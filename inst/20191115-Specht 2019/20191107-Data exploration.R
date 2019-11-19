@@ -95,7 +95,3 @@ ggplot(data = data.frame(PCs, meta)) +
 
 
 
-PpRoloc::plot
-
-
-
