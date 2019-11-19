@@ -1,3 +1,14 @@
+library(dplyr)
+library(ggplot2)
+library(gridExtra)
+library(magrittr)
+library(MSnbase)
+library(nipals)
+library(pRoloc)
+library(scpdata)
+library(tidyr)
+library(vsn)
+
 #' Normalization of single-cell proteomics data
 #'
 #' The function \code{scp_normalise} (and identically \code{scp_normalize}) 
@@ -237,14 +248,28 @@ plotSCoPEset <- function(obj, run, phenotype = NULL){
   # Format the data
   df <- data.frame(run = run, channel = pData(obj)$channel, t(exprs(obj)))
   df <- pivot_longer(data = df, cols = -(1:2), values_to = "intensity") 
+  # Get counts per channel
+  df %>%  group_by(channel) %>% 
+    summarise(max = max(intensity, na.rm = TRUE), 
+              n = sum(!is.na(intensity)),
+              mean = mean(intensity, na.rm = TRUE),
+              median = median(intensity, na.rm = TRUE)) -> counts
+  labs <- if(!is.null(phenotype))
+    array(pData(obj)[,phenotype], dimnames = list(pData(obj)$channel))
+  else waiver()
   # Create the plot
   p <- ggplot(data = df, aes(x = channel, y = intensity)) +
-    geom_violin(na.rm = TRUE) + scale_y_log10() + ggtitle(run)
-  if(!is.null(phenotype)){
-    p <- p + scale_x_discrete(limits = as.character(0:10), 
-                              labels = array(pData(obj)[,phenotype], 
-                                             dimnames = list(pData(obj)$channel)))
-  }
+    geom_violin(na.rm = TRUE) + scale_y_log10() + ggtitle(run) + 
+    geom_point(data = counts, aes(x = channel, y = median, shape = "+"), 
+               color = "red", size = 5) + 
+    geom_text(data = counts, aes(x = channel, y = max*2, 
+                                 label = paste0("n=", n)),
+              size = 4, color = "grey50") + 
+    scale_shape_manual(values = "+",
+                       labels = c(`+` = "Median"),
+                       name = "") + 
+    scale_x_discrete(limits = as.character(0:10), 
+                              labels = labs)
   return(p)
 }
 
