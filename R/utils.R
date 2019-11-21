@@ -41,7 +41,7 @@ library(vsn)
 #' sc <- scpdata("specht2019", type = "peptide")
 #' scpNorm <- scp_normalize(sc, what = "both")
 #' 
-scp_normalize <- scp_normalise <- function(obj, what = "col", method = 1){
+scp_normalize <- scp_normalise <- function(obj, what = "col", method = 1, fun = "-"){
   # Check arguments
   if(!inherits(obj, "MSnSet")) stop("'obj' should be an MSnSet object." )
   what <- match.arg(what, choices = c("col", "row", "both"))
@@ -49,9 +49,11 @@ scp_normalize <- scp_normalise <- function(obj, what = "col", method = 1){
   ## Method 1: implemented by Specht et al. 2019
   if(method == 1){
     # Normalize rows
-    if(what %in% c("row", "both")) obj <- rowNormalize(obj)
+    if(what %in% c("row", "both")) 
+      obj <- stat_normalize(obj, margin = 1, stats = mean, fun = fun)
     # Normalize columns
-    if(what %in% c("col", "both")) obj <- colNormalize(obj)
+    if(what %in% c("col", "both")) 
+      obj <- stat_normalize(obj, margin = 2, stats = median, fun = fun)
   } else {
     stop("Method '", method, "' not implemented.")
   }
@@ -273,6 +275,27 @@ plotSCoPEset <- function(obj, run, phenotype = NULL){
   return(p)
 }
 
+customPCA <- function(obj, pca, x = "PC1", y = "PC2", color = "cell_type", shape = "batch"){
+  PCs <- pca$loadings
+  meta <- pData(obj)
+  meta$batch <- paste0(meta$lcbatch, "-",
+                       sapply(as.character(meta$run), function(x) tail(strsplit(x, "")[[1]], 2)[1]))
+  p <- ggplot(data = data.frame(PCs, meta)) +
+    geom_point(aes(x = eval(parse(text = x)), y = eval(parse(text = y)), 
+                   color = eval(parse(text = color)), 
+                   shape = eval(parse(text = shape)))) +
+    scale_color_manual(name = color,
+                       values = c(carrier_mix = "grey50", 
+                                  unused = "grey70",
+                                  norm = "darkseagreen",
+                                  sc_0 = "bisque3", 
+                                  sc_m0 = "cornflowerblue",
+                                  sc_u = "coral")) + 
+    scale_shape(name = shape) + 
+    ggtitle("PCA on the expression data") + xlab(x) + ylab(y)
+  return(p)
+}
+
 
 
 ####---- SPECHT ET AL. 2019 FUNCTIONS ----####
@@ -280,13 +303,9 @@ plotSCoPEset <- function(obj, run, phenotype = NULL){
 # This part of the script contains the code/algorithms used by Specht et al 
 # (2019) for processing their SCP data
 
-rowNormalize <- function(obj){
-  exprs(obj)  <- t(apply(exprs(obj), 1, function(x) x - mean(x, na.rm = TRUE)))
-  return(obj)
-}
-
-colNormalize <- function(obj){
-  exprs(obj) <- apply(exprs(obj), 2, function(x) x - median(x, na.rm = TRUE))
+stat_normalize <- function(obj, margin = 1, stats = mean, fun = "-"){
+  stats <- apply(exprs(obj), MARGIN = margin, stats, na.rm = TRUE)
+  exprs(obj)  <- sweep(exprs(obj), MARGIN = margin, STATS = stats, FUN = fun)
   return(obj)
 }
 
