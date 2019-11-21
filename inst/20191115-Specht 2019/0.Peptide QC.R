@@ -102,16 +102,62 @@ for(run in unique(pData(dat_sc)$run)){
 }
 dev.off()
 
+# Reproduce Figure 2b from Specht et al. 2019
+dat_sc_cn <- dat_sc
+ed <- exprs(dat_sc_cn)
+for(run in pData(dat_sc)$run){
+  .idx_run <- pData(dat_sc_cn)$run == run
+  .idx_carrier <- .idx_run & pData(dat_sc_cn)$cell_type == "carrier_mix"
+  ed[, .idx_run] <- ed[, .idx_run]/ed[, .idx_carrier]
+}
+ed[ed < 1E-3] <- 1E-3
+exprs(dat_sc_cn) <- ed
+pdf("./inst/20191115-Specht 2019/figs/QC - fig2b from specht2019.pdf")
+for(run in unique(pData(dat_sc)$run)){
+  p <- plotSCoPEset(dat_sc_cn, run = pData(dat_sc_cn)$run[1])
+  print(p)
+}
+dev.off()
+
+# Check correlation between cell types
+plotSCoPEset(dat_sc, run = run, phenotype = "cell_type")
+X <- exprs(dat_sc)[,pData(dat_sc)$run == run]
+X <- X[-unique(which(is.na(X), arr.ind = T)[,1]),]
+X[is.na(X)] <- 0
+image(cor(X), axes = F)
+axis(1, at = seq(0,1,length.out = 11),      
+     labels = pData(dat_sc)$cell_type[pData(dat_sc)$run == run])
+axis(2, at = seq(0,1,length.out = 11),      
+     labels = pData(dat_sc)$cell_type[pData(dat_sc)$run == run])
+# There is an issue here! Correlation does not agree with cell type
+
+
+load(file = "../scpdata/inst/extdata/specht2019/ev_updated_preloaded.rda")
+design <- read.csv("../scpdata/inst/extdata/specht2019/annotation_fp60-97.csv", row.names = 1)
+test <- ev[ev$Raw.file == as.character(run),]
+ri.n <- grep("^Reporter\\.intensity\\.\\d*$", colnames(test), value = T)
+ct <- design[ri.n, paste0("X", as.character(run))]
+test <- test[, ri.n]
+test[test == 0] <- NA
+test <- test[-unique(which(is.na(test), arr.ind = T)[,1]),]
+# test[is.na(test)] <- 0
+image(cor(test), axes = F)
+axis(1, at = seq(0,1,length.out = 11), labels = ct)
+axis(2, at = seq(0,1,length.out = 11), labels = ct)
+
 
 ## Explore the missingness in single cells
 
 mis <- apply(exprs(dat_sc), 2, function(x) sum(is.na(x))/length(x)) * 100
 df <- data.frame(mis = mis, pData(dat_sc)) 
 # Missingness with respect to sample type
+png("./inst/20191115-Specht 2019/figs/QC - effect of sample type on missingness.png",
+    res = 300, height = 2000, width = 2000)
 ggplot(data = df, mapping = aes(x = mis, fill = cell_type)) + 
   geom_histogram(binwidth = 1) +
   scale_fill_discrete(name = "Sample type") +
   xlab("Missingness (%)") + ggtitle("Effect of sample type on missingness")
+dev.off()
 # Missingness with respect to chromatographic batch
 ggplot(data = df, mapping = aes(x = mis, fill = lcbatch)) + 
   geom_histogram(binwidth = 1) +
@@ -123,10 +169,13 @@ ggplot(data = df, mapping = aes(x = mis, fill = channel)) +
   scale_fill_discrete(name = "TMT Channel index") +
   xlab("Missingness (%)") + ggtitle("Effect of TMT channel on missingness")
 # Missingness with respect to digest
+png("./inst/20191115-Specht 2019/figs/QC - effect of digestion on missingness.png",
+    res = 300, height = 2000, width = 2000)
 ggplot(data = df, mapping = aes(x = mis, fill = digest)) + 
   geom_histogram(binwidth = 1) +
   scale_fill_discrete(name = "Digestion batch") +
   xlab("Missingness (%)") + ggtitle("Effect of digestion on missingness")
+dev.off()
 # CCL: the digestion batch/technique has a big impact on the amount of missing
 # data. Hence we only keep the Q and N batches which contain lower missingness
 dat_sc <- dat_sc[, pData(dat_sc)$digest %in% c("Q", "N")]
@@ -144,11 +193,14 @@ df <- do.call(cbind, lapply(c("sc_m0",  "sc_u"), function(x){
 df$logFC <- log2(df$median_intensity_sc_m0/df$median_intensity_sc_u)
 df$logFC[df$logFC > 2.5] <- 2.5
 df$logFC[df$logFC < -2.5] <- -2.5
+png("./inst/20191115-Specht 2019/figs/QC - macrophage vs monocyte missingness.png",
+    res = 300, height = 2000, width = 2000)
 ggplot(data = df, aes(x = mis_sc_m0, y = mis_sc_u, col = logFC), alpha = 0.2) +
   geom_point() + geom_abline() +
   scale_color_gradient2(name = "log2(macro/mono)", low = "darkgreen", 
                         high = "red3", midpoint = 0, mid = "wheat") + 
   ylab("Missingness (%) in monocytes") + xlab("Missingness (%) in macrophages")
+dev.off()
 # Conclusion: peptides that are more missing in monocytes than in macrophage are 
 # less expressed in monocytes compared to macrophages
 
@@ -160,9 +212,9 @@ df <- data.frame(peptide = featureNames(dat_sc),
                  mis = apply(exprs(dat_sc), 1, function(x) sum(is.na(x))/length(x) * 100),
                  n_run = apply(exprs(dat_sc), 1, function(x) length(unique(pData(dat_sc)$run[!is.na(x)]))),
                  int = apply(exprs(dat_sc), 1, mean, na.rm = TRUE))
-png("./inst/20191115-Specht 2019/figs/Missingness vs peptide intensity.png",
+png("./inst/20191115-Specht 2019/figs/QC - Missingness vs peptide intensity.png",
     res = 300, height = 2000, width = 2000)
-p <- ggplot(data = df, aes(y = int, x = mis, color = n_run)) +
+ggplot(data = df, aes(y = int, x = mis, color = n_run)) +
   geom_point(size = 0.75, alpha = 0.35, na.rm = TRUE) +
   stat_smooth(method = "glm", formula = y ~ poly(x, 2), se = FALSE, 
               na.rm = TRUE, col = "red3") +
@@ -172,7 +224,6 @@ p <- ggplot(data = df, aes(y = int, x = mis, color = n_run)) +
                         high = "darkgreen", midpoint = 10, 
                         breaks = seq(0, max(df$n_run), by = 10)) + 
   ggtitle("Relationship between missingness and peptide intensity")
-p
 dev.off()
 # Strange, the highest peptides show the highest missingness. Maybe due to the 
 # fact that with less observations, the mean is more subject to the effect of 
@@ -188,20 +239,8 @@ which(!is.na(exprs(dat_sc)[outl.idx[1],]))
 
 ## Check PCA
 
-pca <- nipals(exprs(dat_sc), ncomp = 10, center = TRUE, scale = TRUE)
-PCs <- pca$loadings
-meta <- pData(dat_sc)
-meta$batch <- paste0(meta$lcbatch, "-",
-                     sapply(as.character(meta$run), function(x) tail(strsplit(x, "")[[1]], 2)[1]))
-ggplot(data = data.frame(PCs, meta)) +
-  geom_point(aes(x = PC2, y = PC1, color = cell_type, shape = batch)) +
-  scale_color_manual(values = c(carrier_mix = "grey50", 
-                                  unused = "grey70",
-                                  norm = "darkseagreen",
-                                  sc_0 = "bisque3", 
-                                  sc_m0 = "cornflowerblue",
-                                  sc_u = "coral")) + 
-  ggtitle("PCA on the expression data")
+pca <- nipals(exprs(dat_sc), ncomp = 2, center = TRUE, scale = TRUE)
+customPCA(dat_sc, pca, x = "PC1", y = "PC2")
 # Conclusion: the PCA plot cannot distinguish between monocytes and macrophages.
 # Furthermore, Carrier and normalization mix are contained in two separate 
 # clusters at opposite sides of the single cell clusters, whereas the opposite 
@@ -209,13 +248,8 @@ ggplot(data = data.frame(PCs, meta)) +
 # help the separation. 
 dat_sc_sub <- dat_sc[,pData(dat_sc)$cell_type %in% c("sc_m0", "sc_u")]
 dat_sc_sub <- filterNA(dat_sc_sub, pNA = 0.25)
-pca <- nipals(exprs(dat_sc_sub), ncomp = 5, center = TRUE, scale = TRUE)
-PCs <- pca$loadings
-meta <- pData(dat_sc_sub)
-meta$batch <- paste0(meta$lcbatch, "-",
-                     sapply(as.character(meta$run), function(x) tail(strsplit(x, "")[[1]], 2)[1]))
-ggplot(data = data.frame(PCs, meta)) +
-  geom_point(aes(x = PC1, y = PC2, color = cell_type, shape = batch))
+pca_sub <- nipals(exprs(dat_sc_sub), ncomp = 5, center = TRUE, scale = TRUE)
+customPCA(dat_sc_sub, pca_sub, x = "PC1", y = "PC2")
 
 
 ####---- Conclusion ----####
@@ -235,5 +269,5 @@ ggplot(data = data.frame(PCs, meta)) +
 #   runs.
 # * The PCA cannot separate macrophages and monocytes, and carrier and 
 #   normalization samples cluster appart while they are made of the sames cells. 
-#   Subsetting the data for macrophages and monocytes only doesn't help as well 
+#   Subsetting the data for macrophages and monocytes doesn't help as well 
 #   as filtering out highly missing peptides. 
