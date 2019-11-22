@@ -171,18 +171,18 @@ scp_plotMissing <- function(obj, what = c("both", "samples", "features")){
 }
 
 #' @export
-scp_plotCV <- function(obj, colorBy = NULL){
+scp_plotCV <- function(obj, groupBy = "Protein", colorBy = NULL){
   dat <- exprs(obj)
-  prots <- as.character(fData(obj)[,1])
+  prots <- as.character(fData(obj)[, "Proteins"])
   CVs <- do.call(rbind, lapply(unique(prots), function(prot){
     .idx <- prots == prot
     if(sum(.idx) < 2) return(NULL)
-    xx <- 2^dat[.idx,]
+    xx <- dat[.idx,]
     CV <- apply(xx, 2, sd, na.rm = TRUE)/apply(xx, 2, mean, na.rm = TRUE)
     return(CV)
   }))
   dimnames(CVs) <- list(NULL, NULL)
-  CVs <- melt(CVs)
+  CVs <- reshape2::melt(CVs)
   CVs <- CVs[!is.na(CVs$value),]
   # CVs <- cbind(CVs, type = pData(obj)$celltype[CVs$Var2])
   ggplot(data = CVs, aes(x = Var2, y = value)) +
@@ -274,6 +274,22 @@ plotSCoPEset <- function(obj, run, phenotype = NULL){
                               labels = labs)
   return(p)
 }
+
+plotCorQC <- function(obj, run, na.rm = FALSE){
+  X <- exprs(obj)[,pData(obj)$run == run]
+  if(na.rm){
+    X <- X[-unique(which(is.na(X), arr.ind = T)[,1]),]
+    # X[is.na(X)] <- 0
+  }
+  ct <- pData(obj)$cell_type[pData(obj)$run == run]
+  image(cor(X), axes = F, 
+        main = paste0("Pearson correlation between channels\n", run))
+  mtext(ct, 1, at = seq(0,1,length.out = length(ct)), las = 2)
+  mtext(ct, 2, at = seq(0,1,length.out = length(ct)), las = 1)
+}
+
+plotSlavovQC <- function(obj)
+
 
 customPCA <- function(obj, pca, x = "PC1", y = "PC2", color = "cell_type", shape = "batch"){
   PCs <- pca$loadings

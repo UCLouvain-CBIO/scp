@@ -50,7 +50,7 @@ dat_sc <- dat[, pData(dat)$run %in% run_sc] %>%
 ####---- Check the 1000 cells samples ----####
 
 # Intensity per channel 
-pdf("./inst/20191115-Specht 2019/figs/SCoPE2 sets - 1000 cells.pdf")
+pdf("./inst/20191115-Specht 2019/figs/QC - channel intensities per run - 1000 cells.pdf")
 for(run in unique(pData(dat_1000)$run)){
   p <- plotSCoPEset(obj = dat_1000, 
                     run = run,
@@ -62,7 +62,7 @@ dev.off()
 
 ####---- Check the 100 cells samples ----####
 
-pdf("./inst/20191115-Specht 2019/figs/SCoPE2 sets - 100 cells.pdf")
+pdf("./inst/20191115-Specht 2019/figs/QC - channel intensities per run - 100 cells.pdf")
 for(run in unique(pData(dat_100)$run)){
   p <- plotSCoPEset(obj = dat_100, 
                     run = run,
@@ -74,7 +74,7 @@ dev.off()
 
 ####---- Check the 10 cells samples ----####
 
-pdf("./inst/20191115-Specht 2019/figs/SCoPE2 sets - 10 cells.pdf")
+pdf("./inst/20191115-Specht 2019/figs/QC - channel intensities per run - 10 cells.pdf")
 for(run in unique(pData(dat_10)$run)){
   p <- plotSCoPEset(obj = dat_10, 
                     run = run,
@@ -84,67 +84,19 @@ for(run in unique(pData(dat_10)$run)){
 dev.off()
 
 
-####---- Check the 1 cells samples ----####
+####---- Check the 1 cell samples ----####
 
+pdf("./inst/20191115-Specht 2019/figs/QC - various diagnostic plots - 10 cells.pdf")
+# Plot bare data
+show_heatmap(dat_sc, Log2 = TRUE, znorm = TRUE, trim = 5)
 # Plots row standard deviations versus row means
 meanSdPlot(dat_sc, ranks = TRUE) # from MSnbase
-
-show_heatmap(dat_sc, Log2 = TRUE, znorm = TRUE, trim = 5)
+# Plt protein consistency 
+scp_plotCV(dat_sc, groupBy = "Proteins")
+# Plot missingness
 plotNA(dat_sc) # from MSnbase
 scp_plotMissing(dat_sc) 
-
-pdf("./inst/20191115-Specht 2019/figs/SCoPE2 sets - single cells.pdf")
-for(run in unique(pData(dat_sc)$run)){
-  p <- plotSCoPEset(obj = dat_sc, 
-                    run = run,
-                    phenotype = "cell_type")
-  print(p)
-}
 dev.off()
-
-# Reproduce Figure 2b from Specht et al. 2019
-dat_sc_cn <- dat_sc
-ed <- exprs(dat_sc_cn)
-for(run in pData(dat_sc)$run){
-  .idx_run <- pData(dat_sc_cn)$run == run
-  .idx_carrier <- .idx_run & pData(dat_sc_cn)$cell_type == "carrier_mix"
-  ed[, .idx_run] <- ed[, .idx_run]/ed[, .idx_carrier]
-}
-ed[ed < 1E-3] <- 1E-3
-exprs(dat_sc_cn) <- ed
-pdf("./inst/20191115-Specht 2019/figs/QC - fig2b from specht2019.pdf")
-for(run in unique(pData(dat_sc)$run)){
-  p <- plotSCoPEset(dat_sc_cn, run = pData(dat_sc_cn)$run[1])
-  print(p)
-}
-dev.off()
-
-# Check correlation between cell types
-plotSCoPEset(dat_sc, run = run, phenotype = "cell_type")
-X <- exprs(dat_sc)[,pData(dat_sc)$run == run]
-X <- X[-unique(which(is.na(X), arr.ind = T)[,1]),]
-X[is.na(X)] <- 0
-image(cor(X), axes = F)
-axis(1, at = seq(0,1,length.out = 11),      
-     labels = pData(dat_sc)$cell_type[pData(dat_sc)$run == run])
-axis(2, at = seq(0,1,length.out = 11),      
-     labels = pData(dat_sc)$cell_type[pData(dat_sc)$run == run])
-# There is an issue here! Correlation does not agree with cell type
-
-
-load(file = "../scpdata/inst/extdata/specht2019/ev_updated_preloaded.rda")
-design <- read.csv("../scpdata/inst/extdata/specht2019/annotation_fp60-97.csv", row.names = 1)
-test <- ev[ev$Raw.file == as.character(run),]
-ri.n <- grep("^Reporter\\.intensity\\.\\d*$", colnames(test), value = T)
-ct <- design[ri.n, paste0("X", as.character(run))]
-test <- test[, ri.n]
-test[test == 0] <- NA
-test <- test[-unique(which(is.na(test), arr.ind = T)[,1]),]
-# test[is.na(test)] <- 0
-image(cor(test), axes = F)
-axis(1, at = seq(0,1,length.out = 11), labels = ct)
-axis(2, at = seq(0,1,length.out = 11), labels = ct)
-
 
 ## Explore the missingness in single cells
 
@@ -214,7 +166,7 @@ df <- data.frame(peptide = featureNames(dat_sc),
                  int = apply(exprs(dat_sc), 1, mean, na.rm = TRUE))
 png("./inst/20191115-Specht 2019/figs/QC - Missingness vs peptide intensity.png",
     res = 300, height = 2000, width = 2000)
-ggplot(data = df, aes(y = int, x = mis, color = n_run)) +
+p<- ggplot(data = df, aes(y = int, x = mis, color = n_run)) +
   geom_point(size = 0.75, alpha = 0.35, na.rm = TRUE) +
   stat_smooth(method = "glm", formula = y ~ poly(x, 2), se = FALSE, 
               na.rm = TRUE, col = "red3") +
@@ -224,17 +176,54 @@ ggplot(data = df, aes(y = int, x = mis, color = n_run)) +
                         high = "darkgreen", midpoint = 10, 
                         breaks = seq(0, max(df$n_run), by = 10)) + 
   ggtitle("Relationship between missingness and peptide intensity")
+print(p)
 dev.off()
 # Strange, the highest peptides show the highest missingness. Maybe due to the 
 # fact that with less observations, the mean is more subject to the effect of 
 # outliers.
 outl.idx <- which.max(df$int * df$mis^3)
 p + geom_point(data = df[outl.idx,], aes(y = int, x = mis), color = "red") + 
-  ylim(0, 110000)
+  ylim(0, max(df$int))
 which(!is.na(exprs(dat_sc)[outl.idx[1],]))
 # These are all coming from the same set ! Hence it is probably better to remove
 # those highly missing peptides. Specth et al discard peptides and cells with 
 # missingness > 99 % .
+
+## Plot intensities per channel
+
+pdf("./inst/20191115-Specht 2019/figs/QC - channel intensities per run - single cells.pdf")
+for(run in unique(pData(dat_sc)$run)){
+  p <- plotSCoPEset(obj = dat_sc, 
+                    run = run,
+                    phenotype = "cell_type")
+  print(p)
+}
+dev.off()
+
+## Plot correlation between cell types
+
+pdf("./inst/20191115-Specht 2019/figs/QC - correlation between channels - single cells.pdf")
+for(run in unique(pData(dat_sc)$run)){
+  plotCorQC(dat_sc, run = run, na.rm = TRUE)
+}
+dev.off()
+
+# Reproduce Figure 2b from Specht et al. 2019
+dat_sc_cn <- dat_sc
+ed <- exprs(dat_sc_cn)
+for(run in pData(dat_sc)$run){
+  .idx_run <- pData(dat_sc_cn)$run == run
+  .idx_carrier <- .idx_run & pData(dat_sc_cn)$cell_type == "carrier_mix"
+  ed[, .idx_run] <- ed[, .idx_run]/ed[, .idx_carrier]
+}
+ed[ed < 1E-3] <- 1E-3
+exprs(dat_sc_cn) <- ed
+pdf("./inst/20191115-Specht 2019/figs/QC - fig2b from specht2019.pdf")
+for(run in unique(pData(dat_sc)$run)){
+  p <- plotSCoPEset(dat_sc_cn, run = run)
+  print(p)
+}
+dev.off()
 
 
 ## Check PCA
@@ -267,6 +256,10 @@ customPCA(dat_sc_sub, pca_sub, x = "PC1", y = "PC2")
 #   missingness. However, the highest peptides show the highest missingness. 
 #   This is because peptides are found at a very high intensities in only a few 
 #   runs.
+# * There seem to be a problem with the single cell annotations. The unused 
+#   channels show high inentisity peptides and highly correlate with carrier. The
+#   sc_m0, sc_0, sc_u have stochastic correlation patterns but are very distinct
+#   from the carrier, unused and normalization channels. 
 # * The PCA cannot separate macrophages and monocytes, and carrier and 
 #   normalization samples cluster appart while they are made of the sames cells. 
 #   Subsetting the data for macrophages and monocytes doesn't help as well 
