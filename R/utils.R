@@ -41,25 +41,22 @@ library(vsn)
 #' sc <- scpdata("specht2019", type = "peptide")
 #' scpNorm <- scp_normalize(sc, what = "both")
 #' 
-scp_normalize <- scp_normalise <- function(obj, what = "col", method = 1, fun = "-"){
-  # Check arguments
-  if(!inherits(obj, "MSnSet")) stop("'obj' should be an MSnSet object." )
-  what <- match.arg(what, choices = c("col", "row", "both"))
-  
-  ## Method 1: implemented by Specht et al. 2019
-  if(method == 1){
-    # Normalize rows
-    if(what %in% c("row", "both")) 
-      obj <- stat_normalize(obj, margin = 1, stats = mean, fun = fun)
-    # Normalize columns
-    if(what %in% c("col", "both")) 
-      obj <- stat_normalize(obj, margin = 2, stats = median, fun = fun)
-  } else {
-    stop("Method '", method, "' not implemented.")
+scp_normalize_stat <- 
+  scp_normalise_stat <- function(obj, what = "column", stats = mean, fun = "-"){
+    # Check arguments
+    if(!inherits(obj, "MSnSet")) stop("'obj' should be an MSnSet object." )
+    what <- match.arg(what, choices = c("column", "row"))
+    margin <- c(row = 1, column = 2)[what]
+    # Normalize 
+    .val <- apply(exprs(obj), MARGIN = margin, stats, na.rm = TRUE)
+    exprs(obj)  <- sweep(exprs(obj), MARGIN = margin, .val, FUN = fun)
+    # Log process to the MSnSet
+    obj@processingData@processing <-
+      c(processingData(obj)@processing,
+        paste0("Normalize by '", fun, "'ing every ", what, " by its ", 
+               stats@generic[1], ": ", date()))
+    return(obj)
   }
-  
-  return(obj)
-}
 
 
 #' Aggregation of peptide expression data into protein expression data
@@ -89,6 +86,221 @@ scp_aggregateByProtein <- function(obj){
   return(aggregateByProtein(obj))
 }
 
+
+
+# Filter peptdes based on the sample over carrier ratio (SCR)
+scp_filterSCR <- function(obj, samples, carrier, thresh = 0.1, 
+                          sel = rep(TRUE, nrow(obj))){
+  # Check arguments
+  if(!inherits(obj, "MSnSet")) stop("'obj' must be an MSnSet object")
+  if(length(carrier) != 1) stop("'carrier' must have length 1. ")
+  # Compute ratios
+  ratios <- apply(exprs(obj)[, samples, drop = FALSE], 2, 
+                  function(x) x/exprs(obj[, carrier]))
+  # Filter data
+  .rm <- rowMeans(ratios, na.rm = TRUE) > thresh
+  .rm[is.na(.rm)] <- FALSE
+  .rm[!sel] <- FALSE
+  obj <- obj[which(!.rm), ]
+  # Log filtering to the MSnSet
+  obj@processingData@processing <-
+    c(processingData(obj)@processing,
+      paste0("Remove features with a sample to carrier ratio higher than ",
+             round(thresh * 100, 1), " %: ", date()))
+  return(obj)
+}
+
+
+scp_normalize_rRI <- scp_normalise_rRI <- function(obj, ref_col){
+  # Check arguments
+  if(!inherits(obj, "MSnSet")) stop("'obj' must be an MSnSet object")
+  if(length(ref_col) != 1) stop("'ref_col' must have length 1. ")
+  if(is.numeric(ref_col)) ref_col <- sampleNames(obj)[ref_col]
+  # Normalize channels
+  exprs(obj) <- exprs(obj)/exprs(obj)[, ref_col]
+  # Log the process to the MSnSet object
+  obj@processingData@processing <-
+    c(processingData(obj)@processing,
+      paste0("Normalize reporter intensities by dividing every channel ",
+             "by the '", ref_col, "' channel: ", date()))
+  return(obj)
+}
+
+
+scp_exprsToLong <- function(obj, f_sel = c("Raw.file", "sequence_charge")){
+  # Check arguments
+  if(!inherits(obj, "MSnSet")) stop("'obj' must be an MSnSet object")
+  if(is.numeric((f_sel))) f_sel <- varLabels(featureData(obj))[f_sel]
+  if(!all(f_sel %in% varLabels(featureData(obj)))) 
+    stop(paste0("Wrong 'f_sel' specification. The variable(s) '", 
+                f_sel[f_sel %in% varLabels(featureData(obj))], 
+                "' is/are not present in 'varLabels(featureData(obj))'"))
+  if(ncol(pData(obj)) != 0) stop("No implementation for elongating 'pData(obj)'. It should be a 0-row data frame.")
+  # Combine expression and metadata
+  ed <- exprs(obj) 
+  fd <- fData(obj)[, f_sel]
+  dat <- cbind(fd, ed)
+  # Elongate data
+  dat <- pivot_longer(data = as.data.frame(dat), names_to = "channel", 
+                      values_to = "Intensity", cols = colnames(ed))
+  # Unbind expression and feature data
+  ed <- dat$Intensity
+  fd <- as.data.frame(dat[, colnames(dat) != "Intensity"])
+  # Log process 
+  obj@processingData@processing <- 
+    c(processingData(obj)@processing, paste0("Convert data to long format: ", date()))
+  # Create a new MSnSet object with updated information
+  ObjNew <- new("MSnSet",
+                featureData = AnnotatedDataFrame(fd),
+                experimentData = experimentData(obj),
+                processingData = processingData(obj),
+                exprs = as.matrix(ed))
+  stopifnot(validObject(ObjNew))
+  return(ObjNew)
+}
+
+scp_exprsToWide <- function(obj){
+  require(tidyr)
+  # Check arguments
+  if(!inherits(obj, "MSnSet")) stop("'obj' must be an MSnSet object")
+  # Get data to widen
+  ed <- exprs(obj) 
+  fd <- fData(obj)
+  # Create a unique id for every sample (will become the new column names)
+  id <- paste0(fd$Raw.file, "-", fd$channel)
+  # Widen expression data
+  ed <- data.frame(seq = fd$sequence_charge, id = id, Intensity = as.vector(ed))
+  ed <- pivot_wider(ed, id_cols = "seq", names_from = id,
+                    values_from = "Intensity", 
+                    values_fill = list("Intensity" = NA))
+  rown <- ed[,1]
+  ed <- as.matrix(ed[,-1])
+  rownames(ed) <- rown$seq
+  # Adapt feature data
+  fd <- fd[!duplicated(fd$sequence_charge), ]
+  rownames(fd) <- fd$sequence_charge
+  fd <- fd[rownames(ed),]
+  # Log process 
+  obj@processingData@processing <- 
+    c(processingData(obj)@processing, paste0("Convert data to wide format: ", date()))
+  # Create a new MSnSet object with updated information
+  ObjNew <- new("MSnSet",
+                featureData = AnnotatedDataFrame(fd),
+                experimentData = experimentData(obj),
+                processingData = processingData(obj),
+                exprs = ed)
+  stopifnot(validObject(ObjNew))
+  return(ObjNew)
+}
+
+scp_cleanMissing <- function(obj, misVal){
+  # Check arguments
+  if(!inherits(obj, "MSnSet")) stop("'obj' must be an MSnSet object")
+  # Clean zero and infinite data points
+  exprs(obj)[exprs(obj) == 0 | is.infinite(exprs(obj))] <- misVal
+  # Log process 
+  obj@processingData@processing <- 
+    c(processingData(obj)@processing, paste0("Replace infinite values and 0's by ", 
+                                             misVal, ": ", date()))
+  return(obj)
+}
+
+
+
+scp_filterDD <- function(obj_nn,
+                         obj_nc, 
+                         obj_lb,
+                         qprobs = 0.3,
+                         q_thres = -2.5,
+                         median_thres = -1.3,
+                         cv_thres = 0.43,
+                         rowNorm = TRUE, npep = 6, Plot = TRUE){
+  # Check arguments
+  # TODO 
+  # Compute the quantile rRI per sample
+  rRI_q <- apply(log10(exprs(obj_lb)), 2, quantile, 
+                 probs = qprobs, na.rm = TRUE)
+  rRI_q[is.infinite(rRI_q)] <- -3
+  # Compute the median rRI per sample
+  rRI_median <- apply(log10(exprs(obj_lb)), 2, median, na.rm = TRUE)
+  rRI_median[is.infinite(rRI_median)] <- -3
+  # Compute the median protein CV per sample
+  cv_median <- computeCV(obj_nc, rowNorm = rowNorm, npep = npep)
+  # Plot distributions
+  if(Plot){
+    par(mfrow = c(3,1))
+    hist(rRI_q, breaks = 30, xlab = "Quantile rRI", col = "bisque3",
+         main = paste0("Histogram of the quantile rRI (p = ", 
+                       round(qprobs, 2), ")"))
+    polygon(x = rep(c(q_thres, -100), each = 2), y = rep(c(-100, 100), 2),
+            col = rgb(1, 0.2, 0.2, 0.2))
+    hist(rRI_median, breaks = 30, main = "Histogram of the median rRI",
+         xlab = "Median rRI", col = "bisque3")
+    polygon(x = rep(c(median_thres, 100), each = 2), y = rep(c(-100, 100), 2),
+            col = rgb(1, 0.2, 0.2, 0.2))
+    hist(cv_median, breaks = 30, main = "Histogram of the median protein CV",
+         xlab = "Median CV",  col = "bisque3")
+    polygon(x = rep(c(cv_thres, 100), each = 2), y = rep(c(-100, 100), 2),
+            col = rgb(1, 0.2, 0.2, 0.2))
+  }
+  # Filter data 
+  sel <- cv_median < cv_thres & rRI_q > q_thres & rRI_median < median_thres
+  sum(sel, na.rm = TRUE)
+  obj_nn <- obj_nn[, sel]
+  # Log the process
+  obj_nn@processingData@processing <- 
+    c(processingData(obj_nn)@processing, 
+      paste0("Filter samples based on the log10 quantile rRI (p =", qprobs, 
+             "; threshold = ", q_thres, "), the log10 median rRI (threshold = ", 
+             median_thres, "), and the median protein CV (threshold = ", 
+             cv_thres, "): ", date()))
+  return(obj_nn)
+}
+
+# import dplyr
+computeCV <- function(obj, rowNorm = TRUE, npep = 6){
+  require(dplyr)
+  # Get rid of modified peptides
+  obj <- obj[!grepl("(", fData(obj)$sequence_charge, fixed = TRUE), ]
+  # Specht et al.first row normalize before computing CV
+  if(rowNorm){
+    obj <- stat_normalize(obj, margin = 1, stats = mean, fun = "/")
+  }
+  # Compute the CVs
+  groupByProt <- data.frame(prot = fData(obj)$Leading.razor.protein, 
+                            exprs(obj)) %>% 
+    group_by(prot)
+  meanDf <- summarize_all(groupByProt, mean, na.rm = TRUE)
+  sdDf <- summarize_all(groupByProt, sd, na.rm = TRUE)
+  countDf <- summarize(groupByProt, sel = n() >= npep)
+  cv <- sdDf[countDf$sel, -1] / meanDf[countDf$sel, -1]
+  medianCV <- apply(cv, 2, median, na.rm = TRUE)
+  return(medianCV)
+}
+
+scp_filterNA <- function(obj, what, pNA = 0) {
+  # Check argmuents 
+  if(!inherits(obj, "MSnSet")) stop("'obj' should be an MSnSet object." )
+  what <- match.arg(what, choices = c("column", "row"))
+  # Filter NAs
+  if(what == "column"){ # Per column
+    .rm <- colSums(is.na(exprs(obj))) / nrow(obj) > pNA
+    obj <- obj[, !.rm]
+  } else { # Per row
+    .rm <- rowSums(is.na(exprs(obj))) / ncol(obj) > pNA
+    obj <- obj[!.rm, ]
+  }
+  # Log process to the MSnSet object
+  obj@processingData@processing <-
+    c(processingData(obj)@processing,
+      paste0("Remove ", what, " with more than ",
+             round(pNA, 3), "% NAs: ", date()))
+  return(obj)
+  
+}
+
+
+####---- Plotting functions ----####
 
 
 #' @export
@@ -271,7 +483,7 @@ plotSCoPEset <- function(obj, run, phenotype = NULL){
                        labels = c(`+` = "Median"),
                        name = "") + 
     scale_x_discrete(limits = as.character(0:10), 
-                              labels = labs)
+                     labels = labs)
   return(p)
 }
 
@@ -289,28 +501,28 @@ plotCorQC <- function(obj, run, na.rm = FALSE){
 }
 
 plotSlavovQC <- function(obj)
-
-
-customPCA <- function(obj, pca, x = "PC1", y = "PC2", color = "cell_type", shape = "batch"){
-  PCs <- pca$loadings
-  meta <- pData(obj)
-  meta$batch <- paste0(meta$lcbatch, "-",
-                       sapply(as.character(meta$run), function(x) tail(strsplit(x, "")[[1]], 2)[1]))
-  p <- ggplot(data = data.frame(PCs, meta)) +
-    geom_point(aes(x = eval(parse(text = x)), y = eval(parse(text = y)), 
-                   color = eval(parse(text = color)), 
-                   shape = eval(parse(text = shape)))) +
-    scale_color_manual(name = color,
-                       values = c(carrier_mix = "grey50", 
-                                  unused = "grey70",
-                                  norm = "darkseagreen",
-                                  sc_0 = "bisque3", 
-                                  sc_m0 = "cornflowerblue",
-                                  sc_u = "coral")) + 
-    scale_shape(name = shape) + 
-    ggtitle("PCA on the expression data") + xlab(x) + ylab(y)
-  return(p)
-}
+  
+  
+  customPCA <- function(obj, pca, x = "PC1", y = "PC2", color = "cell_type", shape = "batch"){
+    PCs <- pca$loadings
+    meta <- pData(obj)
+    meta$batch <- paste0(meta$lcbatch, "-",
+                         sapply(as.character(meta$run), function(x) tail(strsplit(x, "")[[1]], 2)[1]))
+    p <- ggplot(data = data.frame(PCs, meta)) +
+      geom_point(aes(x = eval(parse(text = x)), y = eval(parse(text = y)), 
+                     color = eval(parse(text = color)), 
+                     shape = eval(parse(text = shape)))) +
+      scale_color_manual(name = color,
+                         values = c(carrier_mix = "grey50", 
+                                    unused = "grey70",
+                                    norm = "darkseagreen",
+                                    sc_0 = "bisque3", 
+                                    sc_m0 = "cornflowerblue",
+                                    sc_u = "coral")) + 
+      scale_shape(name = shape) + 
+      ggtitle("PCA on the expression data") + xlab(x) + ylab(y)
+    return(p)
+  }
 
 
 
@@ -319,11 +531,6 @@ customPCA <- function(obj, pca, x = "PC1", y = "PC2", color = "cell_type", shape
 # This part of the script contains the code/algorithms used by Specht et al 
 # (2019) for processing their SCP data
 
-stat_normalize <- function(obj, margin = 1, stats = mean, fun = "-"){
-  stats <- apply(exprs(obj), MARGIN = margin, stats, na.rm = TRUE)
-  exprs(obj)  <- sweep(exprs(obj), MARGIN = margin, STATS = stats, FUN = fun)
-  return(obj)
-}
 
 aggregateByProtein <- function(obj){
   prots <- fData(obj)[,1]
