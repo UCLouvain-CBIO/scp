@@ -5,20 +5,23 @@
 # processing of the MaxQuant output file will be reproduced but using clean  
 # function implemented in the framework of MSnbase. 
 
+# The data can be downloaded from: 
+# https://drive.google.com/drive/folders/1LQicnfUFUBkzrRkHRTmUjO-aDXI0dvSO
 
 ####---- Load the data ----####
 
 library(MSnbase)
 setwd("./inst/20191115-Specht 2019/replicate specht/")
+source("../../../R/utils-0.0.1.R")
 
 # Load meta data
-samp <- read.csv("~/tmp/scpdata/inst/extdata/specht2019/annotation_fp60-97.csv", 
+samp <- read.csv("../extdata/annotation_fp60-97.csv", 
                  row.names = 1, check.names = F)
-batch <- read.csv("~/tmp/scpdata/inst/extdata/specht2019/batch_fp60-97.csv", 
+batch <- read.csv("../extdata/batch_fp60-97.csv", 
                   row.names = 1)
 
 # Load the data and create an MSnSet
-mq_file <- "~/tmp/scpdata/inst/extdata/specht2019/ev_updated.txt"
+mq_file <- "../extdata/ev_updated.txt"
 coln <- colnames(read.table(mq_file, header = TRUE, sep = "\t", nrow = 1))
 sc0 <- readMSnSet2(file = mq_file, fnames = "id", sep = "\t", header = TRUE,
                    ecol = grep("intensity[.]\\d", coln, value = TRUE))
@@ -77,8 +80,9 @@ sc <- sc[fData(sc)$Raw.file %in% names(pep.t[pep.t >= thres]),]
 
 ####--- Filter based on sample to carrier ratio ----####
 
+# This is only performed single cell runs
 sc <- scp_filterSCR(sc, samples = 4:11, carrier = 1, thresh = 0.1,
-                    sel = fData(sc)$Raw.file %in% sc.runs) # This is only performed single cell runs
+                    sel = fData(sc)$Raw.file %in% sc.runs) 
 
 
 ####---- Numeric normalization ----####
@@ -187,3 +191,9 @@ hist(exprs(sc_final), breaks = "FD", xlim = c(-2, 2), col = "darkseagreen")
 # This sc_final is the peptide data as provided in Specth et al article.
 
 
+####---- Save data ----####
+
+# Save data as Rda file
+specht2019 <- sc_final
+save(specht2019, file = file.path("../extdata/specht2019.RData"),
+     compress = "xz", compression_level = 9)
