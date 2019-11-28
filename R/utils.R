@@ -209,7 +209,6 @@ scp_cleanMissing <- function(obj, misVal){
 
 scp_filterDD <- function(obj_nn,
                          obj_nc, 
-                         obj_lb,
                          qprobs = 0.3,
                          q_thres = -2.5,
                          median_thres = -1.3,
@@ -218,11 +217,11 @@ scp_filterDD <- function(obj_nn,
   # Check arguments
   # TODO 
   # Compute the quantile rRI per sample
-  rRI_q <- apply(log10(exprs(obj_lb)), 2, quantile, 
+  rRI_q <- apply(log10(exprs(obj_nc)), 2, quantile, 
                  probs = qprobs, na.rm = TRUE)
   rRI_q[is.infinite(rRI_q)] <- -3
   # Compute the median rRI per sample
-  rRI_median <- apply(log10(exprs(obj_lb)), 2, median, na.rm = TRUE)
+  rRI_median <- apply(log10(exprs(obj_nc)), 2, median, na.rm = TRUE)
   rRI_median[is.infinite(rRI_median)] <- -3
   # Compute the median protein CV per sample
   cv_median <- computeCV(obj_nc, rowNorm = rowNorm, npep = npep)
@@ -264,7 +263,7 @@ computeCV <- function(obj, rowNorm = TRUE, npep = 6){
   obj <- obj[!grepl("(", fData(obj)$sequence_charge, fixed = TRUE), ]
   # Specht et al.first row normalize before computing CV
   if(rowNorm){
-    obj <- stat_normalize(obj, margin = 1, stats = mean, fun = "/")
+    obj <- scp_normalise_stat(obj, what = "row", stats = mean, fun = "/")
   }
   # Compute the CVs
   groupByProt <- data.frame(prot = fData(obj)$Leading.razor.protein, 
@@ -293,7 +292,7 @@ scp_filterNA <- function(obj, what, pNA = 0) {
   # Log process to the MSnSet object
   obj@processingData@processing <-
     c(processingData(obj)@processing,
-      paste0("Remove ", what, " with more than ",
+      paste0("Remove ", what, "s with more than ",
              round(pNA, 3), "% NAs: ", date()))
   return(obj)
   
@@ -500,29 +499,28 @@ plotCorQC <- function(obj, run, na.rm = FALSE){
   mtext(ct, 2, at = seq(0,1,length.out = length(ct)), las = 1)
 }
 
-plotSlavovQC <- function(obj)
-  
-  
-  customPCA <- function(obj, pca, x = "PC1", y = "PC2", color = "cell_type", shape = "batch"){
-    PCs <- pca$loadings
-    meta <- pData(obj)
-    meta$batch <- paste0(meta$lcbatch, "-",
-                         sapply(as.character(meta$run), function(x) tail(strsplit(x, "")[[1]], 2)[1]))
-    p <- ggplot(data = data.frame(PCs, meta)) +
-      geom_point(aes(x = eval(parse(text = x)), y = eval(parse(text = y)), 
-                     color = eval(parse(text = color)), 
-                     shape = eval(parse(text = shape)))) +
-      scale_color_manual(name = color,
-                         values = c(carrier_mix = "grey50", 
-                                    unused = "grey70",
-                                    norm = "darkseagreen",
-                                    sc_0 = "bisque3", 
-                                    sc_m0 = "cornflowerblue",
-                                    sc_u = "coral")) + 
-      scale_shape(name = shape) + 
-      ggtitle("PCA on the expression data") + xlab(x) + ylab(y)
-    return(p)
-  }
+
+
+customPCA <- function(obj, pca, x = "PC1", y = "PC2", color = "cell_type", shape = "batch"){
+  PCs <- pca$loadings
+  meta <- pData(obj)
+  meta$batch <- paste0(meta$lcbatch, "-",
+                       sapply(as.character(meta$run), function(x) tail(strsplit(x, "")[[1]], 2)[1]))
+  p <- ggplot(data = data.frame(PCs, meta)) +
+    geom_point(aes(x = eval(parse(text = x)), y = eval(parse(text = y)), 
+                   color = eval(parse(text = color)), 
+                   shape = eval(parse(text = shape)))) +
+    scale_color_manual(name = color,
+                       values = c(carrier_mix = "grey50", 
+                                  unused = "grey70",
+                                  norm = "darkseagreen",
+                                  sc_0 = "bisque3", 
+                                  sc_m0 = "cornflowerblue",
+                                  sc_u = "coral")) + 
+    scale_shape(name = shape) + 
+    ggtitle("PCA on the expression data") + xlab(x) + ylab(y)
+  return(p)
+}
 
 
 
