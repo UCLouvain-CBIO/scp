@@ -451,6 +451,15 @@ show_heatmap <- function(obj, ylab = "Feature index", xlab = "Cell index",
   return(invisible(NULL))
 }
 
+plotTMTChannels <- function(obj, run = "all",){
+  if(any(.mis <- !c("run", "channel", "samp_type") %in% colnames(pData(obj))))
+    stop(paste0("'", colnames(pData(obj))[.mis], "' ",
+                "is/are missing from 'pData(obj)'", sep = "', '"))
+  # Subset for the desired run
+  if(run != "all"){
+    # TODO 
+}
+
 plotSCoPEset <- function(obj, run, phenotype = NULL){
   if(!all(c("channel", "run", phenotype) %in% colnames(pData(obj))))
     stop(paste0("'pData(obj)' must contain the following fields: ", 
