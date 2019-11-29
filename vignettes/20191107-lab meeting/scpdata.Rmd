@@ -20,7 +20,7 @@ vignette: >
 BiocStyle::markdown()
 ```
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, results='hide'}
 suppressPackageStartupMessages(library(MSnbase))
 suppressPackageStartupMessages(library(magrittr))
 suppressPackageStartupMessages(library(ggplot2))
@@ -30,6 +30,7 @@ suppressPackageStartupMessages(library(sva))
 suppressPackageStartupMessages(library(scpdata))
 suppressPackageStartupMessages(library(pheatmap))
 suppressPackageStartupMessages(library(nipals))
+suppressWarnings(suppressMessages(source("~/tmp/scp/R/utils.R")))
 ```
 
 # Introduction 

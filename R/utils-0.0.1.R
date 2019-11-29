@@ -6,6 +6,7 @@ library(MSnbase)
 library(nipals)
 library(pRoloc)
 library(scpdata)
+library(sva)
 library(tidyr)
 library(vsn)
 
@@ -518,8 +519,7 @@ customPCA <- function(obj, pca, x = "PC1", y = "PC2", color = "cell_type", shape
                                   sc_0 = "bisque3", 
                                   sc_m0 = "cornflowerblue",
                                   sc_u = "coral")) + 
-    scale_shape(name = shape) + 
-    ggtitle("PCA on the expression data") + xlab(x) + ylab(y)
+    scale_shape(name = shape) + xlab(x) + ylab(y)
   return(p)
 }
 
