@@ -26,6 +26,9 @@ coln <- colnames(read.table(mq_file, header = TRUE, sep = "\t", nrow = 1))
 sc0 <- readMSnSet2(file = mq_file, fnames = "id", sep = "\t", header = TRUE,
                    ecol = grep("intensity[.]\\d", coln, value = TRUE))
 sc <- sc0
+# Save a subset of the MSnSet object
+saveRDS(object = sc[sample(1:nrow(sc), 1E5, replace = FALSE), ], 
+        file = "../extdata/ev_subset_MSnSet.rds")
 
 
 ####---- Add a peptide sequence-charge field ----####

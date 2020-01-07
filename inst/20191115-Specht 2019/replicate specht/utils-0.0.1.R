@@ -128,6 +128,33 @@ scp_normalize_rRI <- scp_normalise_rRI <- function(obj, ref_col){
 }
 
 
+#' Transform channel expression data to long format
+#' 
+#' The function converts the TMT channel data to a single-column expression 
+#' data. The channel header is used to create the \code{channel} field in the 
+#' feature data. 
+#'
+#' @param obj 
+#' An object of class \code{\link{MSnSet}} containing channel expression data.
+#' 
+#' @param f_sel 
+#' A vector of columns names that must be kept as feature data.
+#'
+#' @return 
+#' An object of class \code{\link{MSnSet}} containing all expression data in a 
+#' single column.
+#' 
+#' @examples
+#' #TODO export a minimal 
+#' dim(obj)
+#' 
+#' 
+coln <- colnames(read.table(mq_file, header = TRUE, sep = "\t", nrow = 1))
+sc0 <- readMSnSet2(file = mq_file, fnames = "id", sep = "\t", header = TRUE,
+                   ecol = grep("intensity[.]\\d", coln, value = TRUE))
+
+#' 
+#' 
 scp_exprsToLong <- function(obj, f_sel = c("Raw.file", "sequence_charge")){
   # Check arguments
   if(!inherits(obj, "MSnSet")) stop("'obj' must be an MSnSet object")
@@ -517,7 +544,7 @@ customPCA <- function(obj, pca, x = "PC1", y = "PC2", color = "cell_type", shape
                                   unused = "grey70",
                                   norm = "darkseagreen",
                                   sc_0 = "bisque3", 
-                                  sc_m0 = "cornflowerblue",
+                                  sc_m0 = "skyblue3",
                                   sc_u = "coral")) + 
     scale_shape(name = shape) + xlab(x) + ylab(y)
   return(p)
