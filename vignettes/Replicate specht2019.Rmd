@@ -1,0 +1,465 @@
+---
+title: "Replicate Specht et al. 2019 mass spectrometry-based single-cell proteomics analysis"
+author: 
+- name: Christophe Vanderaa
+    affiliation: Computational Biology, UCLouvain
+- name: Laurent Gatto
+    affiliation: Computational Biology, UCLouvain
+date: "27/05/2020"
+output:
+    html_document: 
+    code_folding: hide
+toc : true
+toc_float : true
+bibliography: Replicate_specht2019.bib
+---
+
+# Introduction 
+
+Features framework
+
+Specht et al 2019
+
+The data provided by the authors is the quantification and identification results extracted by MaXQuant + DART-ID update
+
+The authors provided the dataset as spreadsheets and data table. The files can 
+be downloaded from [here](https://scope2.slavovlab.net/docs/data). We already 
+formated the available data and metadata to be contained in a `Features` object.
+This object can be retrieved from the `scpdata` package under the name 
+`specht2019v2`. *Note*: `v2` stands for the second release of the data in 
+December 2019.
+
+```{r load data}
+library(scpdata)
+data(specht2019v2)
+```
+
+The data contain 179 different `SingleCellExperiment` objects that we refer to 
+as **assays**. Each assay contains expression data along with feature metadata.
+The `SingleCellExperiment` class allows to apply cutting-edge methodologies to
+the data
+Below, we show the overview of the `specht2019v2` dataset.
+
+```{r data overview}
+specht2019v2
+```
+
+The 177 first assays are the PSM data acquired from different MS runs. They all 
+have exactly 16 columns because a 16-plex TMT protocole was used to acquire the 
+SCoPE2 dataset. The dataset also contains a `peptides` assay and a `proteins` 
+assay that hold peptide and protein level information, respectively. The 
+objective of this vignette is to produce the `peptides` and `proteins` assays 
+from the 177 PSM assays following the same procedure but using standardized 
+functionalities. The procedure can be split up in the following steps:
+
+1. 
+2. 
+3.
+
+We extract the `peptides` and `proteins` assays 
+
+```{r}
+peptides <- specht2019v2[["peptides"]]
+proteins <- specht2019v2[["proteins"]]
+specht2019v2 <- specht2019v2[, , -(178:179)]
+```
+
+Before starting the data processing, we load some additional required libraries.
+
+```{r}
+source("../R/utils.R") ## remove when scp is build
+library(tidyverse)
+library(patchwork)
+```
+
+Note also that we will use pipe operators `\%>\%` throughout the vignette even
+for single operators. This is meant to show the code shown in this vignette 
+could be written with a few pipe flows (graphs excluded).
+
+# Filter PSMs
+
+We will start with filtering low-quality PSMs. Each PSM assay contains PSM 
+metainformation stored in the assay's `rowData`. The `Features` package allows 
+to quickly filter the PSMs based on those feature (PSM) information. The 
+features variables for the PSM data is listed below.
+
+```{r}
+specht2019v2[[1]] %>%
+    rowData %>%
+    colnames
+```
+
+## Filter out contaminant, contaminated and irrelevant PSMs 
+
+In their work, Specht and colleagues filter PSMs that are annotated as 
+contaminants, that matched the decoy database, or that exhibit low PIF (parental 
+ion fraction) score indicating contaminated spectra.
+
+```{r filter PSMs}
+specht2019v2 %>%
+    filterFeatures(~ Reverse != "+" &
+                       !grepl("REV|CON", protein) &
+                       Potential.contaminant != "+" &
+                       !is.na(PIF) & PIF > 0.8) -> 
+    specht2019v2
+```
+
+## Filter out failed runs based on PSM content
+
+Next, only the assays that have sufficient PSMs are kept. The authors keep an 
+assays if it has over 300 PSMs. Before filtering, let's first look at the 
+distribution of the number of PSMs per assay. Note that we can easily extract 
+the number of rows (feature, here PSMs) and the number of columns (samples) of 
+each assay using the `dims` function implemented in `Features`.
+
+```{r}
+dims(specht2019v2) %>%
+    .[1, ] %>%
+    data.frame(nPSMs = .) %>%
+    ggplot +
+    geom_histogram(aes(x = nPSMs), 
+                   fill = "orange2", col = "grey30", bins = 30) +
+    geom_vline(aes(xintercept = 300), lty = "dashed") +
+    ggtitle("Distribution of the number of \nvalid PSMs found per run")
+```
+
+We can already see from this graph that 4 assays have very few number of PSMs, 
+probably because those runs failed. They are hence below the threshold of 300 
+and are removed from the analysis. 
+
+```{r}
+specht2019v2 <- specht2019v2[, , dims(specht2019v2)[1, ] > 300]
+```
+
+## Filter out PSMs with high sample to carrier ratio
+
+The PSMs are next filtered based on the sample to carrier ratio (SCR), that is 
+the reporter ion intensity of a single-cell sample divided by the reporter ion 
+intensity of the carrier (200 cells) acquired during the same run as the sample. 
+It is expected that the carrier intensities are much higher than the single-cell
+intensities. We implemented the `computeSCR` function that computes the SCR for
+each PSM averaged over all samples of interest in a given assay. A PSM is 
+removed when the mean SCR exceeds 10 \%. To perform this, we need to tell the 
+function which columns are the samples of interest and which is the carrier. 
+The `colData` is used to define this. 
+
+```{r}
+colData(specht2019v2)
+```
+
+In this dataset, `CellType` gives the type of cell that is present in each TMT
+channel. All the single-cells samples start with `sc` (`sc_m0`, `sc_u`, `sc_0`) 
+and the carrier samples are denoted by `carrier_mix`. 
+
+```{r}
+specht2019v2 %>% 
+    computeSCR(i = 1:173,
+               colDataCol = "CellType",
+               samplePattern = "^sc",
+               carrierPattern = "carrier_mix") ->
+    specht2019v2    
+```
+
+**@discussion**: for some PSMs, the mean SCR is `0` (all samples are 0, but not
+carrier), `NaN` (all samples and carrier are 0), or `Inf` (some samples are not 
+0, but the carrier is). In my opinion, those three cases should yield `NA`. This
+can be done if we already clean the missing data by replacing `0` by `NA` as 
+done later on. 
+
+```{r}
+rowDataToDF(specht2019v2, i = 1:173, vars = "meanSCR") %>%
+    data.frame %>%
+    ggplot(aes(x = meanSCR)) +
+    geom_histogram(fill = "orange2", col = "grey40", bins = 30, na.rm = TRUE) +
+    geom_vline(xintercept = 0.1, lty = "dashed") +
+    scale_x_log10() +
+    xlab("Mean sample to carrier ratio") +
+    ggtitle("Distribution of sample to carrier ratios averaged over run")
+```
+
+A great majority of the PSMs have a mean SCR that is lower than 10\%, as 
+expected. We remove the PSMs for the which the mean SCR exceeds that threshold. 
+
+**@discussion** interesting benchmarking observation: the mode of the 
+distribution is located at ~1\%. This is expected a every sample channel 
+contains a single-cell and the carrier contains 200 cells leading to an expected 
+mean SCR of 0.5\%. The factor 2 difference between observed and expected SCR may 
+be explained by the fact that lymphocytes (composing the carrier) and the 
+monocytic cells (single-cell samples)
+
+```{r}
+specht2019v2 %>%
+    filterFeatures(~ !is.na(meanSCR) & 
+                       !is.infinite(meanSCR) & 
+                       meanSCR != 0 &
+                       meanSCR < 0.1) ->
+    specht2019v2
+```
+
+## Filter out PSMs with high false discovery rate
+
+Finally, the last PSM filter criterion is the identification false discovery 
+rate (FDR). As mentioned in the introduction, the data was processed by DART-ID 
+(@Chen2019-uc), a python software that updates the confindence in peptide 
+identification using an Bayesian inference approach. DART-ID outputs for every 
+PSM the updated posterior error probability (PEP). Filtering on the PEP is too 
+conservative (@Kall2008-hb) so we compute the FDR from the PEP. First, let's 
+have a look at the PEP distribution.
+
+```{r}
+rowDataToDF(specht2019v2, i = 1:173, vars = "dart_PEP") %>%
+    data.frame %>%
+    ggplot(aes(x = dart_PEP)) +
+    geom_histogram(fill = "orange2", col = "grey40", bins = 30, na.rm = TRUE) +
+    scale_x_log10() +
+    xlab("PEP") +
+    ggtitle("Distribution of the (DART-ID) posterior error probability")
+```
+
+We compute the FDR grouped over peptide-charge from the PSM PEPs. Again, we implemented 
+a function to peform this. The PEP information as well as the peptide grouping 
+ID are contained the assays `rowData`. So we need to supply the name of the 
+variables that hold this information, `dart_PEP` and `peptide`, respectively. 
+
+```{r}
+specht2019v2 %>% 
+    computeFDR(i = 1:173, 
+               groupCol = "peptide",
+               pepCol = "dart_PEP") ->
+    specht2019v2
+```
+
+Note that a new variable `.FDR` containing the computed FDRs is added to the 
+`rowData`. This allows us to easily plot the updated FDRs. 
+
+```{r}
+rowDataToDF(specht2019v2, i = 1:173, vars = c("peptide", ".FDR")) %>%
+    data.frame %>%
+    group_by(peptide, .assay) %>%
+    summarize(.FDR = unique(.FDR), n = n()) %>%
+    ggplot() ->
+    p
+p + geom_histogram(aes(x = .FDR), 
+                   fill = "orange2", col = "grey40", bins = 30, na.rm = TRUE) +
+    scale_x_log10() +
+    xlab("FDR") +
+    p +
+    geom_histogram(aes(x = n), fill = "grey", col = "grey40", binwidth = 1) +
+    xlab("Peptides per PSM") +
+    plot_layout(widths = c(0.8, 0.2)) +
+    plot_annotation(title = "Distribution of the peptide FDR")
+```
+
+**@discussion**: I'm a bit lost here. First, even if mentioned in @Kall2008-hb, 
+I don't get why we need to compute an FDR. Is it because the PSMs are not 
+independent and we correct for this? Second, why are we grouping over 
+peptide-charge instead of just peptide. Is the FDR ion-specific rather than 
+peptide specific?
+
+The computed FDR doesn't change from the DART-ID updated PEPs. Note that this 
+is due to the fact that most peptides (with specific ion charge) in a run are 
+represented by a single PSM. We filter the PSMs that have an associated peptide 
+FDR smaller than 1 \%.
+
+```{r}
+specht2019v2 %>%
+    filterFeatures(~ .FDR < 0.01) ->
+    specht2019v2
+```
+
+# Process the PSM data to peptide data
+
+Up to now the data are composed of PSMs level intensities split over different 
+runs. We will now combine all this information in a single assay and aggregate
+the data over peptide-charge. 
+
+## Relative reporter ion intensity
+
+In order to correct for between-run variation, the authors compute relative 
+reporter ion intensity. This means that intensities measured for single-cell are
+divided by the reference channel, a channel containing 5-cell equivalents. We 
+use the `divideByReference` function that will automatically divided the 
+single-cell sample columns by the reference channel column using the annotation 
+contained in the `colData`. Single-cell channel annotation starts with `sc` and 
+the reference channel is annotated either as `norm` or `reference`. The assay 
+values will be overwritten by the divided values. 
+
+```{r}
+specht2019v2 %>%
+    divideByReference(i = 1:173, 
+                      colDataCol = "CellType", 
+                      samplePattern = "^sc", 
+                      refPattern = "norm|reference") ->
+    specht2019v2
+```
+
+## Join the PSMs in one assay
+
+We kept the PSM data belonging to each MS run in separate assays. Now that the 
+batch specific filtering and processing is performed, we can combine all batches
+in a single assay. This can easily be done using the `joinAssays` from the 
+`Features` package. 
+
+```{r}
+specht2019v2 %>%
+    joinAssays(i = 1:10, 
+               name = "psms") -> 
+    specht2019v2
+specht2019v2[["psms"]] <- as(specht2019v2[["psms"]], "SingleCellExperiment")
+```
+
+**@TODO**: remove last line when the PR is merged to master in `Feature`
+
+**@discussion**: this step is super slow... It took 1 hour for joining 173 assays.
+
+Note that under the hood, the `Features` architecture preserves the relationship 
+between the joined assay and the input assays. See `?AssayLinks` for more 
+information on relationships between assays.
+
+## Aggregate PSM data to peptide data
+
+In the previous step we joined the assays are joined in blocks, meaning that 
+every row and every column contains missing values for all except one batch. 
+This is a conceptual decision we took based on the fact that it is impossible to 
+collect the same spectra in 2 different runs (different acquisition time, noise 
+levels, sample composition, etc). However, conceptually the same peptide (or 
+peptide-charge) can be acquired across batches. So we aggregate the PSMs to 
+peptides. This is performed using the `aggregateFeatures` function from the 
+`Features` package. 
+
+We however need to acount for an issue. The `aggregateFeatures` will merge the 
+PSMs to the corresponding peptides (peptide-charge) along the associated 
+`rowData`. Only variable that are constant accross peptides will kept. The issue 
+is that some peptides map to multiple proteins hence the protein sequence is not 
+constant across peptides and is removed, although we later need it to aggregate
+to proteins.
+
+```{r}
+rowData(specht2019v2[["psms"]]) %>%
+    data.frame %>%
+    select(peptide, protein) %>%
+    group_by(peptide) %>%
+    mutate(nProteins = length(unique(protein)), 
+           sequence = ifelse(nProteins > 1, 
+                             paste0(peptide, ".", protein), 
+                             peptide)) %>%
+    pull(sequence) ->
+    rowData(specht2019v2[["psms"]])$peptide
+```
+
+**@discussion**: 
+
+* I think there is a semantical confusion. We will continue assuming we are 
+working with peptide data whereas in fact we work with ion data (peptide 
+sequence + charge). Shouldn't we better continue with peptide data only, hence 
+aggregate over `Sequence` (= peptide sequence) instead of `peptide` (= 
+`Sequence` + `_` + `Charge`) ?
+* A clean solution is required for solving the issue of one peptide associated 
+to multiple proteins. Either I implement a function that performs the above 
+peptide annotation cleaning (this looks dirty to me), or we allow 
+`aggregateFeatures` to take 2 or more `fcols`, but this can require heavy 
+changes in the code (namely for `AssayLinks`).
+
+We can now aggregate the PSMs to peptides. We use summing, but this 
+
+```{r}
+specht2019v2 %>%
+    aggregateFeatures(i = "psms", 
+                      fcol = "peptide", 
+                      name = "peptides",
+                      fun = .remove.duplicates) %>%
+    zeroIsNA(i = "peptides") ->
+    specht2019v2
+```
+
+**@discussion** this steps is similar to the step in SCoPE2 at line 244 + 252.
+Why should we keep only the first occurence (this is basically) what happens 
+when we remove duplicates. As sugested by Laurent, would a weighted mean not be 
+better suited (weights based on pep, PIF, distance from apex, ...) ? 
+
+Note that we also performed an additional cleaning step were zero values are 
+replaced by NAs. The `zeroIsNA` function is provided by the `Features` package.
+
+# Filter single-cells
+
+Specht and colleagues filter the single-cell based on 2 criteria: the median 
+relative intensities per cell and the median coefficient of variation (CV) per 
+cell. 
+
+## Filter based on the median relative intensity
+
+We compute the median relative reporter ion intensity for each cell separately 
+and apply a filter based on this statistic. This procedure recalls that 
+library size filtering commonly performed in scRNA-Seq data analysis, where the 
+library size is the sum of the counts in each single cell. We will store the 
+median intensity in the `colData` of the `peptides` assay. Note that this is not 
+the same as the `colData` of the `specht2019v2` object. The later contains the 
+annotation that holds for all assay (typically cell type or batch covariates). 
+The `colData` of the assay hold annotation that is specific to that assay. Here,
+the medians per cell computed at the peptide level are specific to peptides and 
+are not valid at PSM level. You could see this as Matryoshka dolls were 
+`peptides` is a small doll contained in the bigger `specht2019v2` doll.
+
+```{r}
+specht2019v2[["peptides"]] %>%
+    assay %>%
+    colMedians(na.rm = TRUE) ->
+    specht2019v2[["peptides"]]$Median
+```
+
+Looking at the distribution of the median per cell can highlight low-quality
+cells. We here combine the `colData` from the `peptide` assay giving the median 
+intensity per cell with the `colData` of the `specht2019v2` data containing the 
+sample annotation.
+
+```{r}
+specht2019v2[["peptides"]] %>%
+    colData %>%
+    cbind(colData(specht2019v2)[rownames(.), ]) %>%
+    data.frame %>%
+    mutate(CellType = recode(CellType, 
+                             sc_0 = "empty",
+                             sc_u = "single-cell",
+                             sc_m0 = "single-cell",
+                             unused = "unused",
+                             norm = "reference",
+                             carrier_mix = "carrier")) %>%
+    ggplot(aes(x = Median, fill = CellType)) +
+    geom_histogram(col = "grey40", bins = 30, na.rm = TRUE) +
+    scale_x_log10() +
+    xlab("Median") +
+    ggtitle("Distribution of the median intensity per cell")
+```
+
+**@TODO** add conclusion with full data set 
+
+## Filter based on the median CV
+
+```{r}
+longFormat(scp[, , "all_peptides"], colDataCols = "CellType", i = 1) %>%
+    data.frame %>%
+    select(-assay, -colname) %>%
+    cbind(rowData(scp[["all_peptides"]])[.$rowname, c("sequence", "protein")]) %>%
+    mutate(Set = sub("_RI.$", "", primary)) %>%
+    group_by(primary) %>% 
+    mutate(med_per_c = median(value, na.rm = TRUE)) %>%
+    filter(med_per_c > 1/50) %>%
+    group_by(primary) %>%
+    mutate(norm_q1 = value / median(value, na.rm = TRUE)) %>%
+    group_by(sequence, Set) %>%
+    mutate(norm_q = value / mean(norm_q1, na.rm = TRUE)) %>%
+    filter(startsWith(CellType, "sc")) %>%
+    group_by(protein, primary) %>%
+    mutate(cvq = sd(norm_q, na.rm = TRUE) / mean(norm_q, na.rm = TRUE)) %>%
+    group_by(protein, primary) %>%
+    mutate(cvn = sum(!is.na(norm_q))) %>%
+    filter(cvn > 5) %>%
+    group_by(primary) %>%
+    mutate(cvm = median(cvq, na.rm = TRUE)) -> 
+    filterDf
+```
+
+
+
+# Reference
+    
