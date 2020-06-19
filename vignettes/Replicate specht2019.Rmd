@@ -14,6 +14,105 @@ toc_float : true
 bibliography: Replicate_specht2019.bib
 ---
 
+```{r, echo=FALSE}
+source("../R/utils.R")
+scp_normalize <- function(obj, i, margin, method) {
+    # Check arguments
+    if (!inherits(obj, "Features")) stop("'obj' should be a Features object." )
+    trsp <- function(x) x
+    if (margin == 1) trsp <- t
+    # Normalize 
+    y <- obj[[i]]
+    assay(y) <- trsp(apply(assay(y), margin, method))
+    
+    # Replace assay with normalized values
+    .replaceAssay(obj, y, i)
+}
+
+
+scp_imputeKNN <- function(obj, i, name = "KNNimputedAssay", k = 3){
+    
+    oldi <- i
+    exp <- obj[[i]]
+    dat <- assay(exp)
+    
+    # Create a copy of the data, NA values to be filled in later
+    dat.imp<-dat
+    
+    # Calculate similarity metrics for all column pairs (default is Euclidean distance)
+    dist.mat<-as.matrix( dist(t(dat)) )
+    #dist.mat<-as.matrix(as.dist( dist.cosine(t(dat)) ))
+    
+    # Column names of the similarity matrix, same as data matrix
+    cnames<-colnames(dist.mat)
+    
+    # For each column in the data... 
+    for(X in cnames){
+        
+        # Find the distances of all other columns to that column 
+        distances<-dist.mat[, X]
+        
+        # Reorder the distances, smallest to largest (this will reorder the column names as well)
+        distances.ordered<-distances[order(distances, decreasing = F)]
+        
+        # Reorder the data matrix columns, smallest distance to largest from the column of interest
+        # Obviously, first column will be the column of interest, column X
+        dat.reordered<-dat[ , names(distances.ordered ) ]
+        
+        # Take the values in the column of interest
+        vec<-dat[, X]
+        
+        # Which entries are missing and need to be imputed...
+        na.index<-which( is.na(vec) )
+        
+        # For each of the missing entries (rows) in column X...
+        for(i in na.index){
+            
+            # Find the most similar columns that have a non-NA value in this row
+            closest.columns<-names( which( !is.na(dat.reordered[i, ])  ) )
+            
+            # If there are more than k such columns, take the first k most similar
+            if( length(closest.columns)>k ){
+                # Replace NA in column X with the mean the same row in k of the most similar columns
+                vec[i]<-mean( dat[ i, closest.columns[1:k] ] )
+            }
+            
+            # If there are less that or equal to k columns, take all the columns
+            if( length(closest.columns)<=k ){
+                # Replace NA in column X with the mean the same row in all of the most similar columns
+                vec[i]<-mean( dat[ i, closest.columns ])
+            }
+        }
+        # Populate a the matrix with the new, imputed values
+        dat.imp[,X]<-vec
+    }
+    
+    assay(exp) <- dat.imp
+    obj <- addAssay(obj, exp, name = name)
+    addAssayLinkOneToOne(obj, from = oldi, to = name)
+}
+
+scp_ComBat <- function(obj, i, name, batch, mod, ...) {
+  require(sva)
+    exp <- obj[[i]]
+    batch <- factor(colData(exp)[, batch])
+    if (class(mod) == "formula")
+        mod <- model.matrix(mod, data = colData(exp))
+    assay(exp) <- ComBat(assay(exp), batch = batch, mod = mod, ...)
+    obj <- addAssay(obj, exp, name)
+    addAssayLinkOneToOne(obj, from = i, to = name)
+}
+
+## Internal function that is used when aggregating PSMs to peptides. This should
+#" be deleted after discussing with Laurent and Nikolai about removing duplicates
+.remove.duplicates <- function(x) {
+  apply(x, 2, function(xx) {
+    xx[which(!is.na(xx))[1]]
+  })
+}
+
+```
+
 # Introduction 
 
 Features framework
@@ -191,7 +290,7 @@ monocytic cells (single-cell samples)
 specht2019v2 %>%
     filterFeatures(~ !is.na(meanSCR) & 
                        !is.infinite(meanSCR) & 
-                       meanSCR != 0 &
+                       # meanSCR != 0 &
                        meanSCR < 0.1) ->
     specht2019v2
 ```
@@ -267,7 +366,7 @@ specht2019v2 %>%
     specht2019v2
 ```
 
-# Process the PSM data to peptide data
+# Process the PSM data
 
 Up to now the data are composed of PSMs level intensities split over different 
 runs. We will now combine all this information in a single assay and aggregate
@@ -301,22 +400,25 @@ in a single assay. This can easily be done using the `joinAssays` from the
 `Features` package. 
 
 ```{r}
+system.time({
 specht2019v2 %>%
-    joinAssays(i = 1:10, 
+    joinAssays(i = 1:62, 
                name = "psms") -> 
     specht2019v2
+})
 specht2019v2[["psms"]] <- as(specht2019v2[["psms"]], "SingleCellExperiment")
 ```
 
 **@TODO**: remove last line when the PR is merged to master in `Feature`
 
-**@discussion**: this step is super slow... It took 1 hour for joining 173 assays.
+**@discussion**: this step is inefficient... It reached out of memory on 8GB RAM 
++ 8GB SWAP... So I only use sample 1:62
 
 Note that under the hood, the `Features` architecture preserves the relationship 
 between the joined assay and the input assays. See `?AssayLinks` for more 
 information on relationships between assays.
 
-## Aggregate PSM data to peptide data
+# Aggregate PSM data to peptide data
 
 In the previous step we joined the assays are joined in blocks, meaning that 
 every row and every column contains missing values for all except one batch. 
@@ -340,10 +442,10 @@ rowData(specht2019v2[["psms"]]) %>%
     select(peptide, protein) %>%
     group_by(peptide) %>%
     mutate(nProteins = length(unique(protein)), 
-           sequence = ifelse(nProteins > 1, 
+           peptide = ifelse(nProteins > 1, 
                              paste0(peptide, ".", protein), 
                              peptide)) %>%
-    pull(sequence) ->
+    pull(peptide) ->
     rowData(specht2019v2[["psms"]])$peptide
 ```
 
@@ -359,26 +461,33 @@ to multiple proteins. Either I implement a function that performs the above
 peptide annotation cleaning (this looks dirty to me), or we allow 
 `aggregateFeatures` to take 2 or more `fcols`, but this can require heavy 
 changes in the code (namely for `AssayLinks`).
+* Similarly, why removing duplicate peptides instead of using all information 
+when aggregating? 
 
-We can now aggregate the PSMs to peptides. We use summing, but this 
+We can now aggregate the PSMs to peptides. 
 
 ```{r}
 specht2019v2 %>%
+    zeroIsNA(i = "psms") %>%
     aggregateFeatures(i = "psms", 
                       fcol = "peptide", 
                       name = "peptides",
-                      fun = .remove.duplicates) %>%
-    zeroIsNA(i = "peptides") ->
+                      fun = base::colsums, na.rm = TRUE) ->
     specht2019v2
 ```
+
+Note that this is not exactly what is performed in SCoPE2. In the original 
+analysis removes any peptide redundancy by keeping for every cell the first 
+non-missing observation for each peptide. 
 
 **@discussion** this steps is similar to the step in SCoPE2 at line 244 + 252.
 Why should we keep only the first occurence (this is basically) what happens 
 when we remove duplicates. As sugested by Laurent, would a weighted mean not be 
 better suited (weights based on pep, PIF, distance from apex, ...) ? 
 
-Note that we also performed an additional cleaning step were zero values are 
-replaced by NAs. The `zeroIsNA` function is provided by the `Features` package.
+We also performed an additional cleaning step were zero values are replaced by 
+NAs. This is also done in SCoPE2. The `zeroIsNA` function is provided by the 
+`Features` package.
 
 # Filter single-cells
 
@@ -404,13 +513,14 @@ are not valid at PSM level. You could see this as Matryoshka dolls were
 specht2019v2[["peptides"]] %>%
     assay %>%
     colMedians(na.rm = TRUE) ->
-    specht2019v2[["peptides"]]$Median
+    specht2019v2[["peptides"]]$MedianRI
 ```
 
 Looking at the distribution of the median per cell can highlight low-quality
 cells. We here combine the `colData` from the `peptide` assay giving the median 
 intensity per cell with the `colData` of the `specht2019v2` data containing the 
-sample annotation.
+sample annotation. The authors of SCoPE2 used a threshold of 0.02 on the median 
+intensity. This is indicated by the dashed line. 
 
 ```{r}
 specht2019v2[["peptides"]] %>%
@@ -424,29 +534,36 @@ specht2019v2[["peptides"]] %>%
                              unused = "unused",
                              norm = "reference",
                              carrier_mix = "carrier")) %>%
-    ggplot(aes(x = Median, fill = CellType)) +
-    geom_histogram(col = "grey40", bins = 30, na.rm = TRUE) +
-    scale_x_log10() +
+    ggplot(aes(x = MedianRI, y = ..count.., fill = CellType)) +
+    geom_density(col = "grey40", alpha = 0.7, na.rm = TRUE) +
+    geom_vline(xintercept = 0.02, lty = "dashed") +
+    scale_x_log10() + 
     xlab("Median") +
     ggtitle("Distribution of the median intensity per cell")
 ```
 
 **@TODO** add conclusion with full data set 
 
+The subsetting will be performed at the end of the section.
+
 ## Filter based on the median CV
 
+The median CV measures the consistency of quantification for a group of peptides 
+that belong to a protein. We remove cells that exhibit high median CV over the 
+different proteins. We compute the median CV using the code below.
+
 ```{r}
-longFormat(scp[, , "all_peptides"], colDataCols = "CellType", i = 1) %>%
+longFormat(specht2019v2[, , "peptides"], i = 1,
+           colDataCols = c("CellType", "Set")) %>%
     data.frame %>%
     select(-assay, -colname) %>%
-    cbind(rowData(scp[["all_peptides"]])[.$rowname, c("sequence", "protein")]) %>%
-    mutate(Set = sub("_RI.$", "", primary)) %>%
+    cbind(rowData(specht2019v2[["peptides"]])[.$rowname, c("peptide", "protein")]) %>%
     group_by(primary) %>% 
     mutate(med_per_c = median(value, na.rm = TRUE)) %>%
     filter(med_per_c > 1/50) %>%
     group_by(primary) %>%
     mutate(norm_q1 = value / median(value, na.rm = TRUE)) %>%
-    group_by(sequence, Set) %>%
+    group_by(peptide, Set) %>%
     mutate(norm_q = value / mean(norm_q1, na.rm = TRUE)) %>%
     filter(startsWith(CellType, "sc")) %>%
     group_by(protein, primary) %>%
@@ -455,11 +572,246 @@ longFormat(scp[, , "all_peptides"], colDataCols = "CellType", i = 1) %>%
     mutate(cvn = sum(!is.na(norm_q))) %>%
     filter(cvn > 5) %>%
     group_by(primary) %>%
-    mutate(cvm = median(cvq, na.rm = TRUE)) -> 
+    mutate(MedianCV = median(cvq, na.rm = TRUE)) -> 
     filterDf
 ```
 
+**@discussion**: this code is copy-pasted from the SCoPE2 analysis and I just 
+adapted the variable names to match our data. I should create a dedicate 
+function to compute median CVs. The isssue is I don't get the intuition on what 
+is happening here, namely why do we compute `norm_q`?
 
+The data frame we generated holds the compute median CVs with computed using at 
+least 5 peptide observations. The distribution of the median CV per cell is 
+depicted below.
+
+```{r}
+filterDf %>%
+    filter(!duplicated(primary)) %>%
+    mutate(CellType = recode(CellType, 
+                             sc_0 = "empty",
+                             sc_u = "single-cell",
+                             sc_m0 = "single-cell")) %>%
+    ggplot(aes(x = MedianCV, fill = CellType)) +
+    geom_density(alpha = 0.7) +
+    geom_vline(xintercept = 0.4, lty = "dashed")
+```
+
+We can see that the protein quantifiation for single-cell are much more 
+consistent within cells than the empty channels. Similarly to the median 
+intensity, we include the median CV in the `colData` of the `peptides` assay. 
+
+```{r}
+filterDf %>%
+    select(primary, MedianCV) %>%
+    unique ->
+    CVs
+colData(specht2019v2[["peptides"]])$MedianCV <- NA
+colData(specht2019v2[["peptides"]])[CVs$primary, "MedianCV"] <- CVs$MedianCV
+```
+
+**@TODO** include the step in the standardized function as discussed above
+
+## Apply filters
+
+We keep the cells that have a median intensity higher than 0.02 and a median CV
+lower than 0.04. We also remove the carrier, reference, unused and empty 
+channels to keep only the single-cell samples of interest. We store the filtered 
+data in a separate assay using the `addAssay` function and include the 
+one-to-one relationships between the rows of the two assays using the 
+`addAssayLinkOneToOne`. 
+
+```{r}
+sel <- 
+    ## Keep cells with sufficient median intensity
+    !is.na(specht2019v2[["peptides"]]$MedianRI) &
+    specht2019v2[["peptides"]]$MedianRI > 0.02 & 
+    ## Keep cells with a good CV
+    !is.na(specht2019v2[["peptides"]]$MedianCV) &
+    specht2019v2[["peptides"]]$MedianCV < 0.4 & 
+    ## Keep only macrophaes and monocytes
+    colData(specht2019v2)[colnames(specht2019v2[["peptides"]]), "CellType"] != "sc_0"
+specht2019v2 %>%
+    addAssay(name = "peptides_filt",
+             y = specht2019v2[["peptides"]][, sel]) %>%
+    addAssayLinkOneToOne(from = "peptides", 
+                         to = "peptides_filt") ->
+    specht2019v2
+```
+
+# Process the peptide data
+
+In the SCoPE2 analysis, the peptide data is first transformed before aggregated 
+to proteins. The transformation steps are: normalization, filter peptides based 
+on missing data and log-transformation.
+
+## Normalization
+
+The columns (samples) of the peptide data are first normalized by dividing the 
+relative intensities by the median relative intensities. Then, the rows 
+(peptide features) are normalized by dividing the relative intensities by the 
+mean relative intensities. The normalized data is stored in a separate assay. 
+
+```{r}
+specht2019v2 %>%
+  addAssay(y = specht2019v2[["peptides_filt"]], name = "peptides_norm") %>%
+  addAssayLinkOneToOne(from = "peptides_filt", 
+                       to = "peptides_norm") %>%
+  ## Center columns with median
+  scp_normalize(i = "peptides_norm",  margin = 2, 
+                method = function(x) x / median(x, na.rm = TRUE)) %>%
+  ## Center rows with mean
+  scp_normalize(i = "peptides_norm",  margin = 1, 
+                method = function(x) x / mean(x, na.rm = TRUE)) ->
+  specht2019v2
+```
+
+ **@todo**: when PR is merged, use the `sweep` method from `Features`
+ 
+ **@discussion**: why using median for columns and mean for rows?
+
+## Remove peptides with high missing rate
+
+Peptides that contain many missing values are not informative. Therefore, we
+remove those with more than 99 \% missing data. This is done using the 
+`filterNA` function from `Features`.
+
+```{r}
+specht2019v2 %>%
+  filterNA(i = "peptides_norm", 
+           pNA = 0.99) -> 
+  specht2019v2
+```
+
+## Log-transformation 
+
+The last processing step of the peptide data before aggregating to proteins is 
+to log-transform the data. SCoPE2 uses a base 2 log-transformation. 
+
+```{r}
+specht2019v2 %>%
+  logTransform(base = 2,
+               i = "peptides_norm", 
+               name = "peptides_log") ->
+  specht2019v2
+```
+
+The `peptide_log` assay should be identical to the peptide data provided by 
+Specht et al. We will compare the two data tables later in this vignette to 
+benchmark the replication results.
+
+# Aggregate peptide data to protein data
+
+Similarly to aggregating PSM data to peptide data, we can aggregate peptide data
+to protein data using the `aggregateFeatures` function. Note that we here use 
+the median as a summarizing function. 
+```{r}
+specht2019v2 %>%
+  aggregateFeatures(i = "peptides_log",  
+                    name = "proteins", 
+                    fcol = "protein", 
+                    fun = matrixStats::colMedians, na.rm = TRUE) ->
+  specht2019v2
+```
+
+# Process the protein data
+
+The protein data is processed in three steps: normalization, imputation (using 
+the KNN algorithm) and batch correction (using the ComBat algorithm).
+
+## Normalization 
+
+Normalization is performed similarly to peptide normalization. We use the same 
+functions, but since the data were log-transformed at the peptide level, we 
+subtract by the statistics (median or mean) instead of dividing. 
+
+```{r}
+specht2019v2 %>%
+  addAssay(y = specht2019v2[["proteins"]], 
+           name = "proteins_norm") %>%
+  addAssayLinkOneToOne(from = "proteins", 
+                       to = "proteins_norm") %>%
+  ## Center columns with median
+  scp_normalize(i = "proteins_norm",  
+                margin = 2, 
+                method = function(x) x - median(x, na.rm = TRUE)) %>%
+  ## Center rows with mean
+  scp_normalize(i = "proteins_norm",  
+                margin = 1, 
+                method = function(x) x - mean(x, na.rm = TRUE)) ->
+  specht2019v2
+```
+**@todo**: replace scp_normalize with Features:sweep
+
+## Imputation
+
+The protein data contains a lot of missing values. The graph below shows the 
+rate of missingness in proteins found in macrophages versus undifferenciated 
+monocytes. 
+
+```{r, fig.asp=1}
+longFormat(specht2019v2[, , "proteins_norm"], i = 1, colDataCols = "CellType") %>%
+  data.frame %>%
+  rename(Protein = rowname) %>%
+  mutate(CellType = recode(CellType, 
+                           sc_u = "Monocytes",
+                           sc_m0 = "Macrophages")) %>%
+  group_by(CellType, Protein) %>%
+  summarize(pNA = sum(is.na(value))/n() * 100) %>%
+  pivot_wider(id_cols = Protein, names_from = CellType, values_from = pNA) %>%
+  mutate(logFC = Macrophages - Monocytes) %>%
+  ggplot -> 
+  p
+p +
+  geom_histogram(aes(x = Macrophages), binwidth = 5) +
+  plot_spacer() + 
+  p + 
+  geom_point(aes(x = Macrophages, y = Monocytes, col = logFC)) +
+  theme(legend.position = "bottom") +
+  scale_color_gradient(low = "#048ABF", high = "#FF5733") +
+  p +
+  geom_histogram(aes(y = Monocytes), binwidth = 5) +
+  plot_layout(widths = c(0.8, 0.2), heights = c(0.2, 0.8))
+```
+
+
+The missing data is imputated using K nearest neighbors. Specht and colleagues 
+used k = 3. We made a wrapper around the author's code to apply imputation to 
+our `Features` object. 
+
+```{r}
+specht2019v2 %>%
+  scp_imputeKNN(i = "proteins_norm", 
+                name = "proteins_impd") ->
+  specht2019v2
+```
+
+
+## Batch correction
+
+The final steps is to model the remaining batch effects and correct for it. The 
+`ComBat` algorithm is here used, and we again created a wrapper around it to 
+work with `Features` objects 
+
+```{r}
+specht2019v2 %>%
+  transferColDataToAssay(i = "proteins_impd") %>%
+  scp_ComBat(i = "proteins_impd", 
+             name = "proteins_batchC",
+             batch = "Set", 
+             mod = ~ CellType)
+```
+
+The `proeteins_impd` data corresponds to the protein dataset provided by the 
+authors. This is the final step of the data reproduction workflow. 
+
+# Benchmarking the replication
+
+## Compare peptide data
+
+## Compare protein data
+
+## Reproduce the SCoPE2 figures
 
 # Reference
     
