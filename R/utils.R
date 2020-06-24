@@ -234,19 +234,17 @@ computeSCR <- function(obj,
     ## Get the corresponding indices
     sampIdx <- grep(samplePattern, annot)
     carrIdx <- grep(carrierPattern, annot)
-    if (length(carrIdx) != 1)
+    if (length(carrIdx) > 1) {
       warning("Multiple carriers found in assay '", names(obj)[ii], 
               "'. Only the first match will be used")
+      carrIdx <- carrIdx[1]
+    }
     ## Compute ratios
-    ratio <- apply(assay(obj, ii)[, sampIdx, drop = FALSE], 
-                   2, 
-                   function(x) x/assay(obj, ii)[, carrIdx])
-    
+    ratio <- assay(obj[[ii]])[, sampIdx, drop = FALSE] / assay(obj[[ii]])[, carrIdx]
     ## Compute mean sample to carrier ratios
-    ## This is a dirty command, but more efficient than
-    ## rowData(obj[[ii]])$meanSCR <- rowMeans(ratio, na.rm = TRUE)
     rowData(obj@ExperimentList@listData[[ii]])$meanSCR <- 
       rowMeans(ratio, na.rm = TRUE)
+    ## more efficient than rowData(obj[[ii]])$meanSCR <- rowMeans(ratio, na.rm = TRUE)
   }
   obj
 }
@@ -315,19 +313,26 @@ computeFDR <- function(obj,
                        groupCol, 
                        pepCol) {
   if (!inherits(obj, "Features")) stop("'obj' must be a Features object")
+  if (is.numeric(i)) i <- names(obj)[i]
   
   ## Function to compute FDRs from PEPs
   fdrFromPEP <- function(x) ## this is calc_fdr from SCoPE2
-    return((cumsum(x[order(x)]) / (1:length(x)))[order(order(x))])
+    return((cumsum(x[order(x)]) / seq_along(x))[order(order(x))])
   
-  ## Iterate over the different assay indices
+  ## Get the PEP from all assays 
+  peps <- rowDataToDF(obj, i, vars = c(groupCol, pepCol))
+  colnames(peps)[1:2] <- c("groupCol", "pepCol")
+  
+  ## Compute the FDR for every peptide ID separately
+  peps <- group_by(data.frame(peps), groupCol)
+  peps <- mutate(peps, FDR = fdrFromPEP(pepCol))
+  
+  ## Insert the FDR inside every assay
+  pepID <- paste0(peps$.assay, peps$groupCol, peps$pepCol)
   for (ii in i) {
-    rd <- data.frame(rowData(obj[[ii]])[, c(groupCol, pepCol)])
-    colnames(rd) <- c("groupCol", "pepCol")
-    ## Compute the FDR for every peptide ID separately
-    rd <- group_by(rd, groupCol)
-    rd <- mutate(rd, FDR = fdrFromPEP(pepCol))
-    rowData(obj@ExperimentList@listData[[ii]])$.FDR <- rd$FDR
+    rdID <- paste0(ii, rowData(obj[[ii]])[, groupCol], rowData(obj[[ii]])[, pepCol])
+    .FDR <- pull(peps[match(rdID, pepID),], FDR)
+    rowData(obj@ExperimentList@listData[[ii]])$.FDR <- as.vector(.FDR)
   }
   return(obj)
 }
@@ -408,6 +413,14 @@ divideByReference <- function(obj,
   return(obj)
 }
 
+
+infIsNA <- function(obj, i) {
+  for(ii in i) {
+    sel <- is.infinite(assay(obj[[ii]])) 
+    assay(obj[[ii]])[sel] <- NA
+  }
+  obj
+}
 
 ##' Transfer the `colData` to an Assay
 ##' 

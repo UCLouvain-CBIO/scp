@@ -15,7 +15,6 @@ bibliography: Replicate_specht2019.bib
 ---
 
 ```{r, echo=FALSE}
-source("../R/utils.R")
 scp_normalize <- function(obj, i, margin, method) {
     # Check arguments
     if (!inherits(obj, "Features")) stop("'obj' should be a Features object." )
@@ -259,11 +258,18 @@ specht2019v2 %>%
     specht2019v2    
 ```
 
-**@discussion**: for some PSMs, the mean SCR is `0` (all samples are 0, but not
+**@discussion**: 
+
+- for some PSMs, the mean SCR is `0` (all samples are 0, but not
 carrier), `NaN` (all samples and carrier are 0), or `Inf` (some samples are not 
 0, but the carrier is). In my opinion, those three cases should yield `NA`. This
 can be done if we already clean the missing data by replacing `0` by `NA` as 
 done later on. 
+- I cannot exactly replicate the mean SCR as in the paper because the batches 
+63:173 contain an `unused` channel in channel 4. Our function can autmotacilly 
+detect this based on the sample pattern and exclude it whereas the SCoPE2 script 
+does not. This is an error: the `unused` channels should not be used to compute 
+the ratio. 
 
 ```{r}
 rowDataToDF(specht2019v2, i = 1:173, vars = "meanSCR") %>%
@@ -317,7 +323,7 @@ rowDataToDF(specht2019v2, i = 1:173, vars = "dart_PEP") %>%
 
 We compute the FDR grouped over peptide-charge from the PSM PEPs. Again, we implemented 
 a function to peform this. The PEP information as well as the peptide grouping 
-ID are contained the assays `rowData`. So we need to supply the name of the 
+ID are contained the `rowData` of each assay. So we need to supply the name of the 
 variables that hold this information, `dart_PEP` and `peptide`, respectively. 
 
 ```{r}
@@ -334,19 +340,12 @@ Note that a new variable `.FDR` containing the computed FDRs is added to the
 ```{r}
 rowDataToDF(specht2019v2, i = 1:173, vars = c("peptide", ".FDR")) %>%
     data.frame %>%
-    group_by(peptide, .assay) %>%
-    summarize(.FDR = unique(.FDR), n = n()) %>%
-    ggplot() ->
-    p
-p + geom_histogram(aes(x = .FDR), 
+    ggplot +
+    geom_histogram(aes(x = .FDR), 
                    fill = "orange2", col = "grey40", bins = 30, na.rm = TRUE) +
     scale_x_log10() +
     xlab("FDR") +
-    p +
-    geom_histogram(aes(x = n), fill = "grey", col = "grey40", binwidth = 1) +
-    xlab("Peptides per PSM") +
-    plot_layout(widths = c(0.8, 0.2)) +
-    plot_annotation(title = "Distribution of the peptide FDR")
+    ggtitle("Distribution of the peptide FDR across all assays")
 ```
 
 **@discussion**: I'm a bit lost here. First, even if mentioned in @Kall2008-hb, 
@@ -468,11 +467,10 @@ We can now aggregate the PSMs to peptides.
 
 ```{r}
 specht2019v2 %>%
-    zeroIsNA(i = "psms") %>%
     aggregateFeatures(i = "psms", 
                       fcol = "peptide", 
                       name = "peptides",
-                      fun = base::colsums, na.rm = TRUE) ->
+                      fun = .remove.duplicates) ->
     specht2019v2
 ```
 
@@ -484,10 +482,6 @@ non-missing observation for each peptide.
 Why should we keep only the first occurence (this is basically) what happens 
 when we remove duplicates. As sugested by Laurent, would a weighted mean not be 
 better suited (weights based on pep, PIF, distance from apex, ...) ? 
-
-We also performed an additional cleaning step were zero values are replaced by 
-NAs. This is also done in SCoPE2. The `zeroIsNA` function is provided by the 
-`Features` package.
 
 # Filter single-cells
 
@@ -544,7 +538,36 @@ specht2019v2[["peptides"]] %>%
 
 **@TODO** add conclusion with full data set 
 
-The subsetting will be performed at the end of the section.
+We filter out the cells that have a median RI 
+
+```{r}
+sel <- colData(specht2019v2[["peptides"]])$MedianRI > 0.02
+sel[is.na(sel)] <- FALSE
+specht2019v2 %>%
+  addAssay(y = specht2019v2[["peptides"]][, sel], 
+           name = "peptides:MedianFilter") %>%
+  addAssayLink(from = "peptides", to = "peptides:MedianFilter", 
+               varFrom = "peptide", varTo = "peptide") ->
+  specht2019v2
+```
+
+## Clean the data (should be before)
+
+We also performed an additional cleaning step were zero values are replaced by 
+NAs. This is also done in SCoPE2. The `zeroIsNA` function is provided by the 
+`Features` package.
+
+```{r}
+specht2019v2 %>%
+  infIsNA(i = "peptides:MedianFilter") %>%
+  zeroIsNA(i = "peptides:MedianFilter") ->
+  specht2019v2
+```
+
+**@discussion**: the first filter is performed when zero and infinite values 
+are still present, whereas they should be replaced by 0. This biases the median
+values and hence the following filtering steps.The cleaning step should occure before aggregation. 
+
 
 ## Filter based on the median CV
 
@@ -553,21 +576,23 @@ that belong to a protein. We remove cells that exhibit high median CV over the
 different proteins. We compute the median CV using the code below.
 
 ```{r}
-longFormat(specht2019v2[, , "peptides"], i = 1,
+longFormat(specht2019v2[, , "peptides:MedianFilter"], i = 1,
            colDataCols = c("CellType", "Set")) %>%
     data.frame %>%
     select(-assay, -colname) %>%
     cbind(rowData(specht2019v2[["peptides"]])[.$rowname, c("peptide", "protein")]) %>%
-    group_by(primary) %>% 
-    mutate(med_per_c = median(value, na.rm = TRUE)) %>%
-    filter(med_per_c > 1/50) %>%
     group_by(primary) %>%
     mutate(norm_q1 = value / median(value, na.rm = TRUE)) %>%
     group_by(peptide, Set) %>%
+    ## Note that here we do not replicate the original results because of the 1
+    ## peptide to several protein issue (see `Aggregate PSM data to peptide 
+    ## data`)
     mutate(norm_q = value / mean(norm_q1, na.rm = TRUE)) %>%
     filter(startsWith(CellType, "sc")) %>%
     group_by(protein, primary) %>%
-    mutate(cvq = sd(norm_q, na.rm = TRUE) / mean(norm_q, na.rm = TRUE)) %>%
+    mutate(norm_q_sd = sd(norm_q, na.rm = TRUE),
+           norm_q_mean = mean(norm_q, na.rm = TRUE),
+           cvq = norm_q_sd / norm_q_mean) %>%
     group_by(protein, primary) %>%
     mutate(cvn = sum(!is.na(norm_q))) %>%
     filter(cvn > 5) %>%
@@ -576,13 +601,14 @@ longFormat(specht2019v2[, , "peptides"], i = 1,
     filterDf
 ```
 
-**@discussion**: this code is copy-pasted from the SCoPE2 analysis and I just 
-adapted the variable names to match our data. I should create a dedicate 
+**@discussion**: this code is almost copy-pasted from the SCoPE2 analysis and I
+just adapted the variable names to match our data. I should create a dedicate 
 function to compute median CVs. The isssue is I don't get the intuition on what 
-is happening here, namely why do we compute `norm_q`?
+is happening here, namely why do we compute `norm_q`? Also see the comment in 
+the code about peptide mathcing issue.
 
-The data frame we generated holds the compute median CVs with computed using at 
-least 5 peptide observations. The distribution of the median CV per cell is 
+The data frame we generated holds the compute median CVs computed using at 
+least 5 observations (peptides). The distribution of the median CV per cell is 
 depicted below.
 
 ```{r}
@@ -593,48 +619,47 @@ filterDf %>%
                              sc_u = "single-cell",
                              sc_m0 = "single-cell")) %>%
     ggplot(aes(x = MedianCV, fill = CellType)) +
-    geom_density(alpha = 0.7) +
-    geom_vline(xintercept = 0.4, lty = "dashed")
+    geom_histogram(bins = 25, position = "dodge") +
+    geom_vline(xintercept = 0.5, lty = "dashed")
 ```
 
 We can see that the protein quantifiation for single-cell are much more 
-consistent within cells than the empty channels. Similarly to the median 
-intensity, we include the median CV in the `colData` of the `peptides` assay. 
+consistent within cells than the empty channels. In the original analysis, the 
+authors noticed that a threshold of 0.5 on the mediand CV best separates the 
+single cell samples from the empty channels. Since we could not fully replicate 
+the data, we observe that a threshold of 0.5 is best. 
+
+Similarly to the median intensity, we include the median CV in the `colData` of
+the `peptides` assay. 
 
 ```{r}
 filterDf %>%
     select(primary, MedianCV) %>%
     unique ->
     CVs
-colData(specht2019v2[["peptides"]])$MedianCV <- NA
-colData(specht2019v2[["peptides"]])[CVs$primary, "MedianCV"] <- CVs$MedianCV
+colData(specht2019v2[["peptides:MedianFilter"]])$MedianCV <- NA
+colData(specht2019v2[["peptides:MedianFilter"]])[CVs$primary, "MedianCV"] <- CVs$MedianCV
 ```
 
 **@TODO** include the step in the standardized function as discussed above
 
-## Apply filters
-
-We keep the cells that have a median intensity higher than 0.02 and a median CV
-lower than 0.04. We also remove the carrier, reference, unused and empty 
-channels to keep only the single-cell samples of interest. We store the filtered 
-data in a separate assay using the `addAssay` function and include the 
+In the end, we keep the cells that have a median intensity higher than 0.02 and
+a median CV lower than 0.5. We also remove the carrier, reference, unused and
+empty channels to keep only the single-cell samples of interest. We store the
+filtered data in a separate assay using the `addAssay` function and include the 
 one-to-one relationships between the rows of the two assays using the 
 `addAssayLinkOneToOne`. 
 
 ```{r}
 sel <- 
-    ## Keep cells with sufficient median intensity
-    !is.na(specht2019v2[["peptides"]]$MedianRI) &
-    specht2019v2[["peptides"]]$MedianRI > 0.02 & 
-    ## Keep cells with a good CV
-    !is.na(specht2019v2[["peptides"]]$MedianCV) &
-    specht2019v2[["peptides"]]$MedianCV < 0.4 & 
+    !is.na(specht2019v2[["peptides:MedianFilter"]]$MedianCV) &
+    specht2019v2[["peptides:MedianFilter"]]$MedianCV < 0.5 & 
     ## Keep only macrophaes and monocytes
-    colData(specht2019v2)[colnames(specht2019v2[["peptides"]]), "CellType"] != "sc_0"
+    colData(specht2019v2)[colnames(specht2019v2[["peptides:MedianFilter"]]), "CellType"] != "sc_0"
 specht2019v2 %>%
     addAssay(name = "peptides_filt",
-             y = specht2019v2[["peptides"]][, sel]) %>%
-    addAssayLinkOneToOne(from = "peptides", 
+             y = specht2019v2[["peptides:MedianFilter"]][, sel]) %>%
+    addAssayLinkOneToOne(from = "peptides:MedianFilter", 
                          to = "peptides_filt") ->
     specht2019v2
 ```
@@ -749,29 +774,15 @@ The protein data contains a lot of missing values. The graph below shows the
 rate of missingness in proteins found in macrophages versus undifferenciated 
 monocytes. 
 
-```{r, fig.asp=1}
-longFormat(specht2019v2[, , "proteins_norm"], i = 1, colDataCols = "CellType") %>%
+```{r}
+longFormat(specht2019v2[, , "proteins_norm"]) %>%
   data.frame %>%
-  rename(Protein = rowname) %>%
-  mutate(CellType = recode(CellType, 
-                           sc_u = "Monocytes",
-                           sc_m0 = "Macrophages")) %>%
-  group_by(CellType, Protein) %>%
-  summarize(pNA = sum(is.na(value))/n() * 100) %>%
-  pivot_wider(id_cols = Protein, names_from = CellType, values_from = pNA) %>%
-  mutate(logFC = Macrophages - Monocytes) %>%
-  ggplot -> 
-  p
-p +
-  geom_histogram(aes(x = Macrophages), binwidth = 5) +
-  plot_spacer() + 
-  p + 
-  geom_point(aes(x = Macrophages, y = Monocytes, col = logFC)) +
-  theme(legend.position = "bottom") +
-  scale_color_gradient(low = "#048ABF", high = "#FF5733") +
-  p +
-  geom_histogram(aes(y = Monocytes), binwidth = 5) +
-  plot_layout(widths = c(0.8, 0.2), heights = c(0.2, 0.8))
+  group_by(colname) %>%
+  summarize(x = mean(is.na(value)) * 100) %>%
+  ggplot() +
+  geom_histogram(aes(x = x), fill = "orange2", col = "grey30") +
+  xlab("% missing data") +
+  ggtitle("Distribution of the amount of missing data within cells")
 ```
 
 
@@ -809,9 +820,69 @@ authors. This is the final step of the data reproduction workflow.
 
 ## Compare peptide data
 
+```{r}
+peptides
+```
+
+
 ## Compare protein data
 
 ## Reproduce the SCoPE2 figures
+
+### Figure 2.b
+
+```{r}
+filterDf %>%
+  select(MedianCV, CellType) %>%
+  mutate(CellType = recode(CellType, 
+                           sc_0 = "empty",
+                           sc_u = "single-cell",
+                           sc_m0 = "single-cell")) %>%
+  unique %>%
+  ggplot +
+  geom_density(aes(x = MedianCV, fill = CellType), alpha = 0.5) +
+  xlab("Quantification variability") +
+  ylab("Density") +
+  scale_fill_manual(values = c( "black", "purple2")) +
+  theme_pubr()
+```
+
+This is different from the original figure. As addressed during the single cell filtering, we could not exactly reproduce 
+
+
+## Interesting plots
+
+```{r}
+longFormat(specht2019v2[, , "peptides_filt"], i = 1, colDataCols = "CellType") %>%
+  data.frame %>%
+  rename(Protein = rowname) %>%
+  mutate(CellType = recode(CellType, 
+                           sc_u = "Monocytes",
+                           sc_m0 = "Macrophages")) %>%
+  group_by(CellType, Protein) %>%
+  summarize(pNA = sum(is.na(value))/n() * 100) %>%
+  pivot_wider(id_cols = Protein, names_from = CellType, values_from = pNA) %>%
+  mutate(logFC = Macrophages - Monocytes) %>%
+  ggplot -> 
+  p
+p +
+  geom_histogram(aes(x = Macrophages), fill = "grey", binwidth = 5) +
+  theme(axis.title.x = element_blank(), axis.text.x = element_blank(),
+        axis.ticks.x = element_blank()) +
+  plot_spacer() + 
+  p + 
+  geom_point(aes(x = Macrophages, y = Monocytes, col = logFC)) +
+  theme(legend.position = "bottom") +
+  scale_color_gradient2(low = "#048ABF", high = "#FF5733", mid = "wheat") +
+  p +
+  geom_histogram(aes(y = Monocytes), binwidth = 5) +
+  theme(axis.title.y = element_blank(), axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(), 
+        axis.text.x = element_text(angle = -90, vjust = 0.5, hjust=0)) +
+  plot_layout(widths = c(0.8, 0.2), heights = c(0.2, 0.8))
+
+```
+
 
 # Reference
     
