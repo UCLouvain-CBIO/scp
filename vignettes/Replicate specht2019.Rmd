@@ -16,90 +16,90 @@ bibliography: Replicate_specht2019.bib
 
 ```{r, echo=FALSE}
 scp_normalize <- function(obj, i, margin, method) {
-    # Check arguments
-    if (!inherits(obj, "Features")) stop("'obj' should be a Features object." )
-    trsp <- function(x) x
-    if (margin == 1) trsp <- t
-    # Normalize 
-    y <- obj[[i]]
-    assay(y) <- trsp(apply(assay(y), margin, method))
-    
-    # Replace assay with normalized values
-    .replaceAssay(obj, y, i)
+  # Check arguments
+  if (!inherits(obj, "Features")) stop("'obj' should be a Features object." )
+  trsp <- function(x) x
+  if (margin == 1) trsp <- t
+  # Normalize 
+  y <- obj[[i]]
+  assay(y) <- trsp(apply(assay(y), margin, method))
+  
+  # Replace assay with normalized values
+  .replaceAssay(obj, y, i)
 }
 
 
 scp_imputeKNN <- function(obj, i, name = "KNNimputedAssay", k = 3){
+  
+  oldi <- i
+  exp <- obj[[i]]
+  dat <- assay(exp)
+  
+  # Create a copy of the data, NA values to be filled in later
+  dat.imp<-dat
+  
+  # Calculate similarity metrics for all column pairs (default is Euclidean distance)
+  dist.mat<-as.matrix( dist(t(dat)) )
+  #dist.mat<-as.matrix(as.dist( dist.cosine(t(dat)) ))
+  
+  # Column names of the similarity matrix, same as data matrix
+  cnames<-colnames(dist.mat)
+  
+  # For each column in the data... 
+  for(X in cnames){
     
-    oldi <- i
-    exp <- obj[[i]]
-    dat <- assay(exp)
+    # Find the distances of all other columns to that column 
+    distances<-dist.mat[, X]
     
-    # Create a copy of the data, NA values to be filled in later
-    dat.imp<-dat
+    # Reorder the distances, smallest to largest (this will reorder the column names as well)
+    distances.ordered<-distances[order(distances, decreasing = F)]
     
-    # Calculate similarity metrics for all column pairs (default is Euclidean distance)
-    dist.mat<-as.matrix( dist(t(dat)) )
-    #dist.mat<-as.matrix(as.dist( dist.cosine(t(dat)) ))
+    # Reorder the data matrix columns, smallest distance to largest from the column of interest
+    # Obviously, first column will be the column of interest, column X
+    dat.reordered<-dat[ , names(distances.ordered ) ]
     
-    # Column names of the similarity matrix, same as data matrix
-    cnames<-colnames(dist.mat)
+    # Take the values in the column of interest
+    vec<-dat[, X]
     
-    # For each column in the data... 
-    for(X in cnames){
-        
-        # Find the distances of all other columns to that column 
-        distances<-dist.mat[, X]
-        
-        # Reorder the distances, smallest to largest (this will reorder the column names as well)
-        distances.ordered<-distances[order(distances, decreasing = F)]
-        
-        # Reorder the data matrix columns, smallest distance to largest from the column of interest
-        # Obviously, first column will be the column of interest, column X
-        dat.reordered<-dat[ , names(distances.ordered ) ]
-        
-        # Take the values in the column of interest
-        vec<-dat[, X]
-        
-        # Which entries are missing and need to be imputed...
-        na.index<-which( is.na(vec) )
-        
-        # For each of the missing entries (rows) in column X...
-        for(i in na.index){
-            
-            # Find the most similar columns that have a non-NA value in this row
-            closest.columns<-names( which( !is.na(dat.reordered[i, ])  ) )
-            
-            # If there are more than k such columns, take the first k most similar
-            if( length(closest.columns)>k ){
-                # Replace NA in column X with the mean the same row in k of the most similar columns
-                vec[i]<-mean( dat[ i, closest.columns[1:k] ] )
-            }
-            
-            # If there are less that or equal to k columns, take all the columns
-            if( length(closest.columns)<=k ){
-                # Replace NA in column X with the mean the same row in all of the most similar columns
-                vec[i]<-mean( dat[ i, closest.columns ])
-            }
-        }
-        # Populate a the matrix with the new, imputed values
-        dat.imp[,X]<-vec
+    # Which entries are missing and need to be imputed...
+    na.index<-which( is.na(vec) )
+    
+    # For each of the missing entries (rows) in column X...
+    for(i in na.index){
+      
+      # Find the most similar columns that have a non-NA value in this row
+      closest.columns<-names( which( !is.na(dat.reordered[i, ])  ) )
+      
+      # If there are more than k such columns, take the first k most similar
+      if( length(closest.columns)>k ){
+        # Replace NA in column X with the mean the same row in k of the most similar columns
+        vec[i]<-mean( dat[ i, closest.columns[1:k] ] )
+      }
+      
+      # If there are less that or equal to k columns, take all the columns
+      if( length(closest.columns)<=k ){
+        # Replace NA in column X with the mean the same row in all of the most similar columns
+        vec[i]<-mean( dat[ i, closest.columns ])
+      }
     }
-    
-    assay(exp) <- dat.imp
-    obj <- addAssay(obj, exp, name = name)
-    addAssayLinkOneToOne(obj, from = oldi, to = name)
+    # Populate a the matrix with the new, imputed values
+    dat.imp[,X]<-vec
+  }
+  
+  assay(exp) <- dat.imp
+  obj <- addAssay(obj, exp, name = name)
+  addAssayLinkOneToOne(obj, from = oldi, to = name)
 }
 
 scp_ComBat <- function(obj, i, name, batch, mod, ...) {
   require(sva)
-    exp <- obj[[i]]
-    batch <- factor(colData(exp)[, batch])
-    if (class(mod) == "formula")
-        mod <- model.matrix(mod, data = colData(exp))
-    assay(exp) <- ComBat(assay(exp), batch = batch, mod = mod, ...)
-    obj <- addAssay(obj, exp, name)
-    addAssayLinkOneToOne(obj, from = i, to = name)
+  exp <- obj[[i]]
+  batch <- factor(colData(exp)[, batch])
+  if (class(mod) == "formula")
+    mod <- model.matrix(mod, data = colData(exp))
+  assay(exp) <- ComBat(assay(exp), batch = batch, mod = mod, ...)
+  obj <- addAssay(obj, exp, name)
+  addAssayLinkOneToOne(obj, from = i, to = name)
 }
 
 ## Internal function that is used when aggregating PSMs to peptides. This should
@@ -183,8 +183,8 @@ features variables for the PSM data is listed below.
 
 ```{r}
 specht2019v2[[1]] %>%
-    rowData %>%
-    colnames
+  rowData %>%
+  colnames
 ```
 
 ## Filter out contaminant, contaminated and irrelevant PSMs 
@@ -195,11 +195,11 @@ ion fraction) score indicating contaminated spectra.
 
 ```{r filter PSMs}
 specht2019v2 %>%
-    filterFeatures(~ Reverse != "+" &
-                       !grepl("REV|CON", protein) &
-                       Potential.contaminant != "+" &
-                       !is.na(PIF) & PIF > 0.8) -> 
-    specht2019v2
+  filterFeatures(~ Reverse != "+" &
+                   !grepl("REV|CON", protein) &
+                   Potential.contaminant != "+" &
+                   !is.na(PIF) & PIF > 0.8) -> 
+  specht2019v2
 ```
 
 ## Filter out failed runs based on PSM content
@@ -212,13 +212,13 @@ each assay using the `dims` function implemented in `Features`.
 
 ```{r}
 dims(specht2019v2) %>%
-    .[1, ] %>%
-    data.frame(nPSMs = .) %>%
-    ggplot +
-    geom_histogram(aes(x = nPSMs), 
-                   fill = "orange2", col = "grey30", bins = 30) +
-    geom_vline(aes(xintercept = 300), lty = "dashed") +
-    ggtitle("Distribution of the number of \nvalid PSMs found per run")
+  .[1, ] %>%
+  data.frame(nPSMs = .) %>%
+  ggplot +
+  geom_histogram(aes(x = nPSMs), 
+                 fill = "orange2", col = "grey30", bins = 30) +
+  geom_vline(aes(xintercept = 300), lty = "dashed") +
+  ggtitle("Distribution of the number of \nvalid PSMs found per run")
 ```
 
 We can already see from this graph that 4 assays have very few number of PSMs, 
@@ -251,11 +251,11 @@ and the carrier samples are denoted by `carrier_mix`.
 
 ```{r}
 specht2019v2 %>% 
-    computeSCR(i = 1:173,
-               colDataCol = "CellType",
-               samplePattern = "^sc",
-               carrierPattern = "carrier_mix") ->
-    specht2019v2    
+  computeSCR(i = 1:173,
+             colDataCol = "CellType",
+             samplePattern = "^sc",
+             carrierPattern = "carrier_mix") ->
+  specht2019v2    
 ```
 
 **@discussion**: 
@@ -273,13 +273,13 @@ the ratio.
 
 ```{r}
 rowDataToDF(specht2019v2, i = 1:173, vars = "meanSCR") %>%
-    data.frame %>%
-    ggplot(aes(x = meanSCR)) +
-    geom_histogram(fill = "orange2", col = "grey40", bins = 30, na.rm = TRUE) +
-    geom_vline(xintercept = 0.1, lty = "dashed") +
-    scale_x_log10() +
-    xlab("Mean sample to carrier ratio") +
-    ggtitle("Distribution of sample to carrier ratios averaged over run")
+  data.frame %>%
+  ggplot(aes(x = meanSCR)) +
+  geom_histogram(fill = "orange2", col = "grey40", bins = 30, na.rm = TRUE) +
+  geom_vline(xintercept = 0.1, lty = "dashed") +
+  scale_x_log10() +
+  xlab("Mean sample to carrier ratio") +
+  ggtitle("Distribution of sample to carrier ratios averaged over run")
 ```
 
 A great majority of the PSMs have a mean SCR that is lower than 10\%, as 
@@ -294,11 +294,11 @@ monocytic cells (single-cell samples)
 
 ```{r}
 specht2019v2 %>%
-    filterFeatures(~ !is.na(meanSCR) & 
-                       !is.infinite(meanSCR) & 
-                       # meanSCR != 0 &
-                       meanSCR < 0.1) ->
-    specht2019v2
+  filterFeatures(~ !is.na(meanSCR) & 
+                   !is.infinite(meanSCR) & 
+                   # meanSCR != 0 &
+                   meanSCR < 0.1) ->
+  specht2019v2
 ```
 
 ## Filter out PSMs with high false discovery rate
@@ -313,12 +313,12 @@ have a look at the PEP distribution.
 
 ```{r}
 rowDataToDF(specht2019v2, i = 1:173, vars = "dart_PEP") %>%
-    data.frame %>%
-    ggplot(aes(x = dart_PEP)) +
-    geom_histogram(fill = "orange2", col = "grey40", bins = 30, na.rm = TRUE) +
-    scale_x_log10() +
-    xlab("PEP") +
-    ggtitle("Distribution of the (DART-ID) posterior error probability")
+  data.frame %>%
+  ggplot(aes(x = dart_PEP)) +
+  geom_histogram(fill = "orange2", col = "grey40", bins = 30, na.rm = TRUE) +
+  scale_x_log10() +
+  xlab("PEP") +
+  ggtitle("Distribution of the (DART-ID) posterior error probability")
 ```
 
 We compute the FDR grouped over peptide-charge from the PSM PEPs. Again, we implemented 
@@ -328,10 +328,10 @@ variables that hold this information, `dart_PEP` and `peptide`, respectively.
 
 ```{r}
 specht2019v2 %>% 
-    computeFDR(i = 1:173, 
-               groupCol = "peptide",
-               pepCol = "dart_PEP") ->
-    specht2019v2
+  computeFDR(i = 1:173, 
+             groupCol = "peptide",
+             pepCol = "dart_PEP") ->
+  specht2019v2
 ```
 
 Note that a new variable `.FDR` containing the computed FDRs is added to the 
@@ -339,13 +339,13 @@ Note that a new variable `.FDR` containing the computed FDRs is added to the
 
 ```{r}
 rowDataToDF(specht2019v2, i = 1:173, vars = c("peptide", ".FDR")) %>%
-    data.frame %>%
-    ggplot +
-    geom_histogram(aes(x = .FDR), 
-                   fill = "orange2", col = "grey40", bins = 30, na.rm = TRUE) +
-    scale_x_log10() +
-    xlab("FDR") +
-    ggtitle("Distribution of the peptide FDR across all assays")
+  data.frame %>%
+  ggplot +
+  geom_histogram(aes(x = .FDR), 
+                 fill = "orange2", col = "grey40", bins = 30, na.rm = TRUE) +
+  scale_x_log10() +
+  xlab("FDR") +
+  ggtitle("Distribution of the peptide FDR across all assays")
 ```
 
 **@discussion**: I'm a bit lost here. First, even if mentioned in @Kall2008-hb, 
@@ -361,8 +361,8 @@ FDR smaller than 1 \%.
 
 ```{r}
 specht2019v2 %>%
-    filterFeatures(~ .FDR < 0.01) ->
-    specht2019v2
+  filterFeatures(~ .FDR < 0.01) ->
+  specht2019v2
 ```
 
 # Process the PSM data
@@ -384,11 +384,11 @@ values will be overwritten by the divided values.
 
 ```{r}
 specht2019v2 %>%
-    divideByReference(i = 1:173, 
-                      colDataCol = "CellType", 
-                      samplePattern = "^sc", 
-                      refPattern = "norm|reference") ->
-    specht2019v2
+  divideByReference(i = 1:173, 
+                    colDataCol = "CellType", 
+                    samplePattern = "^sc", 
+                    refPattern = "norm|reference") ->
+  specht2019v2
 ```
 
 ## Join the PSMs in one assay
@@ -400,7 +400,7 @@ in a single assay. This can easily be done using the `joinAssays` from the
 
 ```{r}
 system.time({
-specht2019v2 %>%
+  specht2019v2 %>%
     joinAssays(i = 1:62, 
                name = "psms") -> 
     specht2019v2
@@ -437,15 +437,15 @@ to proteins.
 
 ```{r}
 rowData(specht2019v2[["psms"]]) %>%
-    data.frame %>%
-    select(peptide, protein) %>%
-    group_by(peptide) %>%
-    mutate(nProteins = length(unique(protein)), 
-           peptide = ifelse(nProteins > 1, 
-                             paste0(peptide, ".", protein), 
-                             peptide)) %>%
-    pull(peptide) ->
-    rowData(specht2019v2[["psms"]])$peptide
+  data.frame %>%
+  select(peptide, protein) %>%
+  group_by(peptide) %>%
+  mutate(nProteins = length(unique(protein)), 
+         peptide = ifelse(nProteins > 1, 
+                          paste0(peptide, ".", protein), 
+                          peptide)) %>%
+  pull(peptide) ->
+  rowData(specht2019v2[["psms"]])$peptide
 ```
 
 **@discussion**: 
@@ -467,11 +467,11 @@ We can now aggregate the PSMs to peptides.
 
 ```{r}
 specht2019v2 %>%
-    aggregateFeatures(i = "psms", 
-                      fcol = "peptide", 
-                      name = "peptides",
-                      fun = .remove.duplicates) ->
-    specht2019v2
+  aggregateFeatures(i = "psms", 
+                    fcol = "peptide", 
+                    name = "peptides",
+                    fun = .remove.duplicates) ->
+  specht2019v2
 ```
 
 Note that this is not exactly what is performed in SCoPE2. In the original 
@@ -505,9 +505,9 @@ are not valid at PSM level. You could see this as Matryoshka dolls were
 
 ```{r}
 specht2019v2[["peptides"]] %>%
-    assay %>%
-    colMedians(na.rm = TRUE) ->
-    specht2019v2[["peptides"]]$MedianRI
+  assay %>%
+  colMedians(na.rm = TRUE) ->
+  specht2019v2[["peptides"]]$MedianRI
 ```
 
 Looking at the distribution of the median per cell can highlight low-quality
@@ -518,22 +518,22 @@ intensity. This is indicated by the dashed line.
 
 ```{r}
 specht2019v2[["peptides"]] %>%
-    colData %>%
-    cbind(colData(specht2019v2)[rownames(.), ]) %>%
-    data.frame %>%
-    mutate(CellType = recode(CellType, 
-                             sc_0 = "empty",
-                             sc_u = "single-cell",
-                             sc_m0 = "single-cell",
-                             unused = "unused",
-                             norm = "reference",
-                             carrier_mix = "carrier")) %>%
-    ggplot(aes(x = MedianRI, y = ..count.., fill = CellType)) +
-    geom_density(col = "grey40", alpha = 0.7, na.rm = TRUE) +
-    geom_vline(xintercept = 0.02, lty = "dashed") +
-    scale_x_log10() + 
-    xlab("Median") +
-    ggtitle("Distribution of the median intensity per cell")
+  colData %>%
+  cbind(colData(specht2019v2)[rownames(.), ]) %>%
+  data.frame %>%
+  mutate(CellType = recode(CellType, 
+                           sc_0 = "empty",
+                           sc_u = "single-cell",
+                           sc_m0 = "single-cell",
+                           unused = "unused",
+                           norm = "reference",
+                           carrier_mix = "carrier")) %>%
+  ggplot(aes(x = MedianRI, y = ..count.., fill = CellType)) +
+  geom_density(col = "grey40", alpha = 0.7, na.rm = TRUE) +
+  geom_vline(xintercept = 0.02, lty = "dashed") +
+  scale_x_log10() + 
+  xlab("Median") +
+  ggtitle("Distribution of the median intensity per cell")
 ```
 
 **@TODO** add conclusion with full data set 
@@ -578,27 +578,27 @@ different proteins. We compute the median CV using the code below.
 ```{r}
 longFormat(specht2019v2[, , "peptides:MedianFilter"], i = 1,
            colDataCols = c("CellType", "Set")) %>%
-    data.frame %>%
-    select(-assay, -colname) %>%
-    cbind(rowData(specht2019v2[["peptides"]])[.$rowname, c("peptide", "protein")]) %>%
-    group_by(primary) %>%
-    mutate(norm_q1 = value / median(value, na.rm = TRUE)) %>%
-    group_by(peptide, Set) %>%
-    ## Note that here we do not replicate the original results because of the 1
-    ## peptide to several protein issue (see `Aggregate PSM data to peptide 
-    ## data`)
-    mutate(norm_q = value / mean(norm_q1, na.rm = TRUE)) %>%
-    filter(startsWith(CellType, "sc")) %>%
-    group_by(protein, primary) %>%
-    mutate(norm_q_sd = sd(norm_q, na.rm = TRUE),
-           norm_q_mean = mean(norm_q, na.rm = TRUE),
-           cvq = norm_q_sd / norm_q_mean) %>%
-    group_by(protein, primary) %>%
-    mutate(cvn = sum(!is.na(norm_q))) %>%
-    filter(cvn > 5) %>%
-    group_by(primary) %>%
-    mutate(MedianCV = median(cvq, na.rm = TRUE)) -> 
-    filterDf
+  data.frame %>%
+  select(-assay, -colname) %>%
+  cbind(rowData(specht2019v2[["peptides"]])[.$rowname, c("peptide", "protein")]) %>%
+  group_by(primary) %>%
+  mutate(norm_q1 = value / median(value, na.rm = TRUE)) %>%
+  group_by(peptide, Set) %>%
+  ## Note that here we do not replicate the original results because of the 1
+  ## peptide to several protein issue (see `Aggregate PSM data to peptide 
+  ## data`)
+  mutate(norm_q = value / mean(norm_q1, na.rm = TRUE)) %>%
+  filter(startsWith(CellType, "sc")) %>%
+  group_by(protein, primary) %>%
+  mutate(norm_q_sd = sd(norm_q, na.rm = TRUE),
+         norm_q_mean = mean(norm_q, na.rm = TRUE),
+         cvq = norm_q_sd / norm_q_mean) %>%
+  group_by(protein, primary) %>%
+  mutate(cvn = sum(!is.na(norm_q))) %>%
+  filter(cvn > 5) %>%
+  group_by(primary) %>%
+  mutate(MedianCV = median(cvq, na.rm = TRUE)) -> 
+  filterDf
 ```
 
 **@discussion**: this code is almost copy-pasted from the SCoPE2 analysis and I
@@ -613,14 +613,14 @@ depicted below.
 
 ```{r}
 filterDf %>%
-    filter(!duplicated(primary)) %>%
-    mutate(CellType = recode(CellType, 
-                             sc_0 = "empty",
-                             sc_u = "single-cell",
-                             sc_m0 = "single-cell")) %>%
-    ggplot(aes(x = MedianCV, fill = CellType)) +
-    geom_histogram(bins = 25, position = "dodge") +
-    geom_vline(xintercept = 0.5, lty = "dashed")
+  filter(!duplicated(primary)) %>%
+  mutate(CellType = recode(CellType, 
+                           sc_0 = "empty",
+                           sc_u = "single-cell",
+                           sc_m0 = "single-cell")) %>%
+  ggplot(aes(x = MedianCV, fill = CellType)) +
+  geom_histogram(bins = 25, position = "dodge") +
+  geom_vline(xintercept = 0.5, lty = "dashed")
 ```
 
 We can see that the protein quantifiation for single-cell are much more 
@@ -634,9 +634,9 @@ the `peptides` assay.
 
 ```{r}
 filterDf %>%
-    select(primary, MedianCV) %>%
-    unique ->
-    CVs
+  select(primary, MedianCV) %>%
+  unique ->
+  CVs
 colData(specht2019v2[["peptides:MedianFilter"]])$MedianCV <- NA
 colData(specht2019v2[["peptides:MedianFilter"]])[CVs$primary, "MedianCV"] <- CVs$MedianCV
 ```
@@ -652,16 +652,16 @@ one-to-one relationships between the rows of the two assays using the
 
 ```{r}
 sel <- 
-    !is.na(specht2019v2[["peptides:MedianFilter"]]$MedianCV) &
-    specht2019v2[["peptides:MedianFilter"]]$MedianCV < 0.5 & 
-    ## Keep only macrophaes and monocytes
-    colData(specht2019v2)[colnames(specht2019v2[["peptides:MedianFilter"]]), "CellType"] != "sc_0"
+  !is.na(specht2019v2[["peptides:MedianFilter"]]$MedianCV) &
+  specht2019v2[["peptides:MedianFilter"]]$MedianCV < 0.5 & 
+  ## Keep only macrophaes and monocytes
+  colData(specht2019v2)[colnames(specht2019v2[["peptides:MedianFilter"]]), "CellType"] != "sc_0"
 specht2019v2 %>%
-    addAssay(name = "peptides_filt",
-             y = specht2019v2[["peptides:MedianFilter"]][, sel]) %>%
-    addAssayLinkOneToOne(from = "peptides:MedianFilter", 
-                         to = "peptides_filt") ->
-    specht2019v2
+  addAssay(name = "peptides_filt",
+           y = specht2019v2[["peptides:MedianFilter"]][, sel]) %>%
+  addAssayLinkOneToOne(from = "peptides:MedianFilter", 
+                       to = "peptides_filt") ->
+  specht2019v2
 ```
 
 # Process the peptide data
@@ -691,9 +691,9 @@ specht2019v2 %>%
   specht2019v2
 ```
 
- **@todo**: when PR is merged, use the `sweep` method from `Features`
- 
- **@discussion**: why using median for columns and mean for rows?
+**@todo**: when PR is merged, use the `sweep` method from `Features`
+
+**@discussion**: why using median for columns and mean for rows?
 
 ## Remove peptides with high missing rate
 
@@ -810,22 +810,100 @@ specht2019v2 %>%
   scp_ComBat(i = "proteins_impd", 
              name = "proteins_batchC",
              batch = "Set", 
-             mod = ~ CellType)
+             mod = ~ CellType) -> 
+  specht2019v2
 ```
 
 The `proeteins_impd` data corresponds to the protein dataset provided by the 
 authors. This is the final step of the data reproduction workflow. 
 
+```{r echo=FALSE}
+save(filterDf, specht2019v2, peptides, proteins, file = "final.RData")
+```
+
+
 # Benchmarking the replication
 
 ## Compare peptide data
 
+Subset peptide data to match the processed sets.
+
 ```{r}
-peptides
+batches <- unique(colData(specht2019v2)[colnames(specht2019v2[["peptides_filt"]]), "Set"])
+peptidesv1 <- peptides[, peptides$Set %in% batches]
+peptidesv1 <- peptidesv1[apply(assay(peptidesv1), 1, function(x) mean(is.na(x)) < 0.99), ]
 ```
 
 
+```{r}
+dim(peptidesv1)
+dim(specht2019v2[["peptides_log"]])
+```
+
+More peptides but less samples.
+
+```{r}
+allPeps <- unique(c(rownames(peptidesv1), rownames(specht2019v2[["peptides_log"]])))
+table(peptidesSCoPE2 = allPeps %in% rownames(peptidesv1), 
+      peptidesSCP = allPeps %in% rownames(specht2019v2[["peptides_log"]]))
+```
+
+```{r}
+allCells <- unique(c(colnames(peptidesv1), colnames(specht2019v2[["peptides_log"]])))
+table(peptidesSCoPE2 = allCells %in% colnames(peptidesv1), 
+      peptidesSCP = allCells %in% colnames(specht2019v2[["peptides_log"]]))
+```
+
+```{r}
+bind_rows(longFormat(peptidesv1) %>% 
+            mutate(source = "SCoPE2"), 
+          longFormat(specht2019v2[["peptides_log"]]) %>%
+            mutate(source = "SCP")) %>%
+  ggplot +
+  geom_histogram(aes(x = value)) +
+  facet_grid(rows = vars(source))
+```
+
+The profiles are higly similar. 
+
+
 ## Compare protein data
+
+Subset peptide data to match the processed sets.
+
+```{r}
+batches <- unique(colData(specht2019v2)[colnames(specht2019v2[["proteins_batchC"]]), "Set"])
+proteinsv1 <- proteins[, proteins$Set %in% batches]
+proteinsv1 <- proteinsv1[apply(assay(proteinsv1), 1, function(x) mean(is.na(x)) < 0.99), ]
+```
+
+
+```{r}
+dim(proteinsv1)
+dim(specht2019v2[["proteins_batchC"]])
+```
+
+Less proteins and less samples.
+
+```{r}
+allProts <- unique(c(rownames(proteinsv1), rownames(specht2019v2[["proteins_batchC"]])))
+table(ProteinsSCoPE2 = allProts %in% rownames(proteinsv1), 
+      ProteinsSCP = allProts %in% rownames(specht2019v2[["proteins_batchC"]]))
+```
+
+Overlap here is pretty bad...
+
+```{r}
+bind_rows(longFormat(proteinsv1) %>% 
+            mutate(source = "SCoPE2"), 
+          longFormat(specht2019v2[["proteins_batchC"]]) %>%
+            mutate(source = "SCP")) %>%
+  ggplot +
+  geom_histogram(aes(x = value)) +
+  facet_grid(rows = vars(source))
+```
+
+The profiles are less similar than for peptides. 
 
 ## Reproduce the SCoPE2 figures
 
@@ -833,7 +911,7 @@ peptides
 
 ```{r}
 filterDf %>%
-  select(MedianCV, CellType) %>%
+  select(primary, MedianCV, CellType) %>%
   mutate(CellType = recode(CellType, 
                            sc_0 = "empty",
                            sc_u = "single-cell",
@@ -844,45 +922,231 @@ filterDf %>%
   xlab("Quantification variability") +
   ylab("Density") +
   scale_fill_manual(values = c( "black", "purple2")) +
-  theme_pubr()
+  theme_minimal()
 ```
 
-This is different from the original figure. As addressed during the single cell filtering, we could not exactly reproduce 
+This is different from the original figure. As addressed during the cell 
+filtering step, we could not exactly reproduce the CV calculation because of the
+peptide to protein mapping issue. 
+
+### Figure 3.a
+
+To assess the separability between macrophages and monocytes, Specht and 
+colleagues perform weighted PCA on the protein data. The weights are 
+proportional to the amount of correlation between a protein and the other 
+proteins. 
+
+```{r}
+X <- assay(specht2019v2[["proteins_batchC"]])
+w <- rowSums(cor(t(X))^2)
+Xw <- diag(w) %*%  X
+Xcor <- cor(Xw)
+pcaRes <- eigen(Xcor)
+pcaPercentVar <- round(pcaRes$values[1:2] / sum(pcaRes$values) * 100, 2)
+data.frame(PC = pcaRes$vectors[, 1:2], 
+           colData(specht2019v2)[colnames(Xcor), ]) %>%
+  ggplot(aes(x = PC.1, y = PC.2, col = CellType)) +
+  xlab(paste0("PC1 (", pcaPercentVar[1], "%)")) +
+  ylab(paste0("PC2 (", pcaPercentVar[2], "%)")) +
+  geom_point(alpha = 0.5) +
+  scale_color_manual(name = "", values = c("#048ABF","#FF5733"), 
+                     labels = c("Macrophages", "Monocytes")) +
+  theme(legend.position = "top") +
+  ggtitle("PCA plot of the processed protein data") +
+  theme_minimal()
+```
+
+Classical PCA for single-cell data can easily be performed using the `scater` 
+package.
+
+```{r}
+library(scater)
+specht2019v2[["proteins_batchC"]] = as(specht2019v2[["proteins_batchC"]], "SingleCellExperiment")
+specht2019v2[["proteins_batchC"]] %>%
+  runPCA(ncomponents = 50, 
+         ntop = Inf, 
+         scale = TRUE, 
+         exprs_values = 1, 
+         name = "PCA") %>%
+  plotPCA(colour_by = "CellType")
+```
+
+
+### Figure 4.a
+
+The histogram at the top of the plot gives the spectral ordering based on the 
+Fiedler vector. The Fiedler vector is the eigen vector of the Laplacian matrix
+$L$ associated to the smallest non-zero (considering numerical precision) 
+eigenvalue. 
+
+```{r}
+W <- 1 + Xcor
+D <- diag(rowSums(W))
+L <- D - W
+eigs<-eigen(L)
+specht2019v2[["proteins_batchC"]]$fiedler <- 
+  eigs$vectors[, order(eigs$values, decreasing = FALSE)[2]]
+```
+
+The Fiedler vector extracts the main component of cell variability. 
+
+```{r}
+colData(specht2019v2[["proteins_batchC"]]) %>%
+  data.frame() %>%
+  arrange(-fiedler) %>%
+  mutate(index = 1:nrow(.)) %>%
+  ggplot() +
+  geom_bar(aes(x = index, y = fiedler, fill = CellType), 
+           stat = "identity", width = 1, alpha = 0.7)  +
+  scale_fill_manual(values = c("#048ABF","#FF5733"), name = "", 
+                    labels = c("Macrophages", "Monocytes")) +
+  xlab("Cell index") +
+  theme_minimal() +
+  theme(legend.position = "top") ->
+  fiedlerPlot
+fiedlerPlot
+```
+
+
+We try too reproduce the heatmap but not enough info. 
+
+```{r}
+## Order cells by the fiedler vector
+specht2019v2[["proteins_batchC"]] %>%
+  colData %>%
+  data.frame %>%
+  rownames_to_column("cells") %>%
+  arrange(-fiedler) %>%
+  pull(cells) ->
+  cOrd
+## Order and subset proteins by the difference expression between spectrum extremes
+specht2019v2[["proteins_batchC"]] %>%
+  .[, cOrd] %>%
+  assay ->
+  mat
+data.frame(proteins = rownames(mat),
+           medLow = rowMedians(mat[, 1:40], na.rm = TRUE),
+           medHigh = rowMedians(mat[, rev(1:ncol(mat))[1:40]], na.rm = TRUE)) %>%
+  mutate(lfc = medLow - medHigh, 
+         sign = sign(lfc)) %>%
+  arrange(sign, abs(lfc)) %>% 
+  filter(abs(lfc) > quantile(abs(lfc), 0.8)) %>%
+  pull(proteins) -> 
+  pOrd
+## Plot as heatmap
+specht2019v2[["proteins_batchC"]][pOrd, cOrd] %>%
+  longFormat %>%
+  mutate(rowname = factor(rowname, levels = pOrd),
+         colname = factor(colname, levels = cOrd),
+         value = ifelse(value > 2, 2, value), 
+         value = ifelse(value < -2, -2, value)) %>%
+  ggplot(aes(x = colname, y = rowname, fill = value)) +
+  geom_tile() +
+  scale_fill_gradientn(colours = c("blue",rgb(0,0,1,0.5),"white",rgb(1,0,0,0.5),"red")) +
+  theme_minimal() +
+  theme(axis.text = element_blank(), legend.position = "none") +
+  xlab("Cell index") +
+  ylab("Proteins") ->
+  heatmapPlot
+heatmapPlot
+```
+
+Create the figure 4.a
+
+```{r}
+fiedlerPlot + 
+  scale_x_continuous(expand = c(0, 0)) +
+  theme(axis.text = element_blank(), legend.position = "none", 
+        axis.title.x = element_blank(), panel.grid = element_blank()) +
+  heatmapPlot +
+  plot_layout(heights = c(0.2, 0.8), ncol = 1)
+```
+
+
+### Figure 4.b
+
+```{r}
+protAnnot <- c(P29966 = "MARCKS",
+               Q9UIG0 = "BAZ1B",
+               P19338 = "NCL",
+               P08670 = "VIM",
+               P07355 = "ANXA2",
+               O94964 = "SOGA1")
+specht2019v2[["proteins_batchC"]] %>%
+  assay %>%
+  t %>%
+  .[, names(protAnnot)] %>%
+  data.frame(., colData(specht2019v2[["proteins_batchC"]])) %>%
+  rename_with(.fn = function(x) protAnnot[x], .col = names(protAnnot)) %>%
+  mutate(CellType = ifelse(CellType == "sc_u", "Monocyte", "Macrophage")) %>%
+  pivot_longer(cols = any_of(unname(protAnnot)), names_to = "Protein", 
+               values_to = "x") %>%
+  mutate(Protein = factor(Protein, levels = protAnnot)) %>%
+  ggplot(aes(x = x, fill = CellType)) +
+  geom_density(alpha = 0.5) +
+  facet_wrap(~ Protein, nrow = 1, scales = "free_x") +
+  ylab("") +
+  xlab("Protein level, log2") +
+  coord_flip() + 
+  scale_fill_manual(values = c("#048ABF","#FF5733")) +
+  theme_minimal() +
+  theme(axis.text.x = element_blank()) ->
+  protDensityPlot
+protDensityPlot
+```
+
+
+### Figure S.2.b
+
+```{r}
+rowDataToDF(specht2019v2,  i = 1:173, vars = c("peptide", "protein")) %>%
+  data.frame %>%
+  pivot_longer(cols = c("peptide", "protein"), names_to = "type", 
+               values_to = "sequence") %>%
+  group_by(sequence, .assay) %>%
+  summarise(type = unique(type), .groups = "keep") %>%
+  group_by(type, .assay) %>%
+  summarise(n = n(), .groups = "keep") %>%
+  ggplot +
+  geom_violin(aes(x = type, y = n), fill = "black", adjust = 0.5, scale = "width") +
+  xlab("") +
+  ylab("Number IDs per run") +
+  theme_minimal()
+```
 
 
 ## Interesting plots
 
-```{r}
+```{r, fig.asp=1}
 longFormat(specht2019v2[, , "peptides_filt"], i = 1, colDataCols = "CellType") %>%
   data.frame %>%
   rename(Protein = rowname) %>%
-  mutate(CellType = recode(CellType, 
-                           sc_u = "Monocytes",
-                           sc_m0 = "Macrophages")) %>%
   group_by(CellType, Protein) %>%
   summarize(pNA = sum(is.na(value))/n() * 100) %>%
   pivot_wider(id_cols = Protein, names_from = CellType, values_from = pNA) %>%
-  mutate(logFC = Macrophages - Monocytes) %>%
+  mutate(logFC = sc_m0 - sc_u) %>%
   ggplot -> 
   p
 p +
-  geom_histogram(aes(x = Macrophages), fill = "grey", binwidth = 5) +
+  geom_histogram(aes(x = sc_m0), binwidth = 5) +
+  theme_minimal() +
   theme(axis.title.x = element_blank(), axis.text.x = element_blank(),
         axis.ticks.x = element_blank()) +
   plot_spacer() + 
   p + 
-  geom_point(aes(x = Macrophages, y = Monocytes, col = logFC)) +
+  geom_point(aes(x = sc_m0, y = sc_u, col = logFC)) +
   theme(legend.position = "bottom") +
-  scale_color_gradient2(low = "#048ABF", high = "#FF5733", mid = "wheat") +
+  xlab("Missingness (%) in macrophages") +
+  ylab("Missingness (%) in monocytes") +
+  scale_color_gradient2(low = "#048ABF", mid = "bisque2", high = "#FF5733") +
   p +
-  geom_histogram(aes(y = Monocytes), binwidth = 5) +
+  geom_histogram(aes(y = sc_u), binwidth = 5) +
+  theme_minimal() +
   theme(axis.title.y = element_blank(), axis.text.y = element_blank(),
         axis.ticks.y = element_blank(), 
         axis.text.x = element_text(angle = -90, vjust = 0.5, hjust=0)) +
-  plot_layout(widths = c(0.8, 0.2), heights = c(0.2, 0.8))
-
+  plot_layout(widths = c(0.9, 0.1), heights = c(0.1, 0.9))
 ```
 
 
 # Reference
-    
