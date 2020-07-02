@@ -1,176 +1,90 @@
 ---
-title: "Replicate Specht et al. 2019 mass spectrometry-based single-cell proteomics analysis"
+title: "Mass spectrometry-based single-cell proteomics workflow"
 author: 
 - name: Christophe Vanderaa
     affiliation: Computational Biology, UCLouvain
 - name: Laurent Gatto
     affiliation: Computational Biology, UCLouvain
-date: "27/05/2020"
+date: "29/06/2020"
 output:
     html_document: 
     code_folding: hide
 toc : true
 toc_float : true
-bibliography: Replicate_specht2019.bib
 ---
-
-```{r, echo=FALSE}
-scp_normalize <- function(obj, i, margin, method) {
-  # Check arguments
-  if (!inherits(obj, "Features")) stop("'obj' should be a Features object." )
-  trsp <- function(x) x
-  if (margin == 1) trsp <- t
-  # Normalize 
-  y <- obj[[i]]
-  assay(y) <- trsp(apply(assay(y), margin, method))
-  
-  # Replace assay with normalized values
-  .replaceAssay(obj, y, i)
-}
-
-
-scp_imputeKNN <- function(obj, i, name = "KNNimputedAssay", k = 3){
-  
-  oldi <- i
-  exp <- obj[[i]]
-  dat <- assay(exp)
-  
-  # Create a copy of the data, NA values to be filled in later
-  dat.imp<-dat
-  
-  # Calculate similarity metrics for all column pairs (default is Euclidean distance)
-  dist.mat<-as.matrix( dist(t(dat)) )
-  #dist.mat<-as.matrix(as.dist( dist.cosine(t(dat)) ))
-  
-  # Column names of the similarity matrix, same as data matrix
-  cnames<-colnames(dist.mat)
-  
-  # For each column in the data... 
-  for(X in cnames){
-    
-    # Find the distances of all other columns to that column 
-    distances<-dist.mat[, X]
-    
-    # Reorder the distances, smallest to largest (this will reorder the column names as well)
-    distances.ordered<-distances[order(distances, decreasing = F)]
-    
-    # Reorder the data matrix columns, smallest distance to largest from the column of interest
-    # Obviously, first column will be the column of interest, column X
-    dat.reordered<-dat[ , names(distances.ordered ) ]
-    
-    # Take the values in the column of interest
-    vec<-dat[, X]
-    
-    # Which entries are missing and need to be imputed...
-    na.index<-which( is.na(vec) )
-    
-    # For each of the missing entries (rows) in column X...
-    for(i in na.index){
-      
-      # Find the most similar columns that have a non-NA value in this row
-      closest.columns<-names( which( !is.na(dat.reordered[i, ])  ) )
-      
-      # If there are more than k such columns, take the first k most similar
-      if( length(closest.columns)>k ){
-        # Replace NA in column X with the mean the same row in k of the most similar columns
-        vec[i]<-mean( dat[ i, closest.columns[1:k] ] )
-      }
-      
-      # If there are less that or equal to k columns, take all the columns
-      if( length(closest.columns)<=k ){
-        # Replace NA in column X with the mean the same row in all of the most similar columns
-        vec[i]<-mean( dat[ i, closest.columns ])
-      }
-    }
-    # Populate a the matrix with the new, imputed values
-    dat.imp[,X]<-vec
-  }
-  
-  assay(exp) <- dat.imp
-  obj <- addAssay(obj, exp, name = name)
-  addAssayLinkOneToOne(obj, from = oldi, to = name)
-}
-
-scp_ComBat <- function(obj, i, name, batch, mod, ...) {
-  require(sva)
-  exp <- obj[[i]]
-  batch <- factor(colData(exp)[, batch])
-  if (class(mod) == "formula")
-    mod <- model.matrix(mod, data = colData(exp))
-  assay(exp) <- ComBat(assay(exp), batch = batch, mod = mod, ...)
-  obj <- addAssay(obj, exp, name)
-  addAssayLinkOneToOne(obj, from = i, to = name)
-}
-
-## Internal function that is used when aggregating PSMs to peptides. This should
-#" be deleted after discussing with Laurent and Nikolai about removing duplicates
-.remove.duplicates <- function(x) {
-  apply(x, 2, function(xx) {
-    xx[which(!is.na(xx))[1]]
-  })
-}
-
-```
 
 # Introduction 
 
 Features framework
 
-Specht et al 2019
+```{r load packages}
+library(Features)
+library(patchwork)
+library(scp)
+library(SingleCellExperiment)
+library(tidyverse)
+```
 
-The data provided by the authors is the quantification and identification results extracted by MaXQuant + DART-ID update
-
-The authors provided the dataset as spreadsheets and data table. The files can 
-be downloaded from [here](https://scope2.slavovlab.net/docs/data). We already 
-formated the available data and metadata to be contained in a `Features` object.
-This object can be retrieved from the `scpdata` package under the name 
-`specht2019v2`. *Note*: `v2` stands for the second release of the data in 
-December 2019.
+Specht et al 2019 and the toy dataset
 
 ```{r load data}
-library(scpdata)
-data(specht2019v2)
+data("scp1")
 ```
 
-The data contain 179 different `SingleCellExperiment` objects that we refer to 
+The data contain 6 different `SingleCellExperiment` objects that we refer to 
 as **assays**. Each assay contains expression data along with feature metadata.
 The `SingleCellExperiment` class allows to apply cutting-edge methodologies to
-the data
-Below, we show the overview of the `specht2019v2` dataset.
+the data. 
+
+Below is an overview of the `scp1` dataset.
 
 ```{r data overview}
-specht2019v2
+scp1
 ```
 
-The 177 first assays are the PSM data acquired from different MS runs. They all 
-have exactly 16 columns because a 16-plex TMT protocole was used to acquire the 
-SCoPE2 dataset. The dataset also contains a `peptides` assay and a `proteins` 
-assay that hold peptide and protein level information, respectively. The 
-objective of this vignette is to produce the `peptides` and `proteins` assays 
-from the 177 PSM assays following the same procedure but using standardized 
-functionalities. The procedure can be split up in the following steps:
-
-1. 
-2. 
-3.
-
-We extract the `peptides` and `proteins` assays 
+The data holds 6 assays containing PSM data acquired from 6 different MS runs. 
+The first 2 assays were acquired using a TMT-11plex protocole, hence they have 
+11 columns. The last 4 assays were acquired using a TMT-16plex and have 16 
+columns. Each sample (column) has metadata attached to it. This can be retrieved 
+using the `colData` function. 
 
 ```{r}
-peptides <- specht2019v2[["peptides"]]
-proteins <- specht2019v2[["proteins"]]
-specht2019v2 <- specht2019v2[, , -(178:179)]
+colData(scp1)
 ```
 
-Before starting the data processing, we load some additional required libraries.
+Similarly, each batch also contains features specific metadata. This is 
+retrieved using the `rowDataToDF` function. The `rowData` is extracted from 
+the desired assays and combined in a single table. 
 
 ```{r}
-source("../R/utils.R") ## remove when scp is build
-library(tidyverse)
-library(patchwork)
+rowDataToDF(scp1, i = seq_along(scp1), vars = c("peptide", "protein"))
 ```
 
-Note also that we will use pipe operators `\%>\%` throughout the vignette even
+The dataset was artificially sampled so that each run contains 100 proteins. 
+Each proteins has several assicated peptides, and each peptide can have several 
+PSMs. This hierarchy is shown below.
+
+```{r}
+rowDataToDF(scp1, i = seq_along(scp1), vars = c("peptide", "protein")) %>%
+  data.frame %>%
+  rownames_to_column("PSM") %>%
+  group_by(.assay) %>%
+  summarize(nPSMS = n(), nPeptides = length(unique(peptide)), 
+            nProteins = length(unique(protein)))
+```
+
+The workflow can be split up in the following steps:
+
+1. Process the PSM data 
+2. Aggregate PSMs to peptides
+3. Join batches in a single assay
+4. Filter single cells
+5. Process the peptide data 
+6. Aggregate peptides to proteins
+7. Process the protein data
+8. Differential expression analysis
+
+Note that we will use pipe operators `\%>\%` throughout the vignette even
 for single operators. This is meant to show the code shown in this vignette 
 could be written with a few pipe flows (graphs excluded).
 
@@ -189,45 +103,47 @@ specht2019v2[[1]] %>%
 
 ## Filter out contaminant, contaminated and irrelevant PSMs 
 
-In their work, Specht and colleagues filter PSMs that are annotated as 
-contaminants, that matched the decoy database, or that exhibit low PIF (parental 
-ion fraction) score indicating contaminated spectra.
+We filter out PSMs that are annotated as contaminants, that matched the decoy 
+database, or that exhibit low PIF (parental ion fraction) score indicating 
+contaminated spectra. Those variable are stored in the dataset as `Reverse`, 
+`protein` and `PIF`, respectively.
 
 ```{r filter PSMs}
-specht2019v2 %>%
+scp1 %>%
   filterFeatures(~ Reverse != "+" &
                    !grepl("REV|CON", protein) &
                    Potential.contaminant != "+" &
                    !is.na(PIF) & PIF > 0.8) -> 
-  specht2019v2
+  scp1
 ```
 
 ## Filter out failed runs based on PSM content
 
-Next, only the assays that have sufficient PSMs are kept. The authors keep an 
-assays if it has over 300 PSMs. Before filtering, let's first look at the 
-distribution of the number of PSMs per assay. Note that we can easily extract 
-the number of rows (feature, here PSMs) and the number of columns (samples) of 
-each assay using the `dims` function implemented in `Features`.
+Next, only the assays that have sufficient PSMs are kept. Since this is a toy 
+dataset, we will consider that 250 PSMs are sufficient. But this could be 
+manually set based on the distribution of the number of PSMs per run and remove 
+outliers on the lower end. We can easily extract the number of rows (feature, 
+here PSMs) and the number of columns (samples) of each assay using the `dims` 
+function implemented in `Features`.
 
 ```{r}
-dims(specht2019v2) %>%
-  .[1, ] %>%
-  data.frame(nPSMs = .) %>%
-  ggplot +
-  geom_histogram(aes(x = nPSMs), 
-                 fill = "orange2", col = "grey30", bins = 30) +
-  geom_vline(aes(xintercept = 300), lty = "dashed") +
-  ggtitle("Distribution of the number of \nvalid PSMs found per run")
+scp1 <- scp1[, , dims(scp1)[1, ] > 250]
+scp1
 ```
 
-We can already see from this graph that 4 assays have very few number of PSMs, 
-probably because those runs failed. They are hence below the threshold of 300 
-and are removed from the analysis. 
+Notice that 1 run did not fulfill the criterion and was dropped from the 
+dataset.
 
-```{r}
-specht2019v2 <- specht2019v2[, , dims(specht2019v2)[1, ] > 300]
-```
+
+
+## TO CONTINUE 
+
+
+
+
+
+
+
 
 ## Filter out PSMs with high sample to carrier ratio
 
@@ -251,7 +167,7 @@ and the carrier samples are denoted by `carrier_mix`.
 
 ```{r}
 specht2019v2 %>% 
-  computeSCR(i = 1:173,
+  computeSCR(i = names(specht2019v2),
              colDataCol = "CellType",
              samplePattern = "^sc",
              carrierPattern = "carrier_mix") ->
@@ -266,13 +182,13 @@ carrier), `NaN` (all samples and carrier are 0), or `Inf` (some samples are not
 can be done if we already clean the missing data by replacing `0` by `NA` as 
 done later on. 
 - I cannot exactly replicate the mean SCR as in the paper because the batches 
-63:173 contain an `unused` channel in channel 4. Our function can autmotacilly 
+63:173 contain an `unused` channel in channel 4. Our function can automatically 
 detect this based on the sample pattern and exclude it whereas the SCoPE2 script 
 does not. This is an error: the `unused` channels should not be used to compute 
 the ratio. 
 
 ```{r}
-rowDataToDF(specht2019v2, i = 1:173, vars = "meanSCR") %>%
+rowDataToDF(specht2019v2, i = names(specht2019v2), vars = "meanSCR") %>%
   data.frame %>%
   ggplot(aes(x = meanSCR)) +
   geom_histogram(fill = "orange2", col = "grey40", bins = 30, na.rm = TRUE) +
@@ -312,7 +228,7 @@ conservative (@Kall2008-hb) so we compute the FDR from the PEP. First, let's
 have a look at the PEP distribution.
 
 ```{r}
-rowDataToDF(specht2019v2, i = 1:173, vars = "dart_PEP") %>%
+rowDataToDF(specht2019v2, i = names(specht2019v2), vars = "dart_PEP") %>%
   data.frame %>%
   ggplot(aes(x = dart_PEP)) +
   geom_histogram(fill = "orange2", col = "grey40", bins = 30, na.rm = TRUE) +
@@ -328,7 +244,7 @@ variables that hold this information, `dart_PEP` and `peptide`, respectively.
 
 ```{r}
 specht2019v2 %>% 
-  computeFDR(i = 1:173, 
+  computeFDR(i = names(specht2019v2), 
              groupCol = "peptide",
              pepCol = "dart_PEP") ->
   specht2019v2
@@ -338,7 +254,7 @@ Note that a new variable `.FDR` containing the computed FDRs is added to the
 `rowData`. This allows us to easily plot the updated FDRs. 
 
 ```{r}
-rowDataToDF(specht2019v2, i = 1:173, vars = c("peptide", ".FDR")) %>%
+rowDataToDF(specht2019v2, i = names(specht2019v2), vars = c("peptide", ".FDR")) %>%
   data.frame %>%
   ggplot +
   geom_histogram(aes(x = .FDR), 
@@ -384,104 +300,98 @@ values will be overwritten by the divided values.
 
 ```{r}
 specht2019v2 %>%
-  divideByReference(i = 1:173, 
+  divideByReference(i = names(specht2019v2), 
                     colDataCol = "CellType", 
                     samplePattern = "^sc", 
                     refPattern = "norm|reference") ->
   specht2019v2
 ```
 
-## Join the PSMs in one assay
 
-We kept the PSM data belonging to each MS run in separate assays. Now that the 
-batch specific filtering and processing is performed, we can combine all batches
-in a single assay. This can easily be done using the `joinAssays` from the 
-`Features` package. 
+# Aggregate PSM data to peptide data
+
+Now that the PSM assays are processed, we can aggregate them to peptides. This 
+is performed using the `aggregateFeaturesOverAssays` function. This is a wrapper
+function we wrote that sequentially calls for different assays the 
+`aggregateFeatures` from the `Features` package. This is a very useful function 
+that will combine several rows (PSMs) into a single row (peptide) given an 
+aggregating variable in the `rowData` (peptide sequence) and an aggregating 
+function (the median for instance). Regarding the aggregating function, we 
+implemented the `.remove.duplicates` function that will take the first 
+non-missing value as it is performed in SCoPE2.
+
+```{r, results='hide'}
+specht2019v2 %>%
+  aggregateFeaturesOverAssays(i = names(specht2019v2), 
+                              fcol = "peptide", 
+                              name = paste0("peptides_", names(specht2019v2)),
+                              fun = .remove.duplicates) ->
+  specht2019v2
+```
+
+**@TODO**: this took ~ 30 min, but could be so much faster!
+
+**@discussion** this steps is similar to the step in SCoPE2 at line 244 + 252.
+Why should we keep only the first occurence (this is basically what happens 
+when we remove duplicates). As sugested by Laurent, would a weighted mean not be 
+better suited (weights based on pep, PIF, distance from apex, ...) ? 
+
+Note that under the hood, the `Features` architecture preserves the relationship 
+between the aggregated assays. See `?AssayLinks` for more information on 
+relationships between assays.
+
+# Join the SCoPE2 sets in one assay
+
+We kept the data belonging to each MS run in separate assays. We will now 
+combine all batches in a single assay. This can easily be done using the 
+`joinAssays` function from the `Features` package. 
+
+We however need to acount for an issue. The `joinAssays` will only keep the 
+metadata values that have the same value between matching rows and columns. 
+However, some peptide sequences map to one protein in one run and to another 
+protein in another run. Hence, the protein sequence is not constant across 
+peptides and is removed during joining, but we will later need the protein 
+sequence to aggregate peptides to proteins. To avoid this issue, we remove such 
+problematic peptides.
 
 ```{r}
-system.time({
-  specht2019v2 %>%
-    joinAssays(i = 1:62, 
-               name = "psms") -> 
-    specht2019v2
-})
-specht2019v2[["psms"]] <- as(specht2019v2[["psms"]], "SingleCellExperiment")
+specht2019v2 %>%
+  rowDataToDF(grep("^peptides_", names(.)), c("peptide", "protein")) %>%
+  data.frame %>%
+  group_by(peptide) %>%
+  summarize(nProteins = length(unique(protein)))
+  filter(nProteins == 1) %>%
+  pull(peptide) ->
+  pepKeep
+specht2019v2 %>%
+  filterFeatures(~ peptide %in% pepKeep) ->
+  specht2019v2
+```
+
+After removing those peptides, we can join the assays. We join all the peptide
+assays. Those assays start with `peptides_` and can be easily retrieved with
+regular expression (regex) using the `grep` function.
+
+```{r}
+specht2019v2 %>%
+    joinAssays(i = grep("^peptides_", names(.))[1:3], 
+               name = "peptides") -> 
+    tmp
+specht2019v2[["peptides"]] <- as(specht2019v2[["peptides"]], "SingleCellExperiment")
 ```
 
 **@TODO**: remove last line when the PR is merged to master in `Feature`
 
-**@discussion**: this step is inefficient... It reached out of memory on 8GB RAM 
-+ 8GB SWAP... So I only use sample 1:62
-
-Note that under the hood, the `Features` architecture preserves the relationship 
-between the joined assay and the input assays. See `?AssayLinks` for more 
-information on relationships between assays.
-
-# Aggregate PSM data to peptide data
-
-In the previous step we joined the assays are joined in blocks, meaning that 
-every row and every column contains missing values for all except one batch. 
-This is a conceptual decision we took based on the fact that it is impossible to 
-collect the same spectra in 2 different runs (different acquisition time, noise 
-levels, sample composition, etc). However, conceptually the same peptide (or 
-peptide-charge) can be acquired across batches. So we aggregate the PSMs to 
-peptides. This is performed using the `aggregateFeatures` function from the 
-`Features` package. 
-
-We however need to acount for an issue. The `aggregateFeatures` will merge the 
-PSMs to the corresponding peptides (peptide-charge) along the associated 
-`rowData`. Only variable that are constant accross peptides will kept. The issue 
-is that some peptides map to multiple proteins hence the protein sequence is not 
-constant across peptides and is removed, although we later need it to aggregate
-to proteins.
-
-```{r}
-rowData(specht2019v2[["psms"]]) %>%
-  data.frame %>%
-  select(peptide, protein) %>%
-  group_by(peptide) %>%
-  mutate(nProteins = length(unique(protein)), 
-         peptide = ifelse(nProteins > 1, 
-                          paste0(peptide, ".", protein), 
-                          peptide)) %>%
-  pull(peptide) ->
-  rowData(specht2019v2[["psms"]])$peptide
-```
-
 **@discussion**: 
 
-* I think there is a semantical confusion. We will continue assuming we are 
-working with peptide data whereas in fact we work with ion data (peptide 
-sequence + charge). Shouldn't we better continue with peptide data only, hence 
-aggregate over `Sequence` (= peptide sequence) instead of `peptide` (= 
-`Sequence` + `_` + `Charge`) ?
-* A clean solution is required for solving the issue of one peptide associated 
-to multiple proteins. Either I implement a function that performs the above 
-peptide annotation cleaning (this looks dirty to me), or we allow 
-`aggregateFeatures` to take 2 or more `fcols`, but this can require heavy 
-changes in the code (namely for `AssayLinks`).
-* Similarly, why removing duplicate peptides instead of using all information 
-when aggregating? 
-
-We can now aggregate the PSMs to peptides. 
-
-```{r}
-specht2019v2 %>%
-  aggregateFeatures(i = "psms", 
-                    fcol = "peptide", 
-                    name = "peptides",
-                    fun = .remove.duplicates) ->
-  specht2019v2
-```
-
-Note that this is not exactly what is performed in SCoPE2. In the original 
-analysis removes any peptide redundancy by keeping for every cell the first 
-non-missing observation for each peptide. 
-
-**@discussion** this steps is similar to the step in SCoPE2 at line 244 + 252.
-Why should we keep only the first occurence (this is basically) what happens 
-when we remove duplicates. As sugested by Laurent, would a weighted mean not be 
-better suited (weights based on pep, PIF, distance from apex, ...) ? 
+* How should we correctly handle the issue that the same peptide can be mapped 
+to different proteins depending on the batch? In our workflow we remove the 
+problematic peptides and in SCoPE2 the issue is not addressed, but is there a 
+better solution? Note that some peptides map up to 4 different proteins.
+* We will continue assuming we are working with peptide data, but in fact we 
+work with ion data (peptide sequence + charge). Shouldn't we better continue 
+with peptide data only, hence aggregate over `Sequence` (= peptide sequence) 
+instead of `peptide` (= `Sequence` + `_` + `Charge`) ?
 
 # Filter single-cells
 
@@ -536,17 +446,39 @@ specht2019v2[["peptides"]] %>%
   ggtitle("Distribution of the median intensity per cell")
 ```
 
-**@TODO** add conclusion with full data set 
+The distribution of the median intensities display interesting properties of the 
+data. (i) Recall that only the single-cell and the empty samples were divided by 
+the reference channel. This is shown by an important shift for those samples and 
+their mode is located between 0.1 and 1 (expectation is 0.2). (ii) The 
+ratio between reference channel and carrier channel is also close to the 
+expected shift of 0.025. (iii) The distribution within each channel type is 
+multimodal, indicating the presence of strong batch effects. We can zoom in on 
+the carrier channel and include batch information. Notice this difference is 
+expected since the SCoPE2 data switch from a TMT-11plex protocol (sort day s8)
+to a TMT-16plex protocole (sort day s9).
 
-We filter out the cells that have a median RI 
+```{r}
+specht2019v2[["peptides"]] %>%
+  colData %>%
+  cbind(colData(specht2019v2)[rownames(.), ]) %>%
+  data.frame %>%
+  filter(CellType == "carrier_mix") %>%
+  ggplot(aes(x = MedianRI, y = ..count.., fill = sortday)) +
+  geom_density(col = "grey40", alpha = 0.7, na.rm = TRUE) +
+  scale_x_log10() + 
+  xlab("Median") +
+  ggtitle("Distribution of the median intensity per cell")
+```
+
+We filter out the cells that have a median RI smaller than 0.02.
 
 ```{r}
 sel <- colData(specht2019v2[["peptides"]])$MedianRI > 0.02
 sel[is.na(sel)] <- FALSE
 specht2019v2 %>%
   addAssay(y = specht2019v2[["peptides"]][, sel], 
-           name = "peptides:MedianFilter") %>%
-  addAssayLink(from = "peptides", to = "peptides:MedianFilter", 
+           name = "peptides_MedianFilter") %>%
+  addAssayLink(from = "peptides", to = "peptides_MedianFilter", 
                varFrom = "peptide", varTo = "peptide") ->
   specht2019v2
 ```
@@ -559,8 +491,8 @@ NAs. This is also done in SCoPE2. The `zeroIsNA` function is provided by the
 
 ```{r}
 specht2019v2 %>%
-  infIsNA(i = "peptides:MedianFilter") %>%
-  zeroIsNA(i = "peptides:MedianFilter") ->
+  infIsNA(i = "peptides_MedianFilter") %>%
+  zeroIsNA(i = "peptides_MedianFilter") ->
   specht2019v2
 ```
 
