@@ -278,8 +278,8 @@ rowDataToDF <- function(obj, i, vars) {
   mis <- sapply(experiments(obj)[i], 
                 function(x) any(!vars %in% colnames(rowData(x))))
   if(any(mis)) 
-    stop("Some rowData variables are not found for in:", 
-         paste(names(obj)[i][mis], collapse = ", "))
+    stop("rowData variable(s) not found in:\n", 
+         paste(i[mis], collapse = ", "))
   ## Extract the rowData and add from which assay it was extracted
   out <- lapply(i, function(ii){
     x <- rowData(obj[[ii]])[, vars, drop = FALSE]
@@ -414,6 +414,21 @@ divideByReference <- function(obj,
 }
 
 
+##' Remove infinite data 
+##' 
+##' This function coinsiders any infinite value as missing data. So, any value
+##' in assay `i` that return `TRUE` to `is.infinite` will be replaced by `NA`.
+##' 
+##' @param obj A `Features` object
+##' @param i A `numeric()` or `character()` vector indicating from which assays 
+##'     the `rowData` should be taken.
+##' 
+##' @return A `Features` object
+##' 
+##' @export
+##' 
+##' @examples 
+##' TODO
 infIsNA <- function(obj, i) {
   for(ii in i) {
     sel <- is.infinite(assay(obj[[ii]])) 
@@ -443,3 +458,47 @@ transferColDataToAssay <- function (obj, i) {
   colData(obj@ExperimentList[[i]]) <- cbind(colData(obj[[i]]), cd)
   return(obj)
 }
+
+##' Aggregate features over multiple assays
+##' 
+##' This function is a wrapper function around [Features::aggregateFeatures]. It
+##' allows the user to provide multiple assays for which `aggregateFeatures` 
+##' will be applied sequentially. 
+##' 
+##' @param obj A `Features` object
+##' @param i A `numeric(1)` or `character(1)` indicating which assay to transfer 
+##'     the `colData` to.
+##' @param fcol The feature variables for each assays `i` defining how to 
+##'     summarise the features. If `fcol` has length 1, the variable name is 
+##'     assumed to be the same for all assays
+##' @param name A `character()` naming the new assay. `name` must have the same
+##'     length as `i`. Note that the function will fail if of the names in 
+##'     `name` is already present. 
+##' @param fun A function used for quantitative feature aggregation. 
+##' 
+##' @return A `Features` object 
+##' 
+##' @export
+##' 
+##' @seealso [Features::aggregateFeatures]
+##' 
+##' @examples 
+##' TODO
+##' 
+aggregateFeaturesOverAssays <- function(obj, i, fcol, name, fun) {
+  if(length(i) != length(name)) stop("'i' and 'name' must have same length")
+  if(length(fcol) == 1) fcol <- rep(fcol, length(i))
+  if(length(i) != length(fcol)) stop("'i' and 'fcol' must have same length")
+  
+  ## TODO optimize this
+  for(j in seq_along(i)) {
+    cat(paste0("Aggregating: ", i[j], "..."))
+    suppressMessages(
+      obj <- aggregateFeatures(obj, i = i[j], fcol = fcol[j], name = name[j], 
+                               fun = fun)
+    )
+    cat("done\n")
+  }
+  return(obj)
+}
+
