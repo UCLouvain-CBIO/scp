@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{rowDataToDF}
 \alias{rowDataToDF}
-\title{Extract the rowData of a `Features` object to a `DataFrame`}
+\title{Extract the `rowData` of a `Features` object to a `DataFrame`}
 \usage{
 rowDataToDF(obj, i, vars)
 }
