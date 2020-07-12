@@ -250,7 +250,7 @@ computeSCR <- function(obj,
 }
 
 
-##' Extract the rowData of a `Features` object to a `DataFrame`
+##' Extract the `rowData` of a `Features` object to a `DataFrame`
 ##'
 ##' The methods takes the `rowData` of one or more given assay in a `Features`
 ##' object and combines the data in a single `DataFrame`. 
@@ -277,11 +277,11 @@ rowDataToDF <- function(obj, i, vars) {
   ## Make sure that the variables to extract are present in the rowData
   mis <- sapply(experiments(obj)[i], 
                 function(x) any(!vars %in% colnames(rowData(x))))
-  if(any(mis)) 
+  if (any(mis)) 
     stop("rowData variable(s) not found in:\n", 
          paste(i[mis], collapse = ", "))
   ## Extract the rowData and add from which assay it was extracted
-  out <- lapply(i, function(ii){
+  out <- lapply(i, function(ii) {
     x <- rowData(obj[[ii]])[, vars, drop = FALSE]
     cbind(x, .assay = ii)
   })
@@ -430,7 +430,7 @@ divideByReference <- function(obj,
 ##' @examples 
 ##' TODO
 infIsNA <- function(obj, i) {
-  for(ii in i) {
+  for (ii in i) {
     sel <- is.infinite(assay(obj[[ii]])) 
     assay(obj[[ii]])[sel] <- NA
   }
@@ -475,6 +475,7 @@ transferColDataToAssay <- function (obj, i) {
 ##'     length as `i`. Note that the function will fail if of the names in 
 ##'     `name` is already present. 
 ##' @param fun A function used for quantitative feature aggregation. 
+##' @param ... Additional parameters passed the `fun`.
 ##' 
 ##' @return A `Features` object 
 ##' 
@@ -485,20 +486,198 @@ transferColDataToAssay <- function (obj, i) {
 ##' @examples 
 ##' TODO
 ##' 
-aggregateFeaturesOverAssays <- function(obj, i, fcol, name, fun) {
-  if(length(i) != length(name)) stop("'i' and 'name' must have same length")
-  if(length(fcol) == 1) fcol <- rep(fcol, length(i))
-  if(length(i) != length(fcol)) stop("'i' and 'fcol' must have same length")
+aggregateFeaturesOverAssays <- function(obj,
+                                        i,
+                                        fcol, 
+                                        name,
+                                        fun,
+                                        ...) {
+  if (length(i) != length(name)) stop("'i' and 'name' must have same length")
+  if (length(fcol) == 1) fcol <- rep(fcol, length(i))
+  if (length(i) != length(fcol)) stop("'i' and 'fcol' must have same length")
+  if (is.numeric(i)) i <- names(obj)[i]
   
-  ## TODO optimize this
-  for(j in seq_along(i)) {
-    cat(paste0("Aggregating: ", i[j], "..."))
+  ## Compute the aggregated assays
+  el <- obj@ExperimentList[i]
+  for (j in seq_along(el)) {
     suppressMessages(
-      obj <- aggregateFeatures(obj, i = i[j], fcol = fcol[j], name = name[j], 
-                               fun = fun)
+      el[[j]] <- aggregateFeatures(el[[j]], fcol = fcol[j], fun = fun, ...)
     )
-    cat("done\n")
+    ## Print progress
+    cat(paste0("\rAggregated: ", j, "/", length(el)))
+    if (j == length(el)) cat ("\n")
+    flush.console()
   }
+  names(el) <- name
+  ## Get the AssayLinks for the aggregated assays 
+  alnks <- lapply(seq_along(i), function(j) {
+    hits <- Features:::.get_Hits(rdFrom = rowData(obj[[i[j]]]),
+                         rdTo = rowData(el[[j]]), 
+                         varFrom = fcol[[j]], 
+                         varTo = fcol[[j]])
+    AssayLink(name = name[j], from = i[j], fcol = fcol[j], hits = hits)
+  })
+  ## Append the aggregated assays and AssayLinks to the previous assays
+  el <- c(obj@ExperimentList, el)
+  alnks <- append(obj@assayLinks, AssayLinks(alnks))
+  ## Update the sampleMapfrom the data 
+  smap <- MultiAssayExperiment:::.sampleMapFromData(colData(obj), el)
+  
+  ## Create the new Features object
+  new("Features",
+      ExperimentList = el,
+      colData = colData(obj),
+      sampleMap = smap,
+      metadata = metadata(obj),
+      assayLinks = alnks)
+}
+
+
+##' Duplicate an assay in a `Features` object
+##'
+##' The function copies an assay within the supplied `Features` object, 
+##' eventually creating a one-to-one link between the input assay and the copied 
+##' assay.
+##' 
+##' @param obj A `Features` object
+##' @param i A `numeric(1)` or `character(1)` indicating which assay to transfer 
+##'     the `colData` to.
+##' @param name A `character(1)` naming the new assay. Note that the function 
+##'     will fail if of the names in `name` is already present. 
+##' @param link A `logical(1)` indicating whether to add a one-to-one assayLink
+##'     from assay `i` and to the copied assay
+##'
+##' @return A `Features` object 
+##' 
+##' @export
+##'
+##' @examples
+##' TODO
+copyAssay <- function(obj, 
+                      i, 
+                      name = "newAssay", 
+                      link = FALSE) {
+  if (!inherits(obj, "Features")) stop("'obj' must be a Features object")
+  if (i == name) stop("`name` and `i` must be different.")
+  if (name %in% names(obj)) stop("`name` already present in 'names(obj)'")
+  if (link) {
+    obj <- addAssay(obj, obj[[i]], name = name)
+    addAssayLinkOneToOne(obj, from = i, to = name)
+  } else {
+    addAssay(obj, obj[[i]], name = name)
+  }
+}
+
+##' Update the quantitative data of an assay
+##' 
+##' The function update the quantitative data of an assay in a `Features` object
+##' given a custom transformation function. 
+##' 
+##' @param obj A `Features` object
+##' @param i A `numeric(1)` or `character(1)` indicating which assay to transfer 
+##'     the `colData` to.
+##' @param fun A custom function that takes as input the data matrix from assay 
+##'     `i` and return a matrix with same dimension and dimension names. 
+##' @param ... Further arguments passed to `fun`
+##'
+##' @return A `Features` object 
+##'  
+##' @export
+##'
+##' @examples
+##' TODO
+updateAssay <- function(obj, i, fun, ...) {
+  if (!inherits(obj, "Features")) stop("'obj' must be a Features object")
+  if (length(i) > 1) stop("'i' must have lenght 1")
+  if (!is.function(fun)) stop("'fun' must be a function")
+  assayi <- assay(obj[[i]])
+  ## Update the assay using the supplied function
+  newAssay <- fun(assayi, ...)
+  if (!identical(dim(assayi), dim(newAssay))) 
+    stop("The old and new assays must have same dimensions")
+  if (!identical(dimnames(assayi), dimnames(newAssay))) 
+    stop("The old and new assays must have same dimension names")
+  assay(obj@ExperimentList@listData[[i]]) <- newAssay
   return(obj)
 }
 
+
+plotFeatureViolin <- function(obj, i, feature, group, focus) {
+  if (is.numeric(i)) i <- names(obj)[i]
+  dat <- assay(obj[[i]][feature, ])
+  data.frame(value = as.vector(dat), 
+             colData(obj)[colnames(dat), ]) %>%
+    rownames_to_column("rowname") %>%
+    mutate(group = .[, group]) ->
+    dat
+  dat %>%
+    ggplot(aes(x = group, y = value, col = group)) +
+    geom_violin() +
+    geom_jitter() + 
+    xlab("") +
+    ylab("Intensity (arbitrary units)") +
+    ggtitle(paste0(feature, " expression in ", i)) -> 
+    p
+  if (!missing(focus)) {
+    datFocused <- dat[dat$rowname == focus, , drop = FALSE]
+    p <- p + geom_point(data = datFocused, size = 3, col = "black")
+  }
+  p
+}
+
+plotFeatureTrace <- function(obj, feature, sample) {
+  browser()
+  plotFeatureTrace(specht2019v2, feature = "P62277", 
+                   sample = "190222S_LCA9_X_FP94AA_RI4")
+  ## TODO improve this subsetting
+  ## First subset the assays that contain the sample of interest
+  sampleMap(obj) %>%
+    data.frame %>%
+    filter(colname == sample) %>%
+    pull(assay) %>%
+    unique ->
+    assaySel
+  obj <- obj[, , assaySel]
+  obj <- obj[, sample, ]
+  obj <- obj[feature, , ]
+  ## Notice this 3 step subsetting is much faster than obj[features, sample, ]
+  ## Get the feature mapping
+  featMap <- lapply(obj@assayLinks, function(x) {
+    data.frame(elementMetadata(x@hits))
+  })
+  full_join(featMap[[3]], featMap[[10]])
+  Reduce(full_join, featMap[3:length(featMap)])
+  featMap <- unique(bind_rows(featMap))
+  featMap <- filter(featMap, names_from != names_to)
+  rdVars <- unique(rdVars)
+  for (k in setdiff(all_assays_names, leaf_assay_name)) {
+    ## which assay(s) created assay_k
+    assay_k_parent_name <-
+      names(which(sapply(x@assayLinks, function(al) any(k %in% al@from))))
+    
+    for (k2 in assay_k_parent_name) {
+      assayLink_k2 <- x@assayLinks[[k2]]@hits
+      if (inherits(assayLink_k2, "List")) 
+        assayLink_k2 <- assayLink_k2[[k]]
+      l <- featurename_list[[k2]]
+      j <- which(elementMetadata(assayLink_k2)$names_to %in% l)
+      featurename_list[[k]] <- union(featurename_list[[k]],
+                                     elementMetadata(assayLink_k2)$names_from[j])
+    }
+  }
+  
+  obj %>%
+    longFormat %>% 
+    data.frame %>%
+    filter(!is.na(value)) %>%
+    mutate(assay = factor(assay, levels = unique(assay))) %>%
+    ggplot(aes(x = assay, y = value, group = rowname)) +
+    geom_point() +
+    geom_line() +
+    xlab("") +
+    ylab("Intensity (arbitrary units)") +
+    theme(axis.text.x = element_text(angle = -45, hjust = 0)) +
+    ggtitle(paste0(feature, " expression over assays")) -> 
+    p
+  p
+}
