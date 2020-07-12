@@ -4,7 +4,7 @@
 \alias{aggregateFeaturesOverAssays}
 \title{Aggregate features over multiple assays}
 \usage{
-aggregateFeaturesOverAssays(obj, i, fcol, name, fun)
+aggregateFeaturesOverAssays(obj, i, fcol, name, fun, ...)
 }
 \arguments{
 \item{obj}{A `Features` object}
@@ -21,6 +21,8 @@ length as `i`. Note that the function will fail if of the names in
 `name` is already present.}
 
 \item{fun}{A function used for quantitative feature aggregation.}
+
+\item{...}{Additional parameters passed the `fun`.}
 }
 \value{
 A `Features` object
