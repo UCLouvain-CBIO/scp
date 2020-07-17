@@ -7,7 +7,7 @@
 computeSCR(obj, i, colDataCol, samplePattern, carrierPattern, verbose = TRUE)
 }
 \arguments{
-\item{obj}{A `Features` object.}
+\item{obj}{A `QFeatures` object.}
 
 \item{i}{A `character()` or `integer()` indicating for which assay(s) the
 SCR needs to be computed.}
@@ -23,7 +23,7 @@ encoding in `colDataCol`. Only one match per assay is allowed, otherwise
 only the first match is taken}
 }
 \value{
-A `Features` object for which the `rowData` of the given assay(s) is 
+A `QFeatures` object for which the `rowData` of the given assay(s) is 
     augmented with the mean SCR (`meanSCR` variable).
 }
 \description{

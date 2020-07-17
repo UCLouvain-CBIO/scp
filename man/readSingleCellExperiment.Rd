@@ -35,7 +35,7 @@ Convert tabular data from a spreadsheet or a \code{data.frame} into a
 \code{SingleCellExperiment} object.
 }
 \seealso{
-The code relies on \link[Features:readFeatures]{Features::readSummarizedExperiment}.
+The code relies on \link[QFeatures:readQFeatures]{QFeatures::readSummarizedExperiment}.
 }
 \author{
 Laurent Gatto, Christophe Vanderaa

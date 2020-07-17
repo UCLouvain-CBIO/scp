@@ -7,13 +7,13 @@
 aggregateFeaturesOverAssays(obj, i, fcol, name, fun, ...)
 }
 \arguments{
-\item{obj}{A `Features` object}
+\item{obj}{A `QFeatures` object}
 
 \item{i}{A `numeric(1)` or `character(1)` indicating which assay to transfer 
 the `colData` to.}
 
 \item{fcol}{The feature variables for each assays `i` defining how to 
-summarise the features. If `fcol` has length 1, the variable name is 
+summarise the QFeatures. If `fcol` has length 1, the variable name is 
 assumed to be the same for all assays}
 
 \item{name}{A `character()` naming the new assay. `name` must have the same
@@ -25,10 +25,10 @@ length as `i`. Note that the function will fail if of the names in
 \item{...}{Additional parameters passed the `fun`.}
 }
 \value{
-A `Features` object
+A `QFeatures` object
 }
 \description{
-This function is a wrapper function around [Features::aggregateFeatures]. It
+This function is a wrapper function around [QFeatures::aggregateFeatures]. It
 allows the user to provide multiple assays for which `aggregateFeatures` 
 will be applied sequentially.
 }
@@ -37,5 +37,5 @@ TODO
 
 }
 \seealso{
-[Features::aggregateFeatures]
+[QFeatures::aggregateFeatures]
 }
