@@ -7,7 +7,7 @@
 computeFDR(obj, i, groupCol, pepCol)
 }
 \arguments{
-\item{obj}{A `Features` object}
+\item{obj}{A `QFeatures` object}
 
 \item{i}{A `numeric()` or `character()` vector indicating from which assays 
 the `rowData` should be taken.}
@@ -20,7 +20,7 @@ computed for PSMs grouped by peptide ID.}
 `rowData` that contains the PEPs.}
 }
 \value{
-A `Features` object.
+A `QFeatures` object.
 }
 \description{
 The functions takes the PEPs from the given assay's `rowData` and creates a 

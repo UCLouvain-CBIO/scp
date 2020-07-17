@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{readSCP}
 \alias{readSCP}
-\title{Read single-cell proteomics data as a Features object from tabular
+\title{Read single-cell proteomics data as a QFeatures object from tabular
 data and metadata}
 \usage{
 readSCP(quantTable, metaTable, batchCol, channelCol, verbose = TRUE, ...)
@@ -37,12 +37,12 @@ reading and formatting should be printed to the console.}
 except \code{stringsAsFactors}, which is always \code{FALSE}.}
 }
 \value{
-An instance of class \link{Features}. The expression data of each batch
+An instance of class \link{QFeatures}. The expression data of each batch
 is stored in a separate assay as a \code{SingleCellExperiment} object.
 }
 \description{
 Convert tabular quantitative MS data and metadata from a spreadsheet or a
-\code{data.frame} into a \code{Features} object containing \code{SingleCellExperiment}
+\code{data.frame} into a \code{QFeatures} object containing \code{SingleCellExperiment}
 objects.
 }
 \details{

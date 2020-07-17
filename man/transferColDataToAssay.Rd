@@ -7,16 +7,16 @@
 transferColDataToAssay(obj, i)
 }
 \arguments{
-\item{obj}{A `Features` object}
+\item{obj}{A `QFeatures` object}
 
 \item{i}{A `numeric(1)` or `character(1)` indicating which assay to transfer 
 the `colData` to.}
 }
 \value{
-A `Features` object
+A `QFeatures` object
 }
 \description{
-The function transfers the `colData` from a `Features` object to one of the 
+The function transfers the `colData` from a `QFeatures` object to one of the 
 assays it contains. The transfered data is bound to the existing `colData` 
 of the target assay.
 }
