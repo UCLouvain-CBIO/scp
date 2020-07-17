@@ -2,12 +2,12 @@
 % Please edit documentation in R/utils.R
 \name{rowDataToDF}
 \alias{rowDataToDF}
-\title{Extract the `rowData` of a `Features` object to a `DataFrame`}
+\title{Extract the `rowData` of a `QFeatures` object to a `DataFrame`}
 \usage{
 rowDataToDF(obj, i, vars)
 }
 \arguments{
-\item{obj}{A `Features` object}
+\item{obj}{A `QFeatures` object}
 
 \item{i}{A `numeric()` or `character()` vector indicating from which assays 
 the `rowData` should be taken.}
@@ -20,7 +20,7 @@ A `DataFrame` object with the `rowData` row-binded over the required
     assays.
 }
 \description{
-The methods takes the `rowData` of one or more given assay in a `Features`
+The methods takes the `rowData` of one or more given assay in a `QFeatures`
 object and combines the data in a single `DataFrame`.
 }
 \details{
