@@ -7,7 +7,7 @@
 divideByReference(obj, i, colDataCol, samplePattern, refPattern)
 }
 \arguments{
-\item{obj}{A `Features` object}
+\item{obj}{A `QFeatures` object}
 
 \item{i}{A `numeric()` or `character()` vector indicating from which assays 
 the `rowData` should be taken.}
@@ -23,7 +23,7 @@ encoding in `colDataCol`. Only one match per assay is allowed, otherwise
 only the first match is taken}
 }
 \value{
-A `Features` object
+A `QFeatures` object
 }
 \description{
 The function divides the sample columns by a reference column. The sample 
