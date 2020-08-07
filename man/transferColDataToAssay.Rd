@@ -2,22 +2,22 @@
 % Please edit documentation in R/utils.R
 \name{transferColDataToAssay}
 \alias{transferColDataToAssay}
-\title{Transfer the `colData` to an Assay}
+\title{Transfer the \code{colData} to an Assay}
 \usage{
 transferColDataToAssay(obj, i)
 }
 \arguments{
-\item{obj}{A `QFeatures` object}
+\item{obj}{A \code{QFeatures} object}
 
-\item{i}{A `numeric(1)` or `character(1)` indicating which assay to transfer 
-the `colData` to.}
+\item{i}{A \code{numeric(1)} or \code{character(1)} indicating which assay to transfer
+the \code{colData} to.}
 }
 \value{
-A `QFeatures` object
+A \code{QFeatures} object
 }
 \description{
-The function transfers the `colData` from a `QFeatures` object to one of the 
-assays it contains. The transfered data is bound to the existing `colData` 
+The function transfers the \code{colData} from a \code{QFeatures} object to one of the
+assays it contains. The transfered data is bound to the existing \code{colData}
 of the target assay.
 }
 \examples{

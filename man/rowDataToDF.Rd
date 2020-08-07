@@ -2,29 +2,29 @@
 % Please edit documentation in R/utils.R
 \name{rowDataToDF}
 \alias{rowDataToDF}
-\title{Extract the `rowData` of a `QFeatures` object to a `DataFrame`}
+\title{Extract the \code{rowData} of a \code{QFeatures} object to a \code{DataFrame}}
 \usage{
 rowDataToDF(obj, i, vars)
 }
 \arguments{
-\item{obj}{A `QFeatures` object}
+\item{obj}{A \code{QFeatures} object}
 
-\item{i}{A `numeric()` or `character()` vector indicating from which assays 
-the `rowData` should be taken.}
+\item{i}{A \code{numeric()} or \code{character()} vector indicating from which assays
+the \code{rowData} should be taken.}
 
-\item{vars}{A `character()` vector indicating which variables from the 
-`rowData` should be extracted.}
+\item{vars}{A \code{character()} vector indicating which variables from the
+\code{rowData} should be extracted.}
 }
 \value{
-A `DataFrame` object with the `rowData` row-binded over the required
-    assays.
+A \code{DataFrame} object with the \code{rowData} row-binded over the required
+assays.
 }
 \description{
-The methods takes the `rowData` of one or more given assay in a `QFeatures`
-object and combines the data in a single `DataFrame`.
+The methods takes the \code{rowData} of one or more given assay in a \code{QFeatures}
+object and combines the data in a single \code{DataFrame}.
 }
 \details{
-Along with the reuired `rowData` an additional `.assay` variable is created 
+Along with the reuired \code{rowData} an additional \code{.assay} variable is created
 and holds the assay name from which the metadata was taken.
 }
 \examples{

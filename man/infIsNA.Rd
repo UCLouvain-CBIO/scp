@@ -7,17 +7,17 @@
 infIsNA(obj, i)
 }
 \arguments{
-\item{obj}{A `QFeatures` object}
+\item{obj}{A \code{QFeatures} object}
 
-\item{i}{A `numeric()` or `character()` vector indicating from which assays 
-the `rowData` should be taken.}
+\item{i}{A \code{numeric()} or \code{character()} vector indicating from which assays
+the \code{rowData} should be taken.}
 }
 \value{
-A `QFeatures` object
+A \code{QFeatures} object
 }
 \description{
 This function coinsiders any infinite value as missing data. So, any value
-in assay `i` that return `TRUE` to `is.infinite` will be replaced by `NA`.
+in assay \code{i} that return \code{TRUE} to \code{is.infinite} will be replaced by \code{NA}.
 }
 \examples{
 scp1 <- infIsNA(scp1, i = "peptides")
