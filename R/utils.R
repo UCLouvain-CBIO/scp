@@ -56,7 +56,18 @@
 ##' @export
 ##' 
 ##' @examples 
-##' TODO
+##' 
+##' ## Load an example table containing MaxQuant output
+##' data("mqFile")
+##' ## Load the (user-generated) annotation table
+##' data("sampleAnnotation")
+##' 
+##' ## Format the tables into a QFeatures object
+##' readSCP(quantTable = mqFile,
+##'         metaTable = sampleAnnotation,
+##'         batchCol = "Set",
+##'         channelCol = "Channel")
+##' 
 readSCP <- function(quantTable, 
                     metaTable,
                     batchCol,
@@ -137,6 +148,14 @@ readSCP <- function(quantTable,
 ##'
 ##' @md
 ##' @export
+##' 
+##' @examples 
+##' 
+##' 
+##' ## Load a data.frame with PSM-level data
+##' data(mqFile)
+##' ## Create the QFeatures object
+##' sce <- readSingleCellExperiment(mqFile, grep("RI", colnames(mqFile)))
 readSingleCellExperiment <- function(table, 
                                      ecol, 
                                      fnames,
@@ -221,7 +240,13 @@ readSingleCellExperiment <- function(table,
 ##' @export
 ##'
 ##' @examples
-##' TODO
+##' scp1 <- computeSCR(scp1, 
+##'                    i = 1,
+##'                    colDataCol = "SampleType",
+##'                    carrierPattern = "Carrier",
+##'                    samplePattern = "Blank|Macrophage|Monocyte")
+##' ## Check results
+##' rowDataToDF(scp1, 1, "meanSCR")
 computeSCR <- function(obj, 
                        i, 
                        colDataCol, 
@@ -278,7 +303,8 @@ computeSCR <- function(obj,
 ##' @export
 ##'
 ##' @examples
-##' TODO
+##' ## Extract the peptide length and sequence from the first 3 assays
+##' rowDataToDF(scp1, i = 1:3, c("Length", "Sequence"))
 rowDataToDF <- function(obj, i, vars) {
   if (!inherits(obj, "QFeatures")) stop("'obj' must be a QFeatures object")
   if (is.numeric(i)) i <- names(obj)[i]
@@ -315,7 +341,12 @@ rowDataToDF <- function(obj, i, vars) {
 ##' @export
 ##'
 ##' @examples
-##' TODO
+##' scp1 <- computeFDR(scp1,
+##'                    i = 1,
+##'                    groupCol = "Sequence",
+##'                    pepCol = "PEP")
+##' ## Check results
+##' rowDataToDF(scp1, 1, c("PEP", ".FDR"))
 computeFDR <- function(object, 
                        i, 
                        groupCol, 
@@ -379,7 +410,14 @@ computeFDR <- function(object,
 ##' @export
 ##'
 ##' @examples
-##' TODO
+##' scp1 <- computeMedianCV(scp1, 
+##'                         i = "peptides", 
+##'                         proteinCol = "protein", 
+##'                         peptideCol = "peptide", 
+##'                         batchCol = "Set")
+##' ## Check results
+##' hist(scp1[["peptides"]]$MedianCV)
+##' 
 computeMedianCV <- function(object, 
                             i, 
                             peptideCol, 
@@ -389,7 +427,7 @@ computeMedianCV <- function(object,
   ## Extract the expression data and metadata as long format
   colname = "colname" ## for compatibility with `group_by_at`
   object %>%
-    .assayToLongDF(i = "peptides_filter1", 
+    .assayToLongDF(i = i, 
                    rowDataCols = c(peptideCol, proteinCol), 
                    colDataCols = c(batchCol, "SampleType")) %>%
     data.frame %>%
@@ -483,7 +521,11 @@ computeMedianCV <- function(object,
 ##' @export
 ##'
 ##' @examples
-##' TODO
+##' scp1 <- divideByReference(scp1, 
+##'                           i = 1, 
+##'                           colDataCol = "SampleType",
+##'                           samplePattern = "Macrophage",
+##'                           refPattern = "Ref")
 divideByReference <- function(obj, 
                               i,
                               colDataCol,
@@ -529,7 +571,7 @@ divideByReference <- function(obj,
 ##' @export
 ##' 
 ##' @examples 
-##' TODO
+##' scp1 <- infIsNA(scp1, i = "peptides")
 infIsNA <- function(obj, i) {
   for (ii in i) {
     sel <- is.infinite(assay(obj[[ii]])) 
@@ -553,7 +595,9 @@ infIsNA <- function(obj, i) {
 ##' @export
 ##'
 ##' @examples
-##' TODO
+##' colData(scp1[["peptides"]])
+##' scp1 <- transferColDataToAssay(scp1, i = "peptides")
+##' colData(scp1[["peptides"]])
 transferColDataToAssay <- function (obj, i) {
   cd <- colData(obj)[colnames(obj[[i]]),  ]
   if (all(colnames(cd) %in% colnames(colData(obj@ExperimentList[[i]])))) {
@@ -589,7 +633,14 @@ transferColDataToAssay <- function (obj, i) {
 ##' @seealso [QFeatures::aggregateFeatures]
 ##' 
 ##' @examples 
-##' TODO
+##' scp1
+##' scp1 <- aggregateFeaturesOverAssays(scp1, 
+##'                                     i = 1:3,
+##'                                     fcol = "peptide",
+##'                                     name = paste0("peptides", 1:3),
+##'                                     fun = colMeans,
+##'                                     na.rm = TRUE)
+##' scp1
 ##' 
 aggregateFeaturesOverAssays <- function(obj,
                                         i,
