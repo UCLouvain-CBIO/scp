@@ -4,10 +4,10 @@
 \alias{computeFDR}
 \title{Compute false discovery rates (FDRs) from posterior error probabilities (PEPs)}
 \usage{
-computeFDR(obj, i, groupCol, pepCol)
+computeFDR(object, i, groupCol, pepCol)
 }
 \arguments{
-\item{obj}{A `QFeatures` object}
+\item{object}{A `QFeatures` object}
 
 \item{i}{A `numeric()` or `character()` vector indicating from which assays 
 the `rowData` should be taken.}
@@ -27,5 +27,10 @@ The functions takes the PEPs from the given assay's `rowData` and creates a
 new variable (`.FDR`) to it that contains the computed FDRs.
 }
 \examples{
-TODO
+scp1 <- computeFDR(scp1,
+                   i = 1,
+                   groupCol = "Sequence",
+                   pepCol = "PEP")
+## Check results
+rowDataToDF(scp1, 1, c("PEP", ".FDR"))
 }

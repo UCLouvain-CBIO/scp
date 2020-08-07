@@ -49,7 +49,18 @@ objects.
 
 }
 \examples{
-TODO
+
+## Load an example table containing MaxQuant output
+data("mqFile")
+## Load the (user-generated) annotation table
+data("sampleAnnotation")
+
+## Format the tables into a QFeatures object
+readSCP(quantTable = mqFile,
+        metaTable = sampleAnnotation,
+        batchCol = "Set",
+        channelCol = "Channel")
+
 }
 \author{
 Laurent Gatto, Christophe Vanderaa

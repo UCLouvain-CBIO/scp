@@ -16,7 +16,7 @@ SCR needs to be computed.}
 `colData(obj)` that gives the sample annotation.}
 
 \item{samplePattern}{A `character(1)` pattern that matches the sample 
-encoding in `colDataCol`}
+encoding in `colDataCol`.}
 
 \item{carrierPattern}{A `character(1)` pattern that matches the carrier 
 encoding in `colDataCol`. Only one match per assay is allowed, otherwise
@@ -32,5 +32,11 @@ the intentisty of the carrier channel for each feature. The ratios are
 averaged within the assay.
 }
 \examples{
-TODO
+scp1 <- computeSCR(scp1, 
+                   i = 1,
+                   colDataCol = "SampleType",
+                   carrierPattern = "Carrier",
+                   samplePattern = "Blank|Macrophage|Monocyte")
+## Check results
+rowDataToDF(scp1, 1, "meanSCR")
 }

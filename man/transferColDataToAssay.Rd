@@ -21,5 +21,7 @@ assays it contains. The transfered data is bound to the existing `colData`
 of the target assay.
 }
 \examples{
-TODO
+colData(scp1[["peptides"]])
+scp1 <- transferColDataToAssay(scp1, i = "peptides")
+colData(scp1[["peptides"]])
 }
