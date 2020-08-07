@@ -2,6 +2,7 @@
 
 export(aggregateFeaturesOverAssays)
 export(computeFDR)
+export(computeMedianCV)
 export(computeSCR)
 export(divideByReference)
 export(infIsNA)
@@ -11,4 +12,5 @@ export(rowDataToDF)
 export(transferColDataToAssay)
 import(QFeatures)
 import(SingleCellExperiment)
+import(tidyverse)
 importFrom(utils,read.csv)
