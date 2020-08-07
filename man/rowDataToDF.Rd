@@ -28,5 +28,6 @@ Along with the reuired `rowData` an additional `.assay` variable is created
 and holds the assay name from which the metadata was taken.
 }
 \examples{
-TODO
+## Extract the peptide length and sequence from the first 3 assays
+rowDataToDF(scp1, i = 1:3, c("Length", "Sequence"))
 }
