@@ -7,28 +7,28 @@
 computeSCR(obj, i, colDataCol, samplePattern, carrierPattern, verbose = TRUE)
 }
 \arguments{
-\item{obj}{A `QFeatures` object.}
+\item{obj}{A \code{QFeatures} object.}
 
-\item{i}{A `character()` or `integer()` indicating for which assay(s) the
+\item{i}{A \code{character()} or \code{integer()} indicating for which assay(s) the
 SCR needs to be computed.}
 
-\item{colDataCol}{A `character(1)` indicating the variable to take from 
-`colData(obj)` that gives the sample annotation.}
+\item{colDataCol}{A \code{character(1)} indicating the variable to take from
+\code{colData(obj)} that gives the sample annotation.}
 
-\item{samplePattern}{A `character(1)` pattern that matches the sample 
-encoding in `colDataCol`.}
+\item{samplePattern}{A \code{character(1)} pattern that matches the sample
+encoding in \code{colDataCol}.}
 
-\item{carrierPattern}{A `character(1)` pattern that matches the carrier 
-encoding in `colDataCol`. Only one match per assay is allowed, otherwise
+\item{carrierPattern}{A \code{character(1)} pattern that matches the carrier
+encoding in \code{colDataCol}. Only one match per assay is allowed, otherwise
 only the first match is taken}
 }
 \value{
-A `QFeatures` object for which the `rowData` of the given assay(s) is 
-    augmented with the mean SCR (`meanSCR` variable).
+A \code{QFeatures} object for which the \code{rowData} of the given assay(s) is
+augmented with the mean SCR (\code{meanSCR} variable).
 }
 \description{
-The function computes the ratio of the intensities of sample channels over 
-the intentisty of the carrier channel for each feature. The ratios are 
+The function computes the ratio of the intensities of sample channels over
+the intentisty of the carrier channel for each feature. The ratios are
 averaged within the assay.
 }
 \examples{
