@@ -20,5 +20,5 @@ This function coinsiders any infinite value as missing data. So, any value
 in assay `i` that return `TRUE` to `is.infinite` will be replaced by `NA`.
 }
 \examples{
-TODO
+scp1 <- infIsNA(scp1, i = "peptides")
 }

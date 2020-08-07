@@ -33,7 +33,14 @@ allows the user to provide multiple assays for which `aggregateFeatures`
 will be applied sequentially.
 }
 \examples{
-TODO
+scp1
+scp1 <- aggregateFeaturesOverAssays(scp1, 
+                                    i = 1:3,
+                                    fcol = "peptide",
+                                    name = paste0("peptides", 1:3),
+                                    fun = colMeans,
+                                    na.rm = TRUE)
+scp1
 
 }
 \seealso{

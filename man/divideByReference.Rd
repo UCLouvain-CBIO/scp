@@ -35,5 +35,9 @@ The supplied assay(s) are replaced with the values computed after reference
 division.
 }
 \examples{
-TODO
+scp1 <- divideByReference(scp1, 
+                          i = 1, 
+                          colDataCol = "SampleType",
+                          samplePattern = "Macrophage",
+                          refPattern = "Ref")
 }
