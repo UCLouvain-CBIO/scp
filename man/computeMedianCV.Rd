@@ -7,38 +7,38 @@
 computeMedianCV(object, i, peptideCol, proteinCol, batchCol)
 }
 \arguments{
-\item{object}{A `QFeatures` object}
+\item{object}{A \code{QFeatures} object}
 
-\item{i}{A `numeric()` or `character()` vector indicating from which assays 
-the `rowData` should be taken.}
+\item{i}{A \code{numeric()} or \code{character()} vector indicating from which assays
+the \code{rowData} should be taken.}
 
-\item{peptideCol}{A `character(1)` indicating the variable name in the 
-`rowData` that contains the peptide grouping.}
+\item{peptideCol}{A \code{character(1)} indicating the variable name in the
+\code{rowData} that contains the peptide grouping.}
 
-\item{proteinCol}{A `character(1)` indicating the variable name in the 
-`rowData` that contains the protein grouping.}
+\item{proteinCol}{A \code{character(1)} indicating the variable name in the
+\code{rowData} that contains the protein grouping.}
 
-\item{batchCol}{A `character(1)` indicating the variable name in the 
-`colData` of `object` that contains the batch names.}
+\item{batchCol}{A \code{character(1)} indicating the variable name in the
+\code{colData} of \code{object} that contains the batch names.}
 }
 \value{
-A `QFeatures` object.
+A \code{QFeatures} object.
 }
 \description{
-The function computes for each cell the median CV. The expression data is 
-normalized twice. First, cell median expression is used as normalization 
-factor, then, the mean for each batch and peptide. The CV is then computed 
-for each protein in each cell. CV is the standard deviation divided by the 
-mean expression. The CV is computed only if there are more than 5 
+The function computes for each cell the median CV. The expression data is
+normalized twice. First, cell median expression is used as normalization
+factor, then, the mean for each batch and peptide. The CV is then computed
+for each protein in each cell. CV is the standard deviation divided by the
+mean expression. The CV is computed only if there are more than 5
 observations per protein per cell.
 }
 \details{
-A new columns, `medianCV`, is added to the `colData` of the assay `i` and
+A new columns, \code{medianCV}, is added to the \code{colData} of the assay \code{i} and
 contains the computed median CVs.
 
-*Watch out* that `peptideCol` and `proteinCol` are feature variables and 
-hence taken from the `rowData`. `batchCol` is a sample variable and is taken
-from the `colData` of the `QFeatures` object.
+\emph{Watch out} that \code{peptideCol} and \code{proteinCol} are feature variables and
+hence taken from the \code{rowData}. \code{batchCol} is a sample variable and is taken
+from the \code{colData} of the \code{QFeatures} object.
 }
 \examples{
 scp1 <- computeMedianCV(scp1, 

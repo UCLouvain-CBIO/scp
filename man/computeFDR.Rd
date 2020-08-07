@@ -7,24 +7,24 @@
 computeFDR(object, i, groupCol, pepCol)
 }
 \arguments{
-\item{object}{A `QFeatures` object}
+\item{object}{A \code{QFeatures} object}
 
-\item{i}{A `numeric()` or `character()` vector indicating from which assays 
-the `rowData` should be taken.}
+\item{i}{A \code{numeric()} or \code{character()} vector indicating from which assays
+the \code{rowData} should be taken.}
 
-\item{groupCol}{A `character(1)` indicating the variable names in the 
-`rowData` that contains the grouping variable. The FDR are usually 
+\item{groupCol}{A \code{character(1)} indicating the variable names in the
+\code{rowData} that contains the grouping variable. The FDR are usually
 computed for PSMs grouped by peptide ID.}
 
-\item{pepCol}{A `character(1)` indicating the variable names in the 
-`rowData` that contains the PEPs.}
+\item{pepCol}{A \code{character(1)} indicating the variable names in the
+\code{rowData} that contains the PEPs.}
 }
 \value{
-A `QFeatures` object.
+A \code{QFeatures} object.
 }
 \description{
-The functions takes the PEPs from the given assay's `rowData` and creates a 
-new variable (`.FDR`) to it that contains the computed FDRs.
+The functions takes the PEPs from the given assay's \code{rowData} and creates a
+new variable (\code{.FDR}) to it that contains the computed FDRs.
 }
 \examples{
 scp1 <- computeFDR(scp1,

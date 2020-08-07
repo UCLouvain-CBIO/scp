@@ -7,27 +7,27 @@
 divideByReference(obj, i, colDataCol, samplePattern, refPattern)
 }
 \arguments{
-\item{obj}{A `QFeatures` object}
+\item{obj}{A \code{QFeatures} object}
 
-\item{i}{A `numeric()` or `character()` vector indicating from which assays 
-the `rowData` should be taken.}
+\item{i}{A \code{numeric()} or \code{character()} vector indicating from which assays
+the \code{rowData} should be taken.}
 
-\item{colDataCol}{A `character(1)` indicating the variable to take from 
-`colData(obj)` that gives the sample annotation.}
+\item{colDataCol}{A \code{character(1)} indicating the variable to take from
+\code{colData(obj)} that gives the sample annotation.}
 
-\item{samplePattern}{A `character(1)` pattern that matches the sample 
-encoding in `colDataCol`}
+\item{samplePattern}{A \code{character(1)} pattern that matches the sample
+encoding in \code{colDataCol}}
 
-\item{refPattern}{A `character(1)` pattern that matches the carrier 
-encoding in `colDataCol`. Only one match per assay is allowed, otherwise
+\item{refPattern}{A \code{character(1)} pattern that matches the carrier
+encoding in \code{colDataCol}. Only one match per assay is allowed, otherwise
 only the first match is taken}
 }
 \value{
-A `QFeatures` object
+A \code{QFeatures} object
 }
 \description{
-The function divides the sample columns by a reference column. The sample 
-and reference columns are defined based on the provided `colDataCol` 
+The function divides the sample columns by a reference column. The sample
+and reference columns are defined based on the provided \code{colDataCol}
 variable and on regular expression matching.
 }
 \details{
