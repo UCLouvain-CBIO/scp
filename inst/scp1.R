@@ -16,7 +16,8 @@ set.seed(1000)
 specht2019v2[, , 1:177] %>%
   colData %>%
   data.frame %>%
-  group_by(lcbatch, sortday, digest) %>%
+  filter(lcbatch %in% c("LCA9", "LCA10", "LCB3")) %>%
+  group_by(lcbatch) %>%
   sample_n(1) %>%
   pull(Set) ->
   sampledRuns
