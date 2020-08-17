@@ -43,7 +43,7 @@ computeSCR <- function(obj,
     annot <- colData(obj)[colnames(obj[[ii]]), ][, colDataCol]
     ## Get the corresponding indices
     if (is.numeric(samplePattern)) {
-      sampIdx <- samplePattern
+      sampIdx <- samplePattern[samplePattern <= length(annot)]
     } else {
       sampIdx <- grep(samplePattern, annot)
     }
