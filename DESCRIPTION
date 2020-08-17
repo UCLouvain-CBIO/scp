@@ -14,7 +14,8 @@ Description: Utility functions for manipulating, processing, and analyzing mass
     spectrometry-based single-cell proteomics data.
 Depends: 
     R (>= 4.0), 
-    QFeatures
+    QFeatures,
+    tidyverse
 Imports: 
     methods,
     stats,
@@ -26,9 +27,9 @@ Imports:
     AnnotationFilter,
     lazyeval,
     Biobase,
-    MsCoreUtils (>= 1.1.2),
-    tidyverse
+    MsCoreUtils (>= 1.1.2)
 Suggests:
+    testthat
 BiocViews:
 License: Artistic-2.0
 Encoding: UTF-8
