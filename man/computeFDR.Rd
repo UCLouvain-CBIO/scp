@@ -28,10 +28,13 @@ The functions takes the PEPs from the given assay's \code{rowData} and creates a
 new variable (\code{.FDR}) to it that contains the computed FDRs.
 }
 \examples{
+\dontrun{
+data("scp1")
 scp1 <- computeFDR(scp1,
                    i = 1,
                    groupCol = "Sequence",
                    pepCol = "PEP")
 ## Check results
 rowDataToDF(scp1, 1, c("PEP", ".FDR"))
+}
 }
