@@ -87,9 +87,9 @@ computeSCR <- function(obj,
 ##' scp1 <- computeFDR(scp1,
 ##'                    i = 1,
 ##'                    groupCol = "Sequence",
-##'                    pepCol = "PEP")
+##'                    pepCol = "dart_PEP")
 ##' ## Check results
-##' rowDataToDF(scp1, 1, c("PEP", ".FDR"))
+##' rowDataToDF(scp1, 1, c("dart_PEP", ".FDR"))
 computeFDR <- function(object, 
                        i, 
                        groupCol, 
@@ -108,7 +108,7 @@ computeFDR <- function(object,
     stop(paste0("'", pepCol, "' must link to a probability in (0, 1)"))
   
   ## Order the features to replicate SCoPE2
-  warning("Features are sorted. This is only needed when replicating the SCoPE2 analysis\nSee also https://github.com/SlavovLab/SCoPE2/issues/3")
+  message("Features are sorted. This is only needed when replicating the SCoPE2 analysis\nSee also https://github.com/SlavovLab/SCoPE2/issues/3")
   peps <- arrange(data.frame(peps), .assay, groupCol, pepCol)
   ## Compute the FDR for every peptide ID separately
   peps <- group_by(data.frame(peps), groupCol)
