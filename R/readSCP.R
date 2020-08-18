@@ -1,7 +1,8 @@
 ##' @import SingleCellExperiment
 ##' @import QFeatures
-##' @import tidyverse
-
+##' @import dplyr
+##' @import magrittr
+##' @import ggplot2
 
 ##' @title Read single-cell proteomics data as a QFeatures object from
 ##'     tabular data and metadata
@@ -52,6 +53,10 @@
 ##' @author Laurent Gatto, Christophe Vanderaa
 ##' 
 ##' @importFrom utils read.csv
+##' @importFrom S4Vectors DataFrame
+##' @importFrom MultiAssayExperiment ExperimentList
+##' @importFrom SummarizedExperiment colData rowData assay
+##' @importFrom SummarizedExperiment rowData<- colData<- assay<-
 ##'
 ##' @md
 ##' @export

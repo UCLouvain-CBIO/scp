@@ -18,6 +18,8 @@
 ##'     
 ##' @export
 ##'
+##' @importFrom MultiAssayExperiment ExperimentList 
+##'
 ##' @examples
 ##' ## Extract the peptide length and sequence from the first 3 assays
 ##' rowDataToDF(scp1, i = 1:3, c("Length", "Sequence"))
