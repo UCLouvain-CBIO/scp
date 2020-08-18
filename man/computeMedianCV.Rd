@@ -41,6 +41,7 @@ hence taken from the \code{rowData}. \code{batchCol} is a sample variable and is
 from the \code{colData} of the \code{QFeatures} object.
 }
 \examples{
+data("scp1")
 scp1 <- computeMedianCV(scp1, 
                         i = "peptides", 
                         proteinCol = "protein", 
@@ -48,5 +49,4 @@ scp1 <- computeMedianCV(scp1,
                         batchCol = "Set")
 ## Check results
 hist(scp1[["peptides"]]$MedianCV)
-
 }
