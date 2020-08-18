@@ -18,7 +18,7 @@
 ##'     
 ##' @export
 ##'
-##' @importFrom MultiAssayExperiment ExperimentList 
+##' @importFrom MultiAssayExperiment ExperimentList experiments
 ##'
 ##' @examples
 ##' ## Extract the peptide length and sequence from the first 3 assays
@@ -93,11 +93,12 @@ transferColDataToAssay <- function (obj, i) {
 ##'
 ##' @importFrom utils flush.console
 ##' @importFrom methods new
+##' @importFrom S4Vectors metadata
 ##' 
 ##' @seealso [QFeatures::aggregateFeatures]
 ##' 
 ##' @examples 
-##' scp1
+##' data("scp1")
 ##' scp1 <- aggregateFeaturesOverAssays(scp1, 
 ##'                                     i = 1:3,
 ##'                                     fcol = "peptide",
@@ -105,7 +106,6 @@ transferColDataToAssay <- function (obj, i) {
 ##'                                     fun = colMeans,
 ##'                                     na.rm = TRUE)
 ##' scp1
-##' 
 aggregateFeaturesOverAssays <- function(obj,
                                         i,
                                         fcol, 

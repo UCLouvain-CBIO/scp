@@ -14,8 +14,7 @@ Description: Utility functions for manipulating, processing, and analyzing mass
     spectrometry-based single-cell proteomics data.
 Depends:
     R (>= 4.0),
-    QFeatures,
-    tidyverse
+    QFeatures
 Imports:
     methods,
     stats,
@@ -23,7 +22,10 @@ Imports:
     SingleCellExperiment,
     SummarizedExperiment,
     MultiAssayExperiment,
-    S4Vectors
+    S4Vectors,
+    dplyr,
+    magrittr,
+    ggplot2
 Suggests:
     testthat,
     knitr,
