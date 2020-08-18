@@ -1,11 +1,17 @@
-## Internal function to efficiently replace a `SummarizedExperiment` (and 
-## subclasses of it) assay in a `QFeatures` object. Watch out this function 
-## should only be used when the old assay and the assay to replace have same 
-## size. Otherwise, this can lead to inconsistencies in the colData and 
-## functionality from `MultiAssayExperiment` should be used. 
-## obj: A QFeatures object
-## y: A SummarizedExperiment object, or an object that inherits from it
-## i: a characther(1) or logical(1) that indicates which assay must be replaced
+##' Internal function to efficiently replace a `SummarizedExperiment`
+##' (and subclasses of it) assay in a `QFeatures` object. Watch out
+##' this function should only be used when the old assay and the assay
+##' to replace have same size. Otherwise, this can lead to
+##' inconsistencies in the colData and functionality from
+##' `MultiAssayExperiment` should be used.
+##' 
+##' @param obj A QFeatures object
+##' 
+##' @param y A SummarizedExperiment object, or an object that inherits from it
+##' 
+##' @param i a characther(1) or logical(1) that indicates which assay must be replaced
+##'
+##' @noRd
 .replaceAssay <- function(obj, y, i) {
   if (length(i) > 1) stop("Only 1 assay can be replaced at a time.")
   if (!inherits(obj, "QFeatures")) stop("'obj' must be a 'QFeatures' object")
@@ -28,13 +34,17 @@
 ##' division.
 ##' 
 ##' @param obj A `QFeatures` object
+##' 
 ##' @param i A `numeric()` or `character()` vector indicating from which assays 
 ##'     the `rowData` should be taken.
+##' 
 ##' @param colDataCol A `character(1)` indicating the variable to take from 
-##'     `colData(obj)` that gives the sample annotation. 
+##'     `colData(obj)` that gives the sample annotation.
+##' 
 ##' @param samplePattern A `character(1)` pattern that matches the sample 
 ##'     encoding in `colDataCol`. By default all samples are devided (using the
-##'     regex wildcard `.``)..
+##'     regex wildcard `.`).
+##' 
 ##' @param refPattern A `character(1)` pattern that matches the carrier 
 ##'     encoding in `colDataCol`. Only one match per assay is allowed, otherwise
 ##'     only the first match is taken
@@ -44,6 +54,7 @@
 ##' @export
 ##'
 ##' @examples
+##' data("scp1")
 ##' scp1 <- divideByReference(scp1, 
 ##'                           i = 1, 
 ##'                           colDataCol = "SampleType",
@@ -82,10 +93,12 @@ divideByReference <- function(obj,
 
 ##' Remove infinite data 
 ##' 
-##' This function coinsiders any infinite value as missing data. So, any value
-##' in assay `i` that return `TRUE` to `is.infinite` will be replaced by `NA`.
+##' This function coinsiders any infinite value as missing data. So,
+##' any value in assay `i` that return `TRUE` to `is.infinite` will be
+##' replaced by `NA`.
 ##' 
-##' @param obj A `QFeatures` object
+##' @param obj A `QFeatures` object.
+##' 
 ##' @param i A `numeric()` or `character()` vector indicating from which assays 
 ##'     the `rowData` should be taken.
 ##' 
@@ -93,7 +106,8 @@ divideByReference <- function(obj,
 ##' 
 ##' @export
 ##' 
-##' @examples 
+##' @examples
+##' data("scp1")
 ##' scp1 <- infIsNA(scp1, i = "peptides")
 infIsNA <- function(obj, i) {
   for (ii in i) {

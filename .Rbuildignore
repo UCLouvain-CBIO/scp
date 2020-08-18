@@ -6,3 +6,5 @@ inst/
 
 
 ^scp\.Rproj$
+docs
+^\.github$
