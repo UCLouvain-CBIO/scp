@@ -17,7 +17,7 @@ the \code{rowData} should be taken.}
 
 \item{samplePattern}{A \code{character(1)} pattern that matches the sample
 encoding in \code{colDataCol}. By default all samples are devided (using the
-regex wildcard `.``).}
+regex wildcard \code{.}).}
 
 \item{refPattern}{A \code{character(1)} pattern that matches the carrier
 encoding in \code{colDataCol}. Only one match per assay is allowed, otherwise
