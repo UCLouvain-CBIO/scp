@@ -1,0 +1,43 @@
+---
+title: "Single Cell Proteomics data processing and analysis."
+author:
+- name: Laurent Gatto
+- name: Christophe Vanderaa
+package: scp
+abstract: >
+ This vignette describes the functionality implemented in the scp
+ package. scp provides function to process and analyse mass 
+ spectrometry-based single cell proteomics data.
+output:
+  BiocStyle::html_document:
+    toc_float: true
+bibliography: scp.bib
+vignette: >
+  %\VignetteIndexEntry{"Single Cell Proteomics data processing and analysis."}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteKeywords{Mass Spectrometry, MS, Proteomics, Infrastructure, Quantitative, single cell }
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r style, echo = FALSE, results = 'asis'}
+BiocStyle::markdown()
+```
+
+```{r env, message = FALSE, warning = FALSE, echo = FALSE}
+library("scp")
+```
+
+# Introduction
+
+```{r scp_framework, results='markup', fig.cap="`scp` relies on `SingleCellExperiment` and `QFeatures` objects.", echo=FALSE, out.width='100%', fig.align='center', fig.wide = TRUE}
+knitr::include_graphics("./figs/SCP_framework.png", error = FALSE)
+```
+
+# Session information {-}
+
+```{r sessioninfo, echo=FALSE}
+sessionInfo()
+```
+
+
+# References {-}
