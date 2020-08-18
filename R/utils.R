@@ -88,6 +88,9 @@ transferColDataToAssay <- function (obj, i) {
 ##' @return A `QFeatures` object 
 ##' 
 ##' @export
+##'
+##' @importFrom utils flush.console
+##' @importFrom methods new
 ##' 
 ##' @seealso [QFeatures::aggregateFeatures]
 ##' 
@@ -119,7 +122,7 @@ aggregateFeaturesOverAssays <- function(obj,
       el[[j]] <- aggregateFeatures(el[[j]], fcol = fcol[j], fun = fun, ...)
     )
     ## Print progress
-    cat(paste0("\rAggregated: ", j, "/", length(el)))
+    message(paste0("\rAggregated: ", j, "/", length(el)))
     if (j == length(el)) cat ("\n")
     flush.console()
   }
