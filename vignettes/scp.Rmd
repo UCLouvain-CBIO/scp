@@ -11,11 +11,9 @@ abstract: >
 output:
   BiocStyle::html_document:
     toc_float: true
-bibliography: scp.bib
 vignette: >
-  %\VignetteIndexEntry{"Single Cell Proteomics data processing and analysis."}
+  %\VignetteIndexEntry{Single Cell Proteomics data processing and analysis}
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteKeywords{Mass Spectrometry, MS, Proteomics, Infrastructure, Quantitative, single cell }
   %\VignetteEncoding{UTF-8}
 ---
 
@@ -29,8 +27,8 @@ library("scp")
 
 # Introduction
 
-```{r scp_framework, results='markup', fig.cap="`scp` relies on `SingleCellExperiment` and `QFeatures` objects.", echo=FALSE, out.width='100%', fig.align='center', fig.wide = TRUE}
-knitr::include_graphics("./figs/SCP_framework.png", error = FALSE)
+```{r scp_framework, results='markup', fig.cap="`scp` relies on `SingleCellExperiment` and `QFeatures` objects.", echo=FALSE, out.width='100%', fig.align='center'}
+knitr::include_graphics("./figures/SCP_framework.png", error = FALSE)
 ```
 
 # Session information {-}
@@ -38,6 +36,3 @@ knitr::include_graphics("./figs/SCP_framework.png", error = FALSE)
 ```{r sessioninfo, echo=FALSE}
 sessionInfo()
 ```
-
-
-# References {-}
