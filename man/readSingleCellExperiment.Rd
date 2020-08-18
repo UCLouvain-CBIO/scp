@@ -35,10 +35,9 @@ Convert tabular data from a spreadsheet or a \code{data.frame} into a
 \code{SingleCellExperiment} object.
 }
 \examples{
-
-
 ## Load a data.frame with PSM-level data
 data(mqFile)
+
 ## Create the QFeatures object
 sce <- readSingleCellExperiment(mqFile, grep("RI", colnames(mqFile)))
 }
