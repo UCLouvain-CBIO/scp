@@ -32,6 +32,7 @@ Suggests:
     testthat
 Remotes:
    RforMassSpectrometry/QFeatures
+   RforMassSpectrometry/MsCoreUtils
 BiocViews:
 License: Artistic-2.0
 Encoding: UTF-8
