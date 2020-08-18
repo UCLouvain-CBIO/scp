@@ -31,7 +31,7 @@ Imports:
 Suggests:
     testthat
 Remotes:
-   RforMassSpectrometry/QFeatures
+   RforMassSpectrometry/QFeatures,
    RforMassSpectrometry/MsCoreUtils
 BiocViews:
 License: Artistic-2.0
