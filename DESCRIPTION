@@ -27,7 +27,7 @@ Imports:
     AnnotationFilter,
     lazyeval,
     Biobase,
-    MsCoreUtils (>= 1.1.2)
+    MsCoreUtils
 Suggests:
     testthat
 Remotes:
