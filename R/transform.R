@@ -45,7 +45,7 @@
 ##' 
 ##' @param samplePattern A `character(1)` pattern that matches the sample 
 ##'     encoding in `colDataCol`. By default all samples are devided (using the
-##'     regex wildcard `.``).
+##'     regex wildcard `.`).
 ##' 
 ##' @param refPattern A `character(1)` pattern that matches the carrier 
 ##'     encoding in `colDataCol`. Only one match per assay is allowed, otherwise
