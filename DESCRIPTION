@@ -1,15 +1,15 @@
 Package: scp
 Title: Mass Spectrometry-Based Single-Cell Proteomics Data Analysis
-Version: 0.0.1
+Version: 0.1.0
 Authors@R:
     c(person("Christophe", "Vanderaa",
-		    email = "christophe.vanderaa@uclouvain.be",
-		    comment = c(ORCID = "0000-0001-7443-5427"),
-		    role = "ctb"),
-		  person("Laurent", "Gatto",
-		    email = "laurent.gatto@uclouvain.be",
-		    comment = c(ORCID = "0000-0002-1520-2268"),
-		    role = c("aut", "cre")))
+	     email = "christophe.vanderaa@uclouvain.be",
+	     comment = c(ORCID = "0000-0001-7443-5427"),
+	     role = "ctb"),
+      person("Laurent", "Gatto",
+	     email = "laurent.gatto@uclouvain.be",
+	     comment = c(ORCID = "0000-0002-1520-2268"),
+	     role = c("aut", "cre")))
 Description: Utility functions for manipulating, processing, and analyzing mass
     spectrometry-based single-cell proteomics data.
 Depends:
@@ -20,24 +20,15 @@ Imports:
     methods,
     stats,
     utils,
-    S4Vectors,
-    SingleCellExperiment,
-    BiocGenerics,
-    ProtGenerics (>= 1.19.3),
-    AnnotationFilter,
-    lazyeval,
-    Biobase,
-    MsCoreUtils
+    SingleCellExperiment
 Suggests:
     testthat
 Remotes:
    RforMassSpectrometry/QFeatures,
    RforMassSpectrometry/MsCoreUtils
-BiocViews:
 License: Artistic-2.0
 Encoding: UTF-8
 LazyData: true
-VignetteBuilder: knitr
 BugReports: https://github.com/UCLouvain-CBIO/scp/issues
 URL: https://github.com/UCLouvain-CBIO/scp
 Roxygen: list(markdown=TRUE)
