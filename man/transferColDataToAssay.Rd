@@ -9,18 +9,19 @@ transferColDataToAssay(obj, i)
 \arguments{
 \item{obj}{A \code{QFeatures} object}
 
-\item{i}{A \code{numeric(1)} or \code{character(1)} indicating which assay to transfer
-the \code{colData} to.}
+\item{i}{A \code{numeric(1)} or \code{character(1)} indicating which assay
+to transfer the \code{colData} to.}
 }
 \value{
 A \code{QFeatures} object
 }
 \description{
-The function transfers the \code{colData} from a \code{QFeatures} object to one of the
-assays it contains. The transfered data is bound to the existing \code{colData}
-of the target assay.
+The function transfers the \code{colData} from a \code{QFeatures} object to
+one of the assays it contains. The transfered data is bound to the
+existing \code{colData} of the target assay.
 }
 \examples{
+data("scp1")
 colData(scp1[["peptides"]])
 scp1 <- transferColDataToAssay(scp1, i = "peptides")
 colData(scp1[["peptides"]])
