@@ -94,12 +94,15 @@ computeSCR <- function(obj,
 ##' @export
 ##'
 ##' @examples
+##' \dontrun{
+##' data("scp1")
 ##' scp1 <- computeFDR(scp1,
 ##'                    i = 1,
 ##'                    groupCol = "Sequence",
 ##'                    pepCol = "PEP")
 ##' ## Check results
 ##' rowDataToDF(scp1, 1, c("PEP", ".FDR"))
+##' }
 computeFDR <- function(object, 
                        i, 
                        groupCol, 
@@ -172,6 +175,7 @@ computeFDR <- function(object,
 ##' @importFrom stats median sd
 ##'
 ##' @examples
+##' data("scp1")
 ##' scp1 <- computeMedianCV(scp1, 
 ##'                         i = "peptides", 
 ##'                         proteinCol = "protein", 
