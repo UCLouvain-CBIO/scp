@@ -9,16 +9,16 @@ aggregateFeaturesOverAssays(obj, i, fcol, name, fun, ...)
 \arguments{
 \item{obj}{A \code{QFeatures} object}
 
-\item{i}{A \code{numeric(1)} or \code{character(1)} indicating which assay to transfer
-the \code{colData} to.}
+\item{i}{A \code{numeric(1)} or \code{character(1)} indicating which assay
+to transfer the \code{colData} to.}
 
-\item{fcol}{The feature variables for each assays \code{i} defining how to
-summarise the QFeatures. If \code{fcol} has length 1, the variable name is
-assumed to be the same for all assays}
+\item{fcol}{The feature variables for each assays \code{i} defining how
+to summarise the QFeatures. If \code{fcol} has length 1, the
+variable name is assumed to be the same for all assays}
 
-\item{name}{A \code{character()} naming the new assay. \code{name} must have the same
-length as \code{i}. Note that the function will fail if of the names in
-\code{name} is already present.}
+\item{name}{A \code{character()} naming the new assay. \code{name} must have
+the same length as \code{i}. Note that the function will fail if of
+the names in \code{name} is already present.}
 
 \item{fun}{A function used for quantitative feature aggregation.}
 
@@ -28,9 +28,10 @@ length as \code{i}. Note that the function will fail if of the names in
 A \code{QFeatures} object
 }
 \description{
-This function is a wrapper function around \link[QFeatures:QFeatures-aggregate]{QFeatures::aggregateFeatures}. It
-allows the user to provide multiple assays for which \code{aggregateFeatures}
-will be applied sequentially.
+This function is a wrapper function around
+\link[QFeatures:QFeatures-aggregate]{QFeatures::aggregateFeatures}. It allows the user to provide
+multiple assays for which \code{aggregateFeatures} will be applied
+sequentially.
 }
 \examples{
 data("scp1")

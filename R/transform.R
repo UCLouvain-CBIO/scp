@@ -15,15 +15,15 @@
 ##' 
 ##' @noRd
 .replaceAssay <- function(obj, y, i) {
-  if (length(i) > 1) stop("Only 1 assay can be replaced at a time.")
-  if (!inherits(obj, "QFeatures")) stop("'obj' must be a 'QFeatures' object")
-  if (!inherits(y, "SummarizedExperiment")) 
-    stop("'y' must inherits from a 'SummarizedExperiment' object")
-  if (!identical(colnames(experiments(obj)[[i]]), colnames(y)))
-    stop("Colnames of old and new assays must match. Otherwise, consider ",
-         "using 'experiments(obj)[[i]] <- y' to avoid bad surprises.")
-  obj@ExperimentList@listData[[i]] <- y
-  return(obj)
+    if (length(i) > 1) stop("Only 1 assay can be replaced at a time.")
+    if (!inherits(obj, "QFeatures")) stop("'obj' must be a 'QFeatures' object")
+    if (!inherits(y, "SummarizedExperiment")) 
+        stop("'y' must inherits from a 'SummarizedExperiment' object")
+    if (!identical(colnames(experiments(obj)[[i]]), colnames(y)))
+        stop("Colnames of old and new assays must match. Otherwise, consider ",
+             "using 'experiments(obj)[[i]] <- y' to avoid bad surprises.")
+    obj@ExperimentList@listData[[i]] <- y
+    return(obj)
 }
 
 ##' Divide assay columns by a reference column
@@ -67,29 +67,29 @@ divideByReference <- function(obj,
                               colDataCol,
                               samplePattern = ".",
                               refPattern) {
-  ## Check arguments
-  if (!inherits(obj, "QFeatures")) stop("'obj' must be a QFeatures object")
-  for (ii in i){
-    ## Get the reference channel 
-    annot <- colData(obj)[colnames(obj[[ii]]), ][, colDataCol]
-    refIdx <- grep(refPattern, annot)
-    sampIdx <- grep(samplePattern, annot)
-    if (!length(refIdx)) 
-      stop("The reference pattern '", refPattern, 
-           "' did not match any column in '", names(obj)[ii], "'")
-    if (!length(sampIdx)) 
-      stop("The sample pattern '", samplePattern, 
-           "' did not match any column in '", names(obj)[ii], "'")
-    if (length(refIdx) != 1) 
-      warning("Multiple references found in assay '", names(obj)[ii], 
-              "'. Only the first match will be used")
-    ## Divide all channels by the reference channel
-    y <- obj[[ii]]
-    assay(y)[, sampIdx] <- assay(y)[, sampIdx, drop = FALSE] / assay(y)[, refIdx]
-    ## Store the normalized assay
-    obj <- .replaceAssay(obj, y, ii)
-  }
-  return(obj)
+    ## Check arguments
+    if (!inherits(obj, "QFeatures")) stop("'obj' must be a QFeatures object")
+    for (ii in i){
+        ## Get the reference channel 
+        annot <- colData(obj)[colnames(obj[[ii]]), ][, colDataCol]
+        refIdx <- grep(refPattern, annot)
+        sampIdx <- grep(samplePattern, annot)
+        if (!length(refIdx)) 
+            stop("The reference pattern '", refPattern, 
+                 "' did not match any column in '", names(obj)[ii], "'")
+        if (!length(sampIdx)) 
+            stop("The sample pattern '", samplePattern, 
+                 "' did not match any column in '", names(obj)[ii], "'")
+        if (length(refIdx) != 1) 
+            warning("Multiple references found in assay '", names(obj)[ii], 
+                    "'. Only the first match will be used")
+        ## Divide all channels by the reference channel
+        y <- obj[[ii]]
+        assay(y)[, sampIdx] <- assay(y)[, sampIdx, drop = FALSE] / assay(y)[, refIdx]
+        ## Store the normalized assay
+        obj <- .replaceAssay(obj, y, ii)
+    }
+    return(obj)
 }
 
 
@@ -112,9 +112,9 @@ divideByReference <- function(obj,
 ##' data("scp1")
 ##' scp1 <- infIsNA(scp1, i = "peptides")
 infIsNA <- function(obj, i) {
-  for (ii in i) {
-    sel <- is.infinite(assay(obj[[ii]])) 
-    assay(obj[[ii]])[sel] <- NA
-  }
-  obj
+    for (ii in i) {
+        sel <- is.infinite(assay(obj[[ii]])) 
+        assay(obj[[ii]])[sel] <- NA
+    }
+    obj
 }
