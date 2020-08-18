@@ -33,7 +33,7 @@ allows the user to provide multiple assays for which \code{aggregateFeatures}
 will be applied sequentially.
 }
 \examples{
-scp1
+data("scp1")
 scp1 <- aggregateFeaturesOverAssays(scp1, 
                                     i = 1:3,
                                     fcol = "peptide",
@@ -41,7 +41,6 @@ scp1 <- aggregateFeaturesOverAssays(scp1,
                                     fun = colMeans,
                                     na.rm = TRUE)
 scp1
-
 }
 \seealso{
 \link[QFeatures:QFeatures-aggregate]{QFeatures::aggregateFeatures}

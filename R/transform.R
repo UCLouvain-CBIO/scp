@@ -11,6 +11,8 @@
 ##' 
 ##' @param i a characther(1) or logical(1) that indicates which assay must be replaced
 ##'
+##' @importFrom MultiAssayExperiment experiments
+##' 
 ##' @noRd
 .replaceAssay <- function(obj, y, i) {
   if (length(i) > 1) stop("Only 1 assay can be replaced at a time.")
