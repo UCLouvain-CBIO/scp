@@ -4,34 +4,36 @@
 \alias{computeSCR}
 \title{Compute the sample over carrier ratio (SCR)}
 \usage{
-computeSCR(obj, i, colDataCol, samplePattern, carrierPattern, verbose = TRUE)
+computeSCR(obj, i, colDataCol, samplePattern, carrierPattern)
 }
 \arguments{
 \item{obj}{A \code{QFeatures} object.}
 
-\item{i}{A \code{character()} or \code{integer()} indicating for which assay(s) the
-SCR needs to be computed.}
+\item{i}{A \code{character()} or \code{integer()} indicating for which
+assay(s) the SCR needs to be computed.}
 
-\item{colDataCol}{A \code{character(1)} indicating the variable to take from
-\code{colData(obj)} that gives the sample annotation.}
+\item{colDataCol}{A \code{character(1)} indicating the variable to take
+from \code{colData(obj)} that gives the sample annotation.}
 
-\item{samplePattern}{A \code{character(1)} pattern that matches the sample
-encoding in \code{colDataCol}.}
+\item{samplePattern}{A \code{character(1)} pattern that matches the
+sample encoding in \code{colDataCol}.}
 
-\item{carrierPattern}{A \code{character(1)} pattern that matches the carrier
-encoding in \code{colDataCol}. Only one match per assay is allowed, otherwise
-only the first match is taken}
+\item{carrierPattern}{A \code{character(1)} pattern that matches the
+carrier encoding in \code{colDataCol}. Only one match per assay is
+allowed, otherwise only the first match is taken}
 }
 \value{
-A \code{QFeatures} object for which the \code{rowData} of the given assay(s) is
-augmented with the mean SCR (\code{meanSCR} variable).
+A \code{QFeatures} object for which the \code{rowData} of the given
+assay(s) is augmented with the mean SCR (\code{meanSCR}
+variable).
 }
 \description{
-The function computes the ratio of the intensities of sample channels over
-the intentisty of the carrier channel for each feature. The ratios are
-averaged within the assay.
+The function computes the ratio of the intensities of sample
+channels over the intentisty of the carrier channel for each
+feature. The ratios are averaged within the assay.
 }
 \examples{
+data("scp1")
 scp1 <- computeSCR(scp1, 
                    i = 1,
                    colDataCol = "SampleType",

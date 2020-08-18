@@ -2,56 +2,60 @@
 % Please edit documentation in R/readSCP.R
 \name{readSCP}
 \alias{readSCP}
-\title{Read single-cell proteomics data as a QFeatures object from tabular
-data and metadata}
+\title{Read single-cell proteomics data as a QFeatures object from
+tabular data and metadata}
 \usage{
 readSCP(quantTable, metaTable, batchCol, channelCol, verbose = TRUE, ...)
 }
 \arguments{
-\item{quantTable}{File or object holding the quantitative data. Can be
-either a \code{character(1)} with the path to a text-based
-spreadsheet (comma-separated values by default, but see \code{...})
-or an object that can be coerced to a \code{data.frame}. It is
-advised not to encode characters as factors.}
+\item{quantTable}{File or object holding the quantitative
+data. Can be either a \code{character(1)} with the path to a
+text-based spreadsheet (comma-separated values by default, but
+see \code{...}) or an object that can be coerced to a
+\code{data.frame}. It is advised not to encode characters as
+factors.}
 
-\item{metaTable}{A \code{data.frame} or any object that can be coerced to a
-\code{data.frame}. \code{metaTable} is expected to contains all the sample meta
-information. Required fields are the acquisition batch (given by
-\code{batchCol}) and the acquisition channel within the batch (e.g. TMT
-channel, given by \code{channelCol}). Additional fields (e.g. sample type,
-acquisition date,...) are allowed and will be stored as sample meta data.}
+\item{metaTable}{A \code{data.frame} or any object that can be coerced
+to a \code{data.frame}. \code{metaTable} is expected to contains all the
+sample meta information. Required fields are the acquisition
+batch (given by \code{batchCol}) and the acquisition channel within
+the batch (e.g. TMT channel, given by
+\code{channelCol}). Additional fields (e.g. sample type,
+acquisition date,...) are allowed and will be stored as sample
+meta data.}
 
-\item{batchCol}{A \code{numeric(1)} or \code{character(1)} pointing to the column of
-\code{quantTable} and \code{metaTable} that contain the batch names. Make sure
-that the column name in both table are either identical (if you supply a
-\code{character}) or have the same index (if you supply a \code{numeric}).}
+\item{batchCol}{A \code{numeric(1)} or \code{character(1)} pointing to the
+column of \code{quantTable} and \code{metaTable} that contain the batch
+names. Make sure that the column name in both table are either
+identical (if you supply a \code{character}) or have the same index
+(if you supply a \code{numeric}).}
 
-\item{channelCol}{A \code{numeric(1)} or \code{character(1)} pointing to the column of
-\code{metaTable} that contains the column names of the quantitive data in
-\code{quantTable} (see Example).}
+\item{channelCol}{A \code{numeric(1)} or \code{character(1)} pointing to the
+column of \code{metaTable} that contains the column names of the
+quantitive data in \code{quantTable} (see Example).}
 
-\item{verbose}{A \code{logical(1)} indicating whether the progress of the data
-reading and formatting should be printed to the console.}
+\item{verbose}{A \code{logical(1)} indicating whether the progress of
+the data reading and formatting should be printed to the
+console. Default is \code{TRUE}.}
 
 \item{...}{Further arguments that can be passed on to \link{read.csv}
 except \code{stringsAsFactors}, which is always \code{FALSE}.}
 }
 \value{
-An instance of class \link{QFeatures}. The expression data of each batch
-is stored in a separate assay as a \code{SingleCellExperiment} object.
+An instance of class \link{QFeatures}. The expression data of
+each batch is stored in a separate assay as a
+\link{SingleCellExperiment} object.
 }
 \description{
-Convert tabular quantitative MS data and metadata from a spreadsheet or a
-\code{data.frame} into a \code{QFeatures} object containing \code{SingleCellExperiment}
-objects.
-}
-\details{
-
+Convert tabular quantitative MS data and metadata from a
+spreadsheet or a \code{data.frame} into a \link{QFeatures} object containing
+\link{SingleCellExperiment} objects.
 }
 \examples{
 
 ## Load an example table containing MaxQuant output
 data("mqFile")
+
 ## Load the (user-generated) annotation table
 data("sampleAnnotation")
 
