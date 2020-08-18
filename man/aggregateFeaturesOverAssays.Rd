@@ -28,7 +28,7 @@ length as \code{i}. Note that the function will fail if of the names in
 A \code{QFeatures} object
 }
 \description{
-This function is a wrapper function around \link{aggregateFeatures}. It
+This function is a wrapper function around \link[QFeatures:QFeatures-aggregate]{QFeatures::aggregateFeatures}. It
 allows the user to provide multiple assays for which \code{aggregateFeatures}
 will be applied sequentially.
 }
@@ -44,5 +44,5 @@ scp1
 
 }
 \seealso{
-\link{aggregateFeatures}
+\link[QFeatures:QFeatures-aggregate]{QFeatures::aggregateFeatures}
 }
