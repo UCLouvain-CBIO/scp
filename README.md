@@ -1,3 +1,6 @@
+[![codecov.io](https://codecov.io/github/UCLouvain-CBIO/scp/coverage.svg?branch=master)](https://codecov.io/github/UCLouvain-CBIO/scp?branch=master)
+
+
 # Single cell proteomics data processing
 
 The `scp` package is used to process and analyse mass spectrometry-based single cell proteomics data.
