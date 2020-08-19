@@ -1,38 +1,64 @@
 ---
 title: "Single Cell Proteomics data processing and analysis."
-author:
-- name: Laurent Gatto
-- name: Christophe Vanderaa
-package: scp
-abstract: >
- This vignette describes the functionality implemented in the scp
- package. scp provides function to process and analyse mass 
- spectrometry-based single cell proteomics data.
-output:
+author: 
+  - name: Laurent Gatto
+  - name: Christophe Vanderaa
+output: 
   BiocStyle::html_document:
+    self_contained: yes
+    toc: true
     toc_float: true
+    toc_depth: 2
+    code_folding: show
+date: "`r doc_date()`"
+package: "`r pkg_ver('scp')`"
 vignette: >
   %\VignetteIndexEntry{Single Cell Proteomics data processing and analysis}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r style, echo = FALSE, results = 'asis'}
-BiocStyle::markdown()
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+    collapse = TRUE,
+    comment = "#>",
+    crop = NULL ## Related to https://stat.ethz.ch/pipermail/bioc-devel/2020-April/016656.html
+)
 ```
 
-```{r env, message = FALSE, warning = FALSE, echo = FALSE}
+
+# The `scp` package
+
+```{r load, message = FALSE}
 library("scp")
 ```
 
-# Introduction
+The `scp` package is used to process and analyse mass
+spectrometry-based single cell proteomics data.  It relies on the
+[`QFeatures`](https://rformassspectrometry.github.io/QFeatures/)
+package to manage and process
+[`SingleCellExperiment`](http://bioconductor.org/packages/release/bioc/html/SingleCellExperiment.html)
+objects.
+
 
 ```{r scp_framework, results='markup', fig.cap="`scp` relies on `SingleCellExperiment` and `QFeatures` objects.", echo=FALSE, out.width='100%', fig.align='center'}
 knitr::include_graphics("./figures/SCP_framework.png", error = FALSE)
 ```
 
+
 # Session information {-}
+
+```{r setup2, include = FALSE}
+knitr::opts_chunk$set(
+    collapse = TRUE,
+    comment = "",
+    crop = NULL
+)
+```
+
 
 ```{r sessioninfo, echo=FALSE}
 sessionInfo()
 ```
+
+
