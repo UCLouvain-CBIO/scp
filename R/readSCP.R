@@ -106,7 +106,7 @@ readSCP <- function(quantTable,
     
     ## Add unique sample identifiers
     if (verbose) message(paste0("Formating sample metadata (colData)"))
-    for (i in 1:length(scp)) {
+    for (i in seq_along(scp)) {
         colnames(scp[[i]]) <- paste0(names(scp)[[i]], "_", colnames(scp[[i]]))
     }
     ## Create the colData 

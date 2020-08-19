@@ -29,8 +29,9 @@ rowDataToDF <- function(obj, i, vars) {
     if (!inherits(obj, "QFeatures")) stop("'obj' must be a QFeatures object")
     if (is.numeric(i)) i <- names(obj)[i]
     ## Make sure that the variables to extract are present in the rowData
-    mis <- sapply(experiments(obj)[i], 
-                  function(x) any(!vars %in% colnames(rowData(x))))
+    mis <- vapply(experiments(obj)[i], 
+                  function(x) any(!vars %in% colnames(rowData(x))),
+                  logical(1))
     if (any(mis)) 
         stop("rowData variable(s) not found in:\n", 
              paste(i[mis], collapse = ", "))
