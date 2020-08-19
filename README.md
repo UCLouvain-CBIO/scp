@@ -20,8 +20,9 @@ BiocManager::install("UCLouvain-CBIO/scp")
 
 ## Asking for help
 
-Feel free to use Github issues to ask question and report problems
-with `scp`. 
+Feel free to use [Github
+issues](https://github.com/UCLouvain-CBIO/scp/issues) to ask question
+and report problems with `scp`.
 
 
 
