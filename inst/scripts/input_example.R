@@ -3,9 +3,10 @@ library(scp)
 
 ## Create an MaxQuant output example file
 
-## The dataset is a subset of the SCoPE2 dataset (Specht et al. 2019, BioRXiv)
-## https://www.biorxiv.org/content/10.1101/665307v3
-## The datatable was downloaded from https://drive.google.com/drive/folders/1VzBfmNxziRYqayx3SP-cOe2gu129Obgx
+## The dataset is a subset of the SCoPE2 dataset (Specht et al. 2019,
+## BioRXiv) https://www.biorxiv.org/content/10.1101/665307v3 The
+## datatable was downloaded from
+## https://drive.google.com/drive/folders/1VzBfmNxziRYqayx3SP-cOe2gu129Obgx
 ## To run this code, you need to first run scp1.R
 read.csv("extdata/evidence_unfiltered.csv", sep = ",", header = TRUE)
 ev %>% 
@@ -36,8 +37,8 @@ save(mqFile, file = file.path("data/mqFile.rda"),
 ## Create the associated annotation file
 ## The datatables are downloaded from https://www.biorxiv.org/content/10.1101/665307v3
 
-cells <- read.csv("extdata/annotation.csv", check.names = F)
-batch <- read.csv("extdata/batch.csv", check.names = F)
+cells <- read.csv("extdata/annotation.csv", check.names = FALSE)
+batch <- read.csv("extdata/batch.csv", check.names = FALSE)
 ## Clean the sample metadata so that it meets the requirements for
 ## `scp::readSCP`. The cell annotation and batch annotation are merge into a 
 ## table
