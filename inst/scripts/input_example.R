@@ -8,7 +8,7 @@ library(scp)
 ## datatable was downloaded from
 ## https://drive.google.com/drive/folders/1VzBfmNxziRYqayx3SP-cOe2gu129Obgx
 ## To run this code, you need to first run scp1.R
-read.csv("extdata/evidence_unfiltered.csv", sep = ",", header = TRUE)
+read.csv("inst/extdata/evidence_unfiltered.csv", sep = ",", header = TRUE)
 ev %>% 
   select(-c("X", "X1", "lcbatch", "sortday",  "digest")) %>%
   ## channel naming should be consistent with metadata
@@ -37,8 +37,8 @@ save(mqFile, file = file.path("data/mqFile.rda"),
 ## Create the associated annotation file
 ## The datatables are downloaded from https://www.biorxiv.org/content/10.1101/665307v3
 
-cells <- read.csv("extdata/annotation.csv", check.names = FALSE)
-batch <- read.csv("extdata/batch.csv", check.names = FALSE)
+cells <- read.csv("inst/extdata/annotation.csv", check.names = FALSE)
+batch <- read.csv("inst/extdata/batch.csv", check.names = FALSE)
 ## Clean the sample metadata so that it meets the requirements for
 ## `scp::readSCP`. The cell annotation and batch annotation are merge into a 
 ## table
