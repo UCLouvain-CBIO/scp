@@ -2,7 +2,6 @@
 ##' @import QFeatures
 ##' @import dplyr
 ##' @import magrittr
-##' @import ggplot2
 
 ##' @title Read single-cell proteomics data as a QFeatures object from
 ##'     tabular data and metadata
