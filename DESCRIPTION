@@ -25,12 +25,14 @@ Imports:
     S4Vectors,
     dplyr,
     magrittr,
-    ggplot2
+    rlang
 Suggests:
     testthat,
     knitr,
     BiocStyle,
-    rmarkdown
+    rmarkdown,
+    patchwork,
+    ggplot2
 Remotes:
    RforMassSpectrometry/QFeatures
 License: Artistic-2.0
