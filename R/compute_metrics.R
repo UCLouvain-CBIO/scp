@@ -115,16 +115,15 @@ computeFDR <- function(object,
     
     ## Get the PEP from all assays
     peps <- rowDataToDF(object, i, vars = c(groupCol, pepCol))
-    colnames(peps)[1:2] <- c("groupCol", "pepCol")
-    if (max(peps$pepCol) > 1 | min(peps$pepCol) < 0) 
-        stop(paste0("'", pepCol, "' must link to a probability in (0, 1)"))
+    if (max(peps[, pepCol]) > 1 | min(peps[, pepCol]) < 0) 
+        stop(paste0("'", pepCol, "' is not a probability in (0, 1)"))
     
     ## Order the features to replicate SCoPE2
     message("Features are sorted. This is only needed when replicating the SCoPE2 analysis\nSee also https://github.com/SlavovLab/SCoPE2/issues/3")
-    peps <- arrange(data.frame(peps), .assay, groupCol, pepCol)
+    peps <- arrange(data.frame(peps), .data$.assay, .data[[groupCol]], .data[[pepCol]])
     ## Compute the FDR for every peptide ID separately
-    peps <- group_by(data.frame(peps), groupCol)
-    peps <- mutate(peps, FDR = fdrFromPEP(pepCol))
+    peps <- group_by(data.frame(peps), .data[[groupCol]])
+    peps <- mutate(peps, FDR = fdrFromPEP(.data[[pepCol]]))
     
     ## Insert the FDR inside every assay
     pepID <- paste0(peps$.assay, peps$.rowname)
@@ -171,6 +170,7 @@ computeFDR <- function(object,
 ##' @export
 ##'
 ##' @importFrom stats median sd
+##' @importFrom rlang .data
 ##'
 ##' @examples
 ##' data("scp1")
@@ -186,37 +186,36 @@ computeMedianCV <- function(object,
                             peptideCol, 
                             proteinCol,
                             batchCol) {
-    warning("Cell type selection is performed to reproduce SCoPE2. This should be removed!")
+    message("Cell type selection is performed to reproduce SCoPE2. This should be removed!")
     ## Extract the expression data and metadata as long format
-    colname = "colname" ## for compatibility with `group_by_at`
     object %>%
         .assayToLongDF(i = i, 
                        rowDataCols = c(peptideCol, proteinCol), 
                        colDataCols = c(batchCol, "SampleType")) %>%
         data.frame %>%
         ## Normalize cells with median
-        group_by(colname) %>%
-        mutate(norm_q1 = value / median(value, na.rm = TRUE)) %>%
-        ## Normalized peptides/Set with mean of cell normalized expression
-        group_by_at(c(peptideCol, batchCol)) %>%
-        mutate(norm_q = value / mean(norm_q1, na.rm = TRUE)) %>%
+        group_by(.data$colname) %>%
+        mutate(norm_q1 = .data$value / median(.data$value, na.rm = TRUE)) %>%
+        ## Normalize peptides per Set with mean of cell normalized expression
+        group_by(.data[[peptideCol]], .data[[batchCol]]) %>%
+        mutate(norm_q = .data$value / mean(.data$norm_q1, na.rm = TRUE)) %>%
         ## Filter cell type. 
         ## TODO remove this filtering
-        dplyr::filter(SampleType %in% c("Macrophage", "Monocyte", "Blank")) %>%
+        dplyr::filter(.data$SampleType %in% c("Macrophage", "Monocyte", "Blank")) %>%
         ## Compute the protein CV in every cell
-        group_by_at(c(proteinCol, colname)) %>%
-        mutate(norm_q_sd = sd(norm_q, na.rm = TRUE),
-               norm_q_mean = mean(norm_q, na.rm = TRUE),
-               cvq = norm_q_sd / norm_q_mean) %>%
+        group_by(.data[[proteinCol]], .data$colname) %>%
+        mutate(norm_q_sd = sd(.data$norm_q, na.rm = TRUE),
+               norm_q_mean = mean(.data$norm_q, na.rm = TRUE),
+               cvq = .data$norm_q_sd / .data$norm_q_mean) %>%
         ## Remove CVs that were computed based on few data points
-        group_by_at(c(proteinCol, colname)) %>%
-        mutate(cvn = sum(!is.na(norm_q))) %>%
-        dplyr::filter(cvn > 5) %>%
+        group_by(.data[[proteinCol]], .data$colname) %>%
+        mutate(cvn = sum(!is.na(.data$norm_q))) %>%
+        dplyr::filter(.data$cvn > 5) %>%
         ## Compute the median CV per cell
-        group_by(colname) %>%
-        mutate(MedianCV = median(cvq, na.rm = TRUE)) %>%
+        group_by(.data$colname) %>%
+        mutate(MedianCV = median(.data$cvq, na.rm = TRUE)) %>%
         ## Store the cell median CV in the coldata
-        select(colname, MedianCV) %>%
+        select(.data$colname, .data$MedianCV) %>%
         unique ->
         CVs
     object@ExperimentList@listData[[i]]$MedianCV <- NA
