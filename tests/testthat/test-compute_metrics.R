@@ -49,5 +49,15 @@ test_that("computeFDR", {
 })
 
 test_that("computeMedianCV", {
-  warning("TODO")
+  ## TODO improve this test after improving the CV computation algorithm
+  expect_equal(computeMedianCV(scp1, i = "peptides", peptideCol = "peptide", 
+                                   proteinCol = "protein", 
+                                   batchCol = "Set")[["peptides"]]$MedianCV,
+                   c(NA, NA, NA, 0.72830710905132, 0.778688251750191, 1.03956742480134, 
+                     0.526933183452957, 0.447329625349529, 0.346740321446223, 0.441428083348158, 
+                     0.774968411920989, NA, NA, NA, 0.977975517652186, 1.28733510164692, 
+                     0.948691932585763, NA, 0.908961764969587, 1.07509134173885, 0.71998288423204, 
+                     0.947756691696601, NA, NA, NA, NA, 0.808254681838227, 1.09581518003356, 
+                     1.1330059279254, 1.12084088292072, 0.806942496031636, 1.19054653629395, 
+                     1.1396089190922, NA, NA, NA, NA, NA))
 })
