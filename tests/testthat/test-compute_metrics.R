@@ -45,7 +45,7 @@ test_that("computeFDR", {
                regexp = paste0("not found in:\n", names(scp1)[2]))
   ## Error: PEP must be a numeric between 0 and 1
   expect_error(computeFDR(scp1, i = 1, groupCol = "peptide", pepCol = "Length"),
-               regexp = "must link to a probability")
+               regexp = "is not a probability")
 })
 
 test_that("computeMedianCV", {
