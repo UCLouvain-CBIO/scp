@@ -51,7 +51,7 @@ library("scp")
 We also load `ggplot2` and `magrittr` for convenient data manipulation and 
 plotting, respectively.
 
-```{r load_scp, message = FALSE}
+```{r load_other_package, message = FALSE}
 library("ggplot2")
 library("magrittr")
 ```
