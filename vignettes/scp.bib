@@ -1,0 +1,240 @@
+
+
+@ARTICLE{Amezquita2019-bf,
+  title     = "Orchestrating single-cell analysis with Bioconductor",
+  author    = "Amezquita, Robert A and Lun, Aaron T L and Becht, Etienne and
+               Carey, Vince J and Carpp, Lindsay N and Geistlinger, Ludwig and
+               Martini, Federico and Rue-Albrecht, Kevin and Risso, Davide and
+               Soneson, Charlotte and Waldron, Levi and Pag{\`e}s, Herv{\'e}
+               and Smith, Mike L and Huber, Wolfgang and Morgan, Martin and
+               Gottardo, Raphael and Hicks, Stephanie C",
+  abstract  = "Recent technological advancements have enabled the profiling of
+               a large number of genome-wide features in individual cells.
+               However, single-cell data present unique challenges that require
+               the development of specialized methods and software
+               infrastructure to successfully derive biological insights. The
+               Bioconductor project has rapidly grown to meet these demands,
+               hosting community-developed open-source software distributed as
+               R packages. Featuring state-of-the-art computational methods,
+               standardized data infrastructure and interactive data
+               visualization tools, we present an overview and online book
+               (https://osca.bioconductor.org) of single-cell methods for
+               prospective users. This Perspective highlights open-source
+               software for single-cell analysis released as part of the
+               Bioconductor project, providing an overview for users and
+               developers.",
+  journal   = "Nat. Methods",
+  publisher = "Nature Publishing Group",
+  pages     = "1--9",
+  month     =  dec,
+  year      =  2019,
+  language  = "en"
+}
+
+
+@ARTICLE{Chen2019-uc,
+  title    = "{DART-ID} increases single-cell proteome coverage",
+  author   = "Chen, Albert Tian and Franks, Alexander and Slavov, Nikolai",
+  abstract = "Analysis by liquid chromatography and tandem mass spectrometry
+              (LC-MS/MS) can identify and quantify thousands of proteins in
+              microgram-level samples, such as those comprised of thousands of
+              cells. This process, however, remains challenging for smaller
+              samples, such as the proteomes of single mammalian cells, because
+              reduced protein levels reduce the number of confidently sequenced
+              peptides. To alleviate this reduction, we developed Data-driven
+              Alignment of Retention Times for IDentification (DART-ID).
+              DART-ID implements principled Bayesian frameworks for global
+              retention time (RT) alignment and for incorporating RT estimates
+              towards improved confidence estimates of
+              peptide-spectrum-matches. When applied to bulk or to single-cell
+              samples, DART-ID increased the number of data points by 30-50\%
+              at 1\% FDR, and thus decreased missing data. Benchmarks indicate
+              excellent quantification of peptides upgraded by DART-ID and
+              support their utility for quantitative analysis, such as
+              identifying cell types and cell-type specific proteins. The
+              additional datapoints provided by DART-ID boost the statistical
+              power and double the number of proteins identified as
+              differentially abundant in monocytes and T-cells. DART-ID can be
+              applied to diverse experimental designs and is freely available
+              at http://dart-id.slavovlab.net.",
+  journal  = "PLoS Comput. Biol.",
+  volume   =  15,
+  number   =  7,
+  pages    = "e1007082",
+  month    =  jul,
+  year     =  2019,
+  language = "en"
+}
+
+@Manual{QFeatures,
+    title = {QFeatures: Quantitative features for mass spectrometry data},
+    author = {Laurent Gatto},
+    note = {R package version 0.7.0},
+    year = 2020,
+    url = {https://github.com/RforMassSpectrometry/QFeatures},
+  }
+
+@ARTICLE{Gentleman2004-xw,
+  title    = "Bioconductor: open software development for computational biology
+              and bioinformatics",
+  author   = "Gentleman, Robert C and Carey, Vincent J and Bates, Douglas M and
+              Bolstad, Ben and Dettling, Marcel and Dudoit, Sandrine and Ellis,
+              Byron and Gautier, Laurent and Ge, Yongchao and Gentry, Jeff and
+              Hornik, Kurt and Hothorn, Torsten and Huber, Wolfgang and Iacus,
+              Stefano and Irizarry, Rafael and Leisch, Friedrich and Li, Cheng
+              and Maechler, Martin and Rossini, Anthony J and Sawitzki, Gunther
+              and Smith, Colin and Smyth, Gordon and Tierney, Luke and Yang,
+              Jean Y H and Zhang, Jianhua",
+  abstract = "The Bioconductor project is an initiative for the collaborative
+              creation of extensible software for computational biology and
+              bioinformatics. The goals of the project include: fostering
+              collaborative development and widespread use of innovative
+              software, reducing barriers to entry into interdisciplinary
+              scientific research, and promoting the achievement of remote
+              reproducibility of research results. We describe details of our
+              aims and methods, identify current challenges, compare
+              Bioconductor to other open bioinformatics projects, and provide
+              working examples.",
+  journal  = "Genome Biol.",
+  volume   =  5,
+  number   =  10,
+  pages    = "R80",
+  month    =  sep,
+  year     =  2004,
+  language = "en"
+}
+
+
+@ARTICLE{Johnson2007-nc,
+  title    = "Adjusting batch effects in microarray expression data using
+              empirical Bayes methods",
+  author   = "Johnson, W Evan and Li, Cheng and Rabinovic, Ariel",
+  abstract = "Non-biological experimental variation or ``batch effects'' are
+              commonly observed across multiple batches of microarray
+              experiments, often rendering the task of combining data from
+              these batches difficult. The ability to combine microarray data
+              sets is advantageous to researchers to increase statistical power
+              to detect biological phenomena from studies where logistical
+              considerations restrict sample size or in studies that require
+              the sequential hybridization of arrays. In general, it is
+              inappropriate to combine data sets without adjusting for batch
+              effects. Methods have been proposed to filter batch effects from
+              data, but these are often complicated and require large batch
+              sizes ( > 25) to implement. Because the majority of microarray
+              studies are conducted using much smaller sample sizes, existing
+              methods are not sufficient. We propose parametric and
+              non-parametric empirical Bayes frameworks for adjusting data for
+              batch effects that is robust to outliers in small sample sizes
+              and performs comparable to existing methods for large samples. We
+              illustrate our methods using two example data sets and show that
+              our methods are justifiable, easy to apply, and useful in
+              practice. Software for our method is freely available at:
+              http://biosun1.harvard.edu/complab/batch/.",
+  journal  = "Biostatistics",
+  volume   =  8,
+  number   =  1,
+  pages    = "118--127",
+  month    =  jan,
+  year     =  2007,
+  language = "en"
+}
+
+
+@ARTICLE{Kall2008-hb,
+  title    = "Posterior error probabilities and false discovery rates: two
+              sides of the same coin",
+  author   = "K{\"a}ll, Lukas and Storey, John D and MacCoss, Michael J and
+              Noble, William Stafford",
+  abstract = "A variety of methods have been described in the literature for
+              assigning statistical significance to peptides identified via
+              tandem mass spectrometry. Here, we explain how two types of
+              scores, the q-value and the posterior error probability, are
+              related and complementary to one another.",
+  journal  = "J. Proteome Res.",
+  volume   =  7,
+  number   =  1,
+  pages    = "40--44",
+  month    =  jan,
+  year     =  2008,
+  language = "en"
+}
+
+@Manual{sce,
+    title = {SingleCellExperiment: S4 Classes for Single Cell Data},
+    author = {Aaron Lun and Davide Risso},
+    year = {2020},
+    note = {R package version 1.10.1},
+  }
+
+@UNPUBLISHED{Specht2019-jm,
+  title    = "High-throughput single-cell proteomics quantifies the emergence
+              of macrophage heterogeneity",
+  author   = "Specht, Harrison and Emmott, Edward and Koller, Toni and Slavov,
+              Nikolai",
+  abstract = "The fate and physiology of individual cells are controlled by
+              networks of proteins. Yet, our ability to quantitatively analyze
+              protein networks in single cells has remained limited. To
+              overcome this barrier, we developed SCoPE2. It integrates
+              concepts from Single-Cell ProtEomics by Mass Spectrometry
+              (SCoPE-MS) with automated and miniaturized sample preparation,
+              substantially lowering cost and hands-on time. SCoPE2 uses
+              data-driven analytics to optimize instrument parameters for
+              sampling more ion copies per protein, thus supporting
+              quantification with improved count statistics. These advances
+              enabled us to analyze the emergence of cellular heterogeneity as
+              homogeneous monocytes differentiated into macrophage-like cells
+              in the absence of polarizing cytokines. We used SCoPE2 to
+              quantify over 2,000 proteins in 356 single monocytes and
+              macrophages in about 85 hours of instrument time, and the
+              quantified proteins allowed us to discern single cells by cell
+              type. Furthermore, the data uncovered a continuous gradient of
+              proteome states for the macrophage-like cells, suggesting that
+              macrophage heterogeneity may emerge even in the absence of
+              polarizing cytokines. Our methodology lays the foundation for
+              quantitative analysis of protein networks at single-cell
+              resolution. ![Figure][1] [1]: pending:yes",
+  journal  = "bioRxiv",
+  pages    = "665307",
+  month    =  jun,
+  year     =  2019,
+  language = "en"
+}
+
+@UNPUBLISHED{Sticker2019-gd,
+  title    = "Robust summarization and inference in proteome-wide label-free
+              quantification",
+  author   = "Sticker, Adriaan and Goeminne, Ludger and Martens, Lennart and
+              Clement, Lieven",
+  abstract = "Abstract Label-Free Quantitative mass spectrometry based
+              workflows for differential expression (DE) analysis of proteins
+              impose important challenges on the data analysis due to
+              peptide-specific effects and context dependent missingness of
+              peptide intensities. Peptide-based workflows, like MSqRob, test
+              for DE directly from peptide intensities and outper-form
+              summarization methods which first aggregate MS1 peptide
+              intensities to protein intensities before DE analysis. However,
+              these methods are computationally expensive, often hard to
+              understand for the non-specialised end-user, and do not provide
+              protein summaries, which are important for visualisation or
+              downstream processing. In this work, we therefore evaluate
+              state-of-the-art summarization strategies using a benchmark
+              spike-in dataset and discuss why and when these fail compared to
+              the state-of-the-art peptide based model, MSqRob. Based on this
+              evaluation, we propose a novel summarization strategy,
+              MSqRob-Sum, which estimates MSqRob's model parameters in a
+              two-stage procedure circumventing the drawbacks of peptide-based
+              workflows. MSqRobSum maintains MSqRob's superior performance,
+              while providing useful protein expression summaries for plotting
+              and downstream analysis. Summarising peptide to protein
+              intensities considerably reduces the computational complexity,
+              the memory footprint and the model complexity, and makes it
+              easier to disseminate DE inferred on protein summaries. Moreover,
+              MSqRobSum provides a highly modular analysis framework, which
+              provides researchers with full flexibility to develop data
+              analysis workflows tailored towards their specific applications.",
+  journal  = "bioRxiv",
+  pages    = "668863",
+  month    =  jun,
+  year     =  2019,
+  language = "en"
+}
