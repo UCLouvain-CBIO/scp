@@ -22,8 +22,7 @@ vignette: >
 knitr::opts_chunk$set(
     collapse = TRUE,
     comment = "#>",
-    crop = NULL, ## Related to https://stat.ethz.ch/pipermail/bioc-devel/2020-April/016656.html
-    eval = FALSE
+    crop = NULL ## Related to https://stat.ethz.ch/pipermail/bioc-devel/2020-April/016656.html
 )
 ```
 
@@ -54,6 +53,7 @@ plotting, respectively.
 ```{r load_other_package, message = FALSE}
 library("ggplot2")
 library("magrittr")
+library("dplyr")
 ```
 
 
@@ -447,9 +447,9 @@ scp[["peptides_filter1"]] %>%
   scale_x_log10()
 ```
 
-Here all values seems reasonable so no filtering is needed. If it were the 
+Here all values seems reasonable so no filtering is needed. If it were not the 
 case, the same procedure as the previous section can be used for selecting the 
-cells that pass the filter. 
+cells that have an associated median RI lower that a defined threshold. 
 
 ## Filter based on the median CV
 
@@ -484,20 +484,24 @@ scp[["peptides_filter1"]] %>%
   colData %>%
   data.frame %>%
   ggplot(aes(x = MedianCV, 
-             fill = SampleType)) +
-  geom_histogram() +
-  geom_vline(xintercept = 0.4)
+             fill = SampleAnnotation)) +
+  geom_boxplot() +
+  geom_vline(xintercept = 0.3)
 ```
 
 We can see that the protein quantifiation for single-cells are much more 
 consistent within cells than the blank channels. This is expected and can help 
 defining a threshold. We keep the cells that have a a median CV 
-lower than 0.4. We also remove the blanks since all QC is performed. 
+lower than 0.3. We also remove the blanks since all QC is performed. Note this 
+example is crude since there are only 3 blank sample, but more sets could lead 
+to a better estimation of the CV null distribution. 
 
-Again, we first compute the selection criterion.
+Again, we first compute the selection criterion. Note we also keep onluy the 
+samples of interest (macrophages and monocytes) since all QC metrics are now 
+computed.
 
 ```{r}
-keepSample <- scp[["peptides_filter1"]]$MedianCV < 0.4 &
+keepSample <- scp[["peptides_filter1"]]$MedianCV < 0.3 &
   scp[["peptides_filter1"]]$SampleAnnotation %in% c("sc_m0", "sc_u")
 keepSample[is.na(keepSample)] <- FALSE
 ```
@@ -505,7 +509,7 @@ keepSample[is.na(keepSample)] <- FALSE
 Then we subset the assay for samples that pass the filter
 
 ```{r}
-sce <- specht2019v2[["peptides_filter1"]]
+sce <- scp[["peptides_filter1"]]
 sce <- sce[, keepSample]
 ```
 
@@ -513,12 +517,12 @@ Finally, we add the filtered assay to the `QFeatures`object and created the
 required linking with the previous assay.
 
 ```{r}
-specht2019v2 %>%
-  addAssay(y = sce, 
-           name = "peptides_filter2") %>%
+addAssay(scp,
+         y = sce, 
+         name = "peptides_filter2") %>%
   addAssayLinkOneToOne(from = "peptides_filter1", 
                        to = "peptides_filter2") ->
-  specht2019v2
+  scp
 ```
 
 # Process the peptide data
@@ -545,7 +549,7 @@ conventional normalization procedure can be found in `?QFeatures::normalize`.
         i = "peptides_filter2", 
         MARGIN = 2, 
         FUN = "/", 
-        STATS = colMedians(assay(.[["peptides_filter2"]]), 
+        STATS = colMedians(assay(scp[["peptides_filter2"]]), 
                            na.rm = TRUE), 
         name = "peptides_norm_col") %>%
   ## Scale rows with mean
@@ -591,7 +595,8 @@ Similarly to aggregating PSM data to peptide data, we can aggregate peptide data
 to protein data using the `aggregateFeatures` function.
 
 ```{r}
-scp <- aggregateFeatures(i = "peptides_log",  
+scp <- aggregateFeatures(scp,
+                         i = "peptides_log",  
                          name = "proteins", 
                          fcol = "protein", 
                          fun = matrixStats::colMedians, na.rm = TRUE)
@@ -614,7 +619,7 @@ sweep(scp,
       i = "proteins", 
       MARGIN = 2, 
       FUN = "-", 
-      STATS = colMedians(assay(.[["proteins"]]), 
+      STATS = colMedians(assay(scp[["proteins"]]), 
                          na.rm = TRUE), 
       name = "proteins_norm_col") %>%
   ## Center rows with mean
@@ -630,25 +635,13 @@ sweep(scp,
 
 ## Imputation
 
-The protein data contains a lot of missing values. The graph below shows the 
-distribution of the proportion missingness in cells. Cells contain on average 
-over 75 \% missing values!
-
-```{r, message=FALSE}
-longFormat(specht2019v2[, , "proteins_norm"]) %>%
-  data.frame %>%
-  group_by(colname) %>%
-  summarize(missingness = mean(is.na(value))) %>%
-  ggplot(aes(x = missingness)) +
-  geom_histogram()
-```
-
-Whether imputation is beneficial or deleterious for the data will not be 
-discussed in this vignette. Missing data can either be imputed by replacing 
-the missing values by predicted values or can be taken into account during the
-statistical modeling. We here give an example of imputation using the K nearest 
-neighbors algorithm, with k = 3, that is available from the `impute` mehtod. 
-More details about the arguments can be found in `?impute::impute.knn`.
+The protein data contains a lot of missing values. Whether imputation is 
+beneficial or deleterious for the data will not be discussed in this vignette. 
+Missing data can either be imputed by replacing the missing values by predicted 
+values or can be taken into account during the statistical modeling. We here 
+give an example of imputation using the K nearest neighbors algorithm, with 
+k = 3, that is available from the `impute` mehtod. More details about the 
+arguments can be found in `?impute::impute.knn`.
 
 ```{r}
 scp <- impute(scp, 
@@ -673,7 +666,8 @@ as described below could be applied for any batch correcting method.
 We first extract the assay to process.
 
 ```{r}
-sce <- scp[["proteins_impd"]]
+scp <- transferColDataToAssay(scp, i = "proteins_norm")
+sce <- scp[["proteins_norm"]]
 ```
 
 Next, we need to provide a design matrix and the batch annotation to `Combat`. 
@@ -682,7 +676,7 @@ The design matrix allows to protect variables of interest, in our case
 
 ```{r}
 batch <- colData(sce)$Set
-model <- model.matrix(~ SampleType, data = colData(sce))
+model <- model.matrix(~ SampleAnnotation, data = colData(sce))
 ```
 
 We then load and call `ComBat` and overwrite the data matrix. Recall the data 
@@ -702,52 +696,90 @@ the feature links.
 addAssay(scp, 
          y = sce,
          name = "proteins_batchC") %>%
-  addAssayLinkOneToOne(from = "proteins_impd",
+  addAssayLinkOneToOne(from = "proteins_norm",
                        to = "proteins_batchC") ->
   scp
 ```
 
 # Dimension reduction
 
-**@todo**
+Because each assay contains `SingelCellExperiment` objects, we can easily apply
+methods developed in the scRNA-Seq field. A useful package for dimension 
+reduction on single-cell data is the `scater`.
 
 ```{r}
 library(scater)
 ```
 
+This package provides streamline functions to computes various dimension 
+reduction such as PCA, UMAP, t-SNE, NMF, MDS, ....
 
 ## PCA
 
-As a side note, the `scater` packages provides a suite of functions that perform
-and visualize dimension reduction for `SingleCellExperiment` objects. Since our 
-assays are all `SingleCellExperiment` objects, we can perform regular PCA on the
-protein data in just a few commands.
+PCA can be computed using the `runPCA` method. It returns a 
+`SingleCellExperiment` object for which the dimension reduction results are 
+stored in the `reducedDim` slot. 
 
-```{r}
-## Transfer sample annotation to the protein assay
-specht2019v2 <- transferColDataToAssay(specht2019v2, "proteins_batchC_norm") 
-specht2019v2[["proteins_batchC_norm"]] %>%
-  ## Perform PCA, see ?runPCA for more info on arguments
-  runPCA(ncomponents = 50, 
-         ntop = Inf, 
-         scale = TRUE, 
-         exprs_values = 1, 
-         name = "PCA") %>%
-  ## Plotting is performed in a single line of code
-  plotPCA(colour_by = "SampleType")
+```{r run_PCA}
+scp[["proteins_batchC"]] <- runPCA(scp[["proteins_batchC"]],
+                                   ncomponents = 50, 
+                                   ntop = Inf, 
+                                   scale = TRUE, 
+                                   exprs_values = 1, 
+                                   name = "PCA")
 ```
 
+The computed PCA can be displayed using the `plotReducedDim` function. The 
+`dimred` arguments gives the name of the dimension reduction results to plot, 
+here we called it `PCA`. The samples are colored by type of sample. 
+
+```{r plot_PCA}
+plotReducedDim(scp[["proteins_batchC"]], 
+               dimred = "PCA",
+               colour_by = "SampleAnnotation")
+```
+
+This is a minimalistic example with only a few plotted cells, but the original 
+SCoPE2 dataset contained over thousand cells.
 
 ## UMAP
 
-## tSNE
+Similarly to PCA, we can computed a UMAP using the `runUMAP` method. Note 
+however that the UMAP implementation requires a initialization, usually provided
+by PCA. The previous PCA results are used automatically when supplying 
+`dimred = "PCA"` (`PCA` is the name of the dimension reduction result that we 
+supplied in the previous section).
+
+```{r run_UMAP}
+scp[["proteins_batchC"]] <- runUMAP(scp[["proteins_batchC"]],
+                                    ncomponents = 2,
+                                    ntop = Inf, 
+                                    scale = TRUE, 
+                                    exprs_values = 1, 
+                                    n_neighbors = 3,
+                                    dimred = "PCA",
+                                    name = "UMAP")
+```
+
+The computed UMAP can be displayed using the `plotReducedDim` function. The 
+`dimred` arguments gives the name of the dimension reduction results to plot, 
+here we called it `UMAP`. The samples are colored by type of sample. 
+
+```{r plot_UMAP}
+plotReducedDim(scp[["proteins_batchC"]], 
+               dimred = "UMAP",
+               colour_by = "SampleAnnotation")
+```
+
+The UMAP plot is a very interesting plot for large datasets. A UMAP on this
+small example dataset is not useful but is shown for illustration purposes. 
+
 
 # Monitoring data processing
 
 The `QFeatures` plot shows the quantitative data for a features at the different
 expression levels. For instance, suppose we are interested in the protein 
-*VIM* (protein ID is `P08670`) from one of the SCoPE2 batches (*e.g.* 
-`191110S_LCB7_X_APNOV16plex2_Set_9`). A useful QC is to monitor the data 
+*LMNA* (protein ID is `P02545`). A useful QC is to monitor the data 
 processing at the PSM, peptide and protein level. This can easily be done thanks
 to the `QFeatures` framework. Using the `subsetByAssay` and the `subsetByRow` 
 functions, we can extract the batch and feature of interest, respectively. Then,
@@ -756,22 +788,20 @@ the data is formated to a long format table that can easily be plugged in the
 
 ```{r, warning = FALSE, fig.width = 10, out.width = "100%"}
 scp %>%
-  ## Get the features related to VIM (P08670)
-  subsetByFeature("P08670") %>%
+  ## Get the features related to LMNA (P02545)
+  subsetByFeature("P02545") %>%
   ## Format the `QFeatures` to a long format table
-  longFormat(colDataCols = c("Set", "SampleType", "Channel")) %>%
+  longFormat(colDataCols = c("Set", "SampleAnnotation", "Channel")) %>%
   data.frame %>%
-  ## Keep only the SCoPE2 set of interest
-  filter(Set == "191110S_LCB7_X_APNOV16plex2_Set_9") %>%
   ## This is used to preserve ordering of the samples and assays in ggplot2
   mutate(assay = factor(assay, levels = names(scp)),
          Channel = sub("RI", "TMT-", Channel),
          Channel = factor(Channel, levels = unique(Channel))) %>%
   ## Start plotting
-  ggplot(aes(x = Channel, y = value, group = rowname, col = SampleType)) +
+  ggplot(aes(x = Channel, y = value, group = rowname, col = SampleAnnotation)) +
   geom_point() +
   ## Plot every assay in a separate facet
-  facet_wrap(facets = vars(assay), scales = "free_y") +
+  facet_wrap(facets = vars(assay), scales = "free_y", ncol = 3) +
   ## Annotate plot
   xlab("Channels") +
   ylab("Intensity (arbitrary units)") +
@@ -782,80 +812,11 @@ scp %>%
 ```
 
 This graph can help us track the processing of the data and help us detect 
-anomalies in the data. For instance, we can see that 2 samples (TMT-13 and 
-TMT-15) were removed during median filtering because all signal is 0. We can 
-also see that no data was recorded for TMT-12, TMT-14, and TMT-16. Since TMT-12 
-to 16 are either macrophages or monocytes, those channels are not expected to be 
-removed or have missing data. Thanks to this diagnostic plot, we notified Specht 
-and colleagues there was an issue in their dataset and lead to version 3 of 
-the SCoPE2 dataset.
-
-# Cell type dependent missingness
-
-We showed previously in this vignette that SCP data is characterized by a 
-high rate of missing data. This missing data can be either technical or 
-biological. To illustrate this, we plot the rate of missingness in macrophages 
-against the rate of missingness in monocytes. Every point in the graph 
-represents a peptide. We color the peptide by the amount of change in expression
-observed between the macrophages and the monocytes.
-
-The code for plotting is rather elaborate, but notice the necessary data can 
-easily be extracted using only few commands. 
-
-```{r, fig.asp=1}
-## Transfer the sample annotation from the `QFeatures` object 
-## to the peptide assay
-specht2019v2 <- transferColDataToAssay(specht2019v2, "peptides_log")
-sce <- specht2019v2[["peptides_log"]]
-## Extract expression data from macrophages and monocytes separately
-monoDat <- assay(sce[, sce$SampleType == "Monocyte"])
-m0Dat <- assay(sce[, sce$SampleType == "Macrophage"])
-## Create a table with the rate of missingness for each cell type and 
-## compute the log fold change in median expression
-data.frame(m0Missing = rowMeans(is.na(m0Dat)) * 100,
-           monoMissing = rowMeans(is.na(monoDat)) * 100,
-           logFC = rowMedians(m0Dat, na.rm = TRUE) - rowMedians(monoDat, na.rm = TRUE)) %>%
-  ## Trim log fold change to dampen the impact of outliers
-  mutate(logFC = ifelse(abs(logFC) > 1, 1 * sign(logFC), logFC)) %>%
-  ## Start plotting
-  ggplot -> 
-  p
-p +
-  ## Plot rate of missingness in macrophages 
-  geom_histogram(aes(x = m0Missing), bins = 100) +
-  theme_minimal() +
-  theme(axis.title.x = element_blank(), axis.text.x = element_blank(),
-        axis.ticks.x = element_blank()) +
-  plot_spacer() + 
-  p + 
-  ## Plot missingness in macrophages vs missingness in monocytes
-  geom_point(aes(x = m0Missing, y = monoMissing, col = logFC)) +
-  theme(legend.position = "bottom") +
-  xlab("Missingness (%) in macrophages") +
-  ylab("Missingness (%) in monocytes") +
-  scale_color_gradient2(low = "#048ABF", mid = "bisque2", high = "#FF5733",
-                        breaks = c(-1, 1),
-                        labels = c("monocyte", "macrophage")) +
-  p +
-  ## Plot rate of missingness in monocytes
-  geom_histogram(aes(y = monoMissing), bins = 100) +
-  theme_minimal() +
-  theme(axis.title.y = element_blank(), axis.text.y = element_blank(),
-        axis.ticks.y = element_blank(), 
-        axis.text.x = element_text(angle = -90, vjust = 0.5, hjust=0)) +
-  ## Adjust plotting layout
-  plot_layout(widths = c(0.9, 0.1), heights = c(0.1, 0.9))
-```
-
-We can see that most of the peptides have equal missingness in macrophages and 
-monocytes. This is expected for technical missingness and this is further 
-confirmed by the fact that that the slope 1 line is dominated by peptides with 
-no large difference in log fold change (pale yellow). Interestingly, we can 
-also observe that the missingness for some peptides can be explained by 
-biological processes that are specific to one or the other cell type. Peptides 
-more expressed in macrophages (red) tend to be less missing in monocytes.
-Conversely, peptides more expressed in monocytes tend to be less missing in 
-monocytes. 
+anomalies in the data. For instance, we can see that no data were recorded for
+5 samples (TMT-12 to 16). Those channels contain either macrophages or monocytes
+(from the experimental design) and are expected to contain information. Thanks 
+to this diagnostic plot, we reported the issue to Specht and colleagues there 
+and this led to version 3 of the SCoPE2 dataset.
 
 # Session information {-}
 

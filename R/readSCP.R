@@ -89,7 +89,6 @@ readSCP <- function(quantTable,
                                     ...)
     if (is.null(list(...)$row.names))
         rownames(scp@assays@data@listData[[1]]) <- paste0("PSM", 1:nrow(scp))
-        ## Note the row names 
     
     ## Check the link between metaTable and scp
     mis <- !rowData(scp)[, batchCol] %in% metaTable[, batchCol]
@@ -100,7 +99,7 @@ readSCP <- function(quantTable,
     }
     
     ## Split the SingleCellExperiment object by batch column
-    if (verbose) message(paste0("Splitting data based on '", batchCol))
+    if (verbose) message(paste0("Splitting data based on '", batchCol, "'"))
     scp <- .splitSCE(scp, f = batchCol)
     
     ## Add unique sample identifiers
