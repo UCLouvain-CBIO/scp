@@ -118,9 +118,6 @@ computeFDR <- function(object,
     if (max(peps[, pepCol]) > 1 | min(peps[, pepCol]) < 0) 
         stop(paste0("'", pepCol, "' is not a probability in (0, 1)"))
     
-    ## Order the features to replicate SCoPE2
-    message("Features are sorted. This is only needed when replicating the SCoPE2 analysis\nSee also https://github.com/SlavovLab/SCoPE2/issues/3")
-    peps <- arrange(data.frame(peps), .data$.assay, .data[[groupCol]], .data[[pepCol]])
     ## Compute the FDR for every peptide ID separately
     peps <- group_by(data.frame(peps), .data[[groupCol]])
     peps <- mutate(peps, FDR = fdrFromPEP(.data[[pepCol]]))
@@ -186,12 +183,11 @@ computeMedianCV <- function(object,
                             peptideCol, 
                             proteinCol,
                             batchCol) {
-    message("Cell type selection is performed to reproduce SCoPE2. This should be removed!")
     ## Extract the expression data and metadata as long format
     object %>%
         .assayToLongDF(i = i, 
                        rowDataCols = c(peptideCol, proteinCol), 
-                       colDataCols = c(batchCol, "SampleType")) %>%
+                       colDataCols = c(batchCol)) %>%
         data.frame %>%
         ## Normalize cells with median
         group_by(.data$colname) %>%
@@ -199,9 +195,6 @@ computeMedianCV <- function(object,
         ## Normalize peptides per Set with mean of cell normalized expression
         group_by(.data[[peptideCol]], .data[[batchCol]]) %>%
         mutate(norm_q = .data$value / mean(.data$norm_q1, na.rm = TRUE)) %>%
-        ## Filter cell type. 
-        ## TODO remove this filtering
-        dplyr::filter(.data$SampleType %in% c("Macrophage", "Monocyte", "Blank")) %>%
         ## Compute the protein CV in every cell
         group_by(.data[[proteinCol]], .data$colname) %>%
         mutate(norm_q_sd = sd(.data$norm_q, na.rm = TRUE),
