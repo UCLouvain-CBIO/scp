@@ -32,7 +32,12 @@ Suggests:
     BiocStyle,
     rmarkdown,
     patchwork,
-    ggplot2
+    ggplot2,
+    matrixStats,
+    impute,
+    scater,
+    sva,
+    uwot
 Remotes:
    RforMassSpectrometry/QFeatures
 License: Artistic-2.0
