@@ -87,6 +87,11 @@
 <h1 class="hasAnchor">
 <a href="#the-scp-package" class="anchor"></a>The <code>scp</code> package</h1>
 <p>The <code>scp</code> package is used to process and analyse mass spectrometry-based single cell proteomics (SCP) data. It relies on the <a href="https://rformassspectrometry.github.io/QFeatures/"><code>QFeatures</code></a> (<span class="citation">@QFeatures</span>) package to manage and process <a href="http://bioconductor.org/packages/release/bioc/html/SingleCellExperiment.html"><code>SingleCellExperiment</code></a> (<span class="citation">@sce</span>) objects.</p>
+<div class="figure" style="text-align: center">
+<img src="figures/SCP_framework.png" alt="`scp` relies on `SingleCellExperiment` and `QFeatures` objects." width="100%"><p class="caption">
+<code>scp</code> relies on <code>SingleCellExperiment</code> and <code>QFeatures</code> objects.
+</p>
+</div>
 <p>This vignette will guide you through the common steps of mass spectrometry-based single-cell proteomics data analysis. To start, we load the <code>scp</code> package.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st"><a href="https://UCLouvain-CBIO.github.io/scp">"scp"</a></span>)
@@ -95,6 +100,7 @@
 <div class="sourceCode" id="cb2"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st"><a href="http://ggplot2.tidyverse.org">"ggplot2"</a></span>)
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st">"magrittr"</span>)
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="st"><a href="https://dplyr.tidyverse.org">"dplyr"</a></span>)
 </pre></div>
 </div>
 <div id="read-in-scp-data" class="section level1">
@@ -120,6 +126,10 @@
                metaTable = <span class="kw">sampleAnnotation</span>,
                channelCol = <span class="st">"Channel"</span>,
                batchCol = <span class="st">"Set"</span>)
+<span class="co">#&gt; Loading data as a 'SingleCellExperiment' object</span>
+<span class="co">#&gt; Splitting data based on 'Set'</span>
+<span class="co">#&gt; Formating sample metadata (colData)</span>
+<span class="co">#&gt; Formating data as a 'QFeatures' object</span>
 </pre></div>
 <p>As indicated by the output on the console, <code>readSCP</code> proceeds as follows:</p>
 <ol style="list-style-type: decimal">
@@ -131,6 +141,10 @@
 <p>Here is a compact overview of the data:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit">
 <span class="kw">scp</span>
+<span class="co">#&gt; An instance of class QFeatures containing 3 assays:</span>
+<span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 334 rows and 16 columns </span>
+<span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 433 rows and 16 columns </span>
+<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 321 rows and 16 columns</span>
 </pre></div>
 <p>We can see that the <code>scp</code> object we create is a <code>QFeatures</code> object containing 3 assays. Each assay has an associated name, this is the batch name that was used for splitting. We can also see that each assay is a <code>SingleCellExperiment</code> object. The rows represent the peptide to spectrum matches (PSMs), the number vary depending on the batch. Finally, all three assays contains 16 columns that correspond to the 16 TMT channels recorded during the 3 MS runs.</p>
 </div>
@@ -148,6 +162,10 @@
 <p>A common steps in SCP is to filter out low-confidence PSMs. Each PSM assay contains feature meta-information that are stored in the assay’s <code>rowData</code>. The <code>QFeatures</code> package allows to quickly filter the rows of an assay by using these information. The available variables in the <code>rowData</code> are listed below for each assay.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit">
 <span class="fu">rowDataNames</span>(<span class="kw">scp</span>)
+<span class="co">#&gt; CharacterList of length 3</span>
+<span class="co">#&gt; [["190222S_LCA9_X_FP94BM"]] Sequence Length ... participated peptide</span>
+<span class="co">#&gt; [["190321S_LCA10_X_FP97AG"]] Sequence Length ... participated peptide</span>
+<span class="co">#&gt; [["190914S_LCB3_X_16plex_Set_21"]] Sequence Length ... participated peptide</span>
 </pre></div>
 <div id="filter-features-based-on-feature-metadata" class="section level2">
 <h2 class="hasAnchor">
@@ -173,12 +191,19 @@
 <p>To avoid proceedin with failed runs, another interesting filter is to remove assays with too few features. If a batch contains less than, for example, 150 features, then we can suspect something wrong happened in that batch and it should be removed.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit">
 <span class="fu">dims</span>(<span class="kw">scp</span>)
+<span class="co">#&gt;      190222S_LCA9_X_FP94BM 190321S_LCA10_X_FP97AG 190914S_LCB3_X_16plex_Set_21</span>
+<span class="co">#&gt; [1,]                   253                    282                          183</span>
+<span class="co">#&gt; [2,]                    16                     16                           16</span>
 </pre></div>
 <p>A <code>QFeatures</code> object can be seen as a three-order array: <span class="math inline">\(features \times samples \times assay\)</span>. Hence, <code>QFeatures</code> support three-order subsetting <code>x[rows, columns, assays]</code>. We first select the assay that have sufficient PSMs, and then subset the <code>scp</code> object for the assays that meet the criterion.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit">
 <span class="kw">keepAssay</span> <span class="op">&lt;-</span> <span class="fu">dims</span>(<span class="kw">scp</span>)[<span class="fl">1</span>, ] <span class="op">&gt;</span> <span class="fl">150</span>
 <span class="kw">scp</span> <span class="op">&lt;-</span> <span class="kw">scp</span>[, , <span class="kw">keepAssay</span>]
 <span class="kw">scp</span>
+<span class="co">#&gt; An instance of class QFeatures containing 3 assays:</span>
+<span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 253 rows and 16 columns </span>
+<span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 282 rows and 16 columns </span>
+<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 183 rows and 16 columns</span>
 </pre></div>
 <p>Note in our example, all assays have sufficient number of PSMs, hence none are removed.</p>
 </div>
@@ -190,6 +215,11 @@
 <div class="sourceCode" id="cb12"><pre class="downlit">
 <span class="fu">colData</span>(<span class="kw">scp</span>)[, <span class="st">"SampleAnnotation"</span>] <span class="op">%&gt;%</span>
   <span class="kw">table</span>
+<span class="co">#&gt; .</span>
+<span class="co">#&gt; carrier_mix        norm   reference        sc_0       sc_m0        sc_u </span>
+<span class="co">#&gt;           3           2           1           3          20           5 </span>
+<span class="co">#&gt;      unused </span>
+<span class="co">#&gt;          14</span>
 </pre></div>
 <p>In this dataset, <code>SampleType</code> gives the type of sample that is present in each TMT channel. The SCoPE2 protocole includes 5 types of samples: * The carrier channels (<code>carrier_mix</code>) contain 200 cell equivalents and are meant to boost the peptide identification rate. * The normalization channels (<code>norm</code> and <code>reference</code>) contain 5 cell equivalents and are used to partially correct for between-run variation. * The unused channels (<code>unused</code>) are channels that are left empty due to isotopic cross-contamination by the carrier channel. * The blank channels (<code>sc_0</code>) contain samples that do not contain any cell but are processed as single-cell samples. * The single-cell sample channels contain the single-cell samples of interest, that are macrophage (<code>sc_m0</code>) or monocyte (<code>sc_u</code>).</p>
 <p>The <code>computeSCR</code> function expects the following input:</p>
@@ -218,6 +248,7 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram</a></span>() <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span>(xintercept = <span class="fl">0.1</span>)
 </pre></div>
+<p><img src="scp_files/figure-html/plot_SCR-1.png" width="700"></p>
 <p>We can see that most values are close to 0.02 as expected since the experimental ratio is 1/200. There are a few point that have higher signal than expected. We therefore filter those point using a cutoff of 0.1 using again the <code>filterFeatures</code> functions.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit">
 <span class="kw">scp</span> <span class="op">&lt;-</span> <span class="fu">filterFeatures</span>(<span class="kw">scp</span>, 
@@ -263,6 +294,11 @@
 <h1 class="hasAnchor">
 <a href="#aggregate-psm-data-to-peptide-data" class="anchor"></a>Aggregate PSM data to peptide data</h1>
 <p>Now that the PSM assays are processed, we can aggregate them to peptides. This is performed using the <code>aggregateFeaturesOverAssays</code> function. For each assay, the function aggregates several PSMs into a unique peptide. This is best illustrated by the figure below.</p>
+<div class="figure" style="text-align: center">
+<img src="figures/feature_aggregation.png" alt="Conceptual illustration of features aggregation." width="100%"><p class="caption">
+Conceptual illustration of features aggregation.
+</p>
+</div>
 <p>The PSMs are aggregated over the <code>fcol</code> features variable, here peptides. We also need to supply an aggregating function that will tell how to combine the quantitative data of the PSMs to aggregate. We here use the median value. We name the aggregated assays using the original names and appending <code>peptides_</code> at the start.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit">
 <span class="kw">scp</span> <span class="op">&lt;-</span><span class="fu"><a href="../reference/aggregateFeaturesOverAssays.html">aggregateFeaturesOverAssays</a></span>(<span class="kw">scp</span>,
@@ -270,10 +306,23 @@
                                   fcol = <span class="st">"peptide"</span>, 
                                   name = <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"peptides_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="kw">scp</span>)),
                                   fun = <span class="kw">matrixStats</span>::<span class="kw"><a href="https://rdrr.io/pkg/matrixStats/man/rowMedians.html">colMedians</a></span>, na.rm = <span class="fl">TRUE</span>)
+<span class="co">#&gt; </span>
+<span class="kw">Aggregated</span><span class="op">:</span> <span class="fl">1</span><span class="op">/</span><span class="fl">3</span>
+<span class="co">#&gt; </span>
+<span class="kw">Aggregated</span><span class="op">:</span> <span class="fl">2</span><span class="op">/</span><span class="fl">3</span>
+<span class="co">#&gt; </span>
+<span class="kw">Aggregated</span><span class="op">:</span> <span class="fl">3</span><span class="op">/</span><span class="fl">3</span>
 </pre></div>
 <p>Under the hood, the <code>QFeatures</code> architecture preserves the relationship between the aggregated assays. See <code>?AssayLinks</code> for more information on relationships between assays. Three new assays were added to the dataset:</p>
 <div class="sourceCode" id="cb20"><pre class="downlit">
 <span class="kw">scp</span>
+<span class="co">#&gt; An instance of class QFeatures containing 6 assays:</span>
+<span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 217 rows and 16 columns </span>
+<span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 240 rows and 16 columns </span>
+<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 142 rows and 16 columns </span>
+<span class="co">#&gt;  [4] peptides_190222S_LCA9_X_FP94BM: SingleCellExperiment with 215 rows and 16 columns </span>
+<span class="co">#&gt;  [5] peptides_190321S_LCA10_X_FP97AG: SingleCellExperiment with 240 rows and 16 columns </span>
+<span class="co">#&gt;  [6] peptides_190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 142 rows and 16 columns</span>
 </pre></div>
 </div>
 <div id="join-the-scope2-sets-in-one-assay" class="section level1">
@@ -284,6 +333,8 @@
 <span class="kw">scp</span> <span class="op">&lt;-</span> <span class="fu">joinAssays</span>(<span class="kw">scp</span>, 
                   i = <span class="fl">4</span><span class="op">:</span><span class="fl">6</span>, 
                   name = <span class="st">"peptides"</span>)
+<span class="co">#&gt; harmonizing input:</span>
+<span class="co">#&gt;   removing 48 sampleMap rows not in names(experiments)</span>
 </pre></div>
 </div>
 <div id="filter-single-cells" class="section level1">
@@ -297,8 +348,36 @@
 <p>We extract the <code>SingleCellExperiment</code> assay with the joined peptides, subset the channels corresponding to blank, macrophage or monocytes and add it as a new assay in the <code>QFeatures</code> object. However, the sample annotation is contained in the <code>colData</code> of the <code>QFeatures</code> dataset, but we need to access it from the <code>SingeCellExperiment</code> object. Therefore, we provide the <code>transferColDataToAssay</code> to copy the sample metadata from the <code>QFeatures</code> to a target assay.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit">
 <span class="fu">colData</span>(<span class="kw">scp</span>[[<span class="st">"peptides"</span>]])
+<span class="co">#&gt; DataFrame with 48 rows and 0 columns</span>
 <span class="kw">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/transferColDataToAssay.html">transferColDataToAssay</a></span>(<span class="kw">scp</span>, <span class="st">"peptides"</span>)
 <span class="fu">colData</span>(<span class="kw">scp</span>[[<span class="st">"peptides"</span>]])
+<span class="co">#&gt; DataFrame with 48 rows and 6 columns</span>
+<span class="co">#&gt;                                             Set     Channel SampleAnnotation</span>
+<span class="co">#&gt;                                     &lt;character&gt; &lt;character&gt;      &lt;character&gt;</span>
+<span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI1         190222S_LC...         RI1    carrier_mi...</span>
+<span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI2         190222S_LC...         RI2             norm</span>
+<span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI3         190222S_LC...         RI3           unused</span>
+<span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI4         190222S_LC...         RI4             sc_u</span>
+<span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI5         190222S_LC...         RI5             sc_0</span>
+<span class="co">#&gt; ...                                         ...         ...              ...</span>
+<span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI12 190914S_LC...        RI12            sc_m0</span>
+<span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI13 190914S_LC...        RI13            sc_m0</span>
+<span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI14 190914S_LC...        RI14            sc_m0</span>
+<span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI15 190914S_LC...        RI15            sc_m0</span>
+<span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI16 190914S_LC...        RI16            sc_m0</span>
+<span class="co">#&gt;                                       lcbatch     sortday      digest</span>
+<span class="co">#&gt;                                   &lt;character&gt; &lt;character&gt; &lt;character&gt;</span>
+<span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI1                LCA9          s8           N</span>
+<span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI2                LCA9          s8           N</span>
+<span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI3                LCA9          s8           N</span>
+<span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI4                LCA9          s8           N</span>
+<span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI5                LCA9          s8           N</span>
+<span class="co">#&gt; ...                                       ...         ...         ...</span>
+<span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI12        LCB3          s9           R</span>
+<span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI13        LCB3          s9           R</span>
+<span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI14        LCB3          s9           R</span>
+<span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI15        LCB3          s9           R</span>
+<span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI16        LCB3          s9           R</span>
 </pre></div>
 <p>Once the metadata is transfered, we can subset the <code>SingleCellExperiment</code> assay.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit">
@@ -334,7 +413,8 @@
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot</a></span>() <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_log10</a></span>()
 </pre></div>
-<p>Here all values seems reasonable so no filtering is needed. If it were the case, the same procedure as the previous section can be used for selecting the cells that pass the filter.</p>
+<p><img src="scp_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
+<p>Here all values seems reasonable so no filtering is needed. If it were not the case, the same procedure as the previous section can be used for selecting the cells that have an associated median RI lower that a defined threshold.</p>
 </div>
 <div id="filter-based-on-the-median-cv" class="section level2">
 <h2 class="hasAnchor">
@@ -353,30 +433,31 @@
   <span class="kw">colData</span> <span class="op">%&gt;%</span>
   <span class="kw">data.frame</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(x = <span class="kw">MedianCV</span>, 
-             fill = <span class="kw">SampleType</span>)) <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram</a></span>() <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span>(xintercept = <span class="fl">0.4</span>)
+             fill = <span class="kw">SampleAnnotation</span>)) <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot</a></span>() <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span>(xintercept = <span class="fl">0.3</span>)
 </pre></div>
-<p>We can see that the protein quantifiation for single-cells are much more consistent within cells than the blank channels. This is expected and can help defining a threshold. We keep the cells that have a a median CV lower than 0.4. We also remove the blanks since all QC is performed.</p>
-<p>Again, we first compute the selection criterion.</p>
+<p><img src="scp_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
+<p>We can see that the protein quantifiation for single-cells are much more consistent within cells than the blank channels. This is expected and can help defining a threshold. We keep the cells that have a a median CV lower than 0.3. We also remove the blanks since all QC is performed. Note this example is crude since there are only 3 blank sample, but more sets could lead to a better estimation of the CV null distribution.</p>
+<p>Again, we first compute the selection criterion. Note we also keep onluy the samples of interest (macrophages and monocytes) since all QC metrics are now computed.</p>
 <div class="sourceCode" id="cb29"><pre class="downlit">
-<span class="kw">keepSample</span> <span class="op">&lt;-</span> <span class="kw">scp</span>[[<span class="st">"peptides_filter1"</span>]]<span class="op">$</span><span class="kw">MedianCV</span> <span class="op">&lt;</span> <span class="fl">0.4</span> <span class="op">&amp;</span>
+<span class="kw">keepSample</span> <span class="op">&lt;-</span> <span class="kw">scp</span>[[<span class="st">"peptides_filter1"</span>]]<span class="op">$</span><span class="kw">MedianCV</span> <span class="op">&lt;</span> <span class="fl">0.3</span> <span class="op">&amp;</span>
   <span class="kw">scp</span>[[<span class="st">"peptides_filter1"</span>]]<span class="op">$</span><span class="kw">SampleAnnotation</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"sc_m0"</span>, <span class="st">"sc_u"</span>)
 <span class="kw">keepSample</span>[<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="kw">keepSample</span>)] <span class="op">&lt;-</span> <span class="fl">FALSE</span>
 </pre></div>
 <p>Then we subset the assay for samples that pass the filter</p>
 <div class="sourceCode" id="cb30"><pre class="downlit">
-<span class="kw">sce</span> <span class="op">&lt;-</span> <span class="kw">specht2019v2</span>[[<span class="st">"peptides_filter1"</span>]]
+<span class="kw">sce</span> <span class="op">&lt;-</span> <span class="kw">scp</span>[[<span class="st">"peptides_filter1"</span>]]
 <span class="kw">sce</span> <span class="op">&lt;-</span> <span class="kw">sce</span>[, <span class="kw">keepSample</span>]
 </pre></div>
 <p>Finally, we add the filtered assay to the <code>QFeatures</code>object and created the required linking with the previous assay.</p>
 <div class="sourceCode" id="cb31"><pre class="downlit">
-<span class="kw">specht2019v2</span> <span class="op">%&gt;%</span>
-  <span class="fu">addAssay</span>(y = <span class="kw">sce</span>, 
-           name = <span class="st">"peptides_filter2"</span>) <span class="op">%&gt;%</span>
+<span class="fu">addAssay</span>(<span class="kw">scp</span>,
+         y = <span class="kw">sce</span>, 
+         name = <span class="st">"peptides_filter2"</span>) <span class="op">%&gt;%</span>
   <span class="fu">addAssayLinkOneToOne</span>(from = <span class="st">"peptides_filter1"</span>, 
                        to = <span class="st">"peptides_filter2"</span>) <span class="op">-&gt;</span>
-  <span class="kw">specht2019v2</span>
+  <span class="kw">scp</span>
 </pre></div>
 </div>
 </div>
@@ -394,7 +475,7 @@
         i = <span class="st">"peptides_filter2"</span>, 
         MARGIN = <span class="fl">2</span>, 
         FUN = <span class="st">"/"</span>, 
-        STATS = <span class="fu">colMedians</span>(<span class="fu">assay</span>(<span class="kw">.</span>[[<span class="st">"peptides_filter2"</span>]]), 
+        STATS = <span class="fu">colMedians</span>(<span class="fu">assay</span>(<span class="kw">scp</span>[[<span class="st">"peptides_filter2"</span>]]), 
                            na.rm = <span class="fl">TRUE</span>), 
         name = <span class="st">"peptides_norm_col"</span>) <span class="op">%&gt;%</span>
   <span class="co">## Scale rows with mean</span>
@@ -434,10 +515,14 @@
 <a href="#aggregate-peptide-data-to-protein-data" class="anchor"></a>Aggregate peptide data to protein data</h1>
 <p>Similarly to aggregating PSM data to peptide data, we can aggregate peptide data to protein data using the <code>aggregateFeatures</code> function.</p>
 <div class="sourceCode" id="cb35"><pre class="downlit">
-<span class="kw">scp</span> <span class="op">&lt;-</span> <span class="fu">aggregateFeatures</span>(i = <span class="st">"peptides_log"</span>,  
+<span class="kw">scp</span> <span class="op">&lt;-</span> <span class="fu">aggregateFeatures</span>(<span class="kw">scp</span>,
+                         i = <span class="st">"peptides_log"</span>,  
                          name = <span class="st">"proteins"</span>, 
                          fcol = <span class="st">"protein"</span>, 
                          fun = <span class="kw">matrixStats</span>::<span class="kw"><a href="https://rdrr.io/pkg/matrixStats/man/rowMedians.html">colMedians</a></span>, na.rm = <span class="fl">TRUE</span>)
+<span class="co">#&gt; Your quantitative and row data contain missing values. Please read the</span>
+<span class="co">#&gt; relevant section(s) in the aggregateFeatures manual page regarding the</span>
+<span class="co">#&gt; effects of missing values on data aggregation.</span>
 </pre></div>
 </div>
 <div id="process-the-protein-data" class="section level1">
@@ -454,7 +539,7 @@
       i = <span class="st">"proteins"</span>, 
       MARGIN = <span class="fl">2</span>, 
       FUN = <span class="st">"-"</span>, 
-      STATS = <span class="fu">colMedians</span>(<span class="fu">assay</span>(<span class="kw">.</span>[[<span class="st">"proteins"</span>]]), 
+      STATS = <span class="fu">colMedians</span>(<span class="fu">assay</span>(<span class="kw">scp</span>[[<span class="st">"proteins"</span>]]), 
                          na.rm = <span class="fl">TRUE</span>), 
       name = <span class="st">"proteins_norm_col"</span>) <span class="op">%&gt;%</span>
   <span class="co">## Center rows with mean</span>
@@ -470,22 +555,14 @@
 <div id="imputation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#imputation" class="anchor"></a>Imputation</h2>
-<p>The protein data contains a lot of missing values. The graph below shows the distribution of the proportion missingness in cells. Cells contain on average over 75 % missing values!</p>
+<p>The protein data contains a lot of missing values. Whether imputation is beneficial or deleterious for the data will not be discussed in this vignette. Missing data can either be imputed by replacing the missing values by predicted values or can be taken into account during the statistical modeling. We here give an example of imputation using the K nearest neighbors algorithm, with k = 3, that is available from the <code>impute</code> mehtod. More details about the arguments can be found in <code><a href="https://rdrr.io/pkg/impute/man/impute.knn.html">?impute::impute.knn</a></code>.</p>
 <div class="sourceCode" id="cb37"><pre class="downlit">
-<span class="fu">longFormat</span>(<span class="kw">specht2019v2</span>[, , <span class="st">"proteins_norm"</span>]) <span class="op">%&gt;%</span>
-  <span class="kw">data.frame</span> <span class="op">%&gt;%</span>
-  <span class="fu">group_by</span>(<span class="kw">colname</span>) <span class="op">%&gt;%</span>
-  <span class="fu">summarize</span>(missingness = <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="kw">value</span>))) <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(x = <span class="kw">missingness</span>)) <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram</a></span>()
-</pre></div>
-<p>Whether imputation is beneficial or deleterious for the data will not be discussed in this vignette. Missing data can either be imputed by replacing the missing values by predicted values or can be taken into account during the statistical modeling. We here give an example of imputation using the K nearest neighbors algorithm, with k = 3, that is available from the <code>impute</code> mehtod. More details about the arguments can be found in <code>?impute::impute.knn</code>.</p>
-<div class="sourceCode" id="cb38"><pre class="downlit">
 <span class="kw">scp</span> <span class="op">&lt;-</span> <span class="fu">impute</span>(<span class="kw">scp</span>, 
               i = <span class="st">"proteins_norm"</span>, 
               method = <span class="st">"knn"</span>, 
               k = <span class="fl">3</span>, rowmax = <span class="fl">1</span>, colmax= <span class="fl">1</span>, 
               maxp = <span class="fl">Inf</span>, rng.seed = <span class="fl">1234</span>)
+<span class="co">#&gt; Loading required namespace: impute</span>
 </pre></div>
 </div>
 <div id="batch-correction" class="section level2">
@@ -494,27 +571,28 @@
 <p>A very important step for processing SCP data is to correct for batch effects. Batch effects are caused by technical variation occuring during different MS runs. Since only a small number of single-cells can be acquired at once, batch effects are unavoidable.</p>
 <p>The <code>ComBat</code> function from the <code>sva</code> package can be used to perform batch correction as it is performed in the SCoPE2 analysis. We do not claim that <code>ComBat</code> is the best algorithm for batch correcting SCP data. The same steps as described below could be applied for any batch correcting method.</p>
 <p>We first extract the assay to process.</p>
-<div class="sourceCode" id="cb39"><pre class="downlit">
-<span class="kw">sce</span> <span class="op">&lt;-</span> <span class="kw">scp</span>[[<span class="st">"proteins_impd"</span>]]
+<div class="sourceCode" id="cb38"><pre class="downlit">
+<span class="kw">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/transferColDataToAssay.html">transferColDataToAssay</a></span>(<span class="kw">scp</span>, i = <span class="st">"proteins_norm"</span>)
+<span class="kw">sce</span> <span class="op">&lt;-</span> <span class="kw">scp</span>[[<span class="st">"proteins_norm"</span>]]
 </pre></div>
 <p>Next, we need to provide a design matrix and the batch annotation to <code>Combat</code>. The design matrix allows to protect variables of interest, in our case <code>SampleAnnotation</code>.</p>
-<div class="sourceCode" id="cb40"><pre class="downlit">
+<div class="sourceCode" id="cb39"><pre class="downlit">
 <span class="kw">batch</span> <span class="op">&lt;-</span> <span class="fu">colData</span>(<span class="kw">sce</span>)<span class="op">$</span><span class="kw">Set</span>
-<span class="kw">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html">model.matrix</a></span>(<span class="op">~</span> <span class="kw">SampleType</span>, data = <span class="fu">colData</span>(<span class="kw">sce</span>))
+<span class="kw">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html">model.matrix</a></span>(<span class="op">~</span> <span class="kw">SampleAnnotation</span>, data = <span class="fu">colData</span>(<span class="kw">sce</span>))
 </pre></div>
 <p>We then load and call <code>ComBat</code> and overwrite the data matrix. Recall the data matrix can be accessed using the <code>assay</code> function.</p>
-<div class="sourceCode" id="cb41"><pre class="downlit">
+<div class="sourceCode" id="cb40"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw">sva</span>)
-<span class="fu">assay</span>(<span class="kw">sce</span>) <span class="op">&lt;-</span> <span class="fu">ComBat</span>(dat = <span class="fu">assay</span>(<span class="kw">sce</span>), 
+<span class="fu">assay</span>(<span class="kw">sce</span>) <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sva/man/ComBat.html">ComBat</a></span>(dat = <span class="fu">assay</span>(<span class="kw">sce</span>), 
                      batch = <span class="kw">batch</span>, 
                      mod = <span class="kw">model</span>)
 </pre></div>
 <p>Finally, we add the batch corrected assay to the <code>QFeatures</code> object and create the feature links.</p>
-<div class="sourceCode" id="cb42"><pre class="downlit">
+<div class="sourceCode" id="cb41"><pre class="downlit">
 <span class="fu">addAssay</span>(<span class="kw">scp</span>, 
          y = <span class="kw">sce</span>,
          name = <span class="st">"proteins_batchC"</span>) <span class="op">%&gt;%</span>
-  <span class="fu">addAssayLinkOneToOne</span>(from = <span class="st">"proteins_impd"</span>,
+  <span class="fu">addAssayLinkOneToOne</span>(from = <span class="st">"proteins_norm"</span>,
                        to = <span class="st">"proteins_batchC"</span>) <span class="op">-&gt;</span>
   <span class="kw">scp</span>
 </pre></div>
@@ -523,59 +601,82 @@
 <div id="dimension-reduction" class="section level1">
 <h1 class="hasAnchor">
 <a href="#dimension-reduction" class="anchor"></a>Dimension reduction</h1>
-<p><strong><span class="citation">@todo</span></strong></p>
-<div class="sourceCode" id="cb43"><pre class="downlit">
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw">scater</span>)
+<p>Because each assay contains <code>SingelCellExperiment</code> objects, we can easily apply methods developed in the scRNA-Seq field. A useful package for dimension reduction on single-cell data is the <code>scater</code>.</p>
+<div class="sourceCode" id="cb42"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="http://bioconductor.org/packages/scater">scater</a></span>)
+<span class="co">#&gt; Loading required package: SingleCellExperiment</span>
 </pre></div>
+<p>This package provides streamline functions to computes various dimension reduction such as PCA, UMAP, t-SNE, NMF, MDS, ….</p>
 <div id="pca" class="section level2">
 <h2 class="hasAnchor">
 <a href="#pca" class="anchor"></a>PCA</h2>
-<p>As a side note, the <code>scater</code> packages provides a suite of functions that perform and visualize dimension reduction for <code>SingleCellExperiment</code> objects. Since our assays are all <code>SingleCellExperiment</code> objects, we can perform regular PCA on the protein data in just a few commands.</p>
-<div class="sourceCode" id="cb44"><pre class="downlit">
-<span class="co">## Transfer sample annotation to the protein assay</span>
-<span class="kw">specht2019v2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/transferColDataToAssay.html">transferColDataToAssay</a></span>(<span class="kw">specht2019v2</span>, <span class="st">"proteins_batchC_norm"</span>) 
-<span class="kw">specht2019v2</span>[[<span class="st">"proteins_batchC_norm"</span>]] <span class="op">%&gt;%</span>
-  <span class="co">## Perform PCA, see ?runPCA for more info on arguments</span>
-  <span class="fu">runPCA</span>(ncomponents = <span class="fl">50</span>, 
-         ntop = <span class="fl">Inf</span>, 
-         scale = <span class="fl">TRUE</span>, 
-         exprs_values = <span class="fl">1</span>, 
-         name = <span class="st">"PCA"</span>) <span class="op">%&gt;%</span>
-  <span class="co">## Plotting is performed in a single line of code</span>
-  <span class="fu">plotPCA</span>(colour_by = <span class="st">"SampleType"</span>)
+<p>PCA can be computed using the <code>runPCA</code> method. It returns a <code>SingleCellExperiment</code> object for which the dimension reduction results are stored in the <code>reducedDim</code> slot.</p>
+<div class="sourceCode" id="cb43"><pre class="downlit">
+<span class="kw">scp</span>[[<span class="st">"proteins_batchC"</span>]] <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scater/man/runPCA.html">runPCA</a></span>(<span class="kw">scp</span>[[<span class="st">"proteins_batchC"</span>]],
+                                   ncomponents = <span class="fl">50</span>, 
+                                   ntop = <span class="fl">Inf</span>, 
+                                   scale = <span class="fl">TRUE</span>, 
+                                   exprs_values = <span class="fl">1</span>, 
+                                   name = <span class="st">"PCA"</span>)
+<span class="co">#&gt; Warning in check_numbers(k = k, nu = nu, nv = nv, limit = min(dim(x)) - : more</span>
+<span class="co">#&gt; singular values/vectors requested than available</span>
+<span class="co">#&gt; Warning in (function (A, nv = 5, nu = nv, maxit = 1000, work = nv + 7, reorth =</span>
+<span class="co">#&gt; TRUE, : You're computing too large a percentage of total singular values, use a</span>
+<span class="co">#&gt; standard svd instead.</span>
 </pre></div>
+<p>The computed PCA can be displayed using the <code>plotReducedDim</code> function. The <code>dimred</code> arguments gives the name of the dimension reduction results to plot, here we called it <code>PCA</code>. The samples are colored by type of sample.</p>
+<div class="sourceCode" id="cb44"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotReducedDim.html">plotReducedDim</a></span>(<span class="kw">scp</span>[[<span class="st">"proteins_batchC"</span>]], 
+               dimred = <span class="st">"PCA"</span>,
+               colour_by = <span class="st">"SampleAnnotation"</span>)
+</pre></div>
+<p><img src="scp_files/figure-html/plot_PCA-1.png" width="700"></p>
+<p>This is a minimalistic example with only a few plotted cells, but the original SCoPE2 dataset contained over thousand cells.</p>
 </div>
 <div id="umap" class="section level2">
 <h2 class="hasAnchor">
 <a href="#umap" class="anchor"></a>UMAP</h2>
-</div>
-<div id="tsne" class="section level2">
-<h2 class="hasAnchor">
-<a href="#tsne" class="anchor"></a>tSNE</h2>
+<p>Similarly to PCA, we can computed a UMAP using the <code>runUMAP</code> method. Note however that the UMAP implementation requires a initialization, usually provided by PCA. The previous PCA results are used automatically when supplying <code>dimred = "PCA"</code> (<code>PCA</code> is the name of the dimension reduction result that we supplied in the previous section).</p>
+<div class="sourceCode" id="cb45"><pre class="downlit">
+<span class="kw">scp</span>[[<span class="st">"proteins_batchC"</span>]] <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scater/man/runUMAP.html">runUMAP</a></span>(<span class="kw">scp</span>[[<span class="st">"proteins_batchC"</span>]],
+                                    ncomponents = <span class="fl">2</span>,
+                                    ntop = <span class="fl">Inf</span>, 
+                                    scale = <span class="fl">TRUE</span>, 
+                                    exprs_values = <span class="fl">1</span>, 
+                                    n_neighbors = <span class="fl">3</span>,
+                                    dimred = <span class="st">"PCA"</span>,
+                                    name = <span class="st">"UMAP"</span>)
+</pre></div>
+<p>The computed UMAP can be displayed using the <code>plotReducedDim</code> function. The <code>dimred</code> arguments gives the name of the dimension reduction results to plot, here we called it <code>UMAP</code>. The samples are colored by type of sample.</p>
+<div class="sourceCode" id="cb46"><pre class="downlit">
+<span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotReducedDim.html">plotReducedDim</a></span>(<span class="kw">scp</span>[[<span class="st">"proteins_batchC"</span>]], 
+               dimred = <span class="st">"UMAP"</span>,
+               colour_by = <span class="st">"SampleAnnotation"</span>)
+</pre></div>
+<p><img src="scp_files/figure-html/plot_UMAP-1.png" width="700"></p>
+<p>The UMAP plot is a very interesting plot for large datasets. A UMAP on this small example dataset is not useful but is shown for illustration purposes.</p>
 </div>
 </div>
 <div id="monitoring-data-processing" class="section level1">
 <h1 class="hasAnchor">
 <a href="#monitoring-data-processing" class="anchor"></a>Monitoring data processing</h1>
-<p>The <code>QFeatures</code> plot shows the quantitative data for a features at the different expression levels. For instance, suppose we are interested in the protein <em>VIM</em> (protein ID is <code>P08670</code>) from one of the SCoPE2 batches (<em>e.g.</em> <code>191110S_LCB7_X_APNOV16plex2_Set_9</code>). A useful QC is to monitor the data processing at the PSM, peptide and protein level. This can easily be done thanks to the <code>QFeatures</code> framework. Using the <code>subsetByAssay</code> and the <code>subsetByRow</code> functions, we can extract the batch and feature of interest, respectively. Then, the data is formated to a long format table that can easily be plugged in the <code>ggplot2</code> visualization tool.</p>
-<div class="sourceCode" id="cb45"><pre class="downlit">
+<p>The <code>QFeatures</code> plot shows the quantitative data for a features at the different expression levels. For instance, suppose we are interested in the protein <em>LMNA</em> (protein ID is <code>P02545</code>). A useful QC is to monitor the data processing at the PSM, peptide and protein level. This can easily be done thanks to the <code>QFeatures</code> framework. Using the <code>subsetByAssay</code> and the <code>subsetByRow</code> functions, we can extract the batch and feature of interest, respectively. Then, the data is formated to a long format table that can easily be plugged in the <code>ggplot2</code> visualization tool.</p>
+<div class="sourceCode" id="cb47"><pre class="downlit">
 <span class="kw">scp</span> <span class="op">%&gt;%</span>
-  <span class="co">## Get the features related to VIM (P08670)</span>
-  <span class="fu">subsetByFeature</span>(<span class="st">"P08670"</span>) <span class="op">%&gt;%</span>
+  <span class="co">## Get the features related to LMNA (P02545)</span>
+  <span class="fu">subsetByFeature</span>(<span class="st">"P02545"</span>) <span class="op">%&gt;%</span>
   <span class="co">## Format the `QFeatures` to a long format table</span>
-  <span class="fu">longFormat</span>(colDataCols = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Set"</span>, <span class="st">"SampleType"</span>, <span class="st">"Channel"</span>)) <span class="op">%&gt;%</span>
+  <span class="fu">longFormat</span>(colDataCols = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Set"</span>, <span class="st">"SampleAnnotation"</span>, <span class="st">"Channel"</span>)) <span class="op">%&gt;%</span>
   <span class="kw">data.frame</span> <span class="op">%&gt;%</span>
-  <span class="co">## Keep only the SCoPE2 set of interest</span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span>(<span class="kw">Set</span> <span class="op">==</span> <span class="st">"191110S_LCB7_X_APNOV16plex2_Set_9"</span>) <span class="op">%&gt;%</span>
   <span class="co">## This is used to preserve ordering of the samples and assays in ggplot2</span>
-  <span class="fu">mutate</span>(assay = <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw">assay</span>, levels = <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="kw">scp</span>)),
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span>(assay = <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw">assay</span>, levels = <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="kw">scp</span>)),
          Channel = <span class="fu"><a href="https://rdrr.io/r/base/grep.html">sub</a></span>(<span class="st">"RI"</span>, <span class="st">"TMT-"</span>, <span class="kw">Channel</span>),
          Channel = <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span>(<span class="kw">Channel</span>, levels = <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span>(<span class="kw">Channel</span>))) <span class="op">%&gt;%</span>
   <span class="co">## Start plotting</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(x = <span class="kw">Channel</span>, y = <span class="kw">value</span>, group = <span class="kw">rowname</span>, col = <span class="kw">SampleType</span>)) <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span>(<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(x = <span class="kw">Channel</span>, y = <span class="kw">value</span>, group = <span class="kw">rowname</span>, col = <span class="kw">SampleAnnotation</span>)) <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>() <span class="op">+</span>
   <span class="co">## Plot every assay in a separate facet</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span>(facets = <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/vars.html">vars</a></span>(<span class="kw">assay</span>), scales = <span class="st">"free_y"</span>) <span class="op">+</span>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span>(facets = <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/vars.html">vars</a></span>(<span class="kw">assay</span>), scales = <span class="st">"free_y"</span>, ncol = <span class="fl">3</span>) <span class="op">+</span>
   <span class="co">## Annotate plot</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span>(<span class="st">"Channels"</span>) <span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span>(<span class="st">"Intensity (arbitrary units)"</span>) <span class="op">+</span>
@@ -584,62 +685,88 @@
         strip.text = <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span>(hjust = <span class="fl">0</span>),
         legend.position = <span class="st">"bottom"</span>)
 </pre></div>
-<p>This graph can help us track the processing of the data and help us detect anomalies in the data. For instance, we can see that 2 samples (TMT-13 and TMT-15) were removed during median filtering because all signal is 0. We can also see that no data was recorded for TMT-12, TMT-14, and TMT-16. Since TMT-12 to 16 are either macrophages or monocytes, those channels are not expected to be removed or have missing data. Thanks to this diagnostic plot, we notified Specht and colleagues there was an issue in their dataset and lead to version 3 of the SCoPE2 dataset.</p>
-</div>
-<div id="cell-type-dependent-missingness" class="section level1">
-<h1 class="hasAnchor">
-<a href="#cell-type-dependent-missingness" class="anchor"></a>Cell type dependent missingness</h1>
-<p>We showed previously in this vignette that SCP data is characterized by a high rate of missing data. This missing data can be either technical or biological. To illustrate this, we plot the rate of missingness in macrophages against the rate of missingness in monocytes. Every point in the graph represents a peptide. We color the peptide by the amount of change in expression observed between the macrophages and the monocytes.</p>
-<p>The code for plotting is rather elaborate, but notice the necessary data can easily be extracted using only few commands.</p>
-<div class="sourceCode" id="cb46"><pre class="downlit">
-<span class="co">## Transfer the sample annotation from the `QFeatures` object </span>
-<span class="co">## to the peptide assay</span>
-<span class="kw">specht2019v2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/transferColDataToAssay.html">transferColDataToAssay</a></span>(<span class="kw">specht2019v2</span>, <span class="st">"peptides_log"</span>)
-<span class="kw">sce</span> <span class="op">&lt;-</span> <span class="kw">specht2019v2</span>[[<span class="st">"peptides_log"</span>]]
-<span class="co">## Extract expression data from macrophages and monocytes separately</span>
-<span class="kw">monoDat</span> <span class="op">&lt;-</span> <span class="fu">assay</span>(<span class="kw">sce</span>[, <span class="kw">sce</span><span class="op">$</span><span class="kw">SampleType</span> <span class="op">==</span> <span class="st">"Monocyte"</span>])
-<span class="kw">m0Dat</span> <span class="op">&lt;-</span> <span class="fu">assay</span>(<span class="kw">sce</span>[, <span class="kw">sce</span><span class="op">$</span><span class="kw">SampleType</span> <span class="op">==</span> <span class="st">"Macrophage"</span>])
-<span class="co">## Create a table with the rate of missingness for each cell type and </span>
-<span class="co">## compute the log fold change in median expression</span>
-<span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span>(m0Missing = <span class="fu"><a href="https://rdrr.io/r/base/colSums.html">rowMeans</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="kw">m0Dat</span>)) <span class="op">*</span> <span class="fl">100</span>,
-           monoMissing = <span class="fu"><a href="https://rdrr.io/r/base/colSums.html">rowMeans</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="kw">monoDat</span>)) <span class="op">*</span> <span class="fl">100</span>,
-           logFC = <span class="fu">rowMedians</span>(<span class="kw">m0Dat</span>, na.rm = <span class="fl">TRUE</span>) <span class="op">-</span> <span class="fu">rowMedians</span>(<span class="kw">monoDat</span>, na.rm = <span class="fl">TRUE</span>)) <span class="op">%&gt;%</span>
-  <span class="co">## Trim log fold change to dampen the impact of outliers</span>
-  <span class="fu">mutate</span>(logFC = <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span>(<span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span>(<span class="kw">logFC</span>) <span class="op">&gt;</span> <span class="fl">1</span>, <span class="fl">1</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/sign.html">sign</a></span>(<span class="kw">logFC</span>), <span class="kw">logFC</span>)) <span class="op">%&gt;%</span>
-  <span class="co">## Start plotting</span>
-  <span class="kw">ggplot</span> <span class="op">-&gt;</span> 
-  <span class="kw">p</span>
-<span class="kw">p</span> <span class="op">+</span>
-  <span class="co">## Plot rate of missingness in macrophages </span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram</a></span>(<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(x = <span class="kw">m0Missing</span>), bins = <span class="fl">100</span>) <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span>() <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span>(axis.title.x = <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span>(), axis.text.x = <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span>(),
-        axis.ticks.x = <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span>()) <span class="op">+</span>
-  <span class="fu">plot_spacer</span>() <span class="op">+</span> 
-  <span class="kw">p</span> <span class="op">+</span> 
-  <span class="co">## Plot missingness in macrophages vs missingness in monocytes</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span>(<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(x = <span class="kw">m0Missing</span>, y = <span class="kw">monoMissing</span>, col = <span class="kw">logFC</span>)) <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span>(legend.position = <span class="st">"bottom"</span>) <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span>(<span class="st">"Missingness (%) in macrophages"</span>) <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span>(<span class="st">"Missingness (%) in monocytes"</span>) <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_gradient.html">scale_color_gradient2</a></span>(low = <span class="st">"#048ABF"</span>, mid = <span class="st">"bisque2"</span>, high = <span class="st">"#FF5733"</span>,
-                        breaks = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="op">-</span><span class="fl">1</span>, <span class="fl">1</span>),
-                        labels = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"monocyte"</span>, <span class="st">"macrophage"</span>)) <span class="op">+</span>
-  <span class="kw">p</span> <span class="op">+</span>
-  <span class="co">## Plot rate of missingness in monocytes</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram</a></span>(<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span>(y = <span class="kw">monoMissing</span>), bins = <span class="fl">100</span>) <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_minimal</a></span>() <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span>(axis.title.y = <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span>(), axis.text.y = <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span>(),
-        axis.ticks.y = <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_blank</a></span>(), 
-        axis.text.x = <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span>(angle = <span class="op">-</span><span class="fl">90</span>, vjust = <span class="fl">0.5</span>, hjust=<span class="fl">0</span>)) <span class="op">+</span>
-  <span class="co">## Adjust plotting layout</span>
-  <span class="fu">plot_layout</span>(widths = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.9</span>, <span class="fl">0.1</span>), heights = <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">0.1</span>, <span class="fl">0.9</span>))
-</pre></div>
-<p>We can see that most of the peptides have equal missingness in macrophages and monocytes. This is expected for technical missingness and this is further confirmed by the fact that that the slope 1 line is dominated by peptides with no large difference in log fold change (pale yellow). Interestingly, we can also observe that the missingness for some peptides can be explained by biological processes that are specific to one or the other cell type. Peptides more expressed in macrophages (red) tend to be less missing in monocytes. Conversely, peptides more expressed in monocytes tend to be less missing in monocytes.</p>
+<p><img src="scp_files/figure-html/unnamed-chunk-21-1.png" width="100%"></p>
+<p>This graph can help us track the processing of the data and help us detect anomalies in the data. For instance, we can see that no data were recorded for 5 samples (TMT-12 to 16). Those channels contain either macrophages or monocytes (from the experimental design) and are expected to contain information. Thanks to this diagnostic plot, we reported the issue to Specht and colleagues there and this led to version 3 of the SCoPE2 dataset.</p>
 </div>
 <div id="session-information" class="section level1 unnumbered">
 <h1 class="hasAnchor">
 <a href="#session-information" class="anchor"></a>Session information</h1>
+<pre><code>R version 4.0.2 Patched (2020-08-19 r79057)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: Ubuntu 20.04.1 LTS
+
+Matrix products: default
+BLAS/LAPACK: /usr/lib/x86_64-linux-gnu/openblas-openmp/libopenblasp-r0.3.8.so
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=C             
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+
+attached base packages:
+[1] parallel  stats4    stats     graphics  grDevices utils     datasets 
+[8] methods   base     
+
+other attached packages:
+ [1] scater_1.17.4               SingleCellExperiment_1.11.6
+ [3] sva_3.37.0                  BiocParallel_1.23.2        
+ [5] genefilter_1.71.0           mgcv_1.8-31                
+ [7] nlme_3.1-148                dplyr_1.0.2                
+ [9] magrittr_1.5                ggplot2_3.3.2              
+[11] scp_0.1.0                   QFeatures_0.99.1           
+[13] MultiAssayExperiment_1.15.3 SummarizedExperiment_1.19.6
+[15] DelayedArray_0.15.7         matrixStats_0.56.0         
+[17] Matrix_1.2-18               Biobase_2.49.0             
+[19] GenomicRanges_1.41.6        GenomeInfoDb_1.25.10       
+[21] IRanges_2.23.10             S4Vectors_0.27.12          
+[23] BiocGenerics_0.35.4         BiocStyle_2.17.0           
+
+loaded via a namespace (and not attached):
+ [1] ProtGenerics_1.21.0       bitops_1.0-6             
+ [3] fs_1.5.0                  bit64_4.0.2              
+ [5] rprojroot_1.3-2           tools_4.0.2              
+ [7] backports_1.1.8           irlba_2.3.3              
+ [9] R6_2.4.1                  vipor_0.4.5              
+[11] uwot_0.1.8                DBI_1.1.0                
+[13] lazyeval_0.2.2            colorspace_1.4-1         
+[15] withr_2.2.0               gridExtra_2.3            
+[17] tidyselect_1.1.0          bit_4.0.4                
+[19] compiler_4.0.2            BiocNeighbors_1.7.0      
+[21] desc_1.2.0                labeling_0.3             
+[23] bookdown_0.20             scales_1.1.1             
+[25] pkgdown_1.5.1.9000        stringr_1.4.0            
+[27] digest_0.6.25             rmarkdown_2.3            
+[29] XVector_0.29.3            pkgconfig_2.0.3          
+[31] htmltools_0.5.0           limma_3.45.10            
+[33] highr_0.8                 rlang_0.4.7              
+[35] RSQLite_2.2.0             impute_1.63.0            
+[37] FNN_1.1.3                 DelayedMatrixStats_1.11.1
+[39] farver_2.0.3              generics_0.0.2           
+[41] RCurl_1.98-1.2            BiocSingular_1.5.0       
+[43] GenomeInfoDbData_1.2.3    scuttle_0.99.12          
+[45] ggbeeswarm_0.6.0          Rcpp_1.0.5               
+[47] munsell_0.5.0             viridis_0.5.1            
+[49] MsCoreUtils_1.1.3         lifecycle_0.2.0          
+[51] stringi_1.4.6             yaml_2.2.1               
+[53] edgeR_3.31.4              MASS_7.3-52              
+[55] zlibbioc_1.35.0           grid_4.0.2               
+[57] blob_1.2.1                crayon_1.3.4             
+[59] lattice_0.20-41           splines_4.0.2            
+[61] annotate_1.67.1           locfit_1.5-9.4           
+[63] knitr_1.29                pillar_1.4.6             
+[65] XML_3.99-0.5              glue_1.4.1               
+[67] evaluate_0.14             BiocManager_1.30.10      
+[69] vctrs_0.3.2               gtable_0.3.0             
+[71] purrr_0.3.4               assertthat_0.2.1         
+[73] xfun_0.16                 rsvd_1.0.3               
+[75] xtable_1.8-4              AnnotationFilter_1.13.0  
+[77] RSpectra_0.16-0           viridisLite_0.3.0        
+[79] survival_3.2-3            tibble_3.0.3             
+[81] beeswarm_0.2.3            AnnotationDbi_1.51.3     
+[83] memoise_1.1.0             ellipsis_0.3.1           </code></pre>
 </div>
 <div id="reference" class="section level1">
 <h1 class="hasAnchor">
