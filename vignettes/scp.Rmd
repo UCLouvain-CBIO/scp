@@ -47,8 +47,8 @@ single-cell proteomics data analysis. To start, we load the `scp` package.
 library("scp")
 ```
 
-We also load `ggplot2` and `magrittr` for convenient data manipulation and 
-plotting, respectively.
+We also load `ggplot2`, `magrittr` and `dplyr` for convenient data manipulation
+and plotting.
 
 ```{r load_other_package, message = FALSE}
 library("ggplot2")
@@ -71,8 +71,8 @@ data("mqFile")
 ```
 
 In order to convert this tabular data to a `scp`-compatible `QFeatures` object, 
-we need to provide a metadata table. The rows contain sample information and 
-must contain:
+we need to provide a **metadata table** where rows contain sample information 
+and columns must contain at least:
 
 * The name of the batch the sample was acquired in
 * The name of the channel the sample was acquired in
@@ -98,15 +98,18 @@ scp <- readSCP(quantTable = mqFile,
 
 As indicated by the output on the console, `readSCP` proceeds as follows:
 
-1. If `quantTable` is the path to a CSV file, it reads the file using `read.csv`. 
-The table is converted to a `SingleCellExperimentObject` object. `readSCP` needs 
-to know in which field(s) the quantative data is stored. Those field name(s) 
-is/are provided by the `channelCol` field in the `metaData` table.
+1. If `quantTable` is the path to a CSV file, it reads the file using 
+`read.csv`. The table is converted to a `SingleCellExperiment` object. `readSCP`
+needs to know in which field(s) the quantative data is stored. Those field
+name(s) is/are provided by the `channelCol` field in the `metaData` table. So in
+this example, the column names hodling the quantitative data in `mqFile` are
+stored in the column named `Channel` in `sampleAnnotation`. 
 2. The `SingleCellExperiment` object is then split according to batch. The split 
-is performed depending on the `batchCol` field in `quantTable`. 
+is performed depending on the `batchCol` field in `quantTable`, in this case the
+data will be split according to the `Set` column in `mqFile`.
 3. The sample metadata is generated from the `metaTable`. Note that in order for 
 `readSCP` to correctly match the feature data with the metadata, `metaTable` 
-should also contain the `batchCol` field with batch names. 
+must also contain the `batchCol` field with batch names. 
 4. Finally, the split feature data and the sample metadata are stored in a 
 single `QFeatures` object. 
 
@@ -116,7 +119,7 @@ Here is a compact overview of the data:
 scp
 ```
 
-We can see that the `scp` object we create is a `QFeatures` object containing 
+We can see that the `scp` object we created is a `QFeatures` object containing 
 3 assays. Each assay has an associated name, this is the batch name that was 
 used for splitting. We can also see that each assay is a `SingleCellExperiment`
 object. The rows represent the peptide to spectrum matches (PSMs), the number
@@ -129,7 +132,8 @@ Single-cell (proteomics or transcriptomics) data contains many zeros. The zeros
 can be biological zeros or technical zeros. To avoid artefacts in dowstream 
 steps, we replace the zeros by the missing value `NA`. The `zeroIsNA` function 
 takes the `QFeatures` object and the name(s) or index/indices of the assay(s) to
-clean. 
+clean and automatically replaces any zero in the selected quantitative data by
+`NA`. 
 
 ```{r}
 scp <- zeroIsNA(scp, i = 1:3)
@@ -150,7 +154,7 @@ rowDataNames(scp)
 
 ## Filter features based on feature metadata
 
-Here are some examples of criteria that are used to identify low-confidence. The
+Below are some examples of criteria that are used to identify low-confidence. The
 information is readily available since this was computed by MaxQuant: 
 
 - Remove PSMs that are matched to contaminants
@@ -174,20 +178,21 @@ scp <- filterFeatures(scp,
 
 ## Filter assays based on detected features
 
-To avoid proceedin with failed runs, another interesting filter is to remove
+To avoid proceeding with failed runs, another interesting filter is to remove
 assays with too few features. If a batch contains less than, for example, 150 
-features, then we can suspect something wrong happened in that batch and it 
-should be removed. 
+features we can then suspect something wrong happened in that batch and it 
+should be removed. Using `dims`, we can query the dimensions (hence the number 
+of features and the number of samples) of all assays contained in the dataset.
 
 ```{r dims}
 dims(scp)
 ```
 
-A `QFeatures` object can be seen as a three-order array: 
-$features \times samples \times assay$. Hence, `QFeatures` support three-order
+Actually, a `QFeatures` object can be seen as a three-order array: 
+$features \times samples \times assay$. Hence, `QFeatures` supports three-order
 subsetting `x[rows, columns, assays]`. We first select the assay that have 
-sufficient PSMs, and then subset the `scp` object for the assays that meet the 
-criterion. 
+sufficient PSMs (the number of rows is greater than 150), and then subset the
+`scp` object for the assays that meet the criterion. 
 
 ```{r filter_assays}
 keepAssay <- dims(scp)[1, ] > 150
@@ -195,29 +200,31 @@ scp <- scp[, , keepAssay]
 scp
 ```
 
-Note in our example, all assays have sufficient number of PSMs, hence none are
-removed.
+Note in our example all assays have sufficient number of PSMs, hence no assay 
+is removed.
 
 ## Filter features based on SCP metrics
 
-The third type of filtering is specific to SCP. For instance, the SCoPE2 script
-filters features based on the sample to carrier ratio (SCR), that is 
-the reporter ion intensity of a single-cell sample divided by the reporter ion 
-intensity of the carrier channel (200 cells) from the same batch. It is expected 
+Another type of filtering is specific to SCP. In the SCoPE2 analysis, the 
+authors suggest a filters based on the sample to carrier ratio (SCR), that is 
+the reporter ion intensity of a single-cell sample divided by the reporter ion
+intensity of the carrier channel (200 cells) from the same batch. It is expected
 that the carrier intensities are much higher than the single-cell intensities. 
 
 The SCR can be computed using the `computeSCR` function from `scp`. The function
 must be told which channels are the samples that must be divided and which 
 channel contains the carrier. This information is provided in the sample 
-metadata and is accessed using the `colData`. 
+metadata and is accessed using the `colData`, under the `SampleAnnotation` 
+field. 
 
 ```{r show_annotation}
 colData(scp)[, "SampleAnnotation"] %>%
   table
 ```
 
-In this dataset, `SampleType` gives the type of sample that is present in each 
-TMT channel. The SCoPE2 protocole includes 5 types of samples: 
+In this dataset, `SampleAnnotation` gives the type of sample that is present in
+each TMT channel. The SCoPE2 protocole includes 5 types of samples: 
+
 * The carrier channels (`carrier_mix`) contain 200 cell equivalents and are 
 meant to boost the peptide identification rate.
 * The normalization channels (`norm` and `reference`) contain 5 cell equivalents 
@@ -250,7 +257,7 @@ scp <- computeSCR(scp,
                   samplePattern = "^sc")
 ```
 
-Before applying the filter, we plot the distribution of the mean SCR. We can 
+Before applying the filter, we plot the distribution of the average SCR. We can 
 extract the `meanSCR` variable from the `rowData` of several assays using the
 `rowDataToDF`. It takes the `rowData` field(s) of interest and returns a 
 `DataFrame` table. 
@@ -265,10 +272,10 @@ scp %>%
   geom_vline(xintercept = 0.1)
 ```
 
-We can see that most values are close to 0.02 as expected since the experimental
-ratio is 1/200. There are a few point that have higher signal than expected. 
-We therefore filter those point using a cutoff of 0.1 using again the 
-`filterFeatures` functions. 
+Most values are close to 0.02 as expected since the experimental ratio is 1/200.
+There are a few point that have higher signal than expected. We therefore filter
+out those points using a cutoff of 0.1 using again the `filterFeatures`
+functions. 
 
 ```{r filter_SCR}
 scp <- filterFeatures(scp, 
@@ -278,7 +285,7 @@ scp <- filterFeatures(scp,
 
 ## Filter out PSMs with high false discovery rate
 
-Finally, the last PSM filter criterion is the false discovery rate (FDR) for 
+Finally, a last PSM filter criterion is the false discovery rate (FDR) for 
 identification. Filtering on the PEP is too conservative (@Kall2008-hb) so we 
 provide the `computeFDR` function to convert PEPs to FDR. Beside the dataset and 
 the assay(s) for which to compute the FDR, we also need to give the feature 
@@ -331,17 +338,17 @@ is performed using the `aggregateFeaturesOverAssays` function. For each assay,
 the function aggregates several PSMs into a unique peptide. This is best 
 illustrated by the figure below. 
 
-```{r features_aggregation, results = 'markup', fig.cap = "Conceptual illustration of features aggregation.", echo=FALSE, out.width='100%', fig.align='center'}
+```{r features_aggregation, results = 'markup', fig.cap = "Conceptual illustration of feature aggregation.", echo=FALSE, out.width='100%', fig.align='center'}
 knitr::include_graphics("./figures/feature_aggregation.png", error = FALSE)
 ```
 
-The PSMs are aggregated over the `fcol` features variable, here peptides. We 
-also need to supply an aggregating function that will tell how to combine the 
+The PSMs are aggregated over the `fcol` feature variable, here peptides. We also
+need to supply an aggregating function that will tell how to combine the 
 quantitative data of the PSMs to aggregate. We here use the median value. We
 name the aggregated assays using the original names and appending `peptides_` at 
 the start.
 
-```{r, results='hide'}
+```{r, message = FALSE}
 scp <-aggregateFeaturesOverAssays(scp,
                                   i = 1:3, 
                                   fcol = "peptide", 
@@ -351,11 +358,7 @@ scp <-aggregateFeaturesOverAssays(scp,
 
 Under the hood, the `QFeatures` architecture preserves the relationship between 
 the aggregated assays. See `?AssayLinks` for more information on relationships 
-between assays. Three new assays were added to the dataset:
-
-```{r overview2}
-scp
-```
+between assays. 
 
 # Join the SCoPE2 sets in one assay
 
@@ -402,7 +405,7 @@ sce <- scp[["peptides"]]
 sce <- sce[, sce$SampleAnnotation %in% c("sc_0", "sc_m0", "sc_u")]
 ```
 
-Then add this assay back into the `QFeatures` object. This is done using the 
+Then we add this assay back into the `QFeatures` object. This is done using the 
 `addAssay` function. We also preserve the links between dfeatures using the 
 `addAssayLinkOneToOne`. Since the features did not change (only the samples did), 
 one-to-one links between features are added.
@@ -490,15 +493,11 @@ scp[["peptides_filter1"]] %>%
 ```
 
 We can see that the protein quantifiation for single-cells are much more 
-consistent within cells than the blank channels. This is expected and can help 
-defining a threshold. We keep the cells that have a a median CV 
-lower than 0.3. We also remove the blanks since all QC is performed. Note this 
-example is crude since there are only 3 blank sample, but more sets could lead 
-to a better estimation of the CV null distribution. 
-
-Again, we first compute the selection criterion. Note we also keep onluy the 
-samples of interest (macrophages and monocytes) since all QC metrics are now 
-computed.
+consistent within cells than witin the blank channels. Based on the distribution
+of the blanks, we decide to keep the cells that have a median CV lower than
+0.3. Note this example is inaccurate because the null distribution is based on
+only 3 blank samples, but more sets could lead to a better estimation of the CV null distribution. Note we also keep only the samples of interest (macrophages
+and monocytes) since all QC metrics are now computed.
 
 ```{r}
 keepSample <- scp[["peptides_filter1"]]$MedianCV < 0.3 &
@@ -506,7 +505,7 @@ keepSample <- scp[["peptides_filter1"]]$MedianCV < 0.3 &
 keepSample[is.na(keepSample)] <- FALSE
 ```
 
-Then we subset the assay for samples that pass the filter
+Then, we subset the assay for samples that pass the filter.
 
 ```{r}
 sce <- scp[["peptides_filter1"]]
@@ -539,12 +538,13 @@ relative intensities by the median relative intensities. Then, the rows
 mean relative intensities. The normalized data is stored in a separate assay. 
 This normalization procedure is suggested in the SCoPE2 analysis and is applied
 using the `sweep` method. Beside the dataset and the assay to normalize, the 
-method expects a margin, that is either row-wise (`1`) or column-wise (`2`) 
-transformation, the function to apply, and a vector of values to apply. More 
-conventional normalization procedure can be found in `?QFeatures::normalize`.
+method expects a `MARGIN`, that is either row-wise (`1`) or column-wise (`2`) 
+transformation, the `FUN` function to apply and `STATS`, a vector of values to
+apply. More conventional normalization procedure can be found in
+`?QFeatures::normalize`.
 
 ```{r}
-## Scale columns with median
+## Divide columns by median
   sweep(scp, 
         i = "peptides_filter2", 
         MARGIN = 2, 
@@ -552,7 +552,7 @@ conventional normalization procedure can be found in `?QFeatures::normalize`.
         STATS = colMedians(assay(scp[["peptides_filter2"]]), 
                            na.rm = TRUE), 
         name = "peptides_norm_col") %>%
-  ## Scale rows with mean
+  ## Divide rows by mean
   sweep(i = "peptides_norm_col", 
         MARGIN = 1, 
         FUN = "/", 
@@ -604,8 +604,8 @@ scp <- aggregateFeatures(scp,
 
 # Process the protein data
 
-The protein data is processed in three steps: normalization, imputation (using 
-the KNN algorithm) and batch correction (using the `ComBat` algorithm).
+The protein data is further processed in three steps: normalization, imputation
+(using the KNN algorithm) and batch correction (using the `ComBat` algorithm).
 
 ## Normalization 
 
@@ -637,10 +637,8 @@ sweep(scp,
 
 The protein data contains a lot of missing values. Whether imputation is 
 beneficial or deleterious for the data will not be discussed in this vignette. 
-Missing data can either be imputed by replacing the missing values by predicted 
-values or can be taken into account during the statistical modeling. We here 
-give an example of imputation using the K nearest neighbors algorithm, with 
-k = 3, that is available from the `impute` mehtod. More details about the 
+The data imputation is performed using the K nearest neighbors algorithm, with 
+k = 3. This is available from the `impute` mehtod. More details about the 
 arguments can be found in `?impute::impute.knn`.
 
 ```{r}
@@ -660,8 +658,8 @@ effects are unavoidable.
 
 The `ComBat` function from the `sva` package can be used to perform batch 
 correction as it is performed in the SCoPE2 analysis. We do not claim that 
-`ComBat` is the best algorithm for batch correcting SCP data. The same steps 
-as described below could be applied for any batch correcting method.
+`ComBat` is the best algorithm for batch correcting SCP data and other batch 
+correcting methods could be used using the same procedure. 
 
 We first extract the assay to process.
 
@@ -720,7 +718,7 @@ PCA can be computed using the `runPCA` method. It returns a
 `SingleCellExperiment` object for which the dimension reduction results are 
 stored in the `reducedDim` slot. 
 
-```{r run_PCA}
+```{r run_PCA, warning = FALSE}
 scp[["proteins_batchC"]] <- runPCA(scp[["proteins_batchC"]],
                                    ncomponents = 50, 
                                    ntop = Inf, 
@@ -730,8 +728,8 @@ scp[["proteins_batchC"]] <- runPCA(scp[["proteins_batchC"]],
 ```
 
 The computed PCA can be displayed using the `plotReducedDim` function. The 
-`dimred` arguments gives the name of the dimension reduction results to plot, 
-here we called it `PCA`. The samples are colored by type of sample. 
+`dimred` arguments should give the name of the dimension reduction results to
+plot, here we called it `PCA`. The samples are colored by type of sample. 
 
 ```{r plot_PCA}
 plotReducedDim(scp[["proteins_batchC"]], 
@@ -740,11 +738,11 @@ plotReducedDim(scp[["proteins_batchC"]],
 ```
 
 This is a minimalistic example with only a few plotted cells, but the original 
-SCoPE2 dataset contained over thousand cells.
+SCoPE2 dataset contained more than thousand cells.
 
 ## UMAP
 
-Similarly to PCA, we can computed a UMAP using the `runUMAP` method. Note 
+Similarly to PCA, we can compute a UMAP using the `runUMAP` method. Note 
 however that the UMAP implementation requires a initialization, usually provided
 by PCA. The previous PCA results are used automatically when supplying 
 `dimred = "PCA"` (`PCA` is the name of the dimension reduction result that we 
@@ -772,7 +770,7 @@ plotReducedDim(scp[["proteins_batchC"]],
 ```
 
 The UMAP plot is a very interesting plot for large datasets. A UMAP on this
-small example dataset is not useful but is shown for illustration purposes. 
+small example dataset is not useful but is shown for illustration. 
 
 
 # Monitoring data processing
@@ -781,12 +779,12 @@ The `QFeatures` plot shows the quantitative data for a features at the different
 expression levels. For instance, suppose we are interested in the protein 
 *LMNA* (protein ID is `P02545`). A useful QC is to monitor the data 
 processing at the PSM, peptide and protein level. This can easily be done thanks
-to the `QFeatures` framework. Using the `subsetByAssay` and the `subsetByRow` 
-functions, we can extract the batch and feature of interest, respectively. Then,
-the data is formated to a long format table that can easily be plugged in the 
-`ggplot2` visualization tool. 
+to the `QFeatures` framework. Using the `subsetByFeature`, we can extract the
+protein of interest and its related features in the other assays. The data is
+formated to a long format table that can easily be plugged in the `ggplot2`
+visualization tool. 
 
-```{r, warning = FALSE, fig.width = 10, out.width = "100%"}
+```{r monitor_plot, warning = FALSE, fig.width = 10, fig.height = 10, out.width = "100%"}
 scp %>%
   ## Get the features related to LMNA (P02545)
   subsetByFeature("P02545") %>%
@@ -811,12 +809,12 @@ scp %>%
         legend.position = "bottom")
 ```
 
-This graph can help us track the processing of the data and help us detect 
-anomalies in the data. For instance, we can see that no data were recorded for
-5 samples (TMT-12 to 16). Those channels contain either macrophages or monocytes
-(from the experimental design) and are expected to contain information. Thanks 
-to this diagnostic plot, we reported the issue to Specht and colleagues there 
-and this led to version 3 of the SCoPE2 dataset.
+This graph helps to keep track of the data processing and highlights anomalies 
+in the data. For instance, we can see that no data were recorded for 5 channels
+(TMT-12 to 16). Those channels contain either macrophages or monocytes (from the
+experimental design) and are expected to contain information. Thanks to this
+diagnostic plot, we reported the issue to Specht and colleagues and this led to
+version 3 of the SCoPE2 dataset.
 
 # Session information {-}
 
