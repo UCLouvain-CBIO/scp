@@ -246,7 +246,7 @@ identifies the carrier channel in each batch
 * A string pattern (following regular expression syntax) that identifies the 
 samples to divide
 
-The function creates an field `meanSCR` and stores it in the `rowData` of each 
+The function creates an field `.meanSCR` and stores it in the `rowData` of each 
 assay. 
 
 ```{r computeSCR}
@@ -258,16 +258,16 @@ scp <- computeSCR(scp,
 ```
 
 Before applying the filter, we plot the distribution of the average SCR. We can 
-extract the `meanSCR` variable from the `rowData` of several assays using the
+extract the `.meanSCR` variable from the `rowData` of several assays using the
 `rowDataToDF`. It takes the `rowData` field(s) of interest and returns a 
 `DataFrame` table. 
 
 ```{r plot_SCR, warning=FALSE, message=FALSE}
 scp %>%
   rowDataToDF(i = 1:3, 
-              vars = "meanSCR") %>%
+              vars = ".meanSCR") %>%
   data.frame %>%
-  ggplot(aes(x = meanSCR)) +
+  ggplot(aes(x = .meanSCR)) +
   geom_histogram() +
   geom_vline(xintercept = 0.1)
 ```
@@ -279,8 +279,8 @@ functions.
 
 ```{r filter_SCR}
 scp <- filterFeatures(scp, 
-                      ~ !is.na(meanSCR) & 
-                        meanSCR < 0.1)
+                      ~ !is.na(.meanSCR) & 
+                        .meanSCR < 0.1)
 ```
 
 ## Filter out PSMs with high false discovery rate
@@ -464,7 +464,8 @@ different proteins. We compute the median CV per cell using the
 `rowData`, and the batch names in the `colData` of the `QFeatures` object. The 
 peptide and batch information are required to perform normalization prior to the 
 CV computation. Protein information is required since the CV are computed at the
-protein level. 
+protein level. The computed median CVs are automatically stored in the `colData`
+of the `SingleCellExperiment` assay under the `.medianCV` field
 
 ```{r computeMedianCV}
 scp <- computeMedianCV(scp,
@@ -486,7 +487,7 @@ single-cells that contain noisy quantification.
 scp[["peptides_filter1"]] %>%
   colData %>%
   data.frame %>%
-  ggplot(aes(x = MedianCV, 
+  ggplot(aes(x = .MedianCV, 
              fill = SampleType)) +
   geom_boxplot() +
   geom_vline(xintercept = 0.3)
@@ -501,7 +502,7 @@ null distribution. Note we also keep only the samples of interest (macrophages
 and monocytes) since all QC metrics are now computed.
 
 ```{r create_filter2}
-keepSample <- scp[["peptides_filter1"]]$MedianCV < 0.3 &
+keepSample <- scp[["peptides_filter1"]]$.MedianCV < 0.3 &
   scp[["peptides_filter1"]]$SampleType %in% c("Macrophage", "Monocyte")
 keepSample[is.na(keepSample)] <- FALSE
 ```

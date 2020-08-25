@@ -4,12 +4,12 @@ test_that("computeSCR", {
   ## Single assay
   test <- computeSCR(scp1, i = 1, colDataCol = "SampleType", 
                      samplePattern = "Reference", carrierPattern = "Carrier")
-  expect_identical(rowData(test[[1]])$meanSCR,
+  expect_identical(rowData(test[[1]])$.meanSCR,
                    assay(scp1[[1]])[, 2] / assay(scp1[[1]])[, 1])
   ## Multiple assays
   test <- computeSCR(scp1, i = 1:2, colDataCol = "SampleType", 
                      samplePattern = "Reference", carrierPattern = "Carrier")
-  expect_identical(rowData(test[[2]])$meanSCR,
+  expect_identical(rowData(test[[2]])$.meanSCR,
                    assay(scp1[[2]])[, 2] / assay(scp1[[2]])[, 1])
   ## Warning: multiple match for carrier
   expect_warning(test2 <- computeSCR(scp1, i = 1:2, colDataCol = "SampleType", 
@@ -52,7 +52,7 @@ test_that("computeMedianCV", {
   ## TODO improve this test after improving the CV computation algorithm
   expect_equal(computeMedianCV(scp1, i = "peptides", peptideCol = "peptide", 
                                    proteinCol = "protein", 
-                                   batchCol = "Set")[["peptides"]]$MedianCV,
+                                   batchCol = "Set")[["peptides"]]$.MedianCV,
                    c(0.645293098683498, 0.773549942815159, 0.663774239146459, 
                      0.72830710905132, 0.778688251750191, 1.03956742480134, 
                      0.526933183452957, 0.447329625349529, 0.346740321446223, 
