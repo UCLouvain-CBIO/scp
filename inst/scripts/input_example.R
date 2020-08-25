@@ -45,12 +45,22 @@ batch <- read.csv("inst/extdata/batch.csv", check.names = FALSE)
 inner_join(x = cells %>% 
              pivot_longer(-Set, 
                           names_to = "Channel", 
-                          values_to = "SampleAnnotation") %>%
+                          values_to = "SampleType") %>%
+             mutate(SampleType = recode(SampleType, 
+                                        sc_0 = "Blank",
+                                        sc_u = "Monocyte",
+                                        sc_m0 = "Macrophage",
+                                        unused = "Unused",
+                                        norm = "Reference",
+                                        reference = "Reference",
+                                        carrier_mix = "Carrier")) %>%
              mutate_all(as.character), 
            y = batch %>% 
              dplyr::rename(Set = set) %>%
              mutate_all(as.character),
-           by = "Set") -> sampleAnnotation
+           by = "Set") %>%
+  filter(Set %in% mqFile$Set) -> 
+  sampleAnnotation
 format(object.size(sampleAnnotation), units = "MB", digits = 2)
 save(sampleAnnotation, file = file.path("data/sampleAnnotation.rda"), 
      compress = "xz", compression_level = 9)
