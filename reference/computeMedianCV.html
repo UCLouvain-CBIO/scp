@@ -166,7 +166,7 @@ the <code>rowData</code> should be taken.</p></td>
     <p>A <code>QFeatures</code> object.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>A new columns, <code>medianCV</code>, is added to the <code>colData</code> of the assay <code>i</code> and
+    <p>A new columns, <code>.medianCV</code>, is added to the <code>colData</code> of the assay <code>i</code> and
 contains the computed median CVs.</p>
 <p><em>Watch out</em> that <code>peptideCol</code> and <code>proteinCol</code> are feature variables and
 hence taken from the <code>rowData</code>. <code>batchCol</code> is a sample variable and is taken
@@ -180,7 +180,7 @@ from the <code>colData</code> of the <code>QFeatures</code> object.</p>
                         peptideCol = <span class='st'>"peptide"</span>, 
                         batchCol = <span class='st'>"Set"</span>)
 <span class='co'>## Check results</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/hist.html'>hist</a></span>(<span class='kw'>scp1</span>[[<span class='st'>"peptides"</span>]]<span class='op'>$</span><span class='kw'>MedianCV</span>)</div><div class='img'><img src='computeMedianCV-1.png' alt='' width='700' height='433' /></div></pre>
+<span class='fu'><a href='https://rdrr.io/r/graphics/hist.html'>hist</a></span>(<span class='kw'>scp1</span>[[<span class='st'>"peptides"</span>]]<span class='op'>$</span><span class='kw'>.MedianCV</span>)</div><div class='img'><img src='computeMedianCV-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

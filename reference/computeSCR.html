@@ -159,7 +159,7 @@ allowed, otherwise only the first match is taken</p></td>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A <code>QFeatures</code> object for which the <code>rowData</code> of the given
-assay(s) is augmented with the mean SCR (<code>meanSCR</code>
+assay(s) is augmented with the mean SCR (<code>.meanSCR</code>
 variable).</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -170,8 +170,8 @@ variable).</p>
                    carrierPattern = <span class='st'>"Carrier"</span>,
                    samplePattern = <span class='st'>"Blank|Macrophage|Monocyte"</span>)
 <span class='co'>## Check results</span>
-<span class='fu'><a href='rowDataToDF.html'>rowDataToDF</a></span>(<span class='kw'>scp1</span>, <span class='fl'>1</span>, <span class='st'>"meanSCR"</span>)</div><div class='output co'>#&gt; DataFrame with 195 rows and 3 columns
-#&gt;              meanSCR        .assay    .rowname
+<span class='fu'><a href='rowDataToDF.html'>rowDataToDF</a></span>(<span class='kw'>scp1</span>, <span class='fl'>1</span>, <span class='st'>".meanSCR"</span>)</div><div class='output co'>#&gt; DataFrame with 195 rows and 3 columns
+#&gt;             .meanSCR        .assay    .rowname
 #&gt;            &lt;numeric&gt;   &lt;character&gt; &lt;character&gt;
 #&gt; PSM116299  0.0868734 190321S_LC...   PSM116299
 #&gt; PSM116943  0.0328429 190321S_LC...   PSM116943
