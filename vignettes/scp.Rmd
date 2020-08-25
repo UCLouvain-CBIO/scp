@@ -135,7 +135,7 @@ takes the `QFeatures` object and the name(s) or index/indices of the assay(s) to
 clean and automatically replaces any zero in the selected quantitative data by
 `NA`. 
 
-```{r}
+```{r zeroIsNA}
 scp <- zeroIsNA(scp, i = 1:3)
 ```
 
@@ -148,7 +148,7 @@ feature meta-information that are stored in the assay's `rowData`. The
 information. The available variables in the `rowData` are listed below for each
 assay. 
 
-```{r}
+```{r rowDataNames}
 rowDataNames(scp)
 ```
 
@@ -214,27 +214,27 @@ that the carrier intensities are much higher than the single-cell intensities.
 The SCR can be computed using the `computeSCR` function from `scp`. The function
 must be told which channels are the samples that must be divided and which 
 channel contains the carrier. This information is provided in the sample 
-metadata and is accessed using the `colData`, under the `SampleAnnotation` 
+metadata and is accessed using the `colData`, under the `SampleType` 
 field. 
 
 ```{r show_annotation}
-colData(scp)[, "SampleAnnotation"] %>%
+colData(scp)[, "SampleType"] %>%
   table
 ```
 
-In this dataset, `SampleAnnotation` gives the type of sample that is present in
+In this dataset, `SampleType` gives the type of sample that is present in
 each TMT channel. The SCoPE2 protocole includes 5 types of samples: 
 
-* The carrier channels (`carrier_mix`) contain 200 cell equivalents and are 
+* The carrier channels (`Carrier`) contain 200 cell equivalents and are 
 meant to boost the peptide identification rate.
-* The normalization channels (`norm` and `reference`) contain 5 cell equivalents 
+* The normalization channels (`Reference`) contain 5 cell equivalents 
 and are used to partially correct for between-run variation.
-* The unused channels (`unused`) are channels that are left empty due to 
+* The unused channels (`Unused`) are channels that are left empty due to 
 isotopic cross-contamination by the carrier channel.
-* The blank channels (`sc_0`) contain samples that do not contain any cell but 
+* The blank channels (`Blank`) contain samples that do not contain any cell but 
 are processed as single-cell samples.
 * The single-cell sample channels contain the single-cell samples of interest, 
-that are macrophage (`sc_m0`) or monocyte (`sc_u`).
+that are macrophage (`Macrophage`) or monocyte (`Monocyte`).
 
 The `computeSCR` function expects the following input: 
 
@@ -247,14 +247,14 @@ identifies the carrier channel in each batch
 samples to divide
 
 The function creates an field `meanSCR` and stores it in the `rowData` of each 
-assay. Note that `^sc` means *starts with `sc`*.
+assay. 
 
 ```{r computeSCR}
 scp <- computeSCR(scp,
                   i = 1:3,
-                  colDataCol = "SampleAnnotation",
-                  carrierPattern = "carrier",
-                  samplePattern = "^sc")
+                  colDataCol = "SampleType",
+                  carrierPattern = "Carrier",
+                  samplePattern = "Macrophage|Monocyte")
 ```
 
 Before applying the filter, we plot the distribution of the average SCR. We can 
@@ -320,15 +320,15 @@ interest by the reference channel. Similarly to `computeSCR`, we can point to
 the samples and the reference columns in each assay using the annotation 
 contained in the `colData`. 
 
-We here divide all columns (using the regular expression wildcard `.`) by 
-the reference channel (either `reference` or `norm`). 
+We here divide all columns (using the regular expression wildcard `.`) by the 
+reference channel (`Reference`). 
 
 ```{r divideByReference}
 scp <- divideByReference(scp,
                          i = 1:3, 
-                         colDataCol = "SampleAnnotation", 
+                         colDataCol = "SampleType", 
                          samplePattern = ".", 
-                         refPattern = "reference|norm")
+                         refPattern = "Reference")
 ```
 
 # Aggregate PSM data to peptide data
@@ -348,7 +348,7 @@ quantitative data of the PSMs to aggregate. We here use the median value. We
 name the aggregated assays using the original names and appending `peptides_` at 
 the start.
 
-```{r, message = FALSE}
+```{r aggregate_peptides, message = FALSE}
 scp <-aggregateFeaturesOverAssays(scp,
                                   i = 1:3, 
                                   fcol = "peptide", 
@@ -402,7 +402,7 @@ Once the metadata is transfered, we can subset the `SingleCellExperiment` assay.
 
 ```{r subset_single_cells}
 sce <- scp[["peptides"]]
-sce <- sce[, sce$SampleAnnotation %in% c("sc_0", "sc_m0", "sc_u")]
+sce <- sce[, sce$SampleType %in% c("Blank", "Macrophage", "Monocyte")]
 ```
 
 Then we add this assay back into the `QFeatures` object. This is done using the 
@@ -441,11 +441,11 @@ scp[["peptides_filter1"]] %>%
 Looking at the distribution of the median per cell can highlight low-quality
 cells. 
 
-```{r, warning=FALSE, message=FALSE}
+```{r plot_medianRI, warning=FALSE, message=FALSE}
 scp[["peptides_filter1"]] %>%
   colData %>%
   data.frame %>%
-  ggplot(aes(x = MedianRI, fill = SampleAnnotation)) +
+  ggplot(aes(x = MedianRI, fill = SampleType)) +
   geom_boxplot() +
   scale_x_log10()
 ```
@@ -466,7 +466,7 @@ peptide and batch information are required to perform normalization prior to the
 CV computation. Protein information is required since the CV are computed at the
 protein level. 
 
-```{r}
+```{r computeMedianCV}
 scp <- computeMedianCV(scp,
                        i = "peptides_filter1", 
                        proteinCol = "protein", 
@@ -482,12 +482,12 @@ quantifications and hence can be used to estimate an empirical null distribution
 of the CV. This distribution helps defining a threshold that filters out 
 single-cells that contain noisy quantification. 
 
-```{r, message = FALSE, warning = FALSE}
+```{r plot_medianCV, message = FALSE, warning = FALSE}
 scp[["peptides_filter1"]] %>%
   colData %>%
   data.frame %>%
   ggplot(aes(x = MedianCV, 
-             fill = SampleAnnotation)) +
+             fill = SampleType)) +
   geom_boxplot() +
   geom_vline(xintercept = 0.3)
 ```
@@ -496,18 +496,19 @@ We can see that the protein quantifiation for single-cells are much more
 consistent within cells than witin the blank channels. Based on the distribution
 of the blanks, we decide to keep the cells that have a median CV lower than
 0.3. Note this example is inaccurate because the null distribution is based on
-only 3 blank samples, but more sets could lead to a better estimation of the CV null distribution. Note we also keep only the samples of interest (macrophages
+only 3 blank samples, but more sets could lead to a better estimation of the CV 
+null distribution. Note we also keep only the samples of interest (macrophages
 and monocytes) since all QC metrics are now computed.
 
-```{r}
+```{r create_filter2}
 keepSample <- scp[["peptides_filter1"]]$MedianCV < 0.3 &
-  scp[["peptides_filter1"]]$SampleAnnotation %in% c("sc_m0", "sc_u")
+  scp[["peptides_filter1"]]$SampleType %in% c("Macrophage", "Monocyte")
 keepSample[is.na(keepSample)] <- FALSE
 ```
 
 Then, we subset the assay for samples that pass the filter.
 
-```{r}
+```{r apply_filter2}
 sce <- scp[["peptides_filter1"]]
 sce <- sce[, keepSample]
 ```
@@ -515,7 +516,7 @@ sce <- sce[, keepSample]
 Finally, we add the filtered assay to the `QFeatures`object and created the 
 required linking with the previous assay.
 
-```{r}
+```{r add_filter2}
 addAssay(scp,
          y = sce, 
          name = "peptides_filter2") %>%
@@ -543,7 +544,7 @@ transformation, the `FUN` function to apply and `STATS`, a vector of values to
 apply. More conventional normalization procedure can be found in
 `?QFeatures::normalize`.
 
-```{r}
+```{r normalize_scale}
 ## Divide columns by median
   sweep(scp, 
         i = "peptides_filter2", 
@@ -569,7 +570,7 @@ another common procedure is to remove higly missing data. In this example, we
 remove peptides with more than 99 \% missing data. This is done using the 
 `filterNA` function from `QFeatures`.
 
-```{r}
+```{r filterNA}
 scp <- filterNA(scp,
                 i = "peptides_norm", 
                 pNA = 0.99)
@@ -581,7 +582,7 @@ In this vignette, we perform log2-transformation using the `logTransform`
 method from `QFeatures`. Other log-transformation can be applied by changing the 
 `base` argument. 
 
-```{r}
+```{r logTransform}
 scp <- logTransform(scp,
                     base = 2,
                     i = "peptides_norm", 
@@ -594,7 +595,7 @@ scp <- logTransform(scp,
 Similarly to aggregating PSM data to peptide data, we can aggregate peptide data
 to protein data using the `aggregateFeatures` function.
 
-```{r}
+```{r aggregate_proteins}
 scp <- aggregateFeatures(scp,
                          i = "peptides_log",  
                          name = "proteins", 
@@ -613,7 +614,7 @@ Normalization is performed similarly to peptide normalization. We use the same
 functions, but since the data were log-transformed at the peptide level, we 
 subtract by the statistic (median or mean) instead of dividing. 
 
-```{r}
+```{r normalize_center}
 ## Center columns with median
 sweep(scp, 
       i = "proteins", 
@@ -641,7 +642,7 @@ The data imputation is performed using the K nearest neighbors algorithm, with
 k = 3. This is available from the `impute` mehtod. More details about the 
 arguments can be found in `?impute::impute.knn`.
 
-```{r}
+```{r impute}
 scp <- impute(scp, 
               i = "proteins_norm", 
               method = "knn", 
@@ -663,24 +664,24 @@ correcting methods could be used using the same procedure.
 
 We first extract the assay to process.
 
-```{r}
+```{r transferColDataToAssay_proteins}
 scp <- transferColDataToAssay(scp, i = "proteins_norm")
 sce <- scp[["proteins_norm"]]
 ```
 
 Next, we need to provide a design matrix and the batch annotation to `Combat`. 
 The design matrix allows to protect variables of interest, in our case 
-`SampleAnnotation`. 
+`SampleType`. 
 
-```{r}
+```{r prepare_batch_correction}
 batch <- colData(sce)$Set
-model <- model.matrix(~ SampleAnnotation, data = colData(sce))
+model <- model.matrix(~ SampleType, data = colData(sce))
 ```
 
 We then load and call `ComBat` and overwrite the data matrix. Recall the data 
 matrix can be accessed using the `assay` function. 
 
-```{r, results='hide', message=FALSE}
+```{r compute_batch_correction, results = 'hide', message = FALSE}
 library(sva)
 assay(sce) <- ComBat(dat = assay(sce), 
                      batch = batch, 
@@ -690,7 +691,7 @@ assay(sce) <- ComBat(dat = assay(sce),
 Finally, we add the batch corrected assay to the `QFeatures` object and create
 the feature links.
 
-```{r}
+```{r add_batch_correction}
 addAssay(scp, 
          y = sce,
          name = "proteins_batchC") %>%
@@ -705,7 +706,7 @@ Because each assay contains `SingelCellExperiment` objects, we can easily apply
 methods developed in the scRNA-Seq field. A useful package for dimension 
 reduction on single-cell data is the `scater`.
 
-```{r}
+```{r load_scater}
 library(scater)
 ```
 
@@ -734,7 +735,7 @@ plot, here we called it `PCA`. The samples are colored by type of sample.
 ```{r plot_PCA}
 plotReducedDim(scp[["proteins_batchC"]], 
                dimred = "PCA",
-               colour_by = "SampleAnnotation")
+               colour_by = "SampleType")
 ```
 
 This is a minimalistic example with only a few plotted cells, but the original 
@@ -766,7 +767,7 @@ here we called it `UMAP`. The samples are colored by type of sample.
 ```{r plot_UMAP}
 plotReducedDim(scp[["proteins_batchC"]], 
                dimred = "UMAP",
-               colour_by = "SampleAnnotation")
+               colour_by = "SampleType")
 ```
 
 The UMAP plot is a very interesting plot for large datasets. A UMAP on this
@@ -789,14 +790,14 @@ scp %>%
   ## Get the features related to LMNA (P02545)
   subsetByFeature("P02545") %>%
   ## Format the `QFeatures` to a long format table
-  longFormat(colDataCols = c("Set", "SampleAnnotation", "Channel")) %>%
+  longFormat(colDataCols = c("Set", "SampleType", "Channel")) %>%
   data.frame %>%
   ## This is used to preserve ordering of the samples and assays in ggplot2
   mutate(assay = factor(assay, levels = names(scp)),
          Channel = sub("RI", "TMT-", Channel),
          Channel = factor(Channel, levels = unique(Channel))) %>%
   ## Start plotting
-  ggplot(aes(x = Channel, y = value, group = rowname, col = SampleAnnotation)) +
+  ggplot(aes(x = Channel, y = value, group = rowname, col = SampleType)) +
   geom_point() +
   ## Plot every assay in a separate facet
   facet_wrap(facets = vars(assay), scales = "free_y", ncol = 3) +

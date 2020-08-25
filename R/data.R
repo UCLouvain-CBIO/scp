@@ -155,10 +155,10 @@
 ##'
 ##' @description
 ##'
-##' A data frame with 7408 observations on the following 6 variables.
+##' A data frame with 48 observations on the following 6 variables.
 ##' - Set: a character vector
 ##' - Channel: a character vector
-##' - SampleAnnotation: a character vector
+##' - SampleType: a character vector
 ##' - lcbatch: a character vector
 ##' - sortday: a character vector
 ##' - digest: a character vector
