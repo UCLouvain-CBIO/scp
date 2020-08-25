@@ -5,17 +5,17 @@
 \alias{sampleAnnotation}
 \title{Single cell sample annotation}
 \format{
-An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 7408 rows and 6 columns.
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 48 rows and 6 columns.
 }
 \usage{
 sampleAnnotation
 }
 \description{
-A data frame with 7408 observations on the following 6 variables.
+A data frame with 48 observations on the following 6 variables.
 \itemize{
 \item Set: a character vector
 \item Channel: a character vector
-\item SampleAnnotation: a character vector
+\item SampleType: a character vector
 \item lcbatch: a character vector
 \item sortday: a character vector
 \item digest: a character vector

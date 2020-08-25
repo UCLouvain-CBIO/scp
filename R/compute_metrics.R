@@ -20,7 +20,7 @@
 ##'     allowed, otherwise only the first match is taken
 ##'
 ##' @return A `QFeatures` object for which the `rowData` of the given
-##'     assay(s) is augmented with the mean SCR (`meanSCR`
+##'     assay(s) is augmented with the mean SCR (`.meanSCR`
 ##'     variable). 
 ##'
 ##' @export
@@ -33,7 +33,7 @@
 ##'                    carrierPattern = "Carrier",
 ##'                    samplePattern = "Blank|Macrophage|Monocyte")
 ##' ## Check results
-##' rowDataToDF(scp1, 1, "meanSCR")
+##' rowDataToDF(scp1, 1, ".meanSCR")
 computeSCR <- function(obj, 
                        i, 
                        colDataCol, 
@@ -64,9 +64,9 @@ computeSCR <- function(obj,
         ## Compute ratios
         ratio <- assay(obj[[ii]])[, sampIdx, drop = FALSE] / assay(obj[[ii]])[, carrIdx]
         ## Compute mean sample to carrier ratios
-        rowData(obj@ExperimentList@listData[[ii]])$meanSCR <- 
+        rowData(obj@ExperimentList@listData[[ii]])$.meanSCR <- 
                                                      rowMeans(ratio, na.rm = TRUE)
-        ## more efficient than rowData(obj[[ii]])$meanSCR <- rowMeans(ratio, na.rm = TRUE)
+        ## more efficient than rowData(obj[[ii]])$.meanSCR <- rowMeans(ratio, na.rm = TRUE)
     }
     obj
 }
@@ -141,7 +141,7 @@ computeFDR <- function(object,
 ##' mean expression. The CV is computed only if there are more than 5 
 ##' observations per protein per cell. 
 ##' 
-##' A new columns, `medianCV`, is added to the `colData` of the assay `i` and
+##' A new columns, `.medianCV`, is added to the `colData` of the assay `i` and
 ##' contains the computed median CVs.
 ##' 
 ##' *Watch out* that `peptideCol` and `proteinCol` are feature variables and 
@@ -177,7 +177,7 @@ computeFDR <- function(object,
 ##'                         peptideCol = "peptide", 
 ##'                         batchCol = "Set")
 ##' ## Check results
-##' hist(scp1[["peptides"]]$MedianCV)
+##' hist(scp1[["peptides"]]$.MedianCV)
 computeMedianCV <- function(object, 
                             i, 
                             peptideCol, 
@@ -206,14 +206,14 @@ computeMedianCV <- function(object,
         dplyr::filter(.data$cvn > 5) %>%
         ## Compute the median CV per cell
         group_by(.data$colname) %>%
-        mutate(MedianCV = median(.data$cvq, na.rm = TRUE)) %>%
+        mutate(.MedianCV = median(.data$cvq, na.rm = TRUE)) %>%
         ## Store the cell median CV in the coldata
-        select(.data$colname, .data$MedianCV) %>%
+        select(.data$colname, .data$.MedianCV) %>%
         unique ->
         CVs
-    object@ExperimentList@listData[[i]]$MedianCV <- NA
-    colData(object@ExperimentList@listData[[i]])[CVs$colname, "MedianCV"] <- 
-        CVs$MedianCV
+    object@ExperimentList@listData[[i]]$.MedianCV <- NA
+    colData(object@ExperimentList@listData[[i]])[CVs$colname, ".MedianCV"] <- 
+        CVs$.MedianCV
     return(object)
 }
 

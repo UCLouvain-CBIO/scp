@@ -24,7 +24,7 @@ allowed, otherwise only the first match is taken}
 }
 \value{
 A \code{QFeatures} object for which the \code{rowData} of the given
-assay(s) is augmented with the mean SCR (\code{meanSCR}
+assay(s) is augmented with the mean SCR (\code{.meanSCR}
 variable).
 }
 \description{
@@ -40,5 +40,5 @@ scp1 <- computeSCR(scp1,
                    carrierPattern = "Carrier",
                    samplePattern = "Blank|Macrophage|Monocyte")
 ## Check results
-rowDataToDF(scp1, 1, "meanSCR")
+rowDataToDF(scp1, 1, ".meanSCR")
 }
