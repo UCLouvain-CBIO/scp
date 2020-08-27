@@ -49,6 +49,11 @@
 ##'     each batch is stored in a separate assay as a
 ##'     [SingleCellExperiment] object.
 ##'
+##' @note The `SingleCellExperiment` class is built on top of the 
+##'     `RangedSummarizedExperiment` class. This means that some column names 
+##'     are forbidden in the `rowData`. Avoid using the following names:
+##'     `seqnames`, `ranges`, `strand`, `start`, `end`, `width`,  `element`
+##'     
 ##' @author Laurent Gatto, Christophe Vanderaa
 ##' 
 ##' @importFrom utils read.csv
@@ -150,6 +155,12 @@ readSCP <- function(quantTable,
 ##' @return An instance of class [SingleCellExperiment].
 ##'
 ##' @author Laurent Gatto, Christophe Vanderaa
+##' 
+##' @note The `SingleCellExperiment` class is built on top of the 
+##'     `RangedSummarizedExperiment` class. This means that some column names 
+##'     are forbidden in the `rowData`. Avoid using the following names:
+##'     `seqnames`, `ranges`, `strand`, `start`, `end`, `width`,  `element`
+##'     
 ##' 
 ##' @seealso The code relies on [QFeatures::readSummarizedExperiment].
 ##'
