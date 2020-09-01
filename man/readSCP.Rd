@@ -60,13 +60,13 @@ are forbidden in the \code{rowData}. Avoid using the following names:
 \examples{
 
 ## Load an example table containing MaxQuant output
-data("mqFile")
+data("mqScpData")
 
 ## Load the (user-generated) annotation table
 data("sampleAnnotation")
 
 ## Format the tables into a QFeatures object
-readSCP(quantTable = mqFile,
+readSCP(quantTable = mqScpData,
         metaTable = sampleAnnotation,
         batchCol = "Set",
         channelCol = "Channel")
