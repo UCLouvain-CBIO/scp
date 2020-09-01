@@ -155,7 +155,8 @@ taken.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'>## Extract the peptide length and sequence from the first 3 assays</span>
-<span class='fu'>rowDataToDF</span>(<span class='kw'>scp1</span>, i = <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Length"</span>, <span class='st'>"Sequence"</span>))</div><div class='output co'>#&gt; DataFrame with 542 rows and 4 columns
+<span class='fu'>rowDataToDF</span>(<span class='kw'>scp1</span>, i = <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>"Length"</span>, <span class='st'>"Sequence"</span>))
+</div><div class='output co'>#&gt; DataFrame with 542 rows and 4 columns
 #&gt;              Length      Sequence        .assay    .rowname
 #&gt;           &lt;integer&gt;   &lt;character&gt;   &lt;character&gt; &lt;character&gt;
 #&gt; PSM116299         8      AAIGLLAR 190321S_LC...   PSM116299
