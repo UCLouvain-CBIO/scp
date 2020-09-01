@@ -559,22 +559,22 @@ apply. More conventional normalization procedure can be found in
 `?QFeatures::normalize`.
 
 ```{r normalize_scale}
-## Divide columns by median
-  sweep(scp,
-        i = "peptides_filter2",
+scp %>%
+    ## Divide columns by median
+    sweep(i = "peptides_filter2",
         MARGIN = 2,
         FUN = "/",
         STATS = colMedians(assay(scp[["peptides_filter2"]]),
                            na.rm = TRUE),
         name = "peptides_norm_col") %>%
-  ## Divide rows by mean
-  sweep(i = "peptides_norm_col",
+    ## Divide rows by mean
+    sweep(i = "peptides_norm_col",
         MARGIN = 1,
         FUN = "/",
         STATS = rowMeans(assay(.[["peptides_norm_col"]]),
                          na.rm = TRUE),
         name = "peptides_norm") ->
-  scp
+    scp
 ```
 
 ## Remove peptides with high missing rate
