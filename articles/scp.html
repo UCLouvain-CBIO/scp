@@ -216,7 +216,7 @@
 <li>Remove PSMs that are matched to the decoy database</li>
 <li>Keep PSMs that exhibit a high PIF (parental ion fraction), indicative of the purity of a spectrum</li>
 </ul>
-<p>We can perform this filtering using the <code>filterFeatures</code> function. <code>filterFeatures</code> automatically accesses the feature metadata and selects the rows that meet the provided condition(s). For instance, <code>Reverse != "+"</code> keeps the rows for which the <code>Reverse</code> variable in the <code>rowData</code> is not <code>"+"</code> (<em>i.e.</em> the PSM is not matched to the decoy database).</p>
+<p>We can perform this filtering using the <a href="https://rformassspectrometry.github.io/QFeatures/reference/QFeatures-filtering.html"><code>filterFeatures</code> function</a>. <code>filterFeatures</code> automatically accesses the feature metadata and selects the rows that meet the provided condition(s). For instance, <code>Reverse != "+"</code> keeps the rows for which the <code>Reverse</code> variable in the <code>rowData</code> is not <code>"+"</code> (<em>i.e.</em> the PSM is not matched to the decoy database).</p>
 <div class="sourceCode" id="cb9"><pre class="downlit">
 <span class="kw">scp</span> <span class="op">&lt;-</span> <span class="fu">filterFeatures</span>(<span class="kw">scp</span>,
                       <span class="op">~</span> <span class="kw">Reverse</span> != <span class="st">"+"</span> <span class="op">&amp;</span>
