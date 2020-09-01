@@ -498,22 +498,22 @@ Conceptual illustration of feature aggregation.
 <a href="#normalization" class="anchor"></a>Normalization</h2>
 <p>The columns (samples) of the peptide data are first normalized by dividing the relative intensities by the median relative intensities. Then, the rows (peptides) are normalized by dividing the relative intensities by the mean relative intensities. The normalized data is stored in a separate assay. This normalization procedure is suggested in the SCoPE2 analysis and is applied using the <code>sweep</code> method. Beside the dataset and the assay to normalize, the method expects a <code>MARGIN</code>, that is either row-wise (<code>1</code>) or column-wise (<code>2</code>) transformation, the <code>FUN</code> function to apply and <code>STATS</code>, a vector of values to apply. More conventional normalization procedure can be found in <code><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-processing.html">?QFeatures::normalize</a></code>.</p>
 <div class="sourceCode" id="cb31"><pre class="downlit">
-<span class="co">## Divide columns by median</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/sweep.html">sweep</a></span>(<span class="kw">scp</span>,
-        i = <span class="st">"peptides_filter2"</span>,
+<span class="kw">scp</span> <span class="op">%&gt;%</span>
+    <span class="co">## Divide columns by median</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/sweep.html">sweep</a></span>(i = <span class="st">"peptides_filter2"</span>,
         MARGIN = <span class="fl">2</span>,
         FUN = <span class="st">"/"</span>,
         STATS = <span class="fu">colMedians</span>(<span class="fu">assay</span>(<span class="kw">scp</span>[[<span class="st">"peptides_filter2"</span>]]),
                            na.rm = <span class="fl">TRUE</span>),
         name = <span class="st">"peptides_norm_col"</span>) <span class="op">%&gt;%</span>
-  <span class="co">## Divide rows by mean</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/sweep.html">sweep</a></span>(i = <span class="st">"peptides_norm_col"</span>,
+    <span class="co">## Divide rows by mean</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/sweep.html">sweep</a></span>(i = <span class="st">"peptides_norm_col"</span>,
         MARGIN = <span class="fl">1</span>,
         FUN = <span class="st">"/"</span>,
         STATS = <span class="fu"><a href="https://rdrr.io/r/base/colSums.html">rowMeans</a></span>(<span class="fu">assay</span>(<span class="kw">.</span>[[<span class="st">"peptides_norm_col"</span>]]),
                          na.rm = <span class="fl">TRUE</span>),
         name = <span class="st">"peptides_norm"</span>) <span class="op">-&gt;</span>
-  <span class="kw">scp</span>
+    <span class="kw">scp</span>
 </pre></div>
 </div>
 <div id="remove-peptides-with-high-missing-rate" class="section level2">
@@ -562,22 +562,22 @@ Conceptual illustration of feature aggregation.
 <a href="#normalization-1" class="anchor"></a>Normalization</h2>
 <p>Normalization is performed similarly to peptide normalization. We use the same functions, but since the data were log-transformed at the peptide level, we subtract by the statistic (median or mean) instead of dividing.</p>
 <div class="sourceCode" id="cb35"><pre class="downlit">
-<span class="co">## Center columns with median</span>
-<span class="fu"><a href="https://rdrr.io/r/base/sweep.html">sweep</a></span>(<span class="kw">scp</span>,
-      i = <span class="st">"proteins"</span>,
-      MARGIN = <span class="fl">2</span>,
-      FUN = <span class="st">"-"</span>,
-      STATS = <span class="fu">colMedians</span>(<span class="fu">assay</span>(<span class="kw">scp</span>[[<span class="st">"proteins"</span>]]),
-                         na.rm = <span class="fl">TRUE</span>),
-      name = <span class="st">"proteins_norm_col"</span>) <span class="op">%&gt;%</span>
-  <span class="co">## Center rows with mean</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/sweep.html">sweep</a></span>(i = <span class="st">"proteins_norm_col"</span>,
-        MARGIN = <span class="fl">1</span>,
-        FUN = <span class="st">"-"</span>,
-        STATS = <span class="fu"><a href="https://rdrr.io/r/base/colSums.html">rowMeans</a></span>(<span class="fu">assay</span>(<span class="kw">.</span>[[<span class="st">"proteins_norm_col"</span>]]),
-                         na.rm = <span class="fl">TRUE</span>),
-        name = <span class="st">"proteins_norm"</span>) <span class="op">-&gt;</span>
-  <span class="kw">scp</span>
+<span class="kw">scp</span> <span class="op">%&gt;%</span>
+    <span class="co">## Center columns with median</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/sweep.html">sweep</a></span>(i = <span class="st">"proteins"</span>,
+          MARGIN = <span class="fl">2</span>,
+          FUN = <span class="st">"-"</span>,
+          STATS = <span class="fu">colMedians</span>(<span class="fu">assay</span>(<span class="kw">scp</span>[[<span class="st">"proteins"</span>]]),
+                             na.rm = <span class="fl">TRUE</span>),
+          name = <span class="st">"proteins_norm_col"</span>) <span class="op">%&gt;%</span>
+    <span class="co">## Center rows with mean</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/sweep.html">sweep</a></span>(i = <span class="st">"proteins_norm_col"</span>,
+          MARGIN = <span class="fl">1</span>,
+          FUN = <span class="st">"-"</span>,
+          STATS = <span class="fu"><a href="https://rdrr.io/r/base/colSums.html">rowMeans</a></span>(<span class="fu">assay</span>(<span class="kw">.</span>[[<span class="st">"proteins_norm_col"</span>]]),
+                           na.rm = <span class="fl">TRUE</span>),
+          name = <span class="st">"proteins_norm"</span>) <span class="op">-&gt;</span>
+    <span class="kw">scp</span>
 </pre></div>
 </div>
 <div id="imputation" class="section level2">
