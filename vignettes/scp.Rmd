@@ -173,11 +173,13 @@ information is readily available since this was computed by MaxQuant:
 - Keep PSMs that exhibit a high PIF (parental ion fraction), indicative of the
 purity of a spectrum
 
-We can perform this filtering using the `filterFeatures` function.
-`filterFeatures` automatically accesses the feature metadata and selects the
-rows that meet the provided condition(s). For instance, `Reverse != "+"` keeps
-the rows for which the `Reverse` variable in the `rowData` is not `"+"` (*i.e.*
-the PSM is not matched to the decoy database).
+We can perform this filtering using the [`filterFeatures`
+function](https://rformassspectrometry.github.io/QFeatures/reference/QFeatures-filtering.html).
+`filterFeatures` automatically accesses the feature metadata and
+selects the rows that meet the provided condition(s). For instance,
+`Reverse != "+"` keeps the rows for which the `Reverse` variable in
+the `rowData` is not `"+"` (*i.e.* the PSM is not matched to the decoy
+database).
 
 ```{r filter_psms}
 scp <- filterFeatures(scp,
