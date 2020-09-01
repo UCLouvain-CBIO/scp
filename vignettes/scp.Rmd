@@ -629,22 +629,22 @@ functions, but since the data were log-transformed at the peptide level, we
 subtract by the statistic (median or mean) instead of dividing.
 
 ```{r normalize_center}
-## Center columns with median
-sweep(scp,
-      i = "proteins",
-      MARGIN = 2,
-      FUN = "-",
-      STATS = colMedians(assay(scp[["proteins"]]),
-                         na.rm = TRUE),
-      name = "proteins_norm_col") %>%
-  ## Center rows with mean
-  sweep(i = "proteins_norm_col",
-        MARGIN = 1,
-        FUN = "-",
-        STATS = rowMeans(assay(.[["proteins_norm_col"]]),
-                         na.rm = TRUE),
-        name = "proteins_norm") ->
-  scp
+scp %>%
+    ## Center columns with median
+    sweep(i = "proteins",
+          MARGIN = 2,
+          FUN = "-",
+          STATS = colMedians(assay(scp[["proteins"]]),
+                             na.rm = TRUE),
+          name = "proteins_norm_col") %>%
+    ## Center rows with mean
+    sweep(i = "proteins_norm_col",
+          MARGIN = 1,
+          FUN = "-",
+          STATS = rowMeans(assay(.[["proteins_norm_col"]]),
+                           na.rm = TRUE),
+          name = "proteins_norm") ->
+    scp
 ```
 
 
