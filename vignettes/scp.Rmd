@@ -10,6 +10,7 @@ output:
     toc_float: true
     toc_depth: 2
     code_folding: show
+bibliography: scp.bib
 date: "`r doc_date()`"
 package: "`r pkg_ver('scp')`"
 vignette: >
