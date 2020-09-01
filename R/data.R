@@ -148,8 +148,6 @@
 ##' @seealso [readSCP()] for an example on how `mqScpData` is parsed into
 ##'     a [QFeatures] object.
 ##' 
-##' @export
-##' 
 ##' @md
 "mqScpData"
 
