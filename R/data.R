@@ -145,11 +145,13 @@
 ##' - participated: a logical vector
 ##' - peptide: a character vector
 ##'
-##' @seealso [readSCP()] for an example on how `mqFile` is parsed into
+##' @seealso [readSCP()] for an example on how `mqScpData` is parsed into
 ##'     a [QFeatures] object.
 ##' 
+##' @export
+##' 
 ##' @md
-"mqFile"
+"mqScpData"
 
 ##' @title Single cell sample annotation
 ##'

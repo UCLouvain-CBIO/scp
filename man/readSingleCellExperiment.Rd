@@ -42,10 +42,11 @@ are forbidden in the \code{rowData}. Avoid using the following names:
 }
 \examples{
 ## Load a data.frame with PSM-level data
-data(mqFile)
+data(mqScpData)
 
 ## Create the QFeatures object
-sce <- readSingleCellExperiment(mqFile, grep("RI", colnames(mqFile)))
+sce <- readSingleCellExperiment(mqScpData, 
+                                grep("RI", colnames(mqScpData)))
 }
 \seealso{
 The code relies on \link[QFeatures:readQFeatures]{QFeatures::readSummarizedExperiment}.

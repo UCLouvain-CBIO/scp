@@ -68,13 +68,13 @@
 ##' @examples 
 ##' 
 ##' ## Load an example table containing MaxQuant output
-##' data("mqFile")
+##' data("mqScpData")
 ##' 
 ##' ## Load the (user-generated) annotation table
 ##' data("sampleAnnotation")
 ##' 
 ##' ## Format the tables into a QFeatures object
-##' readSCP(quantTable = mqFile,
+##' readSCP(quantTable = mqScpData,
 ##'         metaTable = sampleAnnotation,
 ##'         batchCol = "Set",
 ##'         channelCol = "Channel")
@@ -173,10 +173,11 @@ readSCP <- function(quantTable,
 ##'
 ##' @examples 
 ##' ## Load a data.frame with PSM-level data
-##' data(mqFile)
+##' data(mqScpData)
 ##' 
 ##' ## Create the QFeatures object
-##' sce <- readSingleCellExperiment(mqFile, grep("RI", colnames(mqFile)))
+##' sce <- readSingleCellExperiment(mqScpData, 
+##'                                 grep("RI", colnames(mqScpData)))
 readSingleCellExperiment <- function(table, 
                                      ecol, 
                                      fnames,

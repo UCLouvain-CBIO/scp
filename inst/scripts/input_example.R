@@ -8,8 +8,7 @@ library(scp)
 ## datatable was downloaded from
 ## https://drive.google.com/drive/folders/1VzBfmNxziRYqayx3SP-cOe2gu129Obgx
 ## To run this code, you need to first run scp1.R
-read.csv("inst/extdata/evidence_unfiltered.csv", sep = ",", header = TRUE)
-ev %>% 
+read.csv("inst/extdata/evidence_unfiltered.csv", sep = ",", header = TRUE) %>% 
   select(-c("X", "X1", "lcbatch", "sortday",  "digest")) %>%
   ## channel naming should be consistent with metadata
   rename_all(gsub, 
@@ -29,9 +28,9 @@ ev %>%
            Set %in% names(scp1) &
            ## keep only a few proteins
            protein %in% rowDataToDF(scp1, 1:3, "protein")$protein) ->
-  mqFile
-format(object.size(mqFile), units = "MB", digits = 2)
-save(mqFile, file = file.path("data/mqFile.rda"), 
+  mqScpData
+format(object.size(mqScpData), units = "MB", digits = 2)
+save(mqScpData, file = file.path("data/mqScpData.rda"), 
      compress = "xz", compression_level = 9)
 
 ## Create the associated annotation file
@@ -59,7 +58,7 @@ inner_join(x = cells %>%
              dplyr::rename(Set = set) %>%
              mutate_all(as.character),
            by = "Set") %>%
-  filter(Set %in% mqFile$Set) -> 
+  filter(Set %in% mqScpData$Set) -> 
   sampleAnnotation
 format(object.size(sampleAnnotation), units = "MB", digits = 2)
 save(sampleAnnotation, file = file.path("data/sampleAnnotation.rda"), 
