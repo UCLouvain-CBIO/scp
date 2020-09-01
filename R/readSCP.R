@@ -49,6 +49,11 @@
 ##'     each batch is stored in a separate assay as a
 ##'     [SingleCellExperiment] object.
 ##'
+##' @note The `SingleCellExperiment` class is built on top of the 
+##'     `RangedSummarizedExperiment` class. This means that some column names 
+##'     are forbidden in the `rowData`. Avoid using the following names:
+##'     `seqnames`, `ranges`, `strand`, `start`, `end`, `width`,  `element`
+##'     
 ##' @author Laurent Gatto, Christophe Vanderaa
 ##' 
 ##' @importFrom utils read.csv
@@ -63,13 +68,13 @@
 ##' @examples 
 ##' 
 ##' ## Load an example table containing MaxQuant output
-##' data("mqFile")
+##' data("mqScpData")
 ##' 
 ##' ## Load the (user-generated) annotation table
 ##' data("sampleAnnotation")
 ##' 
 ##' ## Format the tables into a QFeatures object
-##' readSCP(quantTable = mqFile,
+##' readSCP(quantTable = mqScpData,
 ##'         metaTable = sampleAnnotation,
 ##'         batchCol = "Set",
 ##'         channelCol = "Channel")
@@ -151,6 +156,12 @@ readSCP <- function(quantTable,
 ##'
 ##' @author Laurent Gatto, Christophe Vanderaa
 ##' 
+##' @note The `SingleCellExperiment` class is built on top of the 
+##'     `RangedSummarizedExperiment` class. This means that some column names 
+##'     are forbidden in the `rowData`. Avoid using the following names:
+##'     `seqnames`, `ranges`, `strand`, `start`, `end`, `width`,  `element`
+##'     
+##' 
 ##' @seealso The code relies on [QFeatures::readSummarizedExperiment].
 ##'
 ##'
@@ -162,10 +173,11 @@ readSCP <- function(quantTable,
 ##'
 ##' @examples 
 ##' ## Load a data.frame with PSM-level data
-##' data(mqFile)
+##' data(mqScpData)
 ##' 
 ##' ## Create the QFeatures object
-##' sce <- readSingleCellExperiment(mqFile, grep("RI", colnames(mqFile)))
+##' sce <- readSingleCellExperiment(mqScpData, 
+##'                                 grep("RI", colnames(mqScpData)))
 readSingleCellExperiment <- function(table, 
                                      ecol, 
                                      fnames,
