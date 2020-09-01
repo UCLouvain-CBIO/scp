@@ -51,16 +51,22 @@ Convert tabular quantitative MS data and metadata from a
 spreadsheet or a \code{data.frame} into a \link{QFeatures} object containing
 \link{SingleCellExperiment} objects.
 }
+\note{
+The \code{SingleCellExperiment} class is built on top of the
+\code{RangedSummarizedExperiment} class. This means that some column names
+are forbidden in the \code{rowData}. Avoid using the following names:
+\code{seqnames}, \code{ranges}, \code{strand}, \code{start}, \code{end}, \code{width},  \code{element}
+}
 \examples{
 
 ## Load an example table containing MaxQuant output
-data("mqFile")
+data("mqScpData")
 
 ## Load the (user-generated) annotation table
 data("sampleAnnotation")
 
 ## Format the tables into a QFeatures object
-readSCP(quantTable = mqFile,
+readSCP(quantTable = mqScpData,
         metaTable = sampleAnnotation,
         batchCol = "Set",
         channelCol = "Channel")
