@@ -192,7 +192,7 @@
 <div id="clean-missing-data" class="section level1">
 <h1 class="hasAnchor">
 <a href="#clean-missing-data" class="anchor"></a>Clean missing data</h1>
-<p>Single-cell (proteomics or transcriptomics) data contains many zeros. The zeros can be biological zeros or technical zeros. To avoid artefacts in dowstream steps, we replace the zeros by the missing value <code>NA</code>. The <code>zeroIsNA</code> function takes the <code>QFeatures</code> object and the name(s) or index/indices of the assay(s) to clean and automatically replaces any zero in the selected quantitative data by <code>NA</code>.</p>
+<p>Single-cell (proteomics or transcriptomics) data contains many zeros. The zeros can be biological zeros or technical zeros and differentiating between the two types is very hard. To avoid artefacts in dowstream steps, we replace the zeros by the missing value <code>NA</code>. The <code>zeroIsNA</code> function takes the <code>QFeatures</code> object and the name(s) or index/indices of the assay(s) to clean and automatically replaces any zero in the selected quantitative data by <code>NA</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit">
 <span class="kw">scp</span> <span class="op">&lt;-</span> <span class="fu">zeroIsNA</span>(<span class="kw">scp</span>, i = <span class="fl">1</span><span class="op">:</span><span class="fl">4</span>)
 </pre></div>
@@ -352,13 +352,32 @@
 Conceptual illustration of feature aggregation.
 </p>
 </div>
-<p>The PSMs are aggregated over the <code>fcol</code> feature variable, here peptides. We also need to supply an aggregating function that will tell how to combine the quantitative data of the PSMs to aggregate. We here use the median value. We name the aggregated assays using the original names and appending <code>peptides_</code> at the start.</p>
+<p>Remember there currently are three assays containing the PSM data.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit">
+<span class="kw">scp</span>
+<span class="co">#&gt; An instance of class QFeatures containing 3 assays:</span>
+<span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 216 rows and 16 columns </span>
+<span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 240 rows and 16 columns </span>
+<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 142 rows and 16 columns</span>
+</pre></div>
+<p>The PSMs are aggregated over the <code>fcol</code> feature variable, here peptides. We also need to supply an aggregating function that will tell how to combine the quantitative data of the PSMs to aggregate. We here use the median value. We name the aggregated assays using the original names and appending <code>peptides_</code> at the start.</p>
+<div class="sourceCode" id="cb20"><pre class="downlit">
 <span class="kw">scp</span> <span class="op">&lt;-</span><span class="fu"><a href="../reference/aggregateFeaturesOverAssays.html">aggregateFeaturesOverAssays</a></span>(<span class="kw">scp</span>,
                                   i = <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,
                                   fcol = <span class="st">"peptide"</span>,
                                   name = <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span>(<span class="st">"peptides_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="kw">scp</span>)),
                                   fun = <span class="kw">matrixStats</span>::<span class="kw"><a href="https://rdrr.io/pkg/matrixStats/man/rowMedians.html">colMedians</a></span>, na.rm = <span class="fl">TRUE</span>)
+</pre></div>
+<p>Notice that 3 new assays were created in the <code>scp</code> object. Those new assays contain the aggregated features while the three first assays are unchanged. This allows to keep track of the data processing.</p>
+<div class="sourceCode" id="cb21"><pre class="downlit">
+<span class="kw">scp</span>
+<span class="co">#&gt; An instance of class QFeatures containing 6 assays:</span>
+<span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 216 rows and 16 columns </span>
+<span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 240 rows and 16 columns </span>
+<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 142 rows and 16 columns </span>
+<span class="co">#&gt;  [4] peptides_190222S_LCA9_X_FP94BM: SingleCellExperiment with 214 rows and 16 columns </span>
+<span class="co">#&gt;  [5] peptides_190321S_LCA10_X_FP97AG: SingleCellExperiment with 240 rows and 16 columns </span>
+<span class="co">#&gt;  [6] peptides_190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 142 rows and 16 columns</span>
 </pre></div>
 <p>Under the hood, the <code>QFeatures</code> architecture preserves the relationship between the aggregated assays. See <code>?AssayLinks</code> for more information on relationships between assays.</p>
 </div>
@@ -366,12 +385,24 @@ Conceptual illustration of feature aggregation.
 <h1 class="hasAnchor">
 <a href="#join-the-scope2-sets-in-one-assay" class="anchor"></a>Join the SCoPE2 sets in one assay</h1>
 <p>Up to now, we kept the data belonging to each MS run in separate assays. We now combine all batches into a single assay. This is done using the <code>joinAssays</code> function from the <code>QFeatures</code> package. Note that we now use the aggregated assays, so assay 4 to 6.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit">
+<div class="sourceCode" id="cb22"><pre class="downlit">
 <span class="kw">scp</span> <span class="op">&lt;-</span> <span class="fu">joinAssays</span>(<span class="kw">scp</span>,
                   i = <span class="fl">4</span><span class="op">:</span><span class="fl">6</span>,
                   name = <span class="st">"peptides"</span>)
 <span class="co">#&gt; harmonizing input:</span>
 <span class="co">#&gt;   removing 48 sampleMap rows not in names(experiments)</span>
+</pre></div>
+<p>In this case, one new assay is created in the <code>scp</code> object that combines the data from assay 4 to 6. The samples are always distinct so the number of column in the new assay (here <span class="math inline">\(48\)</span>) will always equals the sum of the columns in the assays to join (here <span class="math inline">\(16 + 16 + 16\)</span>). The feature in the joined assay might contain less features than the sum of the rows of the assays to join since common features between assays are joined in a single row.</p>
+<div class="sourceCode" id="cb23"><pre class="downlit">
+<span class="kw">scp</span>
+<span class="co">#&gt; An instance of class QFeatures containing 7 assays:</span>
+<span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 216 rows and 16 columns </span>
+<span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 240 rows and 16 columns </span>
+<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 142 rows and 16 columns </span>
+<span class="co">#&gt;  [4] peptides_190222S_LCA9_X_FP94BM: SingleCellExperiment with 214 rows and 16 columns </span>
+<span class="co">#&gt;  [5] peptides_190321S_LCA10_X_FP97AG: SingleCellExperiment with 240 rows and 16 columns </span>
+<span class="co">#&gt;  [6] peptides_190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 142 rows and 16 columns </span>
+<span class="co">#&gt;  [7] peptides: SingleCellExperiment with 358 rows and 48 columns</span>
 </pre></div>
 </div>
 <div id="filter-single-cells" class="section level1">
@@ -383,7 +414,7 @@ Conceptual illustration of feature aggregation.
 <a href="#filter-samples-of-interest" class="anchor"></a>Filter samples of interest</h2>
 <p>We first subset the cells of interest, that is the blank samples (<code>sc_0</code>), the macrophages (<code>sc_m0</code>) and the monocytes (<code>sc_u</code>).</p>
 <p>We extract the <code>SingleCellExperiment</code> assay with the joined peptides, subset the channels corresponding to blank, macrophage or monocytes and add it as a new assay in the <code>QFeatures</code> object. However, the sample annotation is contained in the <code>colData</code> of the <code>QFeatures</code> dataset, but we need to access it from the <code>SingeCellExperiment</code> object. Therefore, we provide the <code>transferColDataToAssay</code> to copy the sample metadata from the <code>QFeatures</code> to a target assay.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit">
+<div class="sourceCode" id="cb24"><pre class="downlit">
 <span class="fu">colData</span>(<span class="kw">scp</span>[[<span class="st">"peptides"</span>]])
 <span class="co">#&gt; DataFrame with 48 rows and 0 columns</span>
 <span class="kw">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/transferColDataToAssay.html">transferColDataToAssay</a></span>(<span class="kw">scp</span>, <span class="st">"peptides"</span>)
@@ -417,12 +448,12 @@ Conceptual illustration of feature aggregation.
 <span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI16        LCB3          s9           R</span>
 </pre></div>
 <p>Once the metadata is transfered, we can subset the <code>SingleCellExperiment</code> assay.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit">
+<div class="sourceCode" id="cb25"><pre class="downlit">
 <span class="kw">sce</span> <span class="op">&lt;-</span> <span class="kw">scp</span>[[<span class="st">"peptides"</span>]]
 <span class="kw">sce</span> <span class="op">&lt;-</span> <span class="kw">sce</span>[, <span class="kw">sce</span><span class="op">$</span><span class="kw">SampleType</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Blank"</span>, <span class="st">"Macrophage"</span>, <span class="st">"Monocyte"</span>)]
 </pre></div>
 <p>Then we add this assay back into the <code>QFeatures</code> object. This is done using the <code>addAssay</code> function. We also preserve the links between dfeatures using the <code>addAssayLinkOneToOne</code>. Since the features did not change (only the samples did), one-to-one links between features are added.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit">
+<div class="sourceCode" id="cb26"><pre class="downlit">
 <span class="kw">scp</span> <span class="op">%&gt;%</span>
   <span class="fu">addAssay</span>(y = <span class="kw">sce</span>,
            name = <span class="st">"peptides_filter1"</span>) <span class="op">%&gt;%</span>
@@ -430,19 +461,31 @@ Conceptual illustration of feature aggregation.
                        to = <span class="st">"peptides_filter1"</span>) <span class="op">-&gt;</span>
   <span class="kw">scp</span>
 </pre></div>
+<p>Note the added assay <code>peptides_filter1</code> contains the same number of rows than its parent assay <code>peptides</code>, but less samples as 20 samples are not single-cells or blank samples bu rather unused, reference or carrier samples.</p>
+<div class="sourceCode" id="cb27"><pre class="downlit">
+<span class="kw">scp</span>
+<span class="co">#&gt; An instance of class QFeatures containing 8 assays:</span>
+<span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 216 rows and 16 columns </span>
+<span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 240 rows and 16 columns </span>
+<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 142 rows and 16 columns </span>
+<span class="co">#&gt;  ...</span>
+<span class="co">#&gt;  [6] peptides_190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 142 rows and 16 columns </span>
+<span class="co">#&gt;  [7] peptides: SingleCellExperiment with 358 rows and 48 columns </span>
+<span class="co">#&gt;  [8] peptides_filter1: SingleCellExperiment with 358 rows and 28 columns</span>
+</pre></div>
 </div>
 <div id="filter-based-on-the-median-relative-intensity" class="section level2">
 <h2 class="hasAnchor">
 <a href="#filter-based-on-the-median-relative-intensity" class="anchor"></a>Filter based on the median relative intensity</h2>
 <p>We compute the median relative reporter ion intensity for each cell separately and apply a filter based on this statistic. This procedure recalls that of library size filtering commonly performed in scRNA-Seq data analysis, where the library size is the sum of the counts in each single cell. We will store the median intensity in the <code>colData</code> of the <code>peptides_filter1</code> assay (so the <code>SingleCellExperiment</code> object) because this metric is specific to that assay. The medians are computed on the quantitative data using <code>colMedians</code> that requires a data matrix. The data matrix can be extracted from a <code>SingleCellExperiment</code> using the <code>assay</code> function.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit">
+<div class="sourceCode" id="cb28"><pre class="downlit">
 <span class="kw">scp</span>[[<span class="st">"peptides_filter1"</span>]] <span class="op">%&gt;%</span>
   <span class="kw">assay</span> <span class="op">%&gt;%</span>
   <span class="kw">matrixStats</span>::<span class="fu"><a href="https://rdrr.io/pkg/matrixStats/man/rowMedians.html">colMedians</a></span>(na.rm = <span class="fl">TRUE</span>) <span class="op">-&gt;</span>
   <span class="kw">scp</span>[[<span class="st">"peptides_filter1"</span>]]<span class="op">$</span><span class="kw">MedianRI</span>
 </pre></div>
 <p>Looking at the distribution of the median per cell can highlight low-quality cells.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit">
+<div class="sourceCode" id="cb29"><pre class="downlit">
 <span class="kw">scp</span>[[<span class="st">"peptides_filter1"</span>]] <span class="op">%&gt;%</span>
   <span class="kw">colData</span> <span class="op">%&gt;%</span>
   <span class="kw">data.frame</span> <span class="op">%&gt;%</span>
@@ -457,7 +500,7 @@ Conceptual illustration of feature aggregation.
 <h2 class="hasAnchor">
 <a href="#filter-based-on-the-median-cv" class="anchor"></a>Filter based on the median CV</h2>
 <p>The median CV measures the consistency of quantification for a group of peptides that belong to a protein. We remove cells that exhibit high median CV over the different proteins. We compute the median CV per cell using the <code>computeMedianCV</code> function from the <code>scp</code> package. The function takes the <code>peptides_filter1</code> assay, protein and peptide information from the assay <code>rowData</code>, and the batch names in the <code>colData</code> of the <code>QFeatures</code> object. The peptide and batch information are required to perform normalization prior to the CV computation. Protein information is required since the CV are computed at the protein level. The computed median CVs are automatically stored in the <code>colData</code> of the <code>SingleCellExperiment</code> assay under the <code>.medianCV</code> field</p>
-<div class="sourceCode" id="cb26"><pre class="downlit">
+<div class="sourceCode" id="cb30"><pre class="downlit">
 <span class="kw">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/computeMedianCV.html">computeMedianCV</a></span>(<span class="kw">scp</span>,
                        i = <span class="st">"peptides_filter1"</span>,
                        proteinCol = <span class="st">"protein"</span>,
@@ -465,7 +508,7 @@ Conceptual illustration of feature aggregation.
                        batchCol = <span class="st">"Set"</span>)
 </pre></div>
 <p>The computed CVs are stored in the <code>colData</code> of the <code>peptides_filter1</code> assay and holds the median CV per cell computed using at least 5 observations (peptides). The main interest of computing the median CV per cell is to filter cells with reliable quantification. The blank samples are not expected to have reliable quantifications and hence can be used to estimate an empirical null distribution of the CV. This distribution helps defining a threshold that filters out single-cells that contain noisy quantification.</p>
-<div class="sourceCode" id="cb27"><pre class="downlit">
+<div class="sourceCode" id="cb31"><pre class="downlit">
 <span class="kw">scp</span>[[<span class="st">"peptides_filter1"</span>]] <span class="op">%&gt;%</span>
   <span class="kw">colData</span> <span class="op">%&gt;%</span>
   <span class="kw">data.frame</span> <span class="op">%&gt;%</span>
@@ -476,18 +519,18 @@ Conceptual illustration of feature aggregation.
 </pre></div>
 <p><img src="scp_files/figure-html/plot_medianCV-1.png" width="700"></p>
 <p>We can see that the protein quantifiation for single-cells are much more consistent within cells than witin the blank channels. Based on the distribution of the blanks, we decide to keep the cells that have a median CV lower than 0.3. Note this example is inaccurate because the null distribution is based on only 3 blank samples, but more sets could lead to a better estimation of the CV null distribution. Note we also keep only the samples of interest (macrophages and monocytes) since all QC metrics are now computed.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit">
+<div class="sourceCode" id="cb32"><pre class="downlit">
 <span class="kw">keepSample</span> <span class="op">&lt;-</span> <span class="kw">scp</span>[[<span class="st">"peptides_filter1"</span>]]<span class="op">$</span><span class="kw">.MedianCV</span> <span class="op">&lt;</span> <span class="fl">0.3</span> <span class="op">&amp;</span>
   <span class="kw">scp</span>[[<span class="st">"peptides_filter1"</span>]]<span class="op">$</span><span class="kw">SampleType</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">"Macrophage"</span>, <span class="st">"Monocyte"</span>)
 <span class="kw">keepSample</span>[<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="kw">keepSample</span>)] <span class="op">&lt;-</span> <span class="fl">FALSE</span>
 </pre></div>
 <p>Then, we subset the assay for samples that pass the filter.</p>
-<div class="sourceCode" id="cb29"><pre class="downlit">
+<div class="sourceCode" id="cb33"><pre class="downlit">
 <span class="kw">sce</span> <span class="op">&lt;-</span> <span class="kw">scp</span>[[<span class="st">"peptides_filter1"</span>]]
 <span class="kw">sce</span> <span class="op">&lt;-</span> <span class="kw">sce</span>[, <span class="kw">keepSample</span>]
 </pre></div>
 <p>Finally, we add the filtered assay to the <code>QFeatures</code>object and created the required linking with the previous assay.</p>
-<div class="sourceCode" id="cb30"><pre class="downlit">
+<div class="sourceCode" id="cb34"><pre class="downlit">
 <span class="fu">addAssay</span>(<span class="kw">scp</span>,
          y = <span class="kw">sce</span>,
          name = <span class="st">"peptides_filter2"</span>) <span class="op">%&gt;%</span>
@@ -505,7 +548,7 @@ Conceptual illustration of feature aggregation.
 <h2 class="hasAnchor">
 <a href="#normalization" class="anchor"></a>Normalization</h2>
 <p>The columns (samples) of the peptide data are first normalized by dividing the relative intensities by the median relative intensities. Then, the rows (peptides) are normalized by dividing the relative intensities by the mean relative intensities. The normalized data is stored in a separate assay. This normalization procedure is suggested in the SCoPE2 analysis and is applied using the <code>sweep</code> method. Beside the dataset and the assay to normalize, the method expects a <code>MARGIN</code>, that is either row-wise (<code>1</code>) or column-wise (<code>2</code>) transformation, the <code>FUN</code> function to apply and <code>STATS</code>, a vector of values to apply. More conventional normalization procedure can be found in <code><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-processing.html">?QFeatures::normalize</a></code>.</p>
-<div class="sourceCode" id="cb31"><pre class="downlit">
+<div class="sourceCode" id="cb35"><pre class="downlit">
 <span class="kw">scp</span> <span class="op">%&gt;%</span>
     <span class="co">## Divide columns by median</span>
     <span class="fu"><a href="https://rdrr.io/r/base/sweep.html">sweep</a></span>(i = <span class="st">"peptides_filter2"</span>,
@@ -523,12 +566,24 @@ Conceptual illustration of feature aggregation.
         name = <span class="st">"peptides_norm"</span>) <span class="op">-&gt;</span>
     <span class="kw">scp</span>
 </pre></div>
+<p>Notice each call to <code>sweep</code> created a new assay.</p>
+<div class="sourceCode" id="cb36"><pre class="downlit">
+<span class="kw">scp</span>
+<span class="co">#&gt; An instance of class QFeatures containing 11 assays:</span>
+<span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 216 rows and 16 columns </span>
+<span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 240 rows and 16 columns </span>
+<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 142 rows and 16 columns </span>
+<span class="co">#&gt;  ...</span>
+<span class="co">#&gt;  [9] peptides_filter2: SingleCellExperiment with 358 rows and 15 columns </span>
+<span class="co">#&gt;  [10] peptides_norm_col: SingleCellExperiment with 358 rows and 15 columns </span>
+<span class="co">#&gt;  [11] peptides_norm: SingleCellExperiment with 358 rows and 15 columns</span>
+</pre></div>
 </div>
 <div id="remove-peptides-with-high-missing-rate" class="section level2">
 <h2 class="hasAnchor">
 <a href="#remove-peptides-with-high-missing-rate" class="anchor"></a>Remove peptides with high missing rate</h2>
 <p>Peptides that contain many missing values are not informative. Therefore, another common procedure is to remove higly missing data. In this example, we remove peptides with more than 99 % missing data. This is done using the <code>filterNA</code> function from <code>QFeatures</code>.</p>
-<div class="sourceCode" id="cb32"><pre class="downlit">
+<div class="sourceCode" id="cb37"><pre class="downlit">
 <span class="kw">scp</span> <span class="op">&lt;-</span> <span class="fu">filterNA</span>(<span class="kw">scp</span>,
                 i = <span class="st">"peptides_norm"</span>,
                 pNA = <span class="fl">0.99</span>)
@@ -538,19 +593,20 @@ Conceptual illustration of feature aggregation.
 <h2 class="hasAnchor">
 <a href="#log-transformation" class="anchor"></a>Log-transformation</h2>
 <p>In this vignette, we perform log2-transformation using the <code>logTransform</code> method from <code>QFeatures</code>. Other log-transformation can be applied by changing the <code>base</code> argument.</p>
-<div class="sourceCode" id="cb33"><pre class="downlit">
+<div class="sourceCode" id="cb38"><pre class="downlit">
 <span class="kw">scp</span> <span class="op">&lt;-</span> <span class="fu">logTransform</span>(<span class="kw">scp</span>,
                     base = <span class="fl">2</span>,
                     i = <span class="st">"peptides_norm"</span>,
                     name = <span class="st">"peptides_log"</span>)
 </pre></div>
+<p>Similarly to <code>sweep</code>, <code>logTransform</code> creates a new assay in <code>scp</code>.</p>
 </div>
 </div>
 <div id="aggregate-peptide-data-to-protein-data" class="section level1">
 <h1 class="hasAnchor">
 <a href="#aggregate-peptide-data-to-protein-data" class="anchor"></a>Aggregate peptide data to protein data</h1>
 <p>Similarly to aggregating PSM data to peptide data, we can aggregate peptide data to protein data using the <code>aggregateFeatures</code> function.</p>
-<div class="sourceCode" id="cb34"><pre class="downlit">
+<div class="sourceCode" id="cb39"><pre class="downlit">
 <span class="kw">scp</span> <span class="op">&lt;-</span> <span class="fu">aggregateFeatures</span>(<span class="kw">scp</span>,
                          i = <span class="st">"peptides_log"</span>,
                          name = <span class="st">"proteins"</span>,
@@ -560,6 +616,19 @@ Conceptual illustration of feature aggregation.
 <span class="co">#&gt; relevant section(s) in the aggregateFeatures manual page regarding the</span>
 <span class="co">#&gt; effects of missing values on data aggregation.</span>
 </pre></div>
+<p>The only difference between <code>aggregateFeatures</code> and <code>aggregateFeaturesOverAssays</code> is that the second function can aggregate several assay at once whereas the former only takes one assay to aggregate. Hence, only a single assay, <code>proteins</code>, was created in the <code>scp</code> object.</p>
+<div class="sourceCode" id="cb40"><pre class="downlit">
+<span class="kw">scp</span>
+<span class="co">#&gt; An instance of class QFeatures containing 13 assays:</span>
+<span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 216 rows and 16 columns </span>
+<span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 240 rows and 16 columns </span>
+<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 142 rows and 16 columns </span>
+<span class="co">#&gt;  ...</span>
+<span class="co">#&gt;  [11] peptides_norm: SingleCellExperiment with 348 rows and 15 columns </span>
+<span class="co">#&gt;  [12] peptides_log: SingleCellExperiment with 348 rows and 15 columns </span>
+<span class="co">#&gt;  [13] proteins: SingleCellExperiment with 89 rows and 15 columns</span>
+</pre></div>
+<p>After the second aggregation, the <code>proteins</code> assay in this example contains quantitative information for 89 proteins in 15 single-cells.</p>
 </div>
 <div id="process-the-protein-data" class="section level1">
 <h1 class="hasAnchor">
@@ -569,7 +638,7 @@ Conceptual illustration of feature aggregation.
 <h2 class="hasAnchor">
 <a href="#normalization-1" class="anchor"></a>Normalization</h2>
 <p>Normalization is performed similarly to peptide normalization. We use the same functions, but since the data were log-transformed at the peptide level, we subtract by the statistic (median or mean) instead of dividing.</p>
-<div class="sourceCode" id="cb35"><pre class="downlit">
+<div class="sourceCode" id="cb41"><pre class="downlit">
 <span class="kw">scp</span> <span class="op">%&gt;%</span>
     <span class="co">## Center columns with median</span>
     <span class="fu"><a href="https://rdrr.io/r/base/sweep.html">sweep</a></span>(i = <span class="st">"proteins"</span>,
@@ -591,14 +660,30 @@ Conceptual illustration of feature aggregation.
 <div id="imputation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#imputation" class="anchor"></a>Imputation</h2>
-<p>The protein data contains a lot of missing values. Whether imputation is beneficial or deleterious for the data will not be discussed in this vignette. The data imputation is performed using the K nearest neighbors algorithm, with k = 3. This is available from the <code>impute</code> mehtod. More details about the arguments can be found in <code><a href="https://rdrr.io/pkg/impute/man/impute.knn.html">?impute::impute.knn</a></code>.</p>
-<div class="sourceCode" id="cb36"><pre class="downlit">
+<p>The protein data contains a lot of missing values.</p>
+<div class="sourceCode" id="cb42"><pre class="downlit">
+<span class="kw">scp</span>[[<span class="st">"proteins_norm"</span>]] <span class="op">%&gt;%</span>
+  <span class="kw">assay</span> <span class="op">%&gt;%</span>
+  <span class="kw">is.na</span> <span class="op">%&gt;%</span>
+  <span class="kw">mean</span>
+<span class="co">#&gt; [1] 0.2606742</span>
+</pre></div>
+<p>The average missingness in the <code>proteins</code> assay is around 25 %. Including more samples and hence more batches can increase the missingness up to 70 % as seen for the complete SCoPE2 dataset (<span class="citation">Specht et al. (2019)</span>). Whether imputation is beneficial or deleterious for the data will not be discussed in this vignette. But taking those missing value into account is essential to avoid artefacts in downstream analyses. The data imputation is performed using the K nearest neighbors algorithm, with k = 3. This is available from the <code>impute</code> mehtod. More details about the arguments can be found in <code><a href="https://rdrr.io/pkg/impute/man/impute.knn.html">?impute::impute.knn</a></code>.</p>
+<div class="sourceCode" id="cb43"><pre class="downlit">
 <span class="kw">scp</span> <span class="op">&lt;-</span> <span class="fu">impute</span>(<span class="kw">scp</span>,
               i = <span class="st">"proteins_norm"</span>,
               method = <span class="st">"knn"</span>,
               k = <span class="fl">3</span>, rowmax = <span class="fl">1</span>, colmax= <span class="fl">1</span>,
               maxp = <span class="fl">Inf</span>, rng.seed = <span class="fl">1234</span>)
 <span class="co">#&gt; Loading required namespace: impute</span>
+</pre></div>
+<p>Note that after imputation, no value are missing.</p>
+<div class="sourceCode" id="cb44"><pre class="downlit">
+<span class="kw">scp</span>[[<span class="st">"proteins_norm"</span>]] <span class="op">%&gt;%</span>
+  <span class="kw">assay</span> <span class="op">%&gt;%</span>
+  <span class="kw">is.na</span> <span class="op">%&gt;%</span>
+  <span class="kw">mean</span>
+<span class="co">#&gt; [1] 0</span>
 </pre></div>
 </div>
 <div id="batch-correction" class="section level2">
@@ -607,24 +692,24 @@ Conceptual illustration of feature aggregation.
 <p>A very important step for processing SCP data is to correct for batch effects. Batch effects are caused by technical variation occuring during different MS runs. Since only a small number of single-cells can be acquired at once, batch effects are unavoidable.</p>
 <p>The <code>ComBat</code> function from the <code>sva</code> package can be used to perform batch correction as it is performed in the SCoPE2 analysis. We do not claim that <code>ComBat</code> is the best algorithm for batch correcting SCP data and other batch correcting methods could be used using the same procedure.</p>
 <p>We first extract the assay to process.</p>
-<div class="sourceCode" id="cb37"><pre class="downlit">
+<div class="sourceCode" id="cb45"><pre class="downlit">
 <span class="kw">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/transferColDataToAssay.html">transferColDataToAssay</a></span>(<span class="kw">scp</span>, i = <span class="st">"proteins_norm"</span>)
 <span class="kw">sce</span> <span class="op">&lt;-</span> <span class="kw">scp</span>[[<span class="st">"proteins_norm"</span>]]
 </pre></div>
 <p>Next, we need to provide a design matrix and the batch annotation to <code>Combat</code>. The design matrix allows to protect variables of interest, in our case <code>SampleType</code>.</p>
-<div class="sourceCode" id="cb38"><pre class="downlit">
+<div class="sourceCode" id="cb46"><pre class="downlit">
 <span class="kw">batch</span> <span class="op">&lt;-</span> <span class="fu">colData</span>(<span class="kw">sce</span>)<span class="op">$</span><span class="kw">Set</span>
 <span class="kw">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html">model.matrix</a></span>(<span class="op">~</span> <span class="kw">SampleType</span>, data = <span class="fu">colData</span>(<span class="kw">sce</span>))
 </pre></div>
 <p>We then load and call <code>ComBat</code> and overwrite the data matrix. Recall the data matrix can be accessed using the <code>assay</code> function.</p>
-<div class="sourceCode" id="cb39"><pre class="downlit">
+<div class="sourceCode" id="cb47"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw">sva</span>)
 <span class="fu">assay</span>(<span class="kw">sce</span>) <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sva/man/ComBat.html">ComBat</a></span>(dat = <span class="fu">assay</span>(<span class="kw">sce</span>),
                      batch = <span class="kw">batch</span>,
                      mod = <span class="kw">model</span>)
 </pre></div>
 <p>Finally, we add the batch corrected assay to the <code>QFeatures</code> object and create the feature links.</p>
-<div class="sourceCode" id="cb40"><pre class="downlit">
+<div class="sourceCode" id="cb48"><pre class="downlit">
 <span class="fu">addAssay</span>(<span class="kw">scp</span>,
          y = <span class="kw">sce</span>,
          name = <span class="st">"proteins_batchC"</span>) <span class="op">%&gt;%</span>
@@ -638,7 +723,7 @@ Conceptual illustration of feature aggregation.
 <h1 class="hasAnchor">
 <a href="#dimension-reduction" class="anchor"></a>Dimension reduction</h1>
 <p>Because each assay contains <code>SingelCellExperiment</code> objects, we can easily apply methods developed in the scRNA-Seq field. A useful package for dimension reduction on single-cell data is the <code>scater</code>.</p>
-<div class="sourceCode" id="cb41"><pre class="downlit">
+<div class="sourceCode" id="cb49"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="kw"><a href="http://bioconductor.org/packages/scater">scater</a></span>)
 <span class="co">#&gt; Loading required package: SingleCellExperiment</span>
 </pre></div>
@@ -647,7 +732,7 @@ Conceptual illustration of feature aggregation.
 <h2 class="hasAnchor">
 <a href="#pca" class="anchor"></a>PCA</h2>
 <p>PCA can be computed using the <code>runPCA</code> method. It returns a <code>SingleCellExperiment</code> object for which the dimension reduction results are stored in the <code>reducedDim</code> slot.</p>
-<div class="sourceCode" id="cb42"><pre class="downlit">
+<div class="sourceCode" id="cb50"><pre class="downlit">
 <span class="kw">scp</span>[[<span class="st">"proteins_batchC"</span>]] <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scater/man/runPCA.html">runPCA</a></span>(<span class="kw">scp</span>[[<span class="st">"proteins_batchC"</span>]],
                                    ncomponents = <span class="fl">50</span>,
                                    ntop = <span class="fl">Inf</span>,
@@ -656,7 +741,7 @@ Conceptual illustration of feature aggregation.
                                    name = <span class="st">"PCA"</span>)
 </pre></div>
 <p>The computed PCA can be displayed using the <code>plotReducedDim</code> function. The <code>dimred</code> arguments should give the name of the dimension reduction results to plot, here we called it <code>PCA</code>. The samples are colored by type of sample.</p>
-<div class="sourceCode" id="cb43"><pre class="downlit">
+<div class="sourceCode" id="cb51"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotReducedDim.html">plotReducedDim</a></span>(<span class="kw">scp</span>[[<span class="st">"proteins_batchC"</span>]],
                dimred = <span class="st">"PCA"</span>,
                colour_by = <span class="st">"SampleType"</span>)
@@ -668,7 +753,7 @@ Conceptual illustration of feature aggregation.
 <h2 class="hasAnchor">
 <a href="#umap" class="anchor"></a>UMAP</h2>
 <p>Similarly to PCA, we can compute a UMAP using the <code>runUMAP</code> method. Note however that the UMAP implementation requires a initialization, usually provided by PCA. The previous PCA results are used automatically when supplying <code>dimred = "PCA"</code> (<code>PCA</code> is the name of the dimension reduction result that we supplied in the previous section).</p>
-<div class="sourceCode" id="cb44"><pre class="downlit">
+<div class="sourceCode" id="cb52"><pre class="downlit">
 <span class="kw">scp</span>[[<span class="st">"proteins_batchC"</span>]] <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scater/man/runUMAP.html">runUMAP</a></span>(<span class="kw">scp</span>[[<span class="st">"proteins_batchC"</span>]],
                                     ncomponents = <span class="fl">2</span>,
                                     ntop = <span class="fl">Inf</span>,
@@ -679,7 +764,7 @@ Conceptual illustration of feature aggregation.
                                     name = <span class="st">"UMAP"</span>)
 </pre></div>
 <p>The computed UMAP can be displayed using the <code>plotReducedDim</code> function. The <code>dimred</code> arguments gives the name of the dimension reduction results to plot, here we called it <code>UMAP</code>. The samples are colored by type of sample.</p>
-<div class="sourceCode" id="cb45"><pre class="downlit">
+<div class="sourceCode" id="cb53"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotReducedDim.html">plotReducedDim</a></span>(<span class="kw">scp</span>[[<span class="st">"proteins_batchC"</span>]],
                dimred = <span class="st">"UMAP"</span>,
                colour_by = <span class="st">"SampleType"</span>)
@@ -692,7 +777,7 @@ Conceptual illustration of feature aggregation.
 <h1 class="hasAnchor">
 <a href="#monitoring-data-processing" class="anchor"></a>Monitoring data processing</h1>
 <p>The <code>QFeatures</code> plot shows the quantitative data for a features at the different expression levels. For instance, suppose we are interested in the protein <em>LMNA</em> (protein ID is <code>P02545</code>). A useful QC is to monitor the data processing at the PSM, peptide and protein level. This can easily be done thanks to the <code>QFeatures</code> framework. Using the <code>subsetByFeature</code>, we can extract the protein of interest and its related features in the other assays. The data is formated to a long format table that can easily be plugged in the <code>ggplot2</code> visualization tool.</p>
-<div class="sourceCode" id="cb46"><pre class="downlit">
+<div class="sourceCode" id="cb54"><pre class="downlit">
 <span class="kw">scp</span> <span class="op">%&gt;%</span>
   <span class="co">## Get the features related to LMNA (P02545)</span>
   <span class="fu">subsetByFeature</span>(<span class="st">"P02545"</span>) <span class="op">%&gt;%</span>
