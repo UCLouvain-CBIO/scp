@@ -141,11 +141,11 @@ correspond to the 16 TMT channels recorded during the 4 MS runs.
 # Clean missing data
 
 Single-cell (proteomics or transcriptomics) data contains many zeros. The zeros
-can be biological zeros or technical zeros. To avoid artefacts in dowstream
-steps, we replace the zeros by the missing value `NA`. The `zeroIsNA` function
-takes the `QFeatures` object and the name(s) or index/indices of the assay(s) to
-clean and automatically replaces any zero in the selected quantitative data by
-`NA`.
+can be biological zeros or technical zeros and differentiating between the two 
+types is very hard. To avoid artefacts in dowstream steps, we replace the zeros 
+by the missing value `NA`. The `zeroIsNA` function takes the `QFeatures` object 
+and the name(s) or index/indices of the assay(s) to clean and automatically 
+replaces any zero in the selected quantitative data by `NA`.
 
 ```{r zeroIsNA}
 scp <- zeroIsNA(scp, i = 1:4)
@@ -357,6 +357,12 @@ illustrated by the figure below.
 knitr::include_graphics("./figures/feature_aggregation.png", error = FALSE)
 ```
 
+Remember there currently are three assays containing the PSM data. 
+
+```{r show_agg_psms}
+scp
+```
+
 The PSMs are aggregated over the `fcol` feature variable, here peptides. We also
 need to supply an aggregating function that will tell how to combine the
 quantitative data of the PSMs to aggregate. We here use the median value. We
@@ -370,6 +376,15 @@ scp <-aggregateFeaturesOverAssays(scp,
                                   name = paste0("peptides_", names(scp)),
                                   fun = matrixStats::colMedians, na.rm = TRUE)
 ```
+
+Notice that 3 new assays were created in the `scp` object. Those new assays 
+contain the aggregated features while the three first assays are unchanged. This 
+allows to keep track of the data processing. 
+
+```{r show_agg_peptides}
+scp
+```
+
 
 Under the hood, the `QFeatures` architecture preserves the relationship between
 the aggregated assays. See `?AssayLinks` for more information on relationships
@@ -386,6 +401,17 @@ assays, so assay 4 to 6.
 scp <- joinAssays(scp,
                   i = 4:6,
                   name = "peptides")
+```
+
+In this case, one new assay is created in the `scp` object that combines the 
+data from assay 4 to 6. The samples are always distinct so the number of column 
+in the new assay (here $48$) will always equals the sum of the columns in the 
+assays to join (here $16 + 16 + 16$). The feature in the joined assay might 
+contain less features than the sum of the rows of the assays to join since 
+common features between assays are joined in a single row. 
+
+```{r show_join}
+scp
 ```
 
 # Filter single-cells
@@ -433,6 +459,15 @@ scp %>%
                        to = "peptides_filter1") ->
   scp
 ```
+
+Note the added assay `peptides_filter1` contains the same number of rows than 
+its parent assay `peptides`, but less samples as 20 samples are not single-cells
+or blank samples bu rather unused, reference or carrier samples. 
+
+```{r show_cell_filter}
+scp
+```
+
 
 ## Filter based on the median relative intensity
 
@@ -579,6 +614,13 @@ scp %>%
     scp
 ```
 
+Notice each call to `sweep` created a new assay.
+
+```{r show_sweep}
+scp
+```
+
+
 ## Remove peptides with high missing rate
 
 Peptides that contain many missing values are not informative. Therefore,
@@ -605,6 +647,7 @@ scp <- logTransform(scp,
                     name = "peptides_log")
 ```
 
+Similarly to `sweep`, `logTransform` creates a new assay in `scp`.
 
 # Aggregate peptide data to protein data
 
@@ -618,6 +661,18 @@ scp <- aggregateFeatures(scp,
                          fcol = "protein",
                          fun = matrixStats::colMedians, na.rm = TRUE)
 ```
+
+The only difference between `aggregateFeatures` and 
+`aggregateFeaturesOverAssays` is that the second function can aggregate several 
+assay at once whereas the former only takes one assay to aggregate. Hence, only 
+a single assay, `proteins`, was created in the `scp` object.
+
+```{r show_agg_proteins}
+scp
+```
+
+After the second aggregation, the `proteins` assay in this example contains 
+quantitative information for 89 proteins in 15 single-cells. 
 
 # Process the protein data
 
@@ -652,11 +707,23 @@ scp %>%
 
 ## Imputation
 
-The protein data contains a lot of missing values. Whether imputation is
-beneficial or deleterious for the data will not be discussed in this vignette.
-The data imputation is performed using the K nearest neighbors algorithm, with
-k = 3. This is available from the `impute` mehtod. More details about the
-arguments can be found in `?impute::impute.knn`.
+The protein data contains a lot of missing values. 
+
+```{r missingness}
+scp[["proteins_norm"]] %>%
+  assay %>%
+  is.na %>%
+  mean
+```
+
+The average missingness in the `proteins` assay is around 25 \%. Including more
+samples and hence more batches can increase the missingness up to 70 \% as seen 
+for the complete SCoPE2 dataset (@Specht2019-jm). Whether imputation is
+beneficial or deleterious for the data will not be discussed in this vignette. 
+But taking those missing value into account is essential to avoid artefacts in 
+downstream analyses. The data imputation is performed using the K nearest 
+neighbors algorithm, with k = 3. This is available from the `impute` mehtod. 
+More details about the arguments can be found in `?impute::impute.knn`.
 
 ```{r impute}
 scp <- impute(scp,
@@ -665,6 +732,16 @@ scp <- impute(scp,
               k = 3, rowmax = 1, colmax= 1,
               maxp = Inf, rng.seed = 1234)
 ```
+
+Note that after imputation, no value are missing.
+
+```{r missingness_imputed}
+scp[["proteins_norm"]] %>%
+  assay %>%
+  is.na %>%
+  mean
+```
+
 
 ## Batch correction
 
