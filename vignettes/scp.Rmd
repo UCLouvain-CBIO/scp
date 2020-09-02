@@ -132,11 +132,11 @@ scp
 ```
 
 We can see that the `scp` object we created is a `QFeatures` object containing
-3 assays. Each assay has an associated name, this is the batch name that was
+4 assays. Each assay has an associated name, this is the batch name that was
 used for splitting. We can also see that each assay is a `SingleCellExperiment`
 object. The rows represent the peptide to spectrum matches (PSMs), the number
 vary depending on the batch. Finally, all three assays contains 16 columns that
-correspond to the 16 TMT channels recorded during the 3 MS runs.
+correspond to the 16 TMT channels recorded during the 4 MS runs.
 
 # Clean missing data
 
@@ -148,7 +148,7 @@ clean and automatically replaces any zero in the selected quantitative data by
 `NA`.
 
 ```{r zeroIsNA}
-scp <- zeroIsNA(scp, i = 1:3)
+scp <- zeroIsNA(scp, i = 1:4)
 ```
 
 
@@ -214,8 +214,9 @@ scp <- scp[, , keepAssay]
 scp
 ```
 
-Note in our example all assays have sufficient number of PSMs, hence no assay
-is removed.
+Notice the `190321S_LCA10_X_FP97_blank_01` sample was removed because it did 
+not contain sufficient features, as expected from a blank sample. This could
+also have been the case for failed runs. 
 
 ## Filter features based on SCP metrics
 
@@ -595,7 +596,7 @@ scp <- filterNA(scp,
 
 In this vignette, we perform log2-transformation using the `logTransform`
 method from `QFeatures`. Other log-transformation can be applied by changing the
-`base` argument.
+`base` argument. 
 
 ```{r logTransform}
 scp <- logTransform(scp,
