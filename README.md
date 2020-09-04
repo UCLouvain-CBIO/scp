@@ -12,9 +12,9 @@ objects.
 
 ## Installation
 
-```{r install, eval = FALSE}
-if (!requireNamespace("BiocManager")) 
-    install.packages("BiocManager")
+```
+if (!requireNamespace("BiocManager"))
+	install.packages("BiocManager")
 BiocManager::install("UCLouvain-CBIO/scp")
 ```
 
@@ -23,6 +23,3 @@ BiocManager::install("UCLouvain-CBIO/scp")
 Feel free to use [Github
 issues](https://github.com/UCLouvain-CBIO/scp/issues) to ask question
 and report problems with `scp`.
-
-
-
