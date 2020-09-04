@@ -52,7 +52,8 @@
 ##' @note The `SingleCellExperiment` class is built on top of the 
 ##'     `RangedSummarizedExperiment` class. This means that some column names 
 ##'     are forbidden in the `rowData`. Avoid using the following names:
-##'     `seqnames`, `ranges`, `strand`, `start`, `end`, `width`,  `element`
+##'     `seqnames`, `ranges`, `strand`, `start`, `end`, 
+##'     `width`,  `element`
 ##'     
 ##' @author Laurent Gatto, Christophe Vanderaa
 ##' 
@@ -80,8 +81,8 @@
 ##'         channelCol = "Channel")
 ##' 
 readSCP <- function(quantTable, 
-                    metaTable,
-                    batchCol,
+                    metaTable, 
+                    batchCol, 
                     channelCol, 
                     verbose = TRUE,
                     ...) {
@@ -93,7 +94,8 @@ readSCP <- function(quantTable,
                                     ecol = ecol, 
                                     ...)
     if (is.null(list(...)$row.names))
-        rownames(scp@assays@data@listData[[1]]) <- paste0("PSM", 1:nrow(scp))
+        rownames(scp@assays@data@listData[[1]]) <- 
+            paste0("PSM", seq_len(nrow(scp)))
     
     ## Check the link between metaTable and scp
     mis <- !rowData(scp)[, batchCol] %in% metaTable[, batchCol]
@@ -159,10 +161,12 @@ readSCP <- function(quantTable,
 ##' @note The `SingleCellExperiment` class is built on top of the 
 ##'     `RangedSummarizedExperiment` class. This means that some column names 
 ##'     are forbidden in the `rowData`. Avoid using the following names:
-##'     `seqnames`, `ranges`, `strand`, `start`, `end`, `width`,  `element`
+##'     `seqnames`, `ranges`, `strand`, `start`, `end`, 
+##'     `width`,  `element`
 ##'     
 ##' 
-##' @seealso The code relies on [QFeatures::readSummarizedExperiment].
+##' @seealso The code relies on 
+##'     [QFeatures::readSummarizedExperiment].
 ##'
 ##'
 ##' @md
@@ -210,7 +214,8 @@ readSingleCellExperiment <- function(table,
 ##'     (in that order). If a match is found, the respective variable
 ##'     is extracted, converted to a factor if needed
 ##' @noRd
-.splitSCE <- function(x, f) {
+.splitSCE <- function(x, 
+                      f) {
     ## Check that f is a factor
     if (is.character(f)) {
       if (length(f) != 1) 

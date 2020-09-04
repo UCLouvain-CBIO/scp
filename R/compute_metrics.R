@@ -34,6 +34,7 @@
 ##'                    samplePattern = "Blank|Macrophage|Monocyte")
 ##' ## Check results
 ##' rowDataToDF(scp1, 1, ".meanSCR")
+##' 
 computeSCR <- function(obj, 
                        i, 
                        colDataCol, 
@@ -42,7 +43,8 @@ computeSCR <- function(obj,
     if (!inherits(obj, "QFeatures"))
         stop("'obj' must be a QFeatures object")
     if (is.numeric(samplePattern)) 
-        warning("The pattern is numeric. This is only allowed for replicating the SCoPE2 analysis and will later get defunct.")
+        warning("The pattern is numeric. This is only allowed for replicating ",
+                "the SCoPE2 analysis and will later get defunct.")
     
     ## Iterate over the different assay indices
     for (ii in i) {
@@ -62,24 +64,26 @@ computeSCR <- function(obj,
         if (any(!c(length(carrIdx), length(sampIdx))))
             stop("Pattern did not match a sample or carrier channel.")
         ## Compute ratios
-        ratio <- assay(obj[[ii]])[, sampIdx, drop = FALSE] / assay(obj[[ii]])[, carrIdx]
+        carrier <- assay(obj[[ii]])[, carrIdx]
+        ratio <- assay(obj[[ii]])[, sampIdx, drop = FALSE] / carrier
         ## Compute mean sample to carrier ratios
         rowData(obj@ExperimentList@listData[[ii]])$.meanSCR <- 
-                                                     rowMeans(ratio, na.rm = TRUE)
-        ## more efficient than rowData(obj[[ii]])$.meanSCR <- rowMeans(ratio, na.rm = TRUE)
+            rowMeans(ratio, na.rm = TRUE)
+        ## more efficient than rowData(obj[[ii]])$.meanSCR <-  ...
     }
     obj
 }
 
-##' Compute false discovery rates (FDRs) from posterior error probabilities (PEPs)
+##' Compute FDR from posterior error probabilities PEP
 ##' 
-##' The functions takes the PEPs from the given assay's `rowData` and creates a 
-##' new variable (`.FDR`) to it that contains the computed FDRs. 
+##' The functions takes the posterior error probabilities (PEPs) from the given 
+##' assay's `rowData` and creates a new variable (`.FDR`) to it that 
+##' contains the computed false discovery rates (FDRs). 
 ##'
 ##' @param object A `QFeatures` object
 ##' 
-##' @param i A `numeric()` or `character()` vector indicating from which assays 
-##'     the `rowData` should be taken.
+##' @param i A `numeric()` or `character()` vector indicating from which 
+##'     assays the `rowData` should be taken.
 ##' 
 ##' @param groupCol A `character(1)` indicating the variable names in the 
 ##'     `rowData` that contains the grouping variable. The FDR are usually 
@@ -101,6 +105,7 @@ computeSCR <- function(obj,
 ##'                    pepCol = "dart_PEP")
 ##' ## Check results
 ##' rowDataToDF(scp1, 1, c("dart_PEP", ".FDR"))
+##' 
 computeFDR <- function(object, 
                        i, 
                        groupCol, 
@@ -141,17 +146,18 @@ computeFDR <- function(object,
 ##' mean expression. The CV is computed only if there are more than 5 
 ##' observations per protein per cell. 
 ##' 
-##' A new columns, `.medianCV`, is added to the `colData` of the assay `i` and
-##' contains the computed median CVs.
+##' A new columns, `.medianCV`, is added to the `colData` of the assay 
+##' `i` and contains the computed median CVs.
 ##' 
-##' *Watch out* that `peptideCol` and `proteinCol` are feature variables and 
-##' hence taken from the `rowData`. `batchCol` is a sample variable and is taken
-##' from the `colData` of the `QFeatures` object.
+##' *Watch out* that `peptideCol` and `proteinCol` are feature 
+##' variables and hence taken from the `rowData`. `batchCol` is a 
+##' sample variable and is taken from the `colData` of the `QFeatures` 
+##' object.
 ##'
 ##' @param object A `QFeatures` object
 ##'
-##' @param i  A `numeric()` or `character()` vector indicating from which assays 
-##'     the `rowData` should be taken.
+##' @param i  A `numeric()` or `character()` vector indicating from which 
+##'     assays the `rowData` should be taken.
 ##' 
 ##' @param peptideCol  A `character(1)` indicating the variable name in the 
 ##'     `rowData` that contains the peptide grouping.
@@ -178,10 +184,11 @@ computeFDR <- function(object,
 ##'                         batchCol = "Set")
 ##' ## Check results
 ##' hist(scp1[["peptides"]]$.MedianCV)
+##' 
 computeMedianCV <- function(object, 
                             i, 
                             peptideCol, 
-                            proteinCol,
+                            proteinCol, 
                             batchCol) {
     ## Extract the expression data and metadata as long format
     object %>%
@@ -221,13 +228,21 @@ computeMedianCV <- function(object,
 ## Internal function to efficiently extract expression data to long
 ## format. The efficiency is seen when nNA's are present and `na.rm ==
 ## TRUE`. Meta
-.assayToLongDF <- function(obj, colDataCols, rowDataCols, i, na.rm = TRUE) {
+.assayToLongDF <- function(obj, 
+                           colDataCols, 
+                           rowDataCols, 
+                           i, 
+                           na.rm = TRUE) {
     if (length(i) > 1) stop("Multiple assays are not supported (yet).")
     dat <- assay(obj[[i]])
     if (na.rm) sel <- which(!is.na(dat), arr.ind = TRUE) else sel <- TRUE
     DataFrame(colname = colnames(dat)[sel[, 2]],
               rowname = rownames(dat)[sel[, 1]],
-              colData(obj)[colnames(dat)[sel[, 2]], colDataCols, drop = FALSE],
-              rowData(obj[[i]])[rownames(dat)[sel[, 1]], rowDataCols, drop = FALSE],
+              colData(obj)[colnames(dat)[sel[, 2]], 
+                           colDataCols, 
+                           drop = FALSE],
+              rowData(obj[[i]])[rownames(dat)[sel[, 1]], 
+                                rowDataCols, 
+                                drop = FALSE],
               value = dat[sel])
 }

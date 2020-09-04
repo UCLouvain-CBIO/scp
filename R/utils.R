@@ -1,4 +1,5 @@
-##' Extract the `rowData` of a `QFeatures` object to a `DataFrame`
+##' Extract the `rowData` of a `QFeatures` object to a 
+##' `DataFrame`
 ##'
 ##' The methods takes the `rowData` of one or more given assay in a
 ##' `QFeatures` object and combines the data in a single `DataFrame`.
@@ -26,7 +27,10 @@
 ##' ## Extract the peptide length and sequence from the first 3 assays
 ##' data("scp1")
 ##' rowDataToDF(scp1, i = 1:3, c("Length", "Sequence"))
-rowDataToDF <- function(obj, i, vars) {
+##' 
+rowDataToDF <- function(obj, 
+                        i, 
+                        vars) {
     if (!inherits(obj, "QFeatures")) stop("'obj' must be a QFeatures object")
     if (is.numeric(i)) i <- names(obj)[i]
     ## Make sure that the variables to extract are present in the rowData
@@ -65,7 +69,9 @@ rowDataToDF <- function(obj, i, vars) {
 ##' colData(scp1[["peptides"]])
 ##' scp1 <- transferColDataToAssay(scp1, i = "peptides")
 ##' colData(scp1[["peptides"]])
-transferColDataToAssay <- function (obj, i) {
+##' 
+transferColDataToAssay <- function (obj, 
+                                    i) {
     cd <- colData(obj)[colnames(obj[[i]]),  ]
     if (all(colnames(cd) %in% colnames(colData(obj@ExperimentList[[i]])))) {
         message("The colData is already present in assay '", i, "'.")
@@ -78,9 +84,9 @@ transferColDataToAssay <- function (obj, i) {
 ##' Aggregate features over multiple assays
 ##' 
 ##' This function is a wrapper function around
-##' [QFeatures::aggregateFeatures]. It allows the user to provide
-##' multiple assays for which `aggregateFeatures` will be applied
-##' sequentially.
+##' [QFeatures::aggregateFeatures]. 
+##' It allows the user to provide multiple assays for which 
+##' `aggregateFeatures` will be applied sequentially.
 ##' 
 ##' @param obj A `QFeatures` object
 ##' 
@@ -118,11 +124,12 @@ transferColDataToAssay <- function (obj, i) {
 ##'                                     fun = colMeans,
 ##'                                     na.rm = TRUE)
 ##' scp1
-aggregateFeaturesOverAssays <- function(obj,
-                                        i,
+##' 
+aggregateFeaturesOverAssays <- function(obj, 
+                                        i, 
                                         fcol, 
-                                        name,
-                                        fun,
+                                        name, 
+                                        fun, 
                                         ...) {
     if (length(i) != length(name)) stop("'i' and 'name' must have same length")
     if (length(fcol) == 1) fcol <- rep(fcol, length(i))
@@ -133,7 +140,10 @@ aggregateFeaturesOverAssays <- function(obj,
     el <- obj@ExperimentList[i]
     for (j in seq_along(el)) {
         suppressMessages(
-            el[[j]] <- aggregateFeatures(el[[j]], fcol = fcol[j], fun = fun, ...)
+            el[[j]] <- aggregateFeatures(el[[j]], 
+                                         fcol = fcol[j], 
+                                         fun = fun, 
+                                         ...)
         )
         ## Print progress
         message(paste0("\rAggregated: ", j, "/", length(el)))

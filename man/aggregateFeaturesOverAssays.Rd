@@ -29,9 +29,9 @@ A \code{QFeatures} object
 }
 \description{
 This function is a wrapper function around
-\link[QFeatures:QFeatures-aggregate]{QFeatures::aggregateFeatures}. It allows the user to provide
-multiple assays for which \code{aggregateFeatures} will be applied
-sequentially.
+\link[QFeatures:QFeatures-aggregate]{QFeatures::aggregateFeatures}.
+It allows the user to provide multiple assays for which
+\code{aggregateFeatures} will be applied sequentially.
 }
 \examples{
 data("scp1")
@@ -42,6 +42,7 @@ scp1 <- aggregateFeaturesOverAssays(scp1,
                                     fun = colMeans,
                                     na.rm = TRUE)
 scp1
+
 }
 \seealso{
 \link[QFeatures:QFeatures-aggregate]{QFeatures::aggregateFeatures}
