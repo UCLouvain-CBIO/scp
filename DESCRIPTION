@@ -42,8 +42,11 @@ Remotes:
    RforMassSpectrometry/QFeatures
 License: Artistic-2.0
 Encoding: UTF-8
-LazyData: true
 VignetteBuilder: knitr
+biocViews: 
+    GeneExpression,
+    Proteomics,
+    SingleCell
 BugReports: https://github.com/UCLouvain-CBIO/scp/issues
 URL: https://UCLouvain-CBIO.github.io/scp
 Roxygen: list(markdown=TRUE)
