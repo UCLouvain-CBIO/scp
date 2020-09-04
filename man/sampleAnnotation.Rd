@@ -5,7 +5,7 @@
 \alias{sampleAnnotation}
 \title{Single cell sample annotation}
 \format{
-An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 48 rows and 6 columns.
+An object of class \code{tbl_df} (inherits from \code{tbl}, \code{data.frame}) with 64 rows and 6 columns.
 }
 \usage{
 sampleAnnotation
