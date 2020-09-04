@@ -41,6 +41,7 @@ Suggests:
     uwot
 License: Artistic-2.0
 Encoding: UTF-8
+LazyData: true
 VignetteBuilder: knitr
 biocViews: 
     GeneExpression,
