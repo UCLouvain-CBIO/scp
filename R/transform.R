@@ -9,12 +9,15 @@
 ##' 
 ##' @param y A SummarizedExperiment object, or an object that inherits from it
 ##' 
-##' @param i a characther(1) or logical(1) that indicates which assay must be replaced
+##' @param i a characther(1) or logical(1) that indicates which assay must be 
+##'     replaced
 ##'
 ##' @importFrom MultiAssayExperiment experiments
 ##' 
 ##' @noRd
-.replaceAssay <- function(obj, y, i) {
+.replaceAssay <- function(obj, 
+                          y, 
+                          i) {
     if (length(i) > 1) stop("Only 1 assay can be replaced at a time.")
     if (!inherits(obj, "QFeatures")) stop("'obj' must be a 'QFeatures' object")
     if (!inherits(y, "SummarizedExperiment")) 
@@ -37,8 +40,8 @@
 ##' 
 ##' @param obj A `QFeatures` object
 ##' 
-##' @param i A `numeric()` or `character()` vector indicating from which assays 
-##'     the `rowData` should be taken.
+##' @param i A `numeric()` or `character()` vector indicating from which 
+##'     assays the `rowData` should be taken.
 ##' 
 ##' @param colDataCol A `character(1)` indicating the variable to take from 
 ##'     `colData(obj)` that gives the sample annotation.
@@ -62,10 +65,11 @@
 ##'                           colDataCol = "SampleType",
 ##'                           samplePattern = "Macrophage",
 ##'                           refPattern = "Ref")
+##'                           
 divideByReference <- function(obj, 
-                              i,
-                              colDataCol,
-                              samplePattern = ".",
+                              i, 
+                              colDataCol, 
+                              samplePattern = ".", 
                               refPattern) {
     ## Check arguments
     if (!inherits(obj, "QFeatures")) stop("'obj' must be a QFeatures object")
@@ -85,7 +89,8 @@ divideByReference <- function(obj,
                     "'. Only the first match will be used")
         ## Divide all channels by the reference channel
         y <- obj[[ii]]
-        assay(y)[, sampIdx] <- assay(y)[, sampIdx, drop = FALSE] / assay(y)[, refIdx]
+        ref <- assay(y)[, refIdx]
+        assay(y)[, sampIdx] <- assay(y)[, sampIdx, drop = FALSE] / ref
         ## Store the normalized assay
         obj <- .replaceAssay(obj, y, ii)
     }
@@ -96,13 +101,13 @@ divideByReference <- function(obj,
 ##' Remove infinite data 
 ##' 
 ##' This function coinsiders any infinite value as missing data. So,
-##' any value in assay `i` that return `TRUE` to `is.infinite` will be
-##' replaced by `NA`.
+##' any value in assay `i` that return `TRUE` to `is.infinite` will 
+##' be replaced by `NA`.
 ##' 
 ##' @param obj A `QFeatures` object.
 ##' 
-##' @param i A `numeric()` or `character()` vector indicating from which assays 
-##'     the `rowData` should be taken.
+##' @param i A `numeric()` or `character()` vector indicating from which 
+##'     assays the `rowData` should be taken.
 ##' 
 ##' @return A `QFeatures` object
 ##' 
@@ -111,7 +116,9 @@ divideByReference <- function(obj,
 ##' @examples
 ##' data("scp1")
 ##' scp1 <- infIsNA(scp1, i = "peptides")
-infIsNA <- function(obj, i) {
+##' 
+infIsNA <- function(obj, 
+                    i) {
     for (ii in i) {
         sel <- is.infinite(assay(obj[[ii]])) 
         assay(obj[[ii]])[sel] <- NA

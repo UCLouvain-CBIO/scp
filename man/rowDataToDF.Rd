@@ -2,7 +2,8 @@
 % Please edit documentation in R/utils.R
 \name{rowDataToDF}
 \alias{rowDataToDF}
-\title{Extract the \code{rowData} of a \code{QFeatures} object to a \code{DataFrame}}
+\title{Extract the \code{rowData} of a \code{QFeatures} object to a
+\code{DataFrame}}
 \usage{
 rowDataToDF(obj, i, vars)
 }
@@ -32,4 +33,5 @@ taken.
 ## Extract the peptide length and sequence from the first 3 assays
 data("scp1")
 rowDataToDF(scp1, i = 1:3, c("Length", "Sequence"))
+
 }

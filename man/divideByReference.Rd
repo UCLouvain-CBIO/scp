@@ -9,8 +9,8 @@ divideByReference(obj, i, colDataCol, samplePattern = ".", refPattern)
 \arguments{
 \item{obj}{A \code{QFeatures} object}
 
-\item{i}{A \code{numeric()} or \code{character()} vector indicating from which assays
-the \code{rowData} should be taken.}
+\item{i}{A \code{numeric()} or \code{character()} vector indicating from which
+assays the \code{rowData} should be taken.}
 
 \item{colDataCol}{A \code{character(1)} indicating the variable to take from
 \code{colData(obj)} that gives the sample annotation.}
@@ -42,4 +42,5 @@ scp1 <- divideByReference(scp1,
                           colDataCol = "SampleType",
                           samplePattern = "Macrophage",
                           refPattern = "Ref")
+                          
 }

@@ -12,7 +12,8 @@ mqScpData
 }
 \description{
 A \code{data.frame} with 1088 observations and 139 variables, as
-produced by reading a MaxQuant output file with \code{\link[=read.delim]{read.delim()}}.
+produced by reading a MaxQuant output file with
+\code{\link[=read.delim]{read.delim()}}.
 \itemize{
 \item Sequence: a character vector
 \item Length: a numeric vector
@@ -156,7 +157,7 @@ produced by reading a MaxQuant output file with \code{\link[=read.delim]{read.de
 }
 }
 \seealso{
-\code{\link[=readSCP]{readSCP()}} for an example on how \code{mqScpData} is parsed into
-a \link{QFeatures} object.
+\code{\link[=readSCP]{readSCP()}} for an example on how \code{mqScpData} is
+parsed into a \link{QFeatures} object.
 }
 \keyword{datasets}

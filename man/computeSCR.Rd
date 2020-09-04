@@ -41,4 +41,5 @@ scp1 <- computeSCR(scp1,
                    samplePattern = "Blank|Macrophage|Monocyte")
 ## Check results
 rowDataToDF(scp1, 1, ".meanSCR")
+
 }
