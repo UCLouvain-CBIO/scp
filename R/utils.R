@@ -24,6 +24,7 @@
 ##'
 ##' @examples
 ##' ## Extract the peptide length and sequence from the first 3 assays
+##' data("scp1")
 ##' rowDataToDF(scp1, i = 1:3, c("Length", "Sequence"))
 rowDataToDF <- function(obj, i, vars) {
     if (!inherits(obj, "QFeatures")) stop("'obj' must be a QFeatures object")
