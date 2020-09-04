@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Compute false discovery rates (FDRs) from posterior error probabilities (PEPs) — computeFDR • scp</title>
+<title>Compute FDR from posterior error probabilities PEP — computeFDR • scp</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,10 @@
 
 
 
-<meta property="og:title" content="Compute false discovery rates (FDRs) from posterior error probabilities (PEPs) — computeFDR" />
-<meta property="og:description" content="The functions takes the PEPs from the given assay's rowData and creates a
-new variable (.FDR) to it that contains the computed FDRs." />
+<meta property="og:title" content="Compute FDR from posterior error probabilities PEP — computeFDR" />
+<meta property="og:description" content="The functions takes the posterior error probabilities (PEPs) from the given
+assay's rowData and creates a new variable (.FDR) to it that
+contains the computed false discovery rates (FDRs)." />
 
 
 
@@ -73,7 +74,7 @@ new variable (.FDR) to it that contains the computed FDRs." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0</span>
       </span>
     </div>
 
@@ -112,14 +113,15 @@ new variable (.FDR) to it that contains the computed FDRs." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Compute false discovery rates (FDRs) from posterior error probabilities (PEPs)</h1>
+    <h1>Compute FDR from posterior error probabilities PEP</h1>
     <small class="dont-index">Source: <a href='https://github.com/UCLouvain-CBIO/scp/blob/master/R/compute_metrics.R'><code>R/compute_metrics.R</code></a></small>
     <div class="hidden name"><code>computeFDR.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>The functions takes the PEPs from the given assay's <code>rowData</code> and creates a
-new variable (<code>.FDR</code>) to it that contains the computed FDRs.</p>
+    <p>The functions takes the posterior error probabilities (PEPs) from the given
+assay's <code>rowData</code> and creates a new variable (<code>.FDR</code>) to it that
+contains the computed false discovery rates (FDRs).</p>
     </div>
 
     <pre class="usage"><span class='fu'>computeFDR</span>(<span class='kw'>object</span>, <span class='kw'>i</span>, <span class='kw'>groupCol</span>, <span class='kw'>pepCol</span>)</pre>
@@ -133,8 +135,8 @@ new variable (<code>.FDR</code>) to it that contains the computed FDRs.</p>
     </tr>
     <tr>
       <th>i</th>
-      <td><p>A <code><a href='https://rdrr.io/r/base/numeric.html'>numeric()</a></code> or <code><a href='https://rdrr.io/r/base/character.html'>character()</a></code> vector indicating from which assays
-the <code>rowData</code> should be taken.</p></td>
+      <td><p>A <code><a href='https://rdrr.io/r/base/numeric.html'>numeric()</a></code> or <code><a href='https://rdrr.io/r/base/character.html'>character()</a></code> vector indicating from which
+assays the <code>rowData</code> should be taken.</p></td>
     </tr>
     <tr>
       <th>groupCol</th>
@@ -175,7 +177,8 @@ variable must be contained in (0, 1).</p></td>
 #&gt; PSM253848 5.55493e-06 5.55493e-06 190321S_LC...   PSM253848
 #&gt; PSM255286 2.53061e-02 2.53061e-02 190321S_LC...   PSM255286
 #&gt; PSM255919 5.45833e-12 5.45833e-12 190321S_LC...   PSM255919
-#&gt; PSM256061 2.21415e-05 2.21415e-05 190321S_LC...   PSM256061</div></pre>
+#&gt; PSM256061 2.21415e-05 2.21415e-05 190321S_LC...   PSM256061</div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

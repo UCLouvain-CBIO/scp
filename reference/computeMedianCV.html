@@ -77,7 +77,7 @@ observations per protein per cell." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0</span>
       </span>
     </div>
 
@@ -141,8 +141,8 @@ observations per protein per cell.</p>
     </tr>
     <tr>
       <th>i</th>
-      <td><p>A <code><a href='https://rdrr.io/r/base/numeric.html'>numeric()</a></code> or <code><a href='https://rdrr.io/r/base/character.html'>character()</a></code> vector indicating from which assays
-the <code>rowData</code> should be taken.</p></td>
+      <td><p>A <code><a href='https://rdrr.io/r/base/numeric.html'>numeric()</a></code> or <code><a href='https://rdrr.io/r/base/character.html'>character()</a></code> vector indicating from which
+assays the <code>rowData</code> should be taken.</p></td>
     </tr>
     <tr>
       <th>peptideCol</th>
@@ -166,11 +166,12 @@ the <code>rowData</code> should be taken.</p></td>
     <p>A <code>QFeatures</code> object.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>A new columns, <code>.medianCV</code>, is added to the <code>colData</code> of the assay <code>i</code> and
-contains the computed median CVs.</p>
-<p><em>Watch out</em> that <code>peptideCol</code> and <code>proteinCol</code> are feature variables and
-hence taken from the <code>rowData</code>. <code>batchCol</code> is a sample variable and is taken
-from the <code>colData</code> of the <code>QFeatures</code> object.</p>
+    <p>A new columns, <code>.medianCV</code>, is added to the <code>colData</code> of the assay
+<code>i</code> and contains the computed median CVs.</p>
+<p><em>Watch out</em> that <code>peptideCol</code> and <code>proteinCol</code> are feature
+variables and hence taken from the <code>rowData</code>. <code>batchCol</code> is a
+sample variable and is taken from the <code>colData</code> of the <code>QFeatures</code>
+object.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"scp1"</span>)
@@ -181,7 +182,8 @@ from the <code>colData</code> of the <code>QFeatures</code> object.</p>
                         batchCol = <span class='st'>"Set"</span>)
 <span class='co'>## Check results</span>
 <span class='fu'><a href='https://rdrr.io/r/graphics/hist.html'>hist</a></span>(<span class='kw'>scp1</span>[[<span class='st'>"peptides"</span>]]<span class='op'>$</span><span class='kw'>.MedianCV</span>)
-</div><div class='img'><img src='computeMedianCV-1.png' alt='' width='700' height='433' /></div></pre>
+</div><div class='img'><img src='computeMedianCV-1.png' alt='' width='700' height='433' /></div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

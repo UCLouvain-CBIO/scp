@@ -41,8 +41,8 @@
 
 <meta property="og:title" content="Remove infinite data — infIsNA" />
 <meta property="og:description" content="This function coinsiders any infinite value as missing data. So,
-any value in assay i that return TRUE to is.infinite will be
-replaced by NA." />
+any value in assay i that return TRUE to is.infinite will
+be replaced by NA." />
 
 
 
@@ -74,7 +74,7 @@ replaced by NA." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0</span>
       </span>
     </div>
 
@@ -120,8 +120,8 @@ replaced by NA." />
 
     <div class="ref-description">
     <p>This function coinsiders any infinite value as missing data. So,
-any value in assay <code>i</code> that return <code>TRUE</code> to <code>is.infinite</code> will be
-replaced by <code>NA</code>.</p>
+any value in assay <code>i</code> that return <code>TRUE</code> to <code>is.infinite</code> will
+be replaced by <code>NA</code>.</p>
     </div>
 
     <pre class="usage"><span class='fu'>infIsNA</span>(<span class='kw'>obj</span>, <span class='kw'>i</span>)</pre>
@@ -135,8 +135,8 @@ replaced by <code>NA</code>.</p>
     </tr>
     <tr>
       <th>i</th>
-      <td><p>A <code><a href='https://rdrr.io/r/base/numeric.html'>numeric()</a></code> or <code><a href='https://rdrr.io/r/base/character.html'>character()</a></code> vector indicating from which assays
-the <code>rowData</code> should be taken.</p></td>
+      <td><p>A <code><a href='https://rdrr.io/r/base/numeric.html'>numeric()</a></code> or <code><a href='https://rdrr.io/r/base/character.html'>character()</a></code> vector indicating from which
+assays the <code>rowData</code> should be taken.</p></td>
     </tr>
     </table>
 
@@ -147,6 +147,7 @@ the <code>rowData</code> should be taken.</p></td>
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"scp1"</span>)
 <span class='kw'>scp1</span> <span class='op'>&lt;-</span> <span class='fu'>infIsNA</span>(<span class='kw'>scp1</span>, i = <span class='st'>"peptides"</span>)
+
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
