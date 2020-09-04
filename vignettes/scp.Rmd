@@ -154,8 +154,8 @@ scp <- zeroIsNA(scp, i = 1:4)
 
 # Filter PSMs
 
-A common steps in SCP is to filter out low-confidence PSMs. Each PSM assay contains
-feature meta-information that are stored in the assay's `rowData`. The
+A common steps in SCP is to filter out low-confidence PSMs. Each PSM assay 
+contains feature meta-information that are stored in the assay's `rowData`. The
 `QFeatures` package allows to quickly filter the rows of an assay by using these
 information. The available variables in the `rowData` are listed below for each
 assay.
@@ -166,16 +166,16 @@ rowDataNames(scp)
 
 ## Filter features based on feature metadata
 
-Below are some examples of criteria that are used to identify low-confidence. The
-information is readily available since this was computed by MaxQuant:
+Below are some examples of criteria that are used to identify low-confidence. 
+The information is readily available since this was computed by MaxQuant:
 
 - Remove PSMs that are matched to contaminants
 - Remove PSMs that are matched to the decoy database
 - Keep PSMs that exhibit a high PIF (parental ion fraction), indicative of the
 purity of a spectrum
 
-We can perform this filtering using the [`filterFeatures`
-function](https://rformassspectrometry.github.io/QFeatures/reference/QFeatures-filtering.html).
+We can perform this filtering using the 
+[`filterFeatures` function](https://rformassspectrometry.github.io/QFeatures/reference/QFeatures-filtering.html).
 `filterFeatures` automatically accesses the feature metadata and
 selects the rows that meet the provided condition(s). For instance,
 `Reverse != "+"` keeps the rows for which the `Reverse` variable in

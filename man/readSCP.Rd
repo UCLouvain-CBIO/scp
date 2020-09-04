@@ -55,7 +55,8 @@ spreadsheet or a \code{data.frame} into a \link{QFeatures} object containing
 The \code{SingleCellExperiment} class is built on top of the
 \code{RangedSummarizedExperiment} class. This means that some column names
 are forbidden in the \code{rowData}. Avoid using the following names:
-\code{seqnames}, \code{ranges}, \code{strand}, \code{start}, \code{end}, \code{width},  \code{element}
+\code{seqnames}, \code{ranges}, \code{strand}, \code{start}, \code{end},
+\code{width},  \code{element}
 }
 \examples{
 

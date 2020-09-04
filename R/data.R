@@ -3,7 +3,8 @@
 ##' @description
 ##'
 ##' A `data.frame` with 1088 observations and 139 variables, as
-##' produced by reading a MaxQuant output file with [read.delim()].
+##' produced by reading a MaxQuant output file with 
+##' [read.delim()].
 ##'
 ##' - Sequence: a character vector
 ##' - Length: a numeric vector
@@ -145,8 +146,8 @@
 ##' - participated: a logical vector
 ##' - peptide: a character vector
 ##'
-##' @seealso [readSCP()] for an example on how `mqScpData` is parsed into
-##'     a [QFeatures] object.
+##' @seealso [readSCP()] for an example on how `mqScpData` is 
+##'     parsed into a [QFeatures] object.
 ##' 
 ##' @md
 "mqScpData"
