@@ -2,15 +2,15 @@
 % Please edit documentation in R/compute_metrics.R
 \name{computeFDR}
 \alias{computeFDR}
-\title{Compute false discovery rates (FDRs) from posterior error probabilities (PEPs)}
+\title{Compute FDR from posterior error probabilities PEP}
 \usage{
 computeFDR(object, i, groupCol, pepCol)
 }
 \arguments{
 \item{object}{A \code{QFeatures} object}
 
-\item{i}{A \code{numeric()} or \code{character()} vector indicating from which assays
-the \code{rowData} should be taken.}
+\item{i}{A \code{numeric()} or \code{character()} vector indicating from which
+assays the \code{rowData} should be taken.}
 
 \item{groupCol}{A \code{character(1)} indicating the variable names in the
 \code{rowData} that contains the grouping variable. The FDR are usually
@@ -24,8 +24,9 @@ variable must be contained in (0, 1).}
 A \code{QFeatures} object.
 }
 \description{
-The functions takes the PEPs from the given assay's \code{rowData} and creates a
-new variable (\code{.FDR}) to it that contains the computed FDRs.
+The functions takes the posterior error probabilities (PEPs) from the given
+assay's \code{rowData} and creates a new variable (\code{.FDR}) to it that
+contains the computed false discovery rates (FDRs).
 }
 \examples{
 data("scp1")
@@ -35,4 +36,5 @@ scp1 <- computeFDR(scp1,
                    pepCol = "dart_PEP")
 ## Check results
 rowDataToDF(scp1, 1, c("dart_PEP", ".FDR"))
+
 }

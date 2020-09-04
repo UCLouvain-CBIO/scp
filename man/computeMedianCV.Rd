@@ -9,8 +9,8 @@ computeMedianCV(object, i, peptideCol, proteinCol, batchCol)
 \arguments{
 \item{object}{A \code{QFeatures} object}
 
-\item{i}{A \code{numeric()} or \code{character()} vector indicating from which assays
-the \code{rowData} should be taken.}
+\item{i}{A \code{numeric()} or \code{character()} vector indicating from which
+assays the \code{rowData} should be taken.}
 
 \item{peptideCol}{A \code{character(1)} indicating the variable name in the
 \code{rowData} that contains the peptide grouping.}
@@ -33,12 +33,13 @@ mean expression. The CV is computed only if there are more than 5
 observations per protein per cell.
 }
 \details{
-A new columns, \code{.medianCV}, is added to the \code{colData} of the assay \code{i} and
-contains the computed median CVs.
+A new columns, \code{.medianCV}, is added to the \code{colData} of the assay
+\code{i} and contains the computed median CVs.
 
-\emph{Watch out} that \code{peptideCol} and \code{proteinCol} are feature variables and
-hence taken from the \code{rowData}. \code{batchCol} is a sample variable and is taken
-from the \code{colData} of the \code{QFeatures} object.
+\emph{Watch out} that \code{peptideCol} and \code{proteinCol} are feature
+variables and hence taken from the \code{rowData}. \code{batchCol} is a
+sample variable and is taken from the \code{colData} of the \code{QFeatures}
+object.
 }
 \examples{
 data("scp1")
@@ -49,4 +50,5 @@ scp1 <- computeMedianCV(scp1,
                         batchCol = "Set")
 ## Check results
 hist(scp1[["peptides"]]$.MedianCV)
+
 }

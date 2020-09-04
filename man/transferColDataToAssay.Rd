@@ -25,4 +25,5 @@ data("scp1")
 colData(scp1[["peptides"]])
 scp1 <- transferColDataToAssay(scp1, i = "peptides")
 colData(scp1[["peptides"]])
+
 }

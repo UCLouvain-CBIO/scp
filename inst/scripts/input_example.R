@@ -65,7 +65,8 @@ inner_join(x = cells %>%
           Channel = paste0("RI", 1:16),
           SampleType = "Blank",
           lcbatch = "LCA10",
-          sortday = "s8") ->
+          sortday = "s8") %>%
+  data.frame ->
   sampleAnnotation
   
 format(object.size(sampleAnnotation), units = "MB", digits = 2)
