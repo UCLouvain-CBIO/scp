@@ -38,15 +38,15 @@ Suggests:
     scater,
     sva,
     uwot
-Remotes:
-   RforMassSpectrometry/QFeatures
 License: Artistic-2.0
 Encoding: UTF-8
 VignetteBuilder: knitr
 biocViews: 
     GeneExpression,
     Proteomics,
-    SingleCell
+    SingleCell,
+    MassSpectrometry,
+    Preprocessing
 BugReports: https://github.com/UCLouvain-CBIO/scp/issues
 URL: https://UCLouvain-CBIO.github.io/scp
 Roxygen: list(markdown=TRUE)
