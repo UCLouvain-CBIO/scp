@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Compute cell median coefficient of variation (CV) — computeMedianCV • scp</title>
+<title>Changelog • scp</title>
 
 
 <!-- jquery -->
@@ -39,13 +39,7 @@
 
 
 
-<meta property="og:title" content="Compute cell median coefficient of variation (CV) — computeMedianCV" />
-<meta property="og:description" content="The function computes for each cell the median CV. The expression data is
-normalized twice. First, cell median expression is used as normalization
-factor, then, the mean for each batch and peptide. The CV is then computed
-for each protein in each cell. CV is the standard deviation divided by the
-mean expression. The CV is computed only if there are more than 5
-observations per protein per cell." />
+<meta property="og:title" content="Changelog" />
 
 
 
@@ -64,7 +58,7 @@ observations per protein per cell." />
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-reference-topic">
+    <div class="container template-news">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -119,80 +113,29 @@ observations per protein per cell." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Compute cell median coefficient of variation (CV)</h1>
-    <small class="dont-index">Source: <a href='https://github.com/UCLouvain-CBIO/scp/blob/master/R/compute_metrics.R'><code>R/compute_metrics.R</code></a></small>
-    <div class="hidden name"><code>computeMedianCV.Rd</code></div>
+      <h1 data-toc-skip>Changelog <small></small></h1>
+      <small>Source: <a href='https://github.com/UCLouvain-CBIO/scp/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div class="ref-description">
-    <p>The function computes for each cell the median CV. The expression data is
-normalized twice. First, cell median expression is used as normalization
-factor, then, the mean for each batch and peptide. The CV is then computed
-for each protein in each cell. CV is the standard deviation divided by the
-mean expression. The CV is computed only if there are more than 5
-observations per protein per cell.</p>
-    </div>
-
-    <pre class="usage"><span class='fu'>computeMedianCV</span>(<span class='kw'>object</span>, <span class='kw'>i</span>, <span class='kw'>peptideCol</span>, <span class='kw'>proteinCol</span>, <span class='kw'>batchCol</span>)</pre>
-
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>object</th>
-      <td><p>A <code>QFeatures</code> object</p></td>
-    </tr>
-    <tr>
-      <th>i</th>
-      <td><p>A <code><a href='https://rdrr.io/r/base/numeric.html'>numeric()</a></code> or <code><a href='https://rdrr.io/r/base/character.html'>character()</a></code> vector indicating from which
-assays the <code>rowData</code> should be taken.</p></td>
-    </tr>
-    <tr>
-      <th>peptideCol</th>
-      <td><p>A <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> indicating the variable name in the
-<code>rowData</code> that contains the peptide grouping.</p></td>
-    </tr>
-    <tr>
-      <th>proteinCol</th>
-      <td><p>A <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> indicating the variable name in the
-<code>rowData</code> that contains the protein grouping.</p></td>
-    </tr>
-    <tr>
-      <th>batchCol</th>
-      <td><p>A <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> indicating the variable name in the
-<code>colData</code> of <code>object</code> that contains the batch names.</p></td>
-    </tr>
-    </table>
-
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>A <code>QFeatures</code> object.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
-    <p>A new columns, <code>.medianCV</code>, is added to the <code>colData</code> of the assay
-<code>i</code> and contains the computed median CVs.</p>
-<p><em>Watch out</em> that <code>peptideCol</code> and <code>proteinCol</code> are feature
-variables and hence taken from the <code>rowData</code>. <code>batchCol</code> is a
-sample variable and is taken from the <code>colData</code> of the <code>QFeatures</code>
-object.</p>
-
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"scp1"</span>)
-<span class='kw'>scp1</span> <span class='op'>&lt;-</span> <span class='fu'>computeMedianCV</span>(<span class='kw'>scp1</span>, 
-                        i = <span class='st'>"peptides"</span>, 
-                        proteinCol = <span class='st'>"protein"</span>, 
-                        peptideCol = <span class='st'>"peptide"</span>, 
-                        batchCol = <span class='st'>"Set"</span>)
-<span class='co'>## Check results</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/hist.html'>hist</a></span>(<span class='kw'>scp1</span>[[<span class='st'>"peptides"</span>]]<span class='op'>$</span><span class='kw'>.MedianCV</span>)
-</div><div class='img'><img src='computeMedianCV-1.png' alt='' width='700' height='433' /></div><div class='input'>
-</div></pre>
+    <div id="scp-099" class="section level1">
+<h1 class="page-header" data-toc-text="0.99">
+<a href="#scp-099" class="anchor"></a>scp 0.99</h1>
+<div id="scp-0990" class="section level2">
+<h2 class="hasAnchor">
+<a href="#scp-0990" class="anchor"></a>scp 0.99.0</h2>
+<ul>
+<li>Bioconductor submission</li>
+</ul>
+</div>
+</div>
   </div>
+
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>
     </nav>
   </div>
+
 </div>
 
 
