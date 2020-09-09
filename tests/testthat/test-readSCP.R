@@ -16,6 +16,14 @@ test_that("readSCP: correct use", {
     ##  `devtools::test()`, the assays are ordered as they appear in `mqScpData`
     ## hence the need for `dims(scp)[, unique(mqScpData$Set)]` to avoid an error
     
+    ## Make sure all rownames start with "PSM"
+    expect_true(all(grepl("^PSM", unlist(rownames(scp)))))
+    expect_true(all(grepl("^PSM", unlist(rownames(scp@ExperimentList@listData$`190222S_LCA9_X_FP94BM`)))))
+    ## Make sur the column names are as expected
+    expectedCols <- paste0(rep(unique(mqScpData$Set), 16), "_",
+                           rep(paste0("RI", 1:16), each = 4))
+    expect_true(all(unlist(colnames(scp)) %in% as.character(expectedCols)))
+    
     ## Single batch
     scp <- readSCP(mqScpData %>% 
                      dplyr::filter(Set == "190222S_LCA9_X_FP94BM"), 
@@ -39,4 +47,25 @@ test_that("readSCP: warnings", {
                    matrix(c(334L, 16L), nrow = 2, 
                           dimnames = list(NULL, "190222S_LCA9_X_FP94BM")))
   
+})
+
+test_that("readSingleCellExperiment: correct use", {
+  sce <- readSingleCellExperiment(mqScpData, 
+                                  ecol = grep("RI[0-9]*$",
+                                              colnames(mqScpData)))
+  ## Make sure dimensions are correct
+  expect_identical(dim(sce),
+                   c(nrow(mqScpData), 16L))
+  ## Make sure class is correct
+  expect_true(inherits(sce, "SingleCellExperiment"))
+})
+
+test_that("readSingleCellExperiment: error", {
+  ## Some names in the rowData are not allowed by RangedSummarizedExperiment
+  badData <- mqScpData
+  badData$seqnames <- 1
+  sce <- readSingleCellExperiment(badData, 
+                                  ecol = grep("RI[0-9]*$",
+                                              colnames(badData)))
+  expect_error(sce[1, ], regexp = "cannot have columns named \"seqnames\"")
 })
