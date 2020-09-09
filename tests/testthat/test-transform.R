@@ -44,16 +44,3 @@ test_that("divideByReference", {
                    regexp = "Only the first match will be used")
 })
 
-test_that("infIsNA", {
-  ## Correct use
-  test <- scp1
-  assay(test[[1]])[, 1] <- Inf
-  test <- infIsNA(test, i = "190321S_LCA10_X_FP97AG") ## also test character indexing
-  ## Sinlge assay
-  expect_identical(sum(is.na(assay(test[[1]]))), nrow(test[[1]]))
-  expect_identical(dim(test[[1]]), dim(scp1[[1]]))
-  ## Mutliple assays
-  test <- infIsNA(test, i = 1:3)
-  expect_identical(sum(is.na(assay(test[[1]]))), nrow(test[[1]]))
-})
-
