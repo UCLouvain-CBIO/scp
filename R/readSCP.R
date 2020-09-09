@@ -94,8 +94,7 @@ readSCP <- function(quantTable,
                                     ecol = ecol, 
                                     ...)
     if (is.null(list(...)$row.names))
-        rownames(scp@assays@data@listData[[1]]) <- 
-            paste0("PSM", seq_len(nrow(scp)))
+        rownames(scp) <- paste0("PSM", seq_len(nrow(scp)))
     
     ## Check the link between metaTable and scp
     mis <- !rowData(scp)[, batchCol] %in% metaTable[, batchCol]
