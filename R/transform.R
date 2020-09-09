@@ -96,32 +96,3 @@ divideByReference <- function(obj,
     }
     return(obj)
 }
-
-
-##' Remove infinite data 
-##' 
-##' This function coinsiders any infinite value as missing data. So,
-##' any value in assay `i` that return `TRUE` to `is.infinite` will 
-##' be replaced by `NA`.
-##' 
-##' @param obj A `QFeatures` object.
-##' 
-##' @param i A `numeric()` or `character()` vector indicating from which 
-##'     assays the `rowData` should be taken.
-##' 
-##' @return A `QFeatures` object
-##' 
-##' @export
-##' 
-##' @examples
-##' data("scp1")
-##' scp1 <- infIsNA(scp1, i = "peptides")
-##' 
-infIsNA <- function(obj, 
-                    i) {
-    for (ii in i) {
-        sel <- is.infinite(assay(obj[[ii]])) 
-        assay(obj[[ii]])[sel] <- NA
-    }
-    obj
-}
