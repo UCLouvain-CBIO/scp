@@ -2,7 +2,7 @@
 
 ## scp 0.99.2
 
-- Nothing yet
+- fix: `computeFDR` can handle missing values (see issue #12)
 
 ## scp 0.99.1
 
