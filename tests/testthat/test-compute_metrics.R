@@ -38,6 +38,12 @@ test_that("computeFDR", {
     filter(peptide == "_AQLGGPEAAK_2") ->
     test
   expect_identical(test$.FDR, fdrFromPEP(test$dart_PEP))
+  ## Message: the PEP contains missing values
+  rowData(scp1[[1]])$dart_PEP[1] <- NA
+  expect_message(tmp <- computeFDR(scp1, i = 1:3, groupCol = "peptide", 
+                                   pepCol = "dart_PEP"),
+                 regexp = "missing values")
+  expect_true(is.na(rowData(tmp[[1]])$dart_PEP[1]))
   ## Error: rowData variable not fount
   expect_error(computeFDR(scp1, i = 1, groupCol = "foo", pepCol = "dart_PEP"),
                regexp = paste0("not found in:\n", names(scp1)[1]))
