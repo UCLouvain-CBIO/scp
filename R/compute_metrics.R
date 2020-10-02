@@ -76,14 +76,14 @@ computeSCR <- function(obj,
 
 ##' Compute FDR from posterior error probabilities PEP
 ##' 
-##' The functions takes the posterior error probabilities (PEPs) from the given 
-##' assay's `rowData` and creates a new variable (`.FDR`) to it that 
-##' contains the computed false discovery rates (FDRs). 
+##' The functions takes the posterior error probabilities (PEPs) from 
+##' the given assay's `rowData` and adds a new variable to it (called 
+##' `.FDR`) that contains the computed false discovery rates (FDRs). 
 ##'
 ##' @param object A `QFeatures` object
 ##' 
-##' @param i A `numeric()` or `character()` vector indicating from which 
-##'     assays the `rowData` should be taken.
+##' @param i A `numeric()` or `character()` vector indicating from 
+##'     which assays the `rowData` should be taken.
 ##' 
 ##' @param groupCol A `character(1)` indicating the variable names in the 
 ##'     `rowData` that contains the grouping variable. The FDR are usually 
@@ -120,8 +120,16 @@ computeFDR <- function(object,
     
     ## Get the PEP from all assays
     peps <- rowDataToDF(object, i, vars = c(groupCol, pepCol))
-    if (max(peps[, pepCol]) > 1 | min(peps[, pepCol]) < 0) 
+    
+    ## Check PEP is a probability
+    pepRange <- range(peps[, pepCol], na.rm = TRUE)
+    if (max(pepRange) > 1 | min(pepRange < 0))
         stop(paste0("'", pepCol, "' is not a probability in (0, 1)"))
+    
+    ## Report missing values
+    if (anyNA(peps[, pepCol]))
+        message("The 'pepCol' contains missing values. No FDR will ",
+                "be computed for missing data.")
     
     ## Compute the FDR for every peptide ID separately
     peps <- group_by(data.frame(peps), .data[[groupCol]])
@@ -137,7 +145,7 @@ computeFDR <- function(object,
     return(object)
 }
 
-##' Compute cell median coefficient of variation (CV)
+##' Compute the median coefficient of variation (CV) per cell
 ##' 
 ##' The function computes for each cell the median CV. The expression data is 
 ##' normalized twice. First, cell median expression is used as normalization 
