@@ -83,12 +83,6 @@ SingleCellExperiment objects." />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/scp.html">Get started</a>
 </li>
 <li>
@@ -130,7 +124,7 @@ spreadsheet or a <code>data.frame</code> into a QFeatures object containing
 SingleCellExperiment objects.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>readSCP</span>(<span class='kw'>quantTable</span>, <span class='kw'>metaTable</span>, <span class='kw'>batchCol</span>, <span class='kw'>channelCol</span>, verbose = <span class='fl'>TRUE</span>, <span class='kw'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>readSCP</span><span class='op'>(</span><span class='va'>quantTable</span>, <span class='va'>metaTable</span>, <span class='va'>batchCol</span>, <span class='va'>channelCol</span>, verbose <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -201,16 +195,16 @@ are forbidden in the <code>rowData</code>. Avoid using the following names:
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
 <span class='co'>## Load an example table containing MaxQuant output</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"mqScpData"</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"mqScpData"</span><span class='op'>)</span>
 
 <span class='co'>## Load the (user-generated) annotation table</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"sampleAnnotation"</span>)
+<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"sampleAnnotation"</span><span class='op'>)</span>
 
 <span class='co'>## Format the tables into a QFeatures object</span>
-<span class='fu'>readSCP</span>(quantTable = <span class='kw'>mqScpData</span>,
-        metaTable = <span class='kw'>sampleAnnotation</span>,
-        batchCol = <span class='st'>"Set"</span>,
-        channelCol = <span class='st'>"Channel"</span>)
+<span class='fu'>readSCP</span><span class='op'>(</span>quantTable <span class='op'>=</span> <span class='va'>mqScpData</span>,
+        metaTable <span class='op'>=</span> <span class='va'>sampleAnnotation</span>,
+        batchCol <span class='op'>=</span> <span class='st'>"Set"</span>,
+        channelCol <span class='op'>=</span> <span class='st'>"Channel"</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'>Loading data as a 'SingleCellExperiment' object</span></div><div class='output co'>#&gt; <span class='message'>Splitting data based on 'Set'</span></div><div class='output co'>#&gt; <span class='message'>Formating sample metadata (colData)</span></div><div class='output co'>#&gt; <span class='message'>Formating data as a 'QFeatures' object</span></div><div class='output co'>#&gt; An instance of class QFeatures containing 4 assays:
 #&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 334 rows and 16 columns 
 #&gt;  [2] 190321S_LCA10_X_FP97_blank_01: SingleCellExperiment with 109 rows and 16 columns 
@@ -232,7 +226,7 @@ are forbidden in the <code>rowData</code>. Avoid using the following names:
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

@@ -81,12 +81,6 @@ feature. The ratios are averaged within the assay." />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/scp.html">Get started</a>
 </li>
 <li>
@@ -127,7 +121,7 @@ channels over the intentisty of the carrier channel for each
 feature. The ratios are averaged within the assay.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>computeSCR</span>(<span class='kw'>obj</span>, <span class='kw'>i</span>, <span class='kw'>colDataCol</span>, <span class='kw'>samplePattern</span>, <span class='kw'>carrierPattern</span>)</pre>
+    <pre class="usage"><span class='fu'>computeSCR</span><span class='op'>(</span><span class='va'>obj</span>, <span class='va'>i</span>, <span class='va'>colDataCol</span>, <span class='va'>samplePattern</span>, <span class='va'>carrierPattern</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -166,14 +160,14 @@ assay(s) is augmented with the mean SCR (<code>.meanSCR</code>
 variable).</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"scp1"</span>)
-<span class='kw'>scp1</span> <span class='op'>&lt;-</span> <span class='fu'>computeSCR</span>(<span class='kw'>scp1</span>, 
-                   i = <span class='fl'>1</span>,
-                   colDataCol = <span class='st'>"SampleType"</span>,
-                   carrierPattern = <span class='st'>"Carrier"</span>,
-                   samplePattern = <span class='st'>"Blank|Macrophage|Monocyte"</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"scp1"</span><span class='op'>)</span>
+<span class='va'>scp1</span> <span class='op'>&lt;-</span> <span class='fu'>computeSCR</span><span class='op'>(</span><span class='va'>scp1</span>, 
+                   i <span class='op'>=</span> <span class='fl'>1</span>,
+                   colDataCol <span class='op'>=</span> <span class='st'>"SampleType"</span>,
+                   carrierPattern <span class='op'>=</span> <span class='st'>"Carrier"</span>,
+                   samplePattern <span class='op'>=</span> <span class='st'>"Blank|Macrophage|Monocyte"</span><span class='op'>)</span>
 <span class='co'>## Check results</span>
-<span class='fu'><a href='rowDataToDF.html'>rowDataToDF</a></span>(<span class='kw'>scp1</span>, <span class='fl'>1</span>, <span class='st'>".meanSCR"</span>)
+<span class='fu'><a href='rowDataToDF.html'>rowDataToDF</a></span><span class='op'>(</span><span class='va'>scp1</span>, <span class='fl'>1</span>, <span class='st'>".meanSCR"</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; DataFrame with 195 rows and 3 columns
 #&gt;             .meanSCR        .assay    .rowname
 #&gt;            &lt;numeric&gt;   &lt;character&gt; &lt;character&gt;
@@ -204,7 +198,7 @@ variable).</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

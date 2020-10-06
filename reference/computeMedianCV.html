@@ -84,12 +84,6 @@ observations per protein per cell." />
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../articles/scp.html">Get started</a>
 </li>
 <li>
@@ -133,7 +127,7 @@ mean expression. The CV is computed only if there are more than 5
 observations per protein per cell.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>computeMedianCV</span>(<span class='kw'>object</span>, <span class='kw'>i</span>, <span class='kw'>peptideCol</span>, <span class='kw'>proteinCol</span>, <span class='kw'>batchCol</span>)</pre>
+    <pre class="usage"><span class='fu'>computeMedianCV</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>i</span>, <span class='va'>peptideCol</span>, <span class='va'>proteinCol</span>, <span class='va'>batchCol</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -177,14 +171,14 @@ sample variable and is taken from the <code>colData</code> of the <code>QFeature
 object.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span>(<span class='st'>"scp1"</span>)
-<span class='kw'>scp1</span> <span class='op'>&lt;-</span> <span class='fu'>computeMedianCV</span>(<span class='kw'>scp1</span>, 
-                        i = <span class='st'>"peptides"</span>, 
-                        proteinCol = <span class='st'>"protein"</span>, 
-                        peptideCol = <span class='st'>"peptide"</span>, 
-                        batchCol = <span class='st'>"Set"</span>)
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"scp1"</span><span class='op'>)</span>
+<span class='va'>scp1</span> <span class='op'>&lt;-</span> <span class='fu'>computeMedianCV</span><span class='op'>(</span><span class='va'>scp1</span>, 
+                        i <span class='op'>=</span> <span class='st'>"peptides"</span>, 
+                        proteinCol <span class='op'>=</span> <span class='st'>"protein"</span>, 
+                        peptideCol <span class='op'>=</span> <span class='st'>"peptide"</span>, 
+                        batchCol <span class='op'>=</span> <span class='st'>"Set"</span><span class='op'>)</span>
 <span class='co'>## Check results</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/hist.html'>hist</a></span>(<span class='kw'>scp1</span>[[<span class='st'>"peptides"</span>]]<span class='op'>$</span><span class='kw'>.MedianCV</span>)
+<span class='fu'><a href='https://rdrr.io/r/graphics/hist.html'>hist</a></span><span class='op'>(</span><span class='va'>scp1</span><span class='op'>[[</span><span class='st'>"peptides"</span><span class='op'>]</span><span class='op'>]</span><span class='op'>$</span><span class='va'>.MedianCV</span><span class='op'>)</span>
 </div><div class='img'><img src='computeMedianCV-1.png' alt='' width='700' height='433' /></div><div class='input'>
 </div></pre>
   </div>
@@ -202,7 +196,7 @@ object.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.0.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>
