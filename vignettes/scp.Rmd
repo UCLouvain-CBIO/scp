@@ -381,11 +381,11 @@ here use the median value. We name the aggregated assays using the
 original names and appending `peptides_` at the start.
 
 ```{r aggregate_peptides, message = FALSE}
-scp <-aggregateFeaturesOverAssays(scp,
-                                  i = 1:3,
-                                  fcol = "peptide",
-                                  name = paste0("peptides_", names(scp)),
-                                  fun = matrixStats::colMedians, na.rm = TRUE)
+scp <- aggregateFeaturesOverAssays(scp,
+                                   i = 1:3,
+                                   fcol = "peptide",
+                                   name = paste0("peptides_", names(scp)),
+                                   fun = matrixStats::colMedians, na.rm = TRUE)
 ```
 
 Notice that 3 new assays were created in the `scp` object. Those new
@@ -842,9 +842,9 @@ PCA can be computed using the `runPCA` method. It returns a
 `SingleCellExperiment` object for which the dimension reduction
 results are stored in the `reducedDim` slot.
 
-```{r run_PCA, warning = FALSE}
+```{r run_PCA}
 scp[["proteins_batchC"]] <- runPCA(scp[["proteins_batchC"]],
-                                   ncomponents = 50,
+                                   ncomponents = 5,
                                    ntop = Inf,
                                    scale = TRUE,
                                    exprs_values = 1,
