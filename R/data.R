@@ -146,6 +146,8 @@
 ##' - participated: a logical vector
 ##' - peptide: a character vector
 ##'
+##' @usage data("mqScpData")
+##' 
 ##' @details 
 ##' 
 ##' The dataset is a subset of the SCoPE2 dataset (version 2, Specht 
@@ -176,6 +178,8 @@
 ##' - sortday: a character vector
 ##' - digest: a character vector
 ##'
+##' @usage data("sampleAnnotation")
+##' 
 ##' @details 
 ##' 
 ##' ##' The dataset is a subset of the SCoPE2 dataset (version 2, Specht 
@@ -204,6 +208,8 @@
 ##' composed of 5 assays, including 3 PSM-level assays, 1 peptide
 ##' assay and 1 protein assay.
 ##' 
+##' @usage data("scp1")
+##' 
 ##' @details 
 ##' 
 ##' The dataset is a subset of the SCoPE2 dataset (version 2, Specht 
@@ -217,8 +223,10 @@
 ##' Then peptides were aggregated to proteins. 
 ##' 
 ##' @md
+##' 
+##' @docType data
 ##'
 ##' @examples
-##' data(scp1)
+##' data("scp1")
 ##' scp1
 "scp1"
