@@ -12,9 +12,17 @@ objects.
 
 ## Installation
 
+To install the stable version:
+
 ```
 if (!requireNamespace("BiocManager"))
 	install.packages("BiocManager")
+BiocManager::install("UCLouvain-CBIO/scp")
+```
+
+To install the development version:
+
+```
 BiocManager::install("UCLouvain-CBIO/scp")
 ```
 
