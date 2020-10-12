@@ -2,7 +2,7 @@
 % Please edit documentation in R/compute_metrics.R
 \name{computeMedianCV}
 \alias{computeMedianCV}
-\title{Compute cell median coefficient of variation (CV)}
+\title{Compute the median coefficient of variation (CV) per cell}
 \usage{
 computeMedianCV(object, i, peptideCol, proteinCol, batchCol)
 }
