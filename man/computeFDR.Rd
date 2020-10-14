@@ -9,8 +9,8 @@ computeFDR(object, i, groupCol, pepCol)
 \arguments{
 \item{object}{A \code{QFeatures} object}
 
-\item{i}{A \code{numeric()} or \code{character()} vector indicating from which
-assays the \code{rowData} should be taken.}
+\item{i}{A \code{numeric()} or \code{character()} vector indicating from
+which assays the \code{rowData} should be taken.}
 
 \item{groupCol}{A \code{character(1)} indicating the variable names in the
 \code{rowData} that contains the grouping variable. The FDR are usually
@@ -24,9 +24,9 @@ variable must be contained in (0, 1).}
 A \code{QFeatures} object.
 }
 \description{
-The functions takes the posterior error probabilities (PEPs) from the given
-assay's \code{rowData} and creates a new variable (\code{.FDR}) to it that
-contains the computed false discovery rates (FDRs).
+The functions takes the posterior error probabilities (PEPs) from
+the given assay's \code{rowData} and adds a new variable to it (called
+\code{.FDR}) that contains the computed false discovery rates (FDRs).
 }
 \examples{
 data("scp1")
