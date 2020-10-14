@@ -176,7 +176,7 @@ readSCP <- function(quantTable,
 ##'
 ##' @examples 
 ##' ## Load a data.frame with PSM-level data
-##' data(mqScpData)
+##' data("mqScpData")
 ##' 
 ##' ## Create the QFeatures object
 ##' sce <- readSingleCellExperiment(mqScpData, 

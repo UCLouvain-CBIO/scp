@@ -137,7 +137,7 @@ aggregateFeaturesOverAssays <- function(obj,
     if (is.numeric(i)) i <- names(obj)[i]
     
     ## Compute the aggregated assays
-    el <- obj@ExperimentList[i]
+    el <- experiments(obj)[i]
     for (j in seq_along(el)) {
         suppressMessages(
             el[[j]] <- aggregateFeatures(el[[j]], 
@@ -146,9 +146,7 @@ aggregateFeaturesOverAssays <- function(obj,
                                          ...)
         )
         ## Print progress
-        message(paste0("\rAggregated: ", j, "/", length(el)))
-        if (j == length(el)) cat ("\n")
-        flush.console()
+        message("\rAggregated: ", j, "/", length(el), "\n")
     }
     names(el) <- name
     ## Get the AssayLinks for the aggregated assays 
