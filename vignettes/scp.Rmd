@@ -11,8 +11,8 @@ output:
     toc_depth: 2
     code_folding: show
 bibliography: scp.bib
-date: "`r doc_date()`"
-package: "`r pkg_ver('scp')`"
+date: "`r BiocStyle::doc_date()`"
+package: "`r BiocStyle::pkg_ver('scp')`"
 vignette: >
   %\VignetteIndexEntry{Single Cell Proteomics data processing and analysis}
   %\VignetteEngine{knitr::rmarkdown}
@@ -858,7 +858,8 @@ plot, here we called it `PCA`. The samples are colored by type of sample.
 ```{r plot_PCA}
 plotReducedDim(scp[["proteins_batchC"]],
                dimred = "PCA",
-               colour_by = "SampleType")
+               colour_by = "SampleType",
+               point_alpha = 1)
 ```
 
 This is a minimalistic example with only a few plotted cells, but the
@@ -892,7 +893,8 @@ colored by type of sample.
 ```{r plot_UMAP}
 plotReducedDim(scp[["proteins_batchC"]],
                dimred = "UMAP",
-               colour_by = "SampleType")
+               colour_by = "SampleType",
+               point_alpha = 1)
 ```
 
 The UMAP plot is a very interesting plot for large datasets. A UMAP on
