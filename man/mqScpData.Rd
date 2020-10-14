@@ -8,7 +8,7 @@
 An object of class \code{data.frame} with 1197 rows and 139 columns.
 }
 \usage{
-mqScpData
+data("mqScpData")
 }
 \description{
 A \code{data.frame} with 1088 observations and 139 variables, as
@@ -155,6 +155,17 @@ produced by reading a MaxQuant output file with
 \item participated: a logical vector
 \item peptide: a character vector
 }
+}
+\details{
+The dataset is a subset of the SCoPE2 dataset (version 2, Specht
+et al. 2019,
+\href{https://www.biorxiv.org/content/10.1101/665307v3}{BioRXiv}). The
+input file \code{evidence_unfiltered.csv} was downloaded from a
+\href{https://drive.google.com/drive/folders/1VzBfmNxziRYqayx3SP-cOe2gu129Obgx}{Google Drive repository}.
+The MaxQuant evidence file was loaded and the data was cleaned
+(renaming columns, removing duplicate fields,...).  MS runs that
+were selected in the \code{scp1} dataset (see \code{?scp1}) were kept along
+with a blank run. The data is stored as a \code{data.frame}.
 }
 \seealso{
 \code{\link[=readSCP]{readSCP()}} for an example on how \code{mqScpData} is

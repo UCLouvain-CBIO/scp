@@ -43,7 +43,7 @@ are forbidden in the \code{rowData}. Avoid using the following names:
 }
 \examples{
 ## Load a data.frame with PSM-level data
-data(mqScpData)
+data("mqScpData")
 
 ## Create the QFeatures object
 sce <- readSingleCellExperiment(mqScpData, 
