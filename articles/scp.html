@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.3</span>
       </span>
     </div>
 
@@ -71,7 +71,7 @@
                         <h4 class="author">Laurent Gatto</h4>
                                     <h4 class="author">Christophe Vanderaa</h4>
                         
-            <h4 class="date">6 October 2020</h4>
+            <h4 class="date">14 October 2020</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/master/vignettes/scp.Rmd"><code>vignettes/scp.Rmd</code></a></small>
       <div class="hidden name"><code>scp.Rmd</code></div>
@@ -391,11 +391,11 @@ Conceptual illustration of feature aggregation.
 <span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 142 rows and 16 columns</span></pre></div>
 <p>The PSMs are aggregated over the <code>fcol</code> feature variable, here peptides. We also need to supply an aggregating function that will tell how to combine the quantitative data of the PSMs to aggregate. We here use the median value. We name the aggregated assays using the original names and appending <code>peptides_</code> at the start.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit">
-<span class="va">scp</span> <span class="op">&lt;-</span><span class="fu"><a href="../reference/aggregateFeaturesOverAssays.html">aggregateFeaturesOverAssays</a></span><span class="op">(</span><span class="va">scp</span>,
-                                  i <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,
-                                  fcol <span class="op">=</span> <span class="st">"peptide"</span>,
-                                  name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"peptides_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">scp</span><span class="op">)</span><span class="op">)</span>,
-                                  fun <span class="op">=</span> <span class="fu">matrixStats</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/matrixStats/man/rowMedians.html">colMedians</a></span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
+<span class="va">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/aggregateFeaturesOverAssays.html">aggregateFeaturesOverAssays</a></span><span class="op">(</span><span class="va">scp</span>,
+                                   i <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,
+                                   fcol <span class="op">=</span> <span class="st">"peptide"</span>,
+                                   name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"peptides_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">scp</span><span class="op">)</span><span class="op">)</span>,
+                                   fun <span class="op">=</span> <span class="fu">matrixStats</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/matrixStats/man/rowMedians.html">colMedians</a></span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></pre></div>
 <p>Notice that 3 new assays were created in the <code>scp</code> object. Those new assays contain the aggregated features while the three first assays are unchanged. This allows to keep track of the data processing.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit">
 <span class="va">scp</span>
@@ -733,7 +733,7 @@ Conceptual illustration of feature aggregation.
 <p>PCA can be computed using the <code>runPCA</code> method. It returns a <code>SingleCellExperiment</code> object for which the dimension reduction results are stored in the <code>reducedDim</code> slot.</p>
 <div class="sourceCode" id="cb50"><pre class="downlit">
 <span class="va">scp</span><span class="op">[[</span><span class="st">"proteins_batchC"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scater/man/runPCA.html">runPCA</a></span><span class="op">(</span><span class="va">scp</span><span class="op">[[</span><span class="st">"proteins_batchC"</span><span class="op">]</span><span class="op">]</span>,
-                                   ncomponents <span class="op">=</span> <span class="fl">50</span>,
+                                   ncomponents <span class="op">=</span> <span class="fl">5</span>,
                                    ntop <span class="op">=</span> <span class="cn">Inf</span>,
                                    scale <span class="op">=</span> <span class="cn">TRUE</span>,
                                    exprs_values <span class="op">=</span> <span class="fl">1</span>,
@@ -742,7 +742,8 @@ Conceptual illustration of feature aggregation.
 <div class="sourceCode" id="cb51"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotReducedDim.html">plotReducedDim</a></span><span class="op">(</span><span class="va">scp</span><span class="op">[[</span><span class="st">"proteins_batchC"</span><span class="op">]</span><span class="op">]</span>,
                dimred <span class="op">=</span> <span class="st">"PCA"</span>,
-               colour_by <span class="op">=</span> <span class="st">"SampleType"</span><span class="op">)</span></pre></div>
+               colour_by <span class="op">=</span> <span class="st">"SampleType"</span>,
+               point_alpha <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></pre></div>
 <p><img src="scp_files/figure-html/plot_PCA-1.png" width="700"></p>
 <p>This is a minimalistic example with only a few plotted cells, but the original SCoPE2 dataset contained more than thousand cells.</p>
 </div>
@@ -763,7 +764,8 @@ Conceptual illustration of feature aggregation.
 <div class="sourceCode" id="cb53"><pre class="downlit">
 <span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotReducedDim.html">plotReducedDim</a></span><span class="op">(</span><span class="va">scp</span><span class="op">[[</span><span class="st">"proteins_batchC"</span><span class="op">]</span><span class="op">]</span>,
                dimred <span class="op">=</span> <span class="st">"UMAP"</span>,
-               colour_by <span class="op">=</span> <span class="st">"SampleType"</span><span class="op">)</span></pre></div>
+               colour_by <span class="op">=</span> <span class="st">"SampleType"</span>,
+               point_alpha <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></pre></div>
 <p><img src="scp_files/figure-html/plot_UMAP-1.png" width="700"></p>
 <p>The UMAP plot is a very interesting plot for large datasets. A UMAP on this small example dataset is not useful but is shown for illustration.</p>
 </div>
@@ -821,18 +823,18 @@ attached base packages:
 [8] methods   base     
 
 other attached packages:
- [1] scater_1.17.5               SingleCellExperiment_1.11.8
- [3] sva_3.37.0                  BiocParallel_1.23.2        
- [5] genefilter_1.71.0           mgcv_1.8-31                
- [7] nlme_3.1-148                dplyr_1.0.2                
- [9] magrittr_1.5                ggplot2_3.3.2              
-[11] scp_0.99.2                  QFeatures_0.99.2           
-[13] MultiAssayExperiment_1.15.6 SummarizedExperiment_1.19.9
-[15] Biobase_2.49.1              GenomicRanges_1.41.6       
-[17] GenomeInfoDb_1.25.11        IRanges_2.23.10            
-[19] S4Vectors_0.27.13           BiocGenerics_0.35.4        
-[21] MatrixGenerics_1.1.3        matrixStats_0.57.0         
-[23] BiocStyle_2.17.1           
+ [1] scater_1.17.5                SingleCellExperiment_1.11.8 
+ [3] sva_3.37.0                   BiocParallel_1.23.2         
+ [5] genefilter_1.71.0            mgcv_1.8-31                 
+ [7] nlme_3.1-148                 dplyr_1.0.2                 
+ [9] magrittr_1.5                 ggplot2_3.3.2               
+[11] scp_0.99.3                   QFeatures_0.99.2            
+[13] MultiAssayExperiment_1.15.10 SummarizedExperiment_1.19.9 
+[15] Biobase_2.49.1               GenomicRanges_1.41.6        
+[17] GenomeInfoDb_1.25.11         IRanges_2.23.10             
+[19] S4Vectors_0.27.14            BiocGenerics_0.35.4         
+[21] MatrixGenerics_1.1.5         matrixStats_0.57.0          
+[23] BiocStyle_2.17.1            
 
 loaded via a namespace (and not attached):
  [1] ProtGenerics_1.21.0       bitops_1.0-6             
@@ -844,16 +846,16 @@ loaded via a namespace (and not attached):
 [13] lazyeval_0.2.2            colorspace_1.4-1         
 [15] withr_2.3.0               gridExtra_2.3            
 [17] tidyselect_1.1.0          bit_4.0.4                
-[19] compiler_4.0.2            textshaping_0.1.1        
+[19] compiler_4.0.2            textshaping_0.1.2        
 [21] BiocNeighbors_1.7.0       desc_1.2.0               
-[23] DelayedArray_0.15.15      labeling_0.3             
+[23] DelayedArray_0.15.16      labeling_0.3             
 [25] bookdown_0.20             scales_1.1.1             
 [27] pkgdown_1.6.1.9000        systemfonts_0.3.2        
 [29] stringr_1.4.0             digest_0.6.25            
 [31] rmarkdown_2.4             XVector_0.29.3           
 [33] pkgconfig_2.0.3           htmltools_0.5.0          
 [35] limma_3.45.14             highr_0.8                
-[37] rlang_0.4.7               RSQLite_2.2.1            
+[37] rlang_0.4.8               RSQLite_2.2.1            
 [39] impute_1.63.0             FNN_1.1.3                
 [41] DelayedMatrixStats_1.11.1 farver_2.0.3             
 [43] generics_0.0.2            BiocSingular_1.5.2       
@@ -861,7 +863,7 @@ loaded via a namespace (and not attached):
 [47] GenomeInfoDbData_1.2.4    Matrix_1.2-18            
 [49] ggbeeswarm_0.6.0          Rcpp_1.0.5               
 [51] munsell_0.5.0             viridis_0.5.1            
-[53] MsCoreUtils_1.1.5         lifecycle_0.2.0          
+[53] MsCoreUtils_1.1.7         lifecycle_0.2.0          
 [55] stringi_1.5.3             yaml_2.2.1               
 [57] edgeR_3.31.4              MASS_7.3-51.6            
 [59] zlibbioc_1.35.0           grid_4.0.2               
@@ -877,7 +879,7 @@ loaded via a namespace (and not attached):
 [79] rsvd_1.0.3                xtable_1.8-4             
 [81] AnnotationFilter_1.13.0   RSpectra_0.16-0          
 [83] viridisLite_0.3.0         ragg_0.4.0               
-[85] survival_3.1-12           tibble_3.0.3             
+[85] survival_3.1-12           tibble_3.0.4             
 [87] beeswarm_0.2.3            AnnotationDbi_1.51.3     
 [89] memoise_1.1.0             ellipsis_0.3.1           </code></pre>
 </div>
