@@ -34,7 +34,7 @@ rowDataToDF <- function(obj,
     if (!inherits(obj, "QFeatures")) stop("'obj' must be a QFeatures object")
     if (is.numeric(i)) i <- names(obj)[i]
     ## Make sure that the variables to extract are present in the rowData
-    mis <- vapply(experiments(obj)[, , i], 
+    mis <- vapply(experiments(obj)[i], 
                   function(x) any(!vars %in% colnames(rowData(x))),
                   logical(1))
     if (any(mis)) 
@@ -137,7 +137,7 @@ aggregateFeaturesOverAssays <- function(obj,
     if (is.numeric(i)) i <- names(obj)[i]
     
     ## Compute the aggregated assays
-    el <- experiments(obj)[, , i]
+    el <- experiments(obj)[i]
     for (j in seq_along(el)) {
         suppressMessages(
             el[[j]] <- aggregateFeatures(el[[j]], 
