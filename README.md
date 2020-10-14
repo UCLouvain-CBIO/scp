@@ -12,15 +12,15 @@ objects.
 
 ## Installation
 
-To install the stable version:
+To install the stable version from Bioconductor:
 
 ```
 if (!requireNamespace("BiocManager"))
 	install.packages("BiocManager")
-BiocManager::install("UCLouvain-CBIO/scp")
+BiocManager::install("scp")
 ```
 
-To install the development version:
+To install the development version from GitHub:
 
 ```
 BiocManager::install("UCLouvain-CBIO/scp")
@@ -29,5 +29,6 @@ BiocManager::install("UCLouvain-CBIO/scp")
 ## Asking for help
 
 Feel free to use [Github
-issues](https://github.com/UCLouvain-CBIO/scp/issues) to ask question
-and report problems with `scp`.
+issues](https://github.com/UCLouvain-CBIO/scp/issues) or the
+[Bioconductor support site](https://support.bioconductor.org/) to ask
+question or report problems with `scp`.
