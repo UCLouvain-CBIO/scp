@@ -109,7 +109,7 @@ readSCP <- function(quantTable,
     scp <- .splitSCE(scp, f = batchCol)
     
     ## Add unique sample identifiers
-    if (verbose) message(paste0("Formating sample metadata (colData)"))
+    if (verbose) message(paste0("Formatting sample metadata (colData)"))
     for (i in seq_along(scp)) {
         colnames(scp[[i]]) <- paste0(names(scp)[[i]], "_", colnames(scp[[i]]))
     }
@@ -121,7 +121,7 @@ readSCP <- function(quantTable,
     
     ## Store the data as a QFeatures object and add the experimental
     ## information
-    if (verbose) message("Formating data as a 'QFeatures' object")
+    if (verbose) message("Formatting data as a 'QFeatures' object")
     QFeatures(experiments = scp, 
               colData = cd)
 }
