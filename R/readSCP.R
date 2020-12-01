@@ -12,15 +12,15 @@
 ##' spreadsheet or a `data.frame` into a [QFeatures] object containing
 ##' [SingleCellExperiment] objects.
 ##'
-##' @param quantTable File or object holding the quantitative
+##' @param featureData File or object holding the quantitative
 ##'     data. Can be either a `character(1)` with the path to a
 ##'     text-based spreadsheet (comma-separated values by default, but
 ##'     see `...`) or an object that can be coerced to a
 ##'     `data.frame`. It is advised not to encode characters as
 ##'     factors.
 ##' 
-##' @param metaTable A `data.frame` or any object that can be coerced
-##'     to a `data.frame`. `metaTable` is expected to contains all the
+##' @param colData A `data.frame` or any object that can be coerced
+##'     to a `data.frame`. `colData` is expected to contains all the
 ##'     sample meta information. Required fields are the acquisition
 ##'     batch (given by `batchCol`) and the acquisition channel within
 ##'     the batch (e.g. TMT channel, given by
@@ -29,14 +29,14 @@
 ##'     meta data.
 ##'
 ##' @param batchCol A `numeric(1)` or `character(1)` pointing to the
-##'     column of `quantTable` and `metaTable` that contain the batch
+##'     column of `featureData` and `colData` that contain the batch
 ##'     names. Make sure that the column name in both table are either
 ##'     identical (if you supply a `character`) or have the same index
 ##'     (if you supply a `numeric`).
 ##' 
 ##' @param channelCol A `numeric(1)` or `character(1)` pointing to the
-##'     column of `metaTable` that contains the column names of the
-##'     quantitive data in `quantTable` (see Example).
+##'     column of `colData` that contains the column names of the
+##'     quantitive data in `featureData` (see Example).
 ##' 
 ##' @param verbose A `logical(1)` indicating whether the progress of
 ##'     the data reading and formatting should be printed to the
@@ -75,29 +75,29 @@
 ##' data("sampleAnnotation")
 ##' 
 ##' ## Format the tables into a QFeatures object
-##' readSCP(quantTable = mqScpData,
-##'         metaTable = sampleAnnotation,
+##' readSCP(featureData = mqScpData,
+##'         colData = sampleAnnotation,
 ##'         batchCol = "Set",
 ##'         channelCol = "Channel")
 ##' 
-readSCP <- function(quantTable, 
-                    metaTable, 
+readSCP <- function(featureData, 
+                    colData, 
                     batchCol, 
                     channelCol, 
                     verbose = TRUE,
                     ...) {
-    metaTable <- as.data.frame(metaTable)
+    colData <- as.data.frame(colData)
     ## Create the SingleCellExperiment object
     if (verbose) message("Loading data as a 'SingleCellExperiment' object")
-    ecol <- unique(metaTable[, channelCol])
-    scp <- readSingleCellExperiment(table = quantTable, 
+    ecol <- unique(colData[, channelCol])
+    scp <- readSingleCellExperiment(table = featureData, 
                                     ecol = ecol, 
                                     ...)
     if (is.null(list(...)$row.names))
         rownames(scp) <- paste0("PSM", seq_len(nrow(scp)))
     
-    ## Check the link between metaTable and scp
-    mis <- !rowData(scp)[, batchCol] %in% metaTable[, batchCol]
+    ## Check the link between colData and scp
+    mis <- !rowData(scp)[, batchCol] %in% colData[, batchCol]
     if (any(mis)) {
         warning("Missing metadata. The features are removed for ", 
                 paste0(unique(rowData(scp)[mis, batchCol]), collapse = ", "))
@@ -115,9 +115,9 @@ readSCP <- function(quantTable,
     }
     ## Create the colData 
     cd <- DataFrame(row.names = unlist(lapply(scp, colnames)))
-    rownames(metaTable) <- paste0(metaTable[, batchCol], "_", 
-                                  metaTable[, channelCol])
-    cd <- cbind(cd, metaTable[rownames(cd), ])
+    rownames(colData) <- paste0(colData[, batchCol], "_", 
+                                  colData[, channelCol])
+    cd <- cbind(cd, colData[rownames(cd), ])
     
     ## Store the data as a QFeatures object and add the experimental
     ## information

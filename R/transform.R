@@ -34,10 +34,11 @@
 
 ## Internal function that normalizes SingleCellExperiment object using 
 ## proteomics normalization methods available in MsCoreUtils::normalize_matrix
+##' @importFrom MsCoreUtils normalize_matrix
 .normalizeSCP <- function(x, method, ...) {
   if(!inherits(x, "SingleCellExperiment")) 
     stop("The assay must be a 'SingleCellExperiment' object.")
-  e <- MsCoreUtils::normalize_matrix(assay(x), method, ...)
+  e <- normalize_matrix(assay(x), method, ...)
   rownames(e) <- rownames(assay(x))
   colnames(e) <- colnames(assay(x))
   assay(x) <- e
@@ -118,13 +119,14 @@ divideByReference <- function(object,
 
 ##' Normalize single-cell proteomics (SCP) data
 ##'
-##' This function normalises an assay in a `QFeatures` according to the supplied
-##' method (see Details). The normalized data is added as a new assay 
+##' This function normalises an assay in a `QFeatures` according to 
+##' the supplied method (see Details). The normalized data is added as
+##' a new assay 
 ##' 
 ##' @param object An object of class `QFeatures`.
 ##' 
-##' @param i A numeric vector or a character vector giving the index or the
-##'     name, respectively, of the assay(s) to be processed.
+##' @param i A numeric vector or a character vector giving the index 
+##'     or the name, respectively, of the assay(s) to be processed.
 ##'
 ##' @param name A `character(1)` naming the new assay name. Defaults is
 ##'     are `normAssay`.
@@ -163,7 +165,7 @@ divideByReference <- function(object,
 ##' - Using `"quantiles"` or `"quantiles.robust"` applies (robust) quantile
 ##'   normalisation, as implemented in [preprocessCore::normalize.quantiles()]
 ##'   and [preprocessCore::normalize.quantiles.robust()]. `"vsn"` uses the
-##'   [vsn::vsn2()] function.  Note that the latter also glog-transforms the
+##'   [vsn::vsn2()] function. Note that the latter also glog-transforms the
 ##'   intensities.  See respective manuals for more details and function
 ##'   arguments.
 ##'
