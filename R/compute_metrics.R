@@ -4,13 +4,13 @@
 ##' channels over the intentisty of the carrier channel for each
 ##' feature. The ratios are averaged within the assay.
 ##'
-##' @param obj A `QFeatures` object.
+##' @param object A `QFeatures` object.
 ##' 
 ##' @param i A `character()` or `integer()` indicating for which
 ##'     assay(s) the SCR needs to be computed.
 ##' 
 ##' @param colDataCol A `character(1)` indicating the variable to take
-##'     from `colData(obj)` that gives the sample annotation.
+##'     from `colData(object)` that gives the sample annotation.
 ##' 
 ##' @param samplePattern A `character(1)` pattern that matches the
 ##'     sample encoding in `colDataCol`.
@@ -35,20 +35,20 @@
 ##' ## Check results
 ##' rowDataToDF(scp1, 1, ".meanSCR")
 ##' 
-computeSCR <- function(obj, 
+computeSCR <- function(object, 
                        i, 
                        colDataCol, 
                        samplePattern, 
                        carrierPattern) {
-    if (!inherits(obj, "QFeatures"))
-        stop("'obj' must be a QFeatures object")
+    if (!inherits(object, "QFeatures"))
+        stop("'object' must be a QFeatures object")
     if (is.numeric(samplePattern)) 
         warning("The pattern is numeric. This is only allowed for replicating ",
                 "the SCoPE2 analysis and will later get defunct.")
     
     ## Iterate over the different assay indices
     for (ii in i) {
-        annot <- colData(obj)[colnames(obj[[ii]]), ][, colDataCol]
+        annot <- colData(object)[colnames(object[[ii]]), ][, colDataCol]
         ## Get the corresponding indices
         if (is.numeric(samplePattern)) {
             sampIdx <- samplePattern[samplePattern <= length(annot)]
@@ -57,21 +57,21 @@ computeSCR <- function(obj,
         }
         carrIdx <- grep(carrierPattern, annot)
         if (length(carrIdx) > 1) {
-            warning("Multiple carriers found in assay '", names(obj)[ii], 
+            warning("Multiple carriers found in assay '", names(object)[ii], 
                     "'. Only the first match will be used")
             carrIdx <- carrIdx[1]
         } 
         if (any(!c(length(carrIdx), length(sampIdx))))
             stop("Pattern did not match a sample or carrier channel.")
         ## Compute ratios
-        carrier <- assay(obj[[ii]])[, carrIdx]
-        ratio <- assay(obj[[ii]])[, sampIdx, drop = FALSE] / carrier
+        carrier <- assay(object[[ii]])[, carrIdx]
+        ratio <- assay(object[[ii]])[, sampIdx, drop = FALSE] / carrier
         ## Compute mean sample to carrier ratios
-        rowData(obj@ExperimentList@listData[[ii]])$.meanSCR <- 
+        rowData(object@ExperimentList@listData[[ii]])$.meanSCR <- 
             rowMeans(ratio, na.rm = TRUE)
-        ## more efficient than rowData(obj[[ii]])$.meanSCR <-  ...
+        ## more efficient than rowData(object[[ii]])$.meanSCR <-  ...
     }
-    obj
+    object
 }
 
 ##' Compute FDR from posterior error probabilities PEP
@@ -236,20 +236,20 @@ computeMedianCV <- function(object,
 ## Internal function to efficiently extract expression data to long
 ## format. The efficiency is seen when nNA's are present and `na.rm ==
 ## TRUE`. Meta
-.assayToLongDF <- function(obj, 
+.assayToLongDF <- function(object, 
                            colDataCols, 
                            rowDataCols, 
                            i, 
                            na.rm = TRUE) {
     if (length(i) > 1) stop("Multiple assays are not supported (yet).")
-    dat <- assay(obj[[i]])
+    dat <- assay(object[[i]])
     if (na.rm) sel <- which(!is.na(dat), arr.ind = TRUE) else sel <- TRUE
     DataFrame(colname = colnames(dat)[sel[, 2]],
               rowname = rownames(dat)[sel[, 1]],
-              colData(obj)[colnames(dat)[sel[, 2]], 
+              colData(object)[colnames(dat)[sel[, 2]], 
                            colDataCols, 
                            drop = FALSE],
-              rowData(obj[[i]])[rownames(dat)[sel[, 1]], 
+              rowData(object[[i]])[rownames(dat)[sel[, 1]], 
                                 rowDataCols, 
                                 drop = FALSE],
               value = dat[sel])

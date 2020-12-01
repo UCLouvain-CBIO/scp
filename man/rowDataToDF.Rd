@@ -5,10 +5,10 @@
 \title{Extract the \code{rowData} of a \code{QFeatures} object to a
 \code{DataFrame}}
 \usage{
-rowDataToDF(obj, i, vars)
+rowDataToDF(object, i, vars)
 }
 \arguments{
-\item{obj}{A \code{QFeatures} object}
+\item{object}{A \code{QFeatures} object}
 
 \item{i}{A \code{numeric()} or \code{character()} vector indicating from
 which assays the \code{rowData} should be taken.}

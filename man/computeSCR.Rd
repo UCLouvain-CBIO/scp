@@ -4,16 +4,16 @@
 \alias{computeSCR}
 \title{Compute the sample over carrier ratio (SCR)}
 \usage{
-computeSCR(obj, i, colDataCol, samplePattern, carrierPattern)
+computeSCR(object, i, colDataCol, samplePattern, carrierPattern)
 }
 \arguments{
-\item{obj}{A \code{QFeatures} object.}
+\item{object}{A \code{QFeatures} object.}
 
 \item{i}{A \code{character()} or \code{integer()} indicating for which
 assay(s) the SCR needs to be computed.}
 
 \item{colDataCol}{A \code{character(1)} indicating the variable to take
-from \code{colData(obj)} that gives the sample annotation.}
+from \code{colData(object)} that gives the sample annotation.}
 
 \item{samplePattern}{A \code{character(1)} pattern that matches the
 sample encoding in \code{colDataCol}.}

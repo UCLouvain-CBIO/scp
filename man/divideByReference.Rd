@@ -4,16 +4,16 @@
 \alias{divideByReference}
 \title{Divide assay columns by a reference column}
 \usage{
-divideByReference(obj, i, colDataCol, samplePattern = ".", refPattern)
+divideByReference(object, i, colDataCol, samplePattern = ".", refPattern)
 }
 \arguments{
-\item{obj}{A \code{QFeatures} object}
+\item{object}{A \code{QFeatures} object}
 
 \item{i}{A \code{numeric()} or \code{character()} vector indicating from which
 assays the \code{rowData} should be taken.}
 
 \item{colDataCol}{A \code{character(1)} indicating the variable to take from
-\code{colData(obj)} that gives the sample annotation.}
+\code{colData(object)} that gives the sample annotation.}
 
 \item{samplePattern}{A \code{character(1)} pattern that matches the sample
 encoding in \code{colDataCol}. By default all samples are devided (using the
