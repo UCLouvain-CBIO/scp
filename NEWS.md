@@ -1,3 +1,18 @@
+# scp 0.1
+
+## scp 0.1.1
+
+- refactor: renamed all `obj` arguments by `object`
+  <2020-12-01>
+- feat: new function `normalizeSCP` that allow normalizing an assay in a 
+  `QFeatures` object that contains `SingleCellExperiment` objects
+  <2020-11-30>
+
+## scp 0.1.0
+
+- `scp` package acceptance on Bioconductor!!
+  <2020-10-15 Thu>
+
 # scp 0.99
 
 ## scp 0.99.4
