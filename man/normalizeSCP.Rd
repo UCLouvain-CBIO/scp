@@ -9,8 +9,8 @@ normalizeSCP(object, i, name = "normAssay", method, ...)
 \arguments{
 \item{object}{An object of class \code{QFeatures}.}
 
-\item{i}{A numeric vector or a character vector giving the index or the
-name, respectively, of the assay(s) to be processed.}
+\item{i}{A numeric vector or a character vector giving the index
+or the name, respectively, of the assay(s) to be processed.}
 
 \item{name}{A \code{character(1)} naming the new assay name. Defaults is
 are \code{normAssay}.}
@@ -25,8 +25,9 @@ A \code{QFeatures} object with an additional assay containing the
 normalized data.
 }
 \description{
-This function normalises an assay in a \code{QFeatures} according to the supplied
-method (see Details). The normalized data is added as a new assay
+This function normalises an assay in a \code{QFeatures} according to
+the supplied method (see Details). The normalized data is added as
+a new assay
 }
 \details{
 The \code{method} parameter in \code{normalize} can be one of \code{"sum"},
@@ -50,7 +51,7 @@ medians differences to the grand median.
 \item Using \code{"quantiles"} or \code{"quantiles.robust"} applies (robust) quantile
 normalisation, as implemented in \code{\link[preprocessCore:normalize.quantiles]{preprocessCore::normalize.quantiles()}}
 and \code{\link[preprocessCore:normalize.quantiles.robust]{preprocessCore::normalize.quantiles.robust()}}. \code{"vsn"} uses the
-\code{\link[vsn:vsn2]{vsn::vsn2()}} function.  Note that the latter also glog-transforms the
+\code{\link[vsn:vsn2]{vsn::vsn2()}} function. Note that the latter also glog-transforms the
 intensities.  See respective manuals for more details and function
 arguments.
 }

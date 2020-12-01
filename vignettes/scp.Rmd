@@ -97,31 +97,31 @@ sampleAnnotation
 The two tables are supplied to the `readSCP` function.
 
 ```{r readSCP}
-scp <- readSCP(quantTable = mqScpData,
-               metaTable = sampleAnnotation,
+scp <- readSCP(featureData = mqScpData,
+               colData = sampleAnnotation,
                channelCol = "Channel",
                batchCol = "Set")
 ```
 
 As indicated by the output on the console, `readSCP` proceeds as follows:
 
-1. If `quantTable` is the path to a CSV file, it reads the file using
+1. If `featureData` is the path to a CSV file, it reads the file using
    `read.csv`. The table is converted to a `SingleCellExperiment`
-   object. `readSCP` needs to know in which field(s) the quantative
+   object. `readSCP` needs to know in which field(s) the quantitative
    data is stored. Those field name(s) is/are provided by the
    `channelCol` field in the `metaData` table. So in this example, the
-   column names hodling the quantitative data in `mqScpData` are
+   column names holding the quantitative data in `mqScpData` are
    stored in the column named `Channel` in `sampleAnnotation`.
 
 2. The `SingleCellExperiment` object is then split according to
    batch. The split is performed depending on the `batchCol` field in
-   `quantTable`, in this case the data will be split according to the
+   `featureData`, in this case the data will be split according to the
    `Set` column in `mqScpData`.
 
-3. The sample metadata is generated from the `metaTable`. Note that in
-   order for `readSCP` to correctly match the feature data with the
-   metadata, `metaTable` must also contain the `batchCol` field with
-   batch names.
+3. The sample metadata is generated from the supplied `colData`. Note 
+   that in  order for `readSCP` to correctly match the feature data 
+   with the metadata, `colData` must contain the same `batchCol` field
+   with batch names.
 
 4. Finally, the split feature data and the sample metadata are stored
    in a single `QFeatures` object.

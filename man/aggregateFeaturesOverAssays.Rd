@@ -4,10 +4,10 @@
 \alias{aggregateFeaturesOverAssays}
 \title{Aggregate features over multiple assays}
 \usage{
-aggregateFeaturesOverAssays(obj, i, fcol, name, fun, ...)
+aggregateFeaturesOverAssays(object, i, fcol, name, fun, ...)
 }
 \arguments{
-\item{obj}{A \code{QFeatures} object}
+\item{object}{A \code{QFeatures} object}
 
 \item{i}{A \code{numeric(1)} or \code{character(1)} indicating which assay
 to transfer the \code{colData} to.}
