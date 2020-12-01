@@ -5,18 +5,18 @@
 \title{Read single-cell proteomics data as a QFeatures object from
 tabular data and metadata}
 \usage{
-readSCP(quantTable, metaTable, batchCol, channelCol, verbose = TRUE, ...)
+readSCP(featureData, colData, batchCol, channelCol, verbose = TRUE, ...)
 }
 \arguments{
-\item{quantTable}{File or object holding the quantitative
+\item{featureData}{File or object holding the quantitative
 data. Can be either a \code{character(1)} with the path to a
 text-based spreadsheet (comma-separated values by default, but
 see \code{...}) or an object that can be coerced to a
 \code{data.frame}. It is advised not to encode characters as
 factors.}
 
-\item{metaTable}{A \code{data.frame} or any object that can be coerced
-to a \code{data.frame}. \code{metaTable} is expected to contains all the
+\item{colData}{A \code{data.frame} or any object that can be coerced
+to a \code{data.frame}. \code{colData} is expected to contains all the
 sample meta information. Required fields are the acquisition
 batch (given by \code{batchCol}) and the acquisition channel within
 the batch (e.g. TMT channel, given by
@@ -25,14 +25,14 @@ acquisition date,...) are allowed and will be stored as sample
 meta data.}
 
 \item{batchCol}{A \code{numeric(1)} or \code{character(1)} pointing to the
-column of \code{quantTable} and \code{metaTable} that contain the batch
+column of \code{featureData} and \code{colData} that contain the batch
 names. Make sure that the column name in both table are either
 identical (if you supply a \code{character}) or have the same index
 (if you supply a \code{numeric}).}
 
 \item{channelCol}{A \code{numeric(1)} or \code{character(1)} pointing to the
-column of \code{metaTable} that contains the column names of the
-quantitive data in \code{quantTable} (see Example).}
+column of \code{colData} that contains the column names of the
+quantitive data in \code{featureData} (see Example).}
 
 \item{verbose}{A \code{logical(1)} indicating whether the progress of
 the data reading and formatting should be printed to the
@@ -67,8 +67,8 @@ data("mqScpData")
 data("sampleAnnotation")
 
 ## Format the tables into a QFeatures object
-readSCP(quantTable = mqScpData,
-        metaTable = sampleAnnotation,
+readSCP(featureData = mqScpData,
+        colData = sampleAnnotation,
         batchCol = "Set",
         channelCol = "Channel")
 

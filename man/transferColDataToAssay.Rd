@@ -4,10 +4,10 @@
 \alias{transferColDataToAssay}
 \title{Transfer the \code{colData} to an Assay}
 \usage{
-transferColDataToAssay(obj, i)
+transferColDataToAssay(object, i)
 }
 \arguments{
-\item{obj}{A \code{QFeatures} object}
+\item{object}{A \code{QFeatures} object}
 
 \item{i}{A \code{numeric(1)} or \code{character(1)} indicating which assay
 to transfer the \code{colData} to.}

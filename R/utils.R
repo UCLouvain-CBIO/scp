@@ -8,7 +8,7 @@
 ##' is created and holds the assay name from which the metadata was
 ##' taken.
 ##' 
-##' @param obj A `QFeatures` object
+##' @param object A `QFeatures` object
 ##'
 ##' @param i A `numeric()` or `character()` vector indicating from
 ##'     which assays the `rowData` should be taken.
@@ -28,13 +28,13 @@
 ##' data("scp1")
 ##' rowDataToDF(scp1, i = 1:3, c("Length", "Sequence"))
 ##' 
-rowDataToDF <- function(obj, 
+rowDataToDF <- function(object, 
                         i, 
                         vars) {
-    if (!inherits(obj, "QFeatures")) stop("'obj' must be a QFeatures object")
-    if (is.numeric(i)) i <- names(obj)[i]
+    if (!inherits(object, "QFeatures")) stop("'object' must be a QFeatures object")
+    if (is.numeric(i)) i <- names(object)[i]
     ## Make sure that the variables to extract are present in the rowData
-    mis <- vapply(experiments(obj)[i], 
+    mis <- vapply(experiments(object)[i], 
                   function(x) any(!vars %in% colnames(rowData(x))),
                   logical(1))
     if (any(mis)) 
@@ -42,7 +42,7 @@ rowDataToDF <- function(obj,
              paste(i[mis], collapse = ", "))
     ## Extract the rowData and add from which assay it was extracted
     out <- lapply(i, function(ii) {
-        x <- rowData(obj[[ii]])[, vars, drop = FALSE]
+        x <- rowData(object[[ii]])[, vars, drop = FALSE]
         cbind(x, .assay = ii, .rowname = rownames(x))
     })
     do.call(rbind, out)
@@ -55,7 +55,7 @@ rowDataToDF <- function(obj,
 ##' one of the assays it contains. The transfered data is bound to the
 ##' existing `colData` of the target assay.
 ##'
-##' @param obj A `QFeatures` object
+##' @param object A `QFeatures` object
 ##' 
 ##' @param i A `numeric(1)` or `character(1)` indicating which assay
 ##'     to transfer the `colData` to.
@@ -70,15 +70,15 @@ rowDataToDF <- function(obj,
 ##' scp1 <- transferColDataToAssay(scp1, i = "peptides")
 ##' colData(scp1[["peptides"]])
 ##' 
-transferColDataToAssay <- function (obj, 
+transferColDataToAssay <- function (object, 
                                     i) {
-    cd <- colData(obj)[colnames(obj[[i]]),  ]
-    if (all(colnames(cd) %in% colnames(colData(obj@ExperimentList[[i]])))) {
+    cd <- colData(object)[colnames(object[[i]]),  ]
+    if (all(colnames(cd) %in% colnames(colData(object@ExperimentList[[i]])))) {
         message("The colData is already present in assay '", i, "'.")
-        return(obj)
+        return(object)
     }
-    colData(obj@ExperimentList[[i]]) <- cbind(colData(obj[[i]]), cd)
-    return(obj)
+    colData(object@ExperimentList[[i]]) <- cbind(colData(object[[i]]), cd)
+    return(object)
 }
 
 ##' Aggregate features over multiple assays
@@ -88,7 +88,7 @@ transferColDataToAssay <- function (obj,
 ##' It allows the user to provide multiple assays for which 
 ##' `aggregateFeatures` will be applied sequentially.
 ##' 
-##' @param obj A `QFeatures` object
+##' @param object A `QFeatures` object
 ##' 
 ##' @param i A `numeric(1)` or `character(1)` indicating which assay
 ##'     to transfer the `colData` to.
@@ -125,7 +125,7 @@ transferColDataToAssay <- function (obj,
 ##'                                     na.rm = TRUE)
 ##' scp1
 ##' 
-aggregateFeaturesOverAssays <- function(obj, 
+aggregateFeaturesOverAssays <- function(object, 
                                         i, 
                                         fcol, 
                                         name, 
@@ -134,10 +134,10 @@ aggregateFeaturesOverAssays <- function(obj,
     if (length(i) != length(name)) stop("'i' and 'name' must have same length")
     if (length(fcol) == 1) fcol <- rep(fcol, length(i))
     if (length(i) != length(fcol)) stop("'i' and 'fcol' must have same length")
-    if (is.numeric(i)) i <- names(obj)[i]
+    if (is.numeric(i)) i <- names(object)[i]
     
     ## Compute the aggregated assays
-    el <- experiments(obj)[i]
+    el <- experiments(object)[i]
     for (j in seq_along(el)) {
         suppressMessages(
             el[[j]] <- aggregateFeatures(el[[j]], 
@@ -151,24 +151,24 @@ aggregateFeaturesOverAssays <- function(obj,
     names(el) <- name
     ## Get the AssayLinks for the aggregated assays 
     alnks <- lapply(seq_along(i), function(j) {
-        hits <- QFeatures:::.get_Hits(rdFrom = rowData(obj[[i[j]]]),
+        hits <- QFeatures:::.get_Hits(rdFrom = rowData(object[[i[j]]]),
                                       rdTo = rowData(el[[j]]), 
                                       varFrom = fcol[[j]], 
                                       varTo = fcol[[j]])
         AssayLink(name = name[j], from = i[j], fcol = fcol[j], hits = hits)
     })
     ## Append the aggregated assays and AssayLinks to the previous assays
-    el <- c(obj@ExperimentList, el)
-    alnks <- append(obj@assayLinks, AssayLinks(alnks))
+    el <- c(object@ExperimentList, el)
+    alnks <- append(object@assayLinks, AssayLinks(alnks))
     ## Update the sampleMapfrom the data 
-    smap <- MultiAssayExperiment:::.sampleMapFromData(colData(obj), el)
+    smap <- MultiAssayExperiment:::.sampleMapFromData(colData(object), el)
     
     ## Create the new QFeatures object
     new("QFeatures",
         ExperimentList = el,
-        colData = colData(obj),
+        colData = colData(object),
         sampleMap = smap,
-        metadata = metadata(obj),
+        metadata = metadata(object),
         assayLinks = alnks)
 }
 
