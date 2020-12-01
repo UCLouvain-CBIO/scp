@@ -44,3 +44,29 @@ test_that("divideByReference", {
                    regexp = "Only the first match will be used")
 })
 
+
+
+test_that("function: all normalize methods", {
+  sce <- scp1[[1]]
+  for (.method in MsCoreUtils::normalizeMethods()) {
+    sce_norm <- .normalizeSCP(sce, method = .method)
+    scp_norm <- normalizeSCP(scp1, 1, method = .method)
+    expect_identical(sce_norm, scp_norm[["normAssay"]])
+  }
+})
+
+test_that("function: normalizeSCP", {
+  ## Test .normalizeSCP
+  sce <- scp1[[1]]
+  sce_norm <- .normalizeSCP(sce, method = "max")
+  expect_identical(dim(sce), dim(sce_norm))
+  e <- assay(sce) / rowMax(assay(sce))
+  expect_identical(assay(sce_norm), e)
+  ## Test normalizeSCP
+  scp_norm <- normalizeSCP(scp1, 1, method = "max")
+  expect_identical(scp_norm[["normAssay"]], sce_norm)
+  ## Check the one-to-one link
+  expect_identical(assayLink(scp_norm, "normAssay")@hits@elementMetadata$names_from,
+                   assayLink(scp_norm, "normAssay")@hits@elementMetadata$names_to,
+                   rownames(sce))
+})
