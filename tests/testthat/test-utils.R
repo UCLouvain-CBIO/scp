@@ -17,19 +17,6 @@ test_that("rowDataToDF", {
     expect_error(rowDataToDF(scp1, i = 1:3, vars = "foo"),
                  regexp = "rowData variable\\(s\\) not found")
 })
-  
-
-test_that("transferColData", {
-    ## Correct Use
-    test <- transferColDataToAssay(scp1, i = "peptides")
-    expect_identical(colData(test[["peptides"]]), 
-                     colData(test)[colnames(test[["peptides"]]), ])
-    ## Expect message
-    expect_message(transferColDataToAssay(test, i = "peptides"),
-                   regexp = "colData is already present in assay")
-    
-})
-
 
 test_that("aggregateFeaturesOverAssays", {
     ## Correct use

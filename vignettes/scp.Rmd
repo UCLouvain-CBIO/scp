@@ -14,16 +14,16 @@ bibliography: scp.bib
 date: "`r BiocStyle::doc_date()`"
 package: "`r BiocStyle::pkg_ver('scp')`"
 vignette: >
-  %\VignetteIndexEntry{Single Cell Proteomics data processing and analysis}
+%\VignetteIndexEntry{Single Cell Proteomics data processing and analysis}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
----
-
-```{r setup, include = FALSE}
+  ---
+  
+  ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
-    collapse = TRUE,
-    comment = "#>",
-    crop = NULL ## Related to https://stat.ethz.ch/pipermail/bioc-devel/2020-April/016656.html
+collapse = TRUE,
+comment = "#>",
+crop = NULL ## Related to https://stat.ethz.ch/pipermail/bioc-devel/2020-April/016656.html
 )
 ```
 
@@ -106,25 +106,25 @@ scp <- readSCP(featureData = mqScpData,
 As indicated by the output on the console, `readSCP` proceeds as follows:
 
 1. If `featureData` is the path to a CSV file, it reads the file using
-   `read.csv`. The table is converted to a `SingleCellExperiment`
-   object. `readSCP` needs to know in which field(s) the quantitative
-   data is stored. Those field name(s) is/are provided by the
-   `channelCol` field in the `metaData` table. So in this example, the
-   column names holding the quantitative data in `mqScpData` are
-   stored in the column named `Channel` in `sampleAnnotation`.
+`read.csv`. The table is converted to a `SingleCellExperiment`
+object. `readSCP` needs to know in which field(s) the quantitative
+data is stored. Those field name(s) is/are provided by the
+`channelCol` field in the `metaData` table. So in this example, the
+column names holding the quantitative data in `mqScpData` are
+stored in the column named `Channel` in `sampleAnnotation`.
 
 2. The `SingleCellExperiment` object is then split according to
-   batch. The split is performed depending on the `batchCol` field in
-   `featureData`, in this case the data will be split according to the
-   `Set` column in `mqScpData`.
+batch. The split is performed depending on the `batchCol` field in
+`featureData`, in this case the data will be split according to the
+`Set` column in `mqScpData`.
 
 3. The sample metadata is generated from the supplied `colData`. Note 
-   that in  order for `readSCP` to correctly match the feature data 
-   with the metadata, `colData` must contain the same `batchCol` field
-   with batch names.
+that in  order for `readSCP` to correctly match the feature data 
+with the metadata, `colData` must contain the same `batchCol` field
+with batch names.
 
 4. Finally, the split feature data and the sample metadata are stored
-   in a single `QFeatures` object.
+in a single `QFeatures` object.
 
 Here is a compact overview of the data:
 
@@ -176,7 +176,7 @@ computed by MaxQuant:
 - Remove PSMs that are matched to contaminants
 - Remove PSMs that are matched to the decoy database
 - Keep PSMs that exhibit a high PIF (parental ion fraction),
-  indicative of the purity of a spectrum
+indicative of the purity of a spectrum
 
 We can perform this filtering using the
 [`filterFeatures` function](https://rformassspectrometry.github.io/QFeatures/reference/QFeatures-filtering.html).
@@ -248,27 +248,27 @@ In this dataset, `SampleType` gives the type of sample that is present
 in each TMT channel. The SCoPE2 protocole includes 5 types of samples:
 
 * The carrier channels (`Carrier`) contain 200 cell equivalents and
-  are meant to boost the peptide identification rate.
+are meant to boost the peptide identification rate.
 * The normalization channels (`Reference`) contain 5 cell equivalents
-  and are used to partially correct for between-run variation.
+and are used to partially correct for between-run variation.
 * The unused channels (`Unused`) are channels that are left empty due
-  to isotopic cross-contamination by the carrier channel.
+to isotopic cross-contamination by the carrier channel.
 * The blank channels (`Blank`) contain samples that do not contain any
-  cell but are processed as single-cell samples.
+cell but are processed as single-cell samples.
 * The single-cell sample channels contain the single-cell samples of
-  interest, that are macrophage (`Macrophage`) or monocyte
-  (`Monocyte`).
+interest, that are macrophage (`Macrophage`) or monocyte
+(`Monocyte`).
 
 The `computeSCR` function expects the following input:
 
 * The `QFeatures` dataset
 * The assay name(s) or index/indices for which the SCR should be
-  computed
+computed
 * The sample metadata variable pointing to the channel annotation
 * A string pattern (following regular expression syntax) that uniquely
-  identifies the carrier channel in each batch
+identifies the carrier channel in each batch
 * A string pattern (following regular expression syntax) that
-  identifies the samples to divide
+identifies the samples to divide
 
 The function creates an field `.meanSCR` and stores it in the
 `rowData` of each assay.
@@ -435,50 +435,21 @@ the median coefficient of variation (CV) per cell.
 
 ## Filter samples of interest
 
-We first subset the cells of interest, that is the blank samples
-(`sc_0`), the macrophages (`sc_m0`) and the monocytes (`sc_u`).
+We can subset the cells of interest, that is the blank samples
+(`sc_0`), the macrophages (`sc_m0`) and the monocytes (`sc_u`). This 
+can easily be done by taking advantage of the `colData` and the 
+subsetting operators. Recall that `QFeatures` objects support 
+three-order subsetting, `x[rows, columns, assays]`, where columns are 
+the samples of interest. 
 
-We extract the `SingleCellExperiment` assay with the joined peptides,
-subset the channels corresponding to blank, macrophage or monocytes
-and add it as a new assay in the `QFeatures` object. However, the
-sample annotation is contained in the `colData` of the `QFeatures`
-dataset, but we need to access it from the `SingeCellExperiment`
-object. Therefore, we provide the `transferColDataToAssay` to copy the
-sample metadata from the `QFeatures` to a target assay.
-
-```{r transferColDataToAssay}
-colData(scp[["peptides"]])
-scp <- transferColDataToAssay(scp, "peptides")
-colData(scp[["peptides"]])
+```{r subset samples}
+scp
+scp <- scp[, scp$SampleType %in% c("Blank", "Macrophage", "Monocyte"), ]
 ```
 
-Once the metadata is transfered, we can subset the
-`SingleCellExperiment` assay.
-
-```{r subset_single_cells}
-sce <- scp[["peptides"]]
-sce <- sce[, sce$SampleType %in% c("Blank", "Macrophage", "Monocyte")]
-```
-
-Then we add this assay back into the `QFeatures` object. This is done
-using the `addAssay` function. We also preserve the links between
-dfeatures using the `addAssayLinkOneToOne`. Since the features did not
-change (only the samples did), one-to-one links between features are
-added.
-
-```{r addAssay_filter1}
-scp %>%
-  addAssay(y = sce,
-           name = "peptides_filter1") %>%
-  addAssayLinkOneToOne(from = "peptides",
-                       to = "peptides_filter1") ->
-  scp
-```
-
-Note the added assay `peptides_filter1` contains the same number of
-rows than its parent assay `peptides`, but less samples as 20 samples
-are not single-cells or blank samples bu rather unused, reference or
-carrier samples.
+The subsetting removes unwanted samples from all assays. The filtered
+data set contains the same number of assays with the same number of 
+features, but the number of columns (hence sampled) decreased.
 
 ```{r show_cell_filter}
 scp
@@ -491,25 +462,33 @@ We compute the median relative reporter ion intensity for each cell
 separately and apply a filter based on this statistic. This procedure
 recalls that of library size filtering commonly performed in scRNA-Seq
 data analysis, where the library size is the sum of the counts in each
-single cell. We will store the median intensity in the `colData` of
-the `peptides_filter1` assay (so the `SingleCellExperiment` object)
-because this metric is specific to that assay.  The medians are
-computed on the quantitative data using `colMedians` that requires a
-data matrix. The data matrix can be extracted from a
-`SingleCellExperiment` using the `assay` function.
+single cell. We will store the median intensity in the `colData`. The 
+medians are computed for every sample from the quantitative data using 
+the `apply` function. The data matrix can be extracted from a 
+`SingleCellExperiment` using the `assay` function. Setting 
+`MARGIN = 2` means that we compute the median by column. 
 
 ```{r compute_colMedians}
-scp[["peptides_filter1"]] %>%
+scp[["peptides"]] %>%
   assay %>%
-  matrixStats::colMedians(na.rm = TRUE) ->
-  scp[["peptides_filter1"]]$MedianRI
+  apply(MARGIN = 2, 
+        FUN = median, 
+        na.rm = TRUE) ->
+  medians
+head(medians)
+```
+
+The computed medians are then inserted in the `colData`.
+
+```{r}
+colData(scp)[names(medians), "MedianRI"] <- medians
 ```
 
 Looking at the distribution of the median per cell can highlight
 low-quality cells.
 
 ```{r plot_medianRI, warning=FALSE, message=FALSE}
-scp[["peptides_filter1"]] %>%
+scp %>%
   colData %>%
   data.frame %>%
   ggplot(aes(x = MedianRI, fill = SampleType)) +
@@ -528,7 +507,7 @@ The median CV measures the consistency of quantification for a group
 of peptides that belong to a protein. We remove cells that exhibit
 high median CV over the different proteins. We compute the median CV
 per cell using the `computeMedianCV` function from the `scp`
-package. The function takes the `peptides_filter1` assay, protein and
+package. The function takes the `peptides` assay, protein and
 peptide information from the assay `rowData`, and the batch names in
 the `colData` of the `QFeatures` object. The peptide and batch
 information are required to perform normalization prior to the CV
@@ -539,15 +518,15 @@ in the `colData` of the `SingleCellExperiment` assay under the
 
 ```{r computeMedianCV}
 scp <- computeMedianCV(scp,
-                       i = "peptides_filter1",
+                       i = "peptides",
                        proteinCol = "protein",
                        peptideCol = "peptide",
                        batchCol = "Set")
 ```
 
-The computed CVs are stored in the `colData` of the `peptides_filter1`
+The computed CVs are stored in the `colData` of the `peptides`
 assay and holds the median CV per cell computed using at least 5
-observations (peptides).  The main interest of computing the median CV
+observations (peptides). The main interest of computing the median CV
 per cell is to filter cells with reliable quantification. The blank
 samples are not expected to have reliable quantifications and hence
 can be used to estimate an empirical null distribution of the CV. This
@@ -555,7 +534,8 @@ distribution helps defining a threshold that filters out single-cells
 that contain noisy quantification.
 
 ```{r plot_medianCV, message = FALSE, warning = FALSE}
-scp[["peptides_filter1"]] %>%
+scp %>%
+  getWithColData("peptides") %>%
   colData %>%
   data.frame %>%
   ggplot(aes(x = .MedianCV,
@@ -564,38 +544,25 @@ scp[["peptides_filter1"]] %>%
   geom_vline(xintercept = 0.3)
 ```
 
-We can see that the protein quantifiation for single-cells are much
-more consistent within cells than witin the blank channels. Based on
-the distribution of the blanks, we decide to keep the cells that have
+We can see that the protein quantification for single-cells are much
+more consistent than for blank samples. Based on the distribution of 
+the blanks, we decide to keep the cells that have
 a median CV lower than 0.3. Note this example is inaccurate because
 the null distribution is based on only 3 blank samples, but more sets
-could lead to a better estimation of the CV null distribution. Note we
-also keep only the samples of interest (macrophages and monocytes)
-since all QC metrics are now computed.
+could lead to a better estimation of the CV null distribution. 
 
-```{r create_filter2}
-keepSample <- scp[["peptides_filter1"]]$.MedianCV < 0.3 &
-  scp[["peptides_filter1"]]$SampleType %in% c("Macrophage", "Monocyte")
-keepSample[is.na(keepSample)] <- FALSE
+```{r create_filter}
+cvs <- colData(scp[["peptides"]])
+keepSample <- rownames(cvs)[cvs$.MedianCV < 0.3 & 
+                              !is.na(cvs$.MedianCV)]
+scp <- scp[, keepSample, ]
 ```
 
-Then, we subset the assay for samples that pass the filter.
+We can now remove the blank samples since all QC metrics are now 
+computed.
 
-```{r apply_filter2}
-sce <- scp[["peptides_filter1"]]
-sce <- sce[, keepSample]
-```
-
-Finally, we add the filtered assay to the `QFeatures`object and
-created the required linking with the previous assay.
-
-```{r add_filter2}
-addAssay(scp,
-         y = sce,
-         name = "peptides_filter2") %>%
-  addAssayLinkOneToOne(from = "peptides_filter1",
-                       to = "peptides_filter2") ->
-  scp
+```{r remove_blanks}
+scp <- scp[, scp$SampleType != "Blank", ]
 ```
 
 # Process the peptide data
@@ -620,21 +587,21 @@ found in `?QFeatures::normalize`.
 
 ```{r normalize_scale}
 scp %>%
-    ## Divide columns by median
-    sweep(i = "peptides_filter2",
+  ## Divide columns by median
+  sweep(i = "peptides",
         MARGIN = 2,
         FUN = "/",
-        STATS = colMedians(assay(scp[["peptides_filter2"]]),
+        STATS = colMedians(assay(scp[["peptides"]]),
                            na.rm = TRUE),
         name = "peptides_norm_col") %>%
-    ## Divide rows by mean
-    sweep(i = "peptides_norm_col",
+  ## Divide rows by mean
+  sweep(i = "peptides_norm_col",
         MARGIN = 1,
         FUN = "/",
         STATS = rowMeans(assay(.[["peptides_norm_col"]]),
                          na.rm = TRUE),
         name = "peptides_norm") ->
-    scp
+  scp
 ```
 
 Notice each call to `sweep` created a new assay.
@@ -714,21 +681,21 @@ of dividing.
 
 ```{r normalize_center}
 scp %>%
-    ## Center columns with median
-    sweep(i = "proteins",
-          MARGIN = 2,
-          FUN = "-",
-          STATS = colMedians(assay(scp[["proteins"]]),
-                             na.rm = TRUE),
-          name = "proteins_norm_col") %>%
-    ## Center rows with mean
-    sweep(i = "proteins_norm_col",
-          MARGIN = 1,
-          FUN = "-",
-          STATS = rowMeans(assay(.[["proteins_norm_col"]]),
+  ## Center columns with median
+  sweep(i = "proteins",
+        MARGIN = 2,
+        FUN = "-",
+        STATS = colMedians(assay(scp[["proteins"]]),
                            na.rm = TRUE),
-          name = "proteins_norm") ->
-    scp
+        name = "proteins_norm_col") %>%
+  ## Center rows with mean
+  sweep(i = "proteins_norm_col",
+        MARGIN = 1,
+        FUN = "-",
+        STATS = rowMeans(assay(.[["proteins_norm_col"]]),
+                         na.rm = TRUE),
+        name = "proteins_norm") ->
+  scp
 ```
 
 
@@ -787,9 +754,8 @@ procedure.
 
 We first extract the assay to process.
 
-```{r transferColDataToAssay_proteins}
-scp <- transferColDataToAssay(scp, i = "proteins_norm")
-sce <- scp[["proteins_norm"]]
+```{r get_proteins}
+sce <- getWithColData(scp, "proteins_norm")
 ```
 
 Next, we need to provide a design matrix and the batch annotation to
@@ -951,9 +917,9 @@ of the SCoPE2 dataset.
 
 ```{r setup2, include = FALSE}
 knitr::opts_chunk$set(
-    collapse = TRUE,
-    comment = "",
-    crop = NULL
+  collapse = TRUE,
+  comment = "",
+  crop = NULL
 )
 ```
 
