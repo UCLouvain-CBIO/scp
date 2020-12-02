@@ -1,5 +1,11 @@
 # scp 0.1
 
+## scp 0.1.2
+
+- deprecated: removed the `transferColDataToAssay`. You should better 
+  use the `getWithColData` function from `MultiAssayExperiment`.
+  <2020-12-01>
+
 ## scp 0.1.1
 
 - refactor: renamed all `obj` arguments by `object`
