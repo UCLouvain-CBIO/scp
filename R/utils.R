@@ -48,39 +48,6 @@ rowDataToDF <- function(object,
     do.call(rbind, out)
 }
 
-
-##' Transfer the `colData` to an Assay
-##' 
-##' The function transfers the `colData` from a `QFeatures` object to
-##' one of the assays it contains. The transfered data is bound to the
-##' existing `colData` of the target assay.
-##'
-##' @param object A `QFeatures` object
-##' 
-##' @param i A `numeric(1)` or `character(1)` indicating which assay
-##'     to transfer the `colData` to.
-##'
-##' @return A `QFeatures` object
-##' 
-##' @export
-##'
-##' @examples
-##' data("scp1")
-##' colData(scp1[["peptides"]])
-##' scp1 <- transferColDataToAssay(scp1, i = "peptides")
-##' colData(scp1[["peptides"]])
-##' 
-transferColDataToAssay <- function (object, 
-                                    i) {
-    cd <- colData(object)[colnames(object[[i]]),  ]
-    if (all(colnames(cd) %in% colnames(colData(object@ExperimentList[[i]])))) {
-        message("The colData is already present in assay '", i, "'.")
-        return(object)
-    }
-    colData(object@ExperimentList[[i]]) <- cbind(colData(object[[i]]), cd)
-    return(object)
-}
-
 ##' Aggregate features over multiple assays
 ##' 
 ##' This function is a wrapper function around

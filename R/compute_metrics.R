@@ -222,7 +222,7 @@ computeMedianCV <- function(object,
         ## Compute the median CV per cell
         group_by(.data$colname) %>%
         mutate(.MedianCV = median(.data$cvq, na.rm = TRUE)) %>%
-        ## Store the cell median CV in the coldata
+        ## Store the cell median CV in the colData
         select(.data$colname, .data$.MedianCV) %>%
         unique ->
         CVs
