@@ -178,7 +178,7 @@ divideByReference <- function(object,
 normalizeSCP <- normaliseSCP <- function(object, i, name = "normAssay", 
                                          method, ...) {
     if(!inherits(object, "QFeatures"))
-      stop("'object' must be a 'SingleCellExperiment' object.")
+      stop("'object' must be a 'QFeatures' object.")
     if (length(i) != 1)
       stop("Only one assay to be processed at a time")
     if (is.numeric(i)) i <- names(object)[[i]]
