@@ -1,5 +1,12 @@
 # scp 0.1
 
+## scp 0.1.3
+
+- deprecated: renamed `computeMedianCV` to `computeMedianCV_SCoPE2` 
+  and deprecated the function. The function will be preserved for 
+  backward compatibility with the replication of the SCoPE2 analysis
+  (Specht et al. 2020)
+
 ## scp 0.1.2
 
 - deprecated: removed the `transferColDataToAssay`. You should better 

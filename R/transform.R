@@ -175,6 +175,7 @@ divideByReference <- function(object,
 ##' @seealso [QFeatures::normalize] for more details about `normalize`
 ##'
 ##' @export
+##' 
 normalizeSCP <- normaliseSCP <- function(object, i, name = "normAssay", 
                                          method, ...) {
     if(!inherits(object, "QFeatures"))

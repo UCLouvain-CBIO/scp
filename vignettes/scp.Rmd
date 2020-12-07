@@ -496,10 +496,10 @@ scp %>%
   scale_x_log10()
 ```
 
-Here all values seems reasonable so no filtering is needed. If it were
-not the case, the same procedure as the previous section can be used
-for selecting the cells that have an associated median RI lower that a
-defined threshold.
+Here all values seem reasonable so no filtering is needed. Would it 
+not be the case, the same procedure as in the previous section can be 
+used for selecting the cells that have an associated median RI lower 
+that a defined threshold.
 
 ## Filter based on the median CV
 
@@ -507,21 +507,23 @@ The median CV measures the consistency of quantification for a group
 of peptides that belong to a protein. We remove cells that exhibit
 high median CV over the different proteins. We compute the median CV
 per cell using the `computeMedianCV` function from the `scp`
-package. The function takes the `peptides` assay, protein and
-peptide information from the assay `rowData`, and the batch names in
-the `colData` of the `QFeatures` object. The peptide and batch
-information are required to perform normalization prior to the CV
-computation. Protein information is required since the CV are computed
-at the protein level. The computed median CVs are automatically stored
-in the `colData` of the `SingleCellExperiment` assay under the
-`.medianCV` field
+package. The function takes the `peptides` assay and computes the CV
+for each protein in each cell. To perform this, we must supply the 
+name of the `rowData` field that contains the protein information 
+through the `groupBy` argument. We also only want to compute CVs if we
+have at least 5 peptides per protein. Finally, we also perform a
+normalization and divide the columns by the median. The computed 
+median CVs are automatically stored in the `colData` under the name
+that is supplied, here `MedianCV`.
 
-```{r computeMedianCV}
-scp <- computeMedianCV(scp,
-                       i = "peptides",
-                       proteinCol = "protein",
-                       peptideCol = "peptide",
-                       batchCol = "Set")
+```{r medianCVperCell}
+scp <- medianCVperCell(scp,
+                       i = 1:3,
+                       groupBy = "protein",
+                       nobs = 5, 
+                       norm = "div.median",
+                       na.rm = TRUE,
+                       colDataName = "MedianCV")
 ```
 
 The computed CVs are stored in the `colData` of the `peptides`
@@ -538,24 +540,21 @@ scp %>%
   getWithColData("peptides") %>%
   colData %>%
   data.frame %>%
-  ggplot(aes(x = .MedianCV,
+  ggplot(aes(x = MedianCV,
              fill = SampleType)) +
   geom_boxplot() +
-  geom_vline(xintercept = 0.3)
+  geom_vline(xintercept = 0.65)
 ```
 
 We can see that the protein quantification for single-cells are much
 more consistent than for blank samples. Based on the distribution of 
 the blanks, we decide to keep the cells that have
-a median CV lower than 0.3. Note this example is inaccurate because
+a median CV lower than 0.65. Note this example is inaccurate because
 the null distribution is based on only 3 blank samples, but more sets
 could lead to a better estimation of the CV null distribution. 
 
 ```{r create_filter}
-cvs <- colData(scp[["peptides"]])
-keepSample <- rownames(cvs)[cvs$.MedianCV < 0.3 & 
-                              !is.na(cvs$.MedianCV)]
-scp <- scp[, keepSample, ]
+scp <- scp[, !is.na(scp$MedianCV) & scp$MedianCV < 0.65, ]
 ```
 
 We can now remove the blank samples since all QC metrics are now 
