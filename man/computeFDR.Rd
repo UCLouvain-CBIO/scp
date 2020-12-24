@@ -4,7 +4,7 @@
 \alias{computeFDR}
 \title{Compute FDR from posterior error probabilities PEP}
 \usage{
-computeFDR(object, i, groupCol, pepCol)
+computeFDR(object, i, groupBy, PEP, colDataName = "FDR")
 }
 \arguments{
 \item{object}{A \code{QFeatures} object}
@@ -12,13 +12,17 @@ computeFDR(object, i, groupCol, pepCol)
 \item{i}{A \code{numeric()} or \code{character()} vector indicating from
 which assays the \code{rowData} should be taken.}
 
-\item{groupCol}{A \code{character(1)} indicating the variable names in the
+\item{groupBy}{A \code{character(1)} indicating the variable names in the
 \code{rowData} that contains the grouping variable. The FDR are usually
 computed for PSMs grouped by peptide ID.}
 
-\item{pepCol}{A \code{character(1)} indicating the variable names in the
+\item{PEP}{A \code{character(1)} indicating the variable names in the
 \code{rowData} that contains the PEPs. Since, PEPs are probabilities, the
 variable must be contained in (0, 1).}
+
+\item{colDataName}{A \code{character(1)} giving the name of the new
+variable in the \code{colData} where the computed FDRs will be
+stored. The name cannot already exist in the \code{colData}.}
 }
 \value{
 A \code{QFeatures} object.
@@ -32,9 +36,10 @@ the given assay's \code{rowData} and adds a new variable to it (called
 data("scp1")
 scp1 <- computeFDR(scp1,
                    i = 1,
-                   groupCol = "Sequence",
-                   pepCol = "dart_PEP")
+                   groupBy = "Sequence",
+                   PEP = "dart_PEP",
+                   colDataName = "peptideFDR")
 ## Check results
-rowDataToDF(scp1, 1, c("dart_PEP", ".FDR"))
+rowDataToDF(scp1, 1, c("dart_PEP", "peptideFDR"))
 
 }

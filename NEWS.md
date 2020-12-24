@@ -2,10 +2,17 @@
 
 ## scp 0.1.3
 
-- deprecated: renamed `computeMedianCV` to `computeMedianCV_SCoPE2` 
+- refactor: renamed the `groupCol` to `groupBy` and `pepCol` to `PEP`
+  in `computeFDR`.
+  <2020-12-08>
+- refactor: renamed `computeMedianCV` to `computeMedianCV_SCoPE2` 
   and deprecated the function. The function will be preserved for 
   backward compatibility with the replication of the SCoPE2 analysis
-  (Specht et al. 2020)
+  (Specht et al. 2020). Instead, a new function is implemented and 
+  called `medianCVperCell`. See 
+  [issue#7](https://github.com/UCLouvain-CBIO/scp/issues/7) for more 
+  information
+  <2020-12-07>
 
 ## scp 0.1.2
 
