@@ -72,26 +72,30 @@ test_that("computeFDR", {
   ## and compute manually the FDR
   fdrFromPEP <- function(x) ## this is calc_fdr from SCoPE2
     return((cumsum(x[order(x)]) / seq_along(x))[order(order(x))])
-  computeFDR(scp1, i = 1:3, groupCol = "peptide", pepCol = "dart_PEP") %>%
-    rowDataToDF(1:3, vars = c("peptide", "dart_PEP", ".FDR")) %>%
+  computeFDR(scp1, i = 1:3, groupBy = "peptide", PEP = "dart_PEP") %>%
+    rowDataToDF(1:3, vars = c("peptide", "dart_PEP", "FDR")) %>%
     data.frame() %>%
     filter(peptide == "_AQLGGPEAAK_2") ->
     test
-  expect_identical(test$.FDR, fdrFromPEP(test$dart_PEP))
+  expect_identical(test$FDR, fdrFromPEP(test$dart_PEP))
   ## Message: the PEP contains missing values
   rowData(scp1[[1]])$dart_PEP[1] <- NA
-  expect_message(tmp <- computeFDR(scp1, i = 1:3, groupCol = "peptide", 
-                                   pepCol = "dart_PEP"),
+  expect_message(tmp <- computeFDR(scp1, i = 1:3, groupBy = "peptide", 
+                                   PEP = "dart_PEP"),
                  regexp = "missing values")
   expect_true(is.na(rowData(tmp[[1]])$dart_PEP[1]))
   ## Error: rowData variable not fount
-  expect_error(computeFDR(scp1, i = 1, groupCol = "foo", pepCol = "dart_PEP"),
+  expect_error(computeFDR(scp1, i = 1, groupBy = "foo", PEP = "dart_PEP"),
                regexp = paste0("not found in:\n", names(scp1)[1]))
-  expect_error(computeFDR(scp1, i = 2, groupCol = "peptide", pepCol = "foo"),
+  expect_error(computeFDR(scp1, i = 2, groupBy = "peptide", PEP = "foo"),
                regexp = paste0("not found in:\n", names(scp1)[2]))
   ## Error: PEP must be a numeric between 0 and 1
-  expect_error(computeFDR(scp1, i = 1, groupCol = "peptide", pepCol = "Length"),
+  expect_error(computeFDR(scp1, i = 1, groupBy = "peptide", PEP = "Length"),
                regexp = "is not a probability")
+  ## Error: the new colData variable already exists
+  expect_error(computeFDR(scp1, i = 1, groupBy = "peptide", PEP = "Length",
+                          colDataName = "SampleType"),
+               regexp = "already exists")
 })
 
 test_that("featureCV", {
