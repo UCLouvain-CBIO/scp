@@ -44,17 +44,6 @@ test_that("divideByReference", {
                    regexp = "Only the first match will be used")
 })
 
-
-
-test_that("function: all normalize methods", {
-  sce <- scp1[[1]]
-  for (.method in MsCoreUtils::normalizeMethods()) {
-    sce_norm <- .normalizeSCP(sce, method = .method)
-    scp_norm <- normalizeSCP(scp1, 1, method = .method)
-    expect_identical(sce_norm, scp_norm[["normAssay"]])
-  }
-})
-
 test_that("function: normalizeSCP", {
   ## Test .normalizeSCP
   sce <- scp1[[1]]
@@ -69,4 +58,13 @@ test_that("function: normalizeSCP", {
   expect_identical(assayLink(scp_norm, "normAssay")@hits@elementMetadata$names_from,
                    assayLink(scp_norm, "normAssay")@hits@elementMetadata$names_to,
                    rownames(sce))
+})
+
+test_that("function: all normalize methods", {
+    sce <- scp1[[1]]
+    for (.method in MsCoreUtils::normalizeMethods()) {
+        sce_norm <- .normalizeSCP(sce, method = .method)
+        scp_norm <- normalizeSCP(scp1, 1, method = .method)
+        expect_identical(sce_norm, scp_norm[["normAssay"]])
+    }
 })

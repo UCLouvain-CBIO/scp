@@ -154,13 +154,17 @@ computeSCR <- function(object,
 ##' @param i A `numeric()` or `character()` vector indicating from 
 ##'     which assays the `rowData` should be taken.
 ##' 
-##' @param groupCol A `character(1)` indicating the variable names in the 
+##' @param groupBy A `character(1)` indicating the variable names in the 
 ##'     `rowData` that contains the grouping variable. The FDR are usually 
 ##'     computed for PSMs grouped by peptide ID.
 ##' 
-##' @param pepCol A `character(1)` indicating the variable names in the 
+##' @param PEP A `character(1)` indicating the variable names in the 
 ##'     `rowData` that contains the PEPs. Since, PEPs are probabilities, the 
 ##'     variable must be contained in (0, 1).
+##'
+##' @param colDataName A `character(1)` giving the name of the new 
+##'      variable in the `colData` where the computed FDRs will be 
+##'      stored. The name cannot already exist in the `colData`.
 ##'
 ##' @return A `QFeatures` object.
 ##' 
@@ -170,46 +174,53 @@ computeSCR <- function(object,
 ##' data("scp1")
 ##' scp1 <- computeFDR(scp1,
 ##'                    i = 1,
-##'                    groupCol = "Sequence",
-##'                    pepCol = "dart_PEP")
+##'                    groupBy = "Sequence",
+##'                    PEP = "dart_PEP",
+##'                    colDataName = "peptideFDR")
 ##' ## Check results
-##' rowDataToDF(scp1, 1, c("dart_PEP", ".FDR"))
+##' rowDataToDF(scp1, 1, c("dart_PEP", "peptideFDR"))
 ##' 
 computeFDR <- function(object, 
                        i, 
-                       groupCol, 
-                       pepCol) {
+                       groupBy, 
+                       PEP,
+                       colDataName = "FDR") {
     if (!inherits(object, "QFeatures"))
         stop("'object' must be a QFeatures object")
     if (is.numeric(i)) i <- names(object)[i]
+    ## Check arguments: colDataName is valid
+    if (colDataName %in% colnames(colData(object)))
+        stop("The colData name '", colDataName, "' already exists. ", 
+             "Use another name or remove that column before running ",
+             "this function.")
     
     ## Function to compute FDRs from PEPs
     fdrFromPEP <- function(x) ## this is calc_fdr from SCoPE2
         return((cumsum(x[order(x)]) / seq_along(x))[order(order(x))])
     
     ## Get the PEP from all assays
-    peps <- rowDataToDF(object, i, vars = c(groupCol, pepCol))
+    peps <- rowDataToDF(object, i, vars = c(groupBy, PEP))
     
     ## Check PEP is a probability
-    pepRange <- range(peps[, pepCol], na.rm = TRUE)
+    pepRange <- range(peps[, PEP], na.rm = TRUE)
     if (max(pepRange) > 1 | min(pepRange < 0))
-        stop(paste0("'", pepCol, "' is not a probability in (0, 1)"))
+        stop(paste0("'", PEP, "' is not a probability in (0, 1)"))
     
     ## Report missing values
-    if (anyNA(peps[, pepCol]))
-        message("The 'pepCol' contains missing values. No FDR will ",
+    if (anyNA(peps[, PEP]))
+        message("The 'PEP' contains missing values. No FDR will ",
                 "be computed for missing data.")
     
     ## Compute the FDR for every peptide ID separately
-    peps <- group_by(data.frame(peps), .data[[groupCol]])
-    peps <- mutate(peps, FDR = fdrFromPEP(.data[[pepCol]]))
+    peps <- group_by(data.frame(peps), .data[[groupBy]])
+    peps <- mutate(peps, FDR = fdrFromPEP(.data[[PEP]]))
     
     ## Insert the FDR inside every assay
     pepID <- paste0(peps$.assay, peps$.rowname)
     for (ii in i) {
         rdID <- paste0(ii, rownames(object[[ii]]))
         .FDR <- peps[match(rdID, pepID), ]$FDR
-        rowData(object@ExperimentList@listData[[ii]])$.FDR <- .FDR
+        rowData(object@ExperimentList@listData[[ii]])[, colDataName] <- .FDR
     }
     return(object)
 }
