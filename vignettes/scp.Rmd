@@ -320,17 +320,18 @@ contained in the feature metadata.
 ```{r computeFDR}
 scp <- computeFDR(scp,
                   i = 1:3,
-                  groupCol = "peptide",
-                  pepCol = "dart_PEP")
+                  groupBy = "peptide",
+                  PEP = "dart_PEP",
+                  colDataName = "peptideFDR")
 ```
 
-Note that a new variable `.FDR` containing the computed FDRs is added
-to the `rowData`. We filter the PSMs that have an associated peptide
-FDR smaller than 1\%.
+Note that a new variable `peptideFDR` containing the computed FDRs is 
+added to the `rowData`. We filter the PSMs that have an associated 
+peptide FDR smaller than 1\%.
 
 ```{r filter_FDR}
 scp <- filterFeatures(scp,
-                      ~ .FDR < 0.01)
+                      ~ peptideFDR < 0.01)
 ```
 
 # Process the PSM data
