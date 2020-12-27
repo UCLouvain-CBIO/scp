@@ -1,6 +1,10 @@
 # scp 1.1
 
-# scp 1.1.0
+## scp 1.1.1
+
+- Fix news file
+
+## scp 1.1.0
 
 - New devel (Bioc 3.13)
 
