@@ -71,7 +71,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
       </span>
     </div>
 
@@ -90,7 +90,7 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/UCLouvain-CBIO/scp/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -111,6 +111,35 @@
       <small>Source: <a href='https://github.com/UCLouvain-CBIO/scp/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="scp-11" class="section level1">
+<h1 class="page-header" data-toc-text="1.1">
+<a href="#scp-11" class="anchor"></a>scp 1.1</h1>
+<div id="scp-111" class="section level2">
+<h2 class="hasAnchor">
+<a href="#scp-111" class="anchor"></a>scp 1.1.1</h2>
+<ul>
+<li>Fix news file</li>
+</ul>
+</div>
+<div id="scp-110" class="section level2">
+<h2 class="hasAnchor">
+<a href="#scp-110" class="anchor"></a>scp 1.1.0</h2>
+<ul>
+<li>New devel (Bioc 3.13)</li>
+</ul>
+</div>
+</div>
+    <div id="scp-10" class="section level1">
+<h1 class="page-header" data-toc-text="1.0">
+<a href="#scp-10" class="anchor"></a>scp 1.0</h1>
+<div id="scp-100" class="section level2">
+<h2 class="hasAnchor">
+<a href="#scp-100" class="anchor"></a>scp 1.0.0</h2>
+<ul>
+<li>New stable release (Bioc 3.12)</li>
+</ul>
+</div>
+</div>
     <div id="scp-099" class="section level1">
 <h1 class="page-header" data-toc-text="0.99">
 <a href="#scp-099" class="anchor"></a>scp 0.99</h1>
@@ -153,6 +182,41 @@
 <a href="#scp-0990" class="anchor"></a>scp 0.99.0</h2>
 <ul>
 <li>Bioconductor submission</li>
+</ul>
+</div>
+</div>
+    <div id="scp-01" class="section level1">
+<h1 class="page-header" data-toc-text="0.1">
+<a href="#scp-01" class="anchor"></a>scp 0.1</h1>
+<div id="scp-013" class="section level2">
+<h2 class="hasAnchor">
+<a href="#scp-013" class="anchor"></a>scp 0.1.3</h2>
+<ul>
+<li>refactor: renamed the <code>groupCol</code> to <code>groupBy</code> and <code>pepCol</code> to <code>PEP</code> in <code>computeFDR</code>. &lt;2020-12-08&gt;</li>
+<li>refactor: renamed <code>computeMedianCV</code> to <code>computeMedianCV_SCoPE2</code> and deprecated the function. The function will be preserved for backward compatibility with the replication of the SCoPE2 analysis (Specht et al. 2020). Instead, a new function is implemented and called <code>medianCVperCell</code>. See <a href="https://github.com/UCLouvain-CBIO/scp/issues/7">issue<a href='https://github.com/UCLouvain-CBIO/scp/issues/7'>#7</a></a> for more information &lt;2020-12-07&gt;</li>
+</ul>
+</div>
+<div id="scp-012" class="section level2">
+<h2 class="hasAnchor">
+<a href="#scp-012" class="anchor"></a>scp 0.1.2</h2>
+<ul>
+<li>deprecated: removed the <code>transferColDataToAssay</code>. You should better use the <code>getWithColData</code> function from <code>MultiAssayExperiment</code>. &lt;2020-12-01&gt;</li>
+</ul>
+</div>
+<div id="scp-011" class="section level2">
+<h2 class="hasAnchor">
+<a href="#scp-011" class="anchor"></a>scp 0.1.1</h2>
+<ul>
+<li>refactor: renamed all <code>obj</code> arguments by <code>object</code> &lt;2020-12-01&gt;</li>
+<li>feat: new function <code>normalizeSCP</code> that allow normalizing an assay in a <code>QFeatures</code> object that contains <code>SingleCellExperiment</code> objects &lt;2020-11-30&gt;</li>
+</ul>
+</div>
+<div id="scp-010" class="section level2">
+<h2 class="hasAnchor">
+<a href="#scp-010" class="anchor"></a>scp 0.1.0</h2>
+<ul>
+<li>
+<code>scp</code> package acceptance on Bioconductor!! &lt;2020-10-15 Thu&gt;</li>
 </ul>
 </div>
 </div>

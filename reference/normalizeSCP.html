@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Read SingleCellExperiment from tabular data — readSingleCellExperiment • scp</title>
+<title>Normalize single-cell proteomics (SCP) data — normalizeSCP • scp</title>
 
 
 <!-- jquery -->
@@ -39,9 +39,10 @@
 
 
 
-<meta property="og:title" content="Read SingleCellExperiment from tabular data — readSingleCellExperiment" />
-<meta property="og:description" content="Convert tabular data from a spreadsheet or a data.frame into a
-SingleCellExperiment object." />
+<meta property="og:title" content="Normalize single-cell proteomics (SCP) data — normalizeSCP" />
+<meta property="og:description" content="This function normalises an assay in a QFeatures according to
+the supplied method (see Details). The normalized data is added as
+a new assay" />
 
 
 
@@ -109,77 +110,84 @@ SingleCellExperiment object." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Read SingleCellExperiment from tabular data</h1>
-    <small class="dont-index">Source: <a href='https://github.com/UCLouvain-CBIO/scp/blob/master/R/readSCP.R'><code>R/readSCP.R</code></a></small>
-    <div class="hidden name"><code>readSingleCellExperiment.Rd</code></div>
+    <h1>Normalize single-cell proteomics (SCP) data</h1>
+    <small class="dont-index">Source: <a href='https://github.com/UCLouvain-CBIO/scp/blob/master/R/transform.R'><code>R/transform.R</code></a></small>
+    <div class="hidden name"><code>normalizeSCP.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Convert tabular data from a spreadsheet or a <code>data.frame</code> into a
-<code>SingleCellExperiment</code> object.</p>
+    <p>This function normalises an assay in a <code>QFeatures</code> according to
+the supplied method (see Details). The normalized data is added as
+a new assay</p>
     </div>
 
-    <pre class="usage"><span class='fu'>readSingleCellExperiment</span><span class='op'>(</span><span class='va'>table</span>, <span class='va'>ecol</span>, <span class='va'>fnames</span>, <span class='va'>...</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>normalizeSCP</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>i</span>, name <span class='op'>=</span> <span class='st'>"normAssay"</span>, <span class='va'>method</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>table</th>
-      <td><p>File or object holding the quantitative data. Can be
-either a <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> with the path to a text-based
-spreadsheet (comma-separated values by default, but see <code>...</code>)
-or an object that can be coerced to a <code>data.frame</code>. It is
-advised not to encode characters as factors.</p></td>
+      <th>object</th>
+      <td><p>An object of class <code>QFeatures</code>.</p></td>
     </tr>
     <tr>
-      <th>ecol</th>
-      <td><p>A <code>numeric</code> indicating the indices of the columns to
-be used as assay values. Can also be a <code>character</code>
-indicating the names of the columns. Caution must be taken if
-the column names are composed of special characters like <code>(</code>
-or <code><a href='https://rdrr.io/r/base/Arithmetic.html'>-</a></code> that will be converted to a <code>.</code> by the <code>read.csv</code>
-function. If <code>ecol</code> does not match, the error message will
-dislpay the column names as seen by the <code>read.csv</code> function.</p></td>
+      <th>i</th>
+      <td><p>A numeric vector or a character vector giving the index
+or the name, respectively, of the assay(s) to be processed.</p></td>
     </tr>
     <tr>
-      <th>fnames</th>
-      <td><p>An optional <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> or <code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code>
-indicating the column to be used as row names.</p></td>
+      <th>name</th>
+      <td><p>A <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> naming the new assay name. Defaults is
+are <code>normAssay</code>.</p></td>
+    </tr>
+    <tr>
+      <th>method</th>
+      <td><p><code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> defining the normalisation method to
+apply. See Details.`</p></td>
     </tr>
     <tr>
       <th>...</th>
-      <td><p>Further arguments that can be passed on to <a href='https://rdrr.io/r/utils/read.table.html'>read.csv</a>
-except <code>stringsAsFactors</code>, which is always <code>FALSE</code>.</p></td>
+      <td><p>Additional parameters passed to <code><a href='https://rdrr.io/pkg/MsCoreUtils/man/normalize.html'>MsCoreUtils::normalizeMethods()</a></code>.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>An instance of class SingleCellExperiment.</p>
-    <h2 class="hasAnchor" id="note"><a class="anchor" href="#note"></a>Note</h2>
+    <p>A <code>QFeatures</code> object with an additional assay containing the
+normalized data.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The <code>SingleCellExperiment</code> class is built on top of the
-<code>RangedSummarizedExperiment</code> class. This means that some column names
-are forbidden in the <code>rowData</code>. Avoid using the following names:
-<code>seqnames</code>, <code>ranges</code>, <code>strand</code>, <code>start</code>, <code>end</code>,
-<code>width</code>,  <code>element</code></p>
+    <p>The <code>method</code> parameter in <code>normalize</code> can be one of <code>"sum"</code>,
+<code>"max"</code>, <code>"center.mean"</code>, <code>"center.median"</code>, <code>"div.mean"</code>,
+<code>"div.median"</code>, <code>"diff.meda"</code>, <code>"quantiles</code>", <code>"quantiles.robust</code>"
+or <code>"vsn"</code>. The <code><a href='https://rdrr.io/pkg/MsCoreUtils/man/normalize.html'>MsCoreUtils::normalizeMethods()</a></code> function returns
+a vector of available normalisation methods.</p><ul>
+<li><p>For <code>"sum"</code> and <code>"max"</code>, each feature's intensity is divided by
+the maximum or the sum of the feature respectively. These two
+methods are applied along the features (rows).</p></li>
+<li><p><code>"center.mean"</code> and <code>"center.median"</code> center the respective
+sample (column) intensities by subtracting the respective column
+means or medians. <code>"div.mean"</code> and <code>"div.median"</code> divide by the
+column means or medians. These are equivalent to <code>sweep</code>ing the
+column means (medians) along <code>MARGIN = 2</code> with <code>FUN = "-"</code> (for
+<code>"center.*"</code>) or <code>FUN = "/"</code> (for <code>"div.*"</code>).</p></li>
+<li><p><code>"diff.median"</code> centers all samples (columns) so that they all
+match the grand median by subtracting the respective columns
+medians differences to the grand median.</p></li>
+<li><p>Using <code>"quantiles"</code> or <code>"quantiles.robust"</code> applies (robust) quantile
+normalisation, as implemented in <code><a href='https://rdrr.io/pkg/preprocessCore/man/normalize.quantiles.html'>preprocessCore::normalize.quantiles()</a></code>
+and <code><a href='https://rdrr.io/pkg/preprocessCore/man/normalize.quantiles.robust.html'>preprocessCore::normalize.quantiles.robust()</a></code>. <code>"vsn"</code> uses the
+<code><a href='https://rdrr.io/pkg/vsn/man/vsn2.html'>vsn::vsn2()</a></code> function. Note that the latter also glog-transforms the
+intensities.  See respective manuals for more details and function
+arguments.</p></li>
+</ul>
+
+<p>For further details and examples about normalisation, see
+<code><a href='https://rdrr.io/pkg/MsCoreUtils/man/normalize.html'>MsCoreUtils::normalize_matrix()</a></code>.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>The code relies on
-<a href='https://rdrr.io/pkg/QFeatures/man/readQFeatures.html'>QFeatures::readSummarizedExperiment</a>.</p></div>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
+    <div class='dont-index'><p><a href='https://rdrr.io/pkg/QFeatures/man/QFeatures-processing.html'>QFeatures::normalize</a> for more details about <code>normalize</code></p></div>
 
-    <p>Laurent Gatto, Christophe Vanderaa</p>
-
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'>## Load a data.frame with PSM-level data</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"mqScpData"</span><span class='op'>)</span>
-
-<span class='co'>## Create the QFeatures object</span>
-<span class='va'>sce</span> <span class='op'>&lt;-</span> <span class='fu'>readSingleCellExperiment</span><span class='op'>(</span><span class='va'>mqScpData</span>, 
-                                <span class='fu'><a href='https://rdrr.io/r/base/grep.html'>grep</a></span><span class='op'>(</span><span class='st'>"RI"</span>, <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>mqScpData</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
-</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

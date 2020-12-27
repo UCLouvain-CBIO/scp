@@ -76,7 +76,7 @@ SingleCellExperiment objects." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
       </span>
     </div>
 
@@ -95,7 +95,7 @@ SingleCellExperiment objects." />
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/UCLouvain-CBIO/scp/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -124,13 +124,13 @@ spreadsheet or a <code>data.frame</code> into a QFeatures object containing
 SingleCellExperiment objects.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>readSCP</span><span class='op'>(</span><span class='va'>quantTable</span>, <span class='va'>metaTable</span>, <span class='va'>batchCol</span>, <span class='va'>channelCol</span>, verbose <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>readSCP</span><span class='op'>(</span><span class='va'>featureData</span>, <span class='va'>colData</span>, <span class='va'>batchCol</span>, <span class='va'>channelCol</span>, verbose <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>quantTable</th>
+      <th>featureData</th>
       <td><p>File or object holding the quantitative
 data. Can be either a <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> with the path to a
 text-based spreadsheet (comma-separated values by default, but
@@ -139,9 +139,9 @@ see <code>...</code>) or an object that can be coerced to a
 factors.</p></td>
     </tr>
     <tr>
-      <th>metaTable</th>
+      <th>colData</th>
       <td><p>A <code>data.frame</code> or any object that can be coerced
-to a <code>data.frame</code>. <code>metaTable</code> is expected to contains all the
+to a <code>data.frame</code>. <code>colData</code> is expected to contains all the
 sample meta information. Required fields are the acquisition
 batch (given by <code>batchCol</code>) and the acquisition channel within
 the batch (e.g. TMT channel, given by
@@ -152,7 +152,7 @@ meta data.</p></td>
     <tr>
       <th>batchCol</th>
       <td><p>A <code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> or <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> pointing to the
-column of <code>quantTable</code> and <code>metaTable</code> that contain the batch
+column of <code>featureData</code> and <code>colData</code> that contain the batch
 names. Make sure that the column name in both table are either
 identical (if you supply a <code>character</code>) or have the same index
 (if you supply a <code>numeric</code>).</p></td>
@@ -160,8 +160,8 @@ identical (if you supply a <code>character</code>) or have the same index
     <tr>
       <th>channelCol</th>
       <td><p>A <code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> or <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> pointing to the
-column of <code>metaTable</code> that contains the column names of the
-quantitive data in <code>quantTable</code> (see Example).</p></td>
+column of <code>colData</code> that contains the column names of the
+quantitive data in <code>featureData</code> (see Example).</p></td>
     </tr>
     <tr>
       <th>verbose</th>
@@ -201,8 +201,8 @@ are forbidden in the <code>rowData</code>. Avoid using the following names:
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"sampleAnnotation"</span><span class='op'>)</span>
 
 <span class='co'>## Format the tables into a QFeatures object</span>
-<span class='fu'>readSCP</span><span class='op'>(</span>quantTable <span class='op'>=</span> <span class='va'>mqScpData</span>,
-        metaTable <span class='op'>=</span> <span class='va'>sampleAnnotation</span>,
+<span class='fu'>readSCP</span><span class='op'>(</span>featureData <span class='op'>=</span> <span class='va'>mqScpData</span>,
+        colData <span class='op'>=</span> <span class='va'>sampleAnnotation</span>,
         batchCol <span class='op'>=</span> <span class='st'>"Set"</span>,
         channelCol <span class='op'>=</span> <span class='st'>"Channel"</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'>Loading data as a 'SingleCellExperiment' object</span></div><div class='output co'>#&gt; <span class='message'>Splitting data based on 'Set'</span></div><div class='output co'>#&gt; <span class='message'>Formatting sample metadata (colData)</span></div><div class='output co'>#&gt; <span class='message'>Formatting data as a 'QFeatures' object</span></div><div class='output co'>#&gt; An instance of class QFeatures containing 4 assays:

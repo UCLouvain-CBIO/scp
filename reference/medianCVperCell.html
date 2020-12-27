@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Compute FDR from posterior error probabilities PEP — computeFDR • scp</title>
+<title>Compute the median coefficient of variation (CV) per cell — medianCVperCell • scp</title>
 
 
 <!-- jquery -->
@@ -39,10 +39,17 @@
 
 
 
-<meta property="og:title" content="Compute FDR from posterior error probabilities PEP — computeFDR" />
-<meta property="og:description" content="The functions takes the posterior error probabilities (PEPs) from
-the given assay's rowData and adds a new variable to it (called
-.FDR) that contains the computed false discovery rates (FDRs)." />
+<meta property="og:title" content="Compute the median coefficient of variation (CV) per cell — medianCVperCell" />
+<meta property="og:description" content="The function computes for each cell the median CV and stores them
+accordingly in the colData of the QFeatures object. The CVs in
+each cell are computed from a group of features. The grouping is
+defined by a variable in the rowData. The function can be
+applied to one or more assays, as long as the samples (column
+names) are not duplicated. Also, the user can supply a minimal
+number of observations required to compute a CV to avoid that CVs
+computed on too few observations influence the distribution within
+a cell. The quantification matrix can be optionally normalized
+before computing the CVs. Multiple normalizations are possible." />
 
 
 
@@ -110,18 +117,34 @@ the given assay's rowData and adds a new variable to it (called
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Compute FDR from posterior error probabilities PEP</h1>
+    <h1>Compute the median coefficient of variation (CV) per cell</h1>
     <small class="dont-index">Source: <a href='https://github.com/UCLouvain-CBIO/scp/blob/master/R/compute_metrics.R'><code>R/compute_metrics.R</code></a></small>
-    <div class="hidden name"><code>computeFDR.Rd</code></div>
+    <div class="hidden name"><code>medianCVperCell.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>The functions takes the posterior error probabilities (PEPs) from
-the given assay's <code>rowData</code> and adds a new variable to it (called
-<code>.FDR</code>) that contains the computed false discovery rates (FDRs).</p>
+    <p>The function computes for each cell the median CV and stores them
+accordingly in the <code>colData</code> of the <code>QFeatures</code> object. The CVs in
+each cell are computed from a group of features. The grouping is
+defined by a variable in the <code>rowData</code>. The function can be
+applied to one or more assays, as long as the samples (column
+names) are not duplicated. Also, the user can supply a minimal
+number of observations required to compute a CV to avoid that CVs
+computed on too few observations influence the distribution within
+a cell. The quantification matrix can be optionally normalized
+before computing the CVs. Multiple normalizations are possible.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>computeFDR</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>i</span>, <span class='va'>groupBy</span>, <span class='va'>PEP</span>, colDataName <span class='op'>=</span> <span class='st'>"FDR"</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>medianCVperCell</span><span class='op'>(</span>
+  <span class='va'>object</span>,
+  <span class='va'>i</span>,
+  <span class='va'>groupBy</span>,
+  nobs <span class='op'>=</span> <span class='fl'>5</span>,
+  na.rm <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  colDataName <span class='op'>=</span> <span class='st'>"MedianCV"</span>,
+  norm <span class='op'>=</span> <span class='st'>"none"</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -137,51 +160,65 @@ which assays the <code>rowData</code> should be taken.</p></td>
     </tr>
     <tr>
       <th>groupBy</th>
-      <td><p>A <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> indicating the variable names in the
-<code>rowData</code> that contains the grouping variable. The FDR are usually
-computed for PSMs grouped by peptide ID.</p></td>
+      <td><p>A <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> indicating the variable name in
+the <code>rowData</code> that contains the feature grouping.</p></td>
     </tr>
     <tr>
-      <th>PEP</th>
-      <td><p>A <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> indicating the variable names in the
-<code>rowData</code> that contains the PEPs. Since, PEPs are probabilities, the
-variable must be contained in (0, 1).</p></td>
+      <th>nobs</th>
+      <td><p>An <code><a href='https://rdrr.io/r/base/integer.html'>integer(1)</a></code> indicating how many observations should
+at least be considered for computing the CV. Since no CV can
+be computed for less than 2 observations, <code>nobs</code> should at
+least be 2.</p></td>
+    </tr>
+    <tr>
+      <th>na.rm</th>
+      <td><p>A <code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code> indicating whether missing data should
+be removed before computation.</p></td>
     </tr>
     <tr>
       <th>colDataName</th>
       <td><p>A <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> giving the name of the new
-variable in the <code>colData</code> where the computed FDRs will be
+variable in the <code>colData</code> where the computed CVs will be
 stored. The name cannot already exist in the <code>colData</code>.</p></td>
+    </tr>
+    <tr>
+      <th>norm</th>
+      <td><p>A <code><a href='https://rdrr.io/r/base/character.html'>character()</a></code> of normalization methods that will be
+sequentially applied. Available methods and additional
+information about normalization can be found in
+MsCoreUtils::normalizeMethods. <code>norm = "none"</code> will not
+normalize the data (default).</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>Additional arguments that are passed to the
+normalization method.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A <code>QFeatures</code> object.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>A new column is added to the <code>colData</code> of the object. The samples
+(columns) that are not present in the selection <code>i</code> will get
+assigned an NA.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"scp1"</span><span class='op'>)</span>
-<span class='va'>scp1</span> <span class='op'>&lt;-</span> <span class='fu'>computeFDR</span><span class='op'>(</span><span class='va'>scp1</span>,
-                   i <span class='op'>=</span> <span class='fl'>1</span>,
-                   groupBy <span class='op'>=</span> <span class='st'>"Sequence"</span>,
-                   PEP <span class='op'>=</span> <span class='st'>"dart_PEP"</span>,
-                   colDataName <span class='op'>=</span> <span class='st'>"peptideFDR"</span><span class='op'>)</span>
-<span class='co'>## Check results</span>
-<span class='fu'><a href='rowDataToDF.html'>rowDataToDF</a></span><span class='op'>(</span><span class='va'>scp1</span>, <span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"dart_PEP"</span>, <span class='st'>"peptideFDR"</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; DataFrame with 195 rows and 4 columns
-#&gt;              dart_PEP  peptideFDR        .assay    .rowname
-#&gt;             &lt;numeric&gt;   &lt;numeric&gt;   &lt;character&gt; &lt;character&gt;
-#&gt; PSM116299 2.51576e-03 2.51576e-03 190321S_LC...   PSM116299
-#&gt; PSM116943 1.00000e+00 1.00000e+00 190321S_LC...   PSM116943
-#&gt; PSM117524 1.24305e-11 1.24305e-11 190321S_LC...   PSM117524
-#&gt; PSM119466 1.79900e-01 1.79900e-01 190321S_LC...   PSM119466
-#&gt; PSM119691 8.39315e-05 8.39315e-05 190321S_LC...   PSM119691
-#&gt; ...               ...         ...           ...         ...
-#&gt; PSM253842 9.00309e-04 9.00309e-04 190321S_LC...   PSM253842
-#&gt; PSM253848 5.55493e-06 5.55493e-06 190321S_LC...   PSM253848
-#&gt; PSM255286 2.53061e-02 2.53061e-02 190321S_LC...   PSM255286
-#&gt; PSM255919 5.45833e-12 5.45833e-12 190321S_LC...   PSM255919
-#&gt; PSM256061 2.21415e-05 2.21415e-05 190321S_LC...   PSM256061</div><div class='input'>
+<span class='va'>scp1</span> <span class='op'>&lt;-</span> <span class='fu'>filterFeatures</span><span class='op'>(</span><span class='va'>scp1</span>, <span class='op'>~</span> <span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span><span class='op'>(</span><span class='va'>Proteins</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>harmonizing input:</span>
+#&gt; <span class='message'>  removing 76 sampleMap rows not in names(experiments)</span></div><div class='input'><span class='va'>scp1</span> <span class='op'>&lt;-</span> <span class='fu'>medianCVperCell</span><span class='op'>(</span><span class='va'>scp1</span>, 
+                        i <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>,
+                        groupBy <span class='op'>=</span> <span class='st'>"Proteins"</span>,
+                        nobs <span class='op'>=</span> <span class='fl'>5</span>,
+                        na.rm <span class='op'>=</span> <span class='cn'>TRUE</span>,
+                        colDataName <span class='op'>=</span> <span class='st'>"MedianCV"</span>,
+                        norm <span class='op'>=</span> <span class='st'>"div.median"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: The median CV is NA for at least one column in assay 190222S_LCA9_X_FP94BM. Try a smaller value for 'nobs'.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: The median CV is NA for at least one column in assay 190914S_LCB3_X_16plex_Set_21. Try a smaller value for 'nobs'.</span></div><div class='input'><span class='co'>## Check results</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/hist.html'>hist</a></span><span class='op'>(</span><span class='va'>scp1</span><span class='op'>$</span><span class='va'>MedianCV</span><span class='op'>)</span>
+</div><div class='img'><img src='medianCVperCell-1.png' alt='' width='700' height='433' /></div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
