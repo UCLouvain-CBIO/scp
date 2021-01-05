@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.2</span>
       </span>
     </div>
 
@@ -115,10 +115,10 @@
 <td>bibliography: scp.bib</td>
 </tr>
 <tr class="odd">
-<td>date: “27 December 2020”</td>
+<td>date: “5 January 2021”</td>
 </tr>
 <tr class="even">
-<td>package: “scp 1.1.1”</td>
+<td>package: “scp 1.1.2”</td>
 </tr>
 <tr class="odd">
 <td>vignette: &gt;</td>
@@ -136,7 +136,9 @@
 <div id="the-scp-package" class="section level1">
 <h1 class="hasAnchor">
 <a href="#the-scp-package" class="anchor"></a>The <code>scp</code> package</h1>
-<p>The <code>scp</code> package is used to process and analyse mass spectrometry-based single cell proteomics (SCP) data. It relies on the <a href="https://rformassspectrometry.github.io/QFeatures/"><code>QFeatures</code></a> (<span class="citation">@QFeatures</span>) package to manage and process <a href="http://bioconductor.org/packages/release/bioc/html/SingleCellExperiment.html"><code>SingleCellExperiment</code></a> (<span class="citation">@sce</span>) objects.</p>
+<p>The <code>scp</code> package is used to process and analyse mass spectrometry (MS)-based single cell proteomics (SCP) data. The functions rely on a specific data structure that wraps <a href="https://rformassspectrometry.github.io/QFeatures/"><code>QFeatures</code></a> objects (<span class="citation">@QFeatures</span>) around <a href="http://bioconductor.org/packages/release/bioc/html/SingleCellExperiment.html"><code>SingleCellExperiment</code></a> objects (<span class="citation">@sce</span>). This data structure could be seen as Matryoshka dolls were the <code>SingleCellExperiment</code> objects are small dolls contained in the bigger <code>QFeatures</code> doll.</p>
+<p>The <code>SingleCellExperiment</code> class provides a dedicated framework for single-cell data. The <code>SingleCellExperiment</code> serves as an interface to many cutting-edge methods for processing, visualizing and analysis single-cell data. More information about the <code>SingleCellExperiment</code> class and associated methods can be found in the <a href="http://bioconductor.org/books/release/OSCA/">OSCA book</a>.</p>
+<p>The <code>QFeatures</code> class is a data framework dedicated to manipulate and process MS-based quantitative data. It preserves the relationship between the different levels of information: peptide to spectrum match (PSM) data, peptide data and protein data. The <code>QFeatures</code> package also provides an interface to many utility functions to streamline the processing MS data. More information about MS data analysis tools can be found in the <a href="https://www.rformassspectrometry.org/">RforMassSpectrometry project</a>.</p>
 <div class="figure" style="text-align: center">
 <img src="figures/SCP_framework.png" alt="`scp` relies on `SingleCellExperiment` and `QFeatures` objects." width="100%"><p class="caption">
 <code>scp</code> relies on <code>SingleCellExperiment</code> and <code>QFeatures</code> objects.
@@ -147,7 +149,7 @@
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://UCLouvain-CBIO.github.io/scp">"scp"</a></span><span class="op">)</span></code></pre></div>
 <p>We also load <code>ggplot2</code>, <code>magrittr</code> and <code>dplyr</code> for convenient data manipulation and plotting.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="http://ggplot2.tidyverse.org">"ggplot2"</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org">"ggplot2"</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://magrittr.tidyverse.org">"magrittr"</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="st"><a href="https://dplyr.tidyverse.org">"dplyr"</a></span><span class="op">)</span></code></pre></div>
 </div>
@@ -829,7 +831,7 @@ Conceptual illustration of feature aggregation.
 <div id="session-information" class="section level1 unnumbered">
 <h1 class="hasAnchor">
 <a href="#session-information" class="anchor"></a>Session information</h1>
-<pre><code>R Under development (unstable) (2020-12-24 r79679)
+<pre><code>R Under development (unstable) (2020-12-31 r79746)
 Platform: x86_64-pc-linux-gnu (64-bit)
 Running under: Ubuntu 20.04.1 LTS
 
@@ -849,12 +851,12 @@ attached base packages:
 [8] methods   base     
 
 other attached packages:
- [1] scater_1.19.5               SingleCellExperiment_1.13.3
+ [1] scater_1.19.6               SingleCellExperiment_1.13.3
  [3] sva_3.39.0                  BiocParallel_1.25.2        
  [5] genefilter_1.73.0           mgcv_1.8-33                
  [7] nlme_3.1-151                dplyr_1.0.2                
- [9] magrittr_2.0.1              ggplot2_3.3.2              
-[11] scp_1.1.1                   QFeatures_1.1.0            
+ [9] magrittr_2.0.1              ggplot2_3.3.3              
+[11] scp_1.1.2                   QFeatures_1.1.0            
 [13] MultiAssayExperiment_1.17.2 SummarizedExperiment_1.21.1
 [15] Biobase_2.51.0              GenomicRanges_1.43.1       
 [17] GenomeInfoDb_1.27.3         IRanges_2.25.6             
@@ -881,22 +883,22 @@ loaded via a namespace (and not attached):
 [33] Rcpp_1.0.5                pkgdown_1.6.1.9000       
 [35] vctrs_0.3.6               DelayedMatrixStats_1.13.1
 [37] xfun_0.19                 stringr_1.4.0            
-[39] beachmat_2.7.4            lifecycle_0.2.0          
+[39] beachmat_2.7.5            lifecycle_0.2.0          
 [41] irlba_2.3.3               XML_3.99-0.5             
 [43] edgeR_3.33.0              zlibbioc_1.37.0          
 [45] MASS_7.3-53               scales_1.1.1             
 [47] BiocStyle_2.19.1          ragg_0.4.0               
-[49] ProtGenerics_1.23.5       AnnotationFilter_1.15.0  
+[49] ProtGenerics_1.23.6       AnnotationFilter_1.15.0  
 [51] yaml_2.2.1                memoise_1.1.0            
 [53] gridExtra_2.3             stringi_1.5.3            
 [55] RSQLite_2.2.1             highr_0.8                
-[57] desc_1.2.0                rlang_0.4.9              
+[57] desc_1.2.0                rlang_0.4.10             
 [59] pkgconfig_2.0.3           systemfonts_0.3.2        
 [61] bitops_1.0-6              evaluate_0.14            
 [63] lattice_0.20-41           purrr_0.3.4              
 [65] labeling_0.4.2            bit_4.0.4                
 [67] tidyselect_1.1.0          R6_2.5.0                 
-[69] generics_0.1.0            DelayedArray_0.17.6      
+[69] generics_0.1.0            DelayedArray_0.17.7      
 [71] DBI_1.1.0                 pillar_1.4.7             
 [73] withr_2.3.0               MsCoreUtils_1.3.2        
 [75] survival_3.2-7            RCurl_1.98-1.2           
