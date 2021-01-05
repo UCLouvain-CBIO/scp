@@ -2,6 +2,9 @@
 
 ## scp 0.1.3
 
+- docs: improved the description of the `scp` data structure in the 
+  vignette 
+  <2021-01-05>
 - refactor: renamed the `groupCol` to `groupBy` and `pepCol` to `PEP`
   in `computeFDR`.
   <2020-12-08>

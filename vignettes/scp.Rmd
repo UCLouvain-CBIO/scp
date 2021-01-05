@@ -30,12 +30,31 @@ crop = NULL ## Related to https://stat.ethz.ch/pipermail/bioc-devel/2020-April/0
 
 # The `scp` package
 
-The `scp` package is used to process and analyse mass
-spectrometry-based single cell proteomics (SCP) data. It relies on the
+The `scp` package is used to process and analyse mass spectrometry 
+(MS)-based single cell proteomics (SCP) data. The functions rely on a 
+specific data structure that wraps 
 [`QFeatures`](https://rformassspectrometry.github.io/QFeatures/)
-(@QFeatures) package to manage and process
+objects (@QFeatures) around 
 [`SingleCellExperiment`](http://bioconductor.org/packages/release/bioc/html/SingleCellExperiment.html)
-(@sce) objects.
+objects (@sce). This data structure could be seen as Matryoshka dolls 
+were the `SingleCellExperiment` objects are small dolls contained in 
+the bigger `QFeatures` doll.
+
+The `SingleCellExperiment` class provides a dedicated framework for 
+single-cell data. The `SingleCellExperiment` serves as an interface to
+many cutting-edge methods for processing, visualizing and analysis 
+single-cell data. More information about the `SingleCellExperiment` 
+class and associated methods can be found in the 
+[OSCA book](http://bioconductor.org/books/release/OSCA/). 
+
+The `QFeatures` class is a data framework dedicated to manipulate and 
+process MS-based quantitative data. It preserves the relationship 
+between the different levels of information: peptide to spectrum match
+(PSM) data, peptide data and protein data. The `QFeatures` package 
+also provides an interface to many utility functions to streamline the
+processing MS data. More information about MS data analysis tools can 
+be found in the
+[RforMassSpectrometry project](https://www.rformassspectrometry.org/).
 
 ```{r scp_framework, results='markup', fig.cap="`scp` relies on `SingleCellExperiment` and `QFeatures` objects.", echo=FALSE, out.width='100%', fig.align='center'}
 knitr::include_graphics("./figures/SCP_framework.png", error = FALSE)
