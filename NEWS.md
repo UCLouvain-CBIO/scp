@@ -1,6 +1,18 @@
 # scp 1.1
 
+## scp 1.1.4
+
 ## scp 1.1.3
+
+- docs: improved the manual page for `pep2qvalue` and the 
+  corresponding section in the vignette. 
+  <2021-01-23>
+- refactor: renamed `computeFDR` to `pep2qvalue`. This is more in line
+  with the theory. 
+  <2021-01-23>
+- refactor: reimplemented the `computeFDR` to catch up with the new 
+  release of SCoPE2. Also adapted the unit tests.
+  <2021-01-22>
 
 ## scp 1.1.2
 
