@@ -326,31 +326,44 @@ scp <- filterFeatures(scp,
                         .meanSCR < 0.1)
 ```
 
-## Filter out PSMs with high false discovery rate
+## Filter features to control for FDR
 
-Finally, a last PSM filter criterion is the false discovery rate (FDR)
-for identification. Filtering on the PEP is too conservative
-(@Kall2008-hb) so we provide the `computeFDR` function to convert PEPs
-to FDR. Beside the dataset and the assay(s) for which to compute the
-FDR, we also need to give the feature grouping variable, here the
-peptide sequence, and the variable containing the PEPs. Those are
-contained in the feature metadata.
+Finally, we might also want to control for false discovery rate (FDR).
+MaxQuant already computes posterior error probabilities (PEP), but filtering on PEPs is
+too conservative (@Kall2008-hb) so we provide the `pep2qvalue` 
+function to convert PEPs to q-values that are directly related to FDR.
+We here compute the q-values from the PEP (`dart_PEP`) for each PSM 
+(assay 1 to 3). The function will store the results in the `rowData`, 
+we here asked to names the new column `qvalue_PSMs`.
 
-```{r computeFDR}
-scp <- computeFDR(scp,
+```{r compute_qvalues}
+scp <- pep2qvalue(scp,
                   i = 1:3,
-                  groupBy = "peptide",
                   PEP = "dart_PEP",
-                  colDataName = "peptideFDR")
+                  rowDataName = "qvalue_PSMs")
 ```
 
-Note that a new variable `peptideFDR` containing the computed FDRs is 
-added to the `rowData`. We filter the PSMs that have an associated 
-peptide FDR smaller than 1\%.
+We also allow to compute q-values at peptide or protein level rather
+than PSM. In this case, you need to supply the `groupBy` argument. 
+Suppose we want to compute the q-values at protein level, we can fetch
+the protein information stored under `protein` in the `rowData`. This 
+time, we store the q-values in a new field called `qvalue_proteins`. 
+
+```{r compute_qvalues2}
+scp <- pep2qvalue(scp,
+                  i = 1:3,
+                  PEP = "dart_PEP",
+                  groupBy = "proteins",
+                  rowDataName = "qvalue_proteins")
+```
+
+We can now filter the PSM to control, let's say, the protein FDR at 
+1\%. This can be performed using `filterFeatures` because the q-values 
+were stored in the `rowData`.
 
 ```{r filter_FDR}
 scp <- filterFeatures(scp,
-                      ~ peptideFDR < 0.01)
+                      ~ qvalue_proteins < 0.01)
 ```
 
 # Process the PSM data
