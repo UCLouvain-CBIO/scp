@@ -1,5 +1,7 @@
 # scp 1.1
 
+## scp 1.1.3
+
 ## scp 1.1.2
 
 - docs: improved the description of the `scp` data structure in the 
