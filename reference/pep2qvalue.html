@@ -6,8 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>(Deprecated) Compute the median coefficient of variation (CV) per
-cell — computeMedianCV_SCoPE2 • scp</title>
+<title>Compute q-values — pep2qvalue • scp</title>
 
 
 <!-- jquery -->
@@ -40,16 +39,11 @@ cell — computeMedianCV_SCoPE2 • scp</title>
 
 
 
-<meta property="og:title" content="(Deprecated) Compute the median coefficient of variation (CV) per
-cell — computeMedianCV_SCoPE2" />
-<meta property="og:description" content="This function was implemented using the code provide in the SCoPE2
-analysis (Specht et al. 2020). The function computes for each cell
-the median CV. The expression data is normalized twice. First,
-cell median expression is used as normalization factor, then, the
-mean for each batch and peptide. The CV is then computed for each
-protein in each cell. CV is the standard deviation divided by the
-mean expression. The CV is computed only if there are more than 5
-observations per protein per cell." />
+<meta property="og:title" content="Compute q-values — pep2qvalue" />
+<meta property="og:description" content="This function computes q-values from the posterior error
+probabilities (PEPs). The functions takes the PEPs from the given
+assay's rowData and adds a new variable to it that contains the
+computed q-values." />
 
 
 
@@ -119,24 +113,19 @@ observations per protein per cell." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>(Deprecated) Compute the median coefficient of variation (CV) per
-cell</h1>
+    <h1>Compute q-values</h1>
     <small class="dont-index">Source: <a href='https://github.com/UCLouvain-CBIO/scp/blob/master/R/compute_metrics.R'><code>R/compute_metrics.R</code></a></small>
-    <div class="hidden name"><code>computeMedianCV_SCoPE2.Rd</code></div>
+    <div class="hidden name"><code>pep2qvalue.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This function was implemented using the code provide in the SCoPE2
-analysis (Specht et al. 2020). The function computes for each cell
-the median CV. The expression data is normalized twice. First,
-cell median expression is used as normalization factor, then, the
-mean for each batch and peptide. The CV is then computed for each
-protein in each cell. CV is the standard deviation divided by the
-mean expression. The CV is computed only if there are more than 5
-observations per protein per cell.</p>
+    <p>This function computes q-values from the posterior error
+probabilities (PEPs). The functions takes the PEPs from the given
+assay's <code>rowData</code> and adds a new variable to it that contains the
+computed q-values.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>computeMedianCV_SCoPE2</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>i</span>, <span class='va'>peptideCol</span>, <span class='va'>proteinCol</span>, <span class='va'>batchCol</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>pep2qvalue</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>i</span>, <span class='va'>groupBy</span>, <span class='va'>PEP</span>, rowDataName <span class='op'>=</span> <span class='st'>"qvalue"</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -147,23 +136,28 @@ observations per protein per cell.</p>
     </tr>
     <tr>
       <th>i</th>
-      <td><p>A <code><a href='https://rdrr.io/r/base/numeric.html'>numeric()</a></code> or <code><a href='https://rdrr.io/r/base/character.html'>character()</a></code> vector indicating from which
-assays the <code>rowData</code> should be taken.</p></td>
+      <td><p>A <code><a href='https://rdrr.io/r/base/numeric.html'>numeric()</a></code> or <code><a href='https://rdrr.io/r/base/character.html'>character()</a></code> vector indicating from
+which assays the <code>rowData</code> should be taken.</p></td>
     </tr>
     <tr>
-      <th>peptideCol</th>
-      <td><p>A <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> indicating the variable name in the
-<code>rowData</code> that contains the peptide grouping.</p></td>
+      <th>groupBy</th>
+      <td><p>A <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> indicating the variable name in
+the <code>rowData</code> that contains the grouping variable, for
+instance to compute protein FDR. When <code>groupBy</code> is not missing,
+the best feature approach is used to compute the PEP per group,
+meaning that the smallest PEP is taken as the PEP of the group.</p></td>
     </tr>
     <tr>
-      <th>proteinCol</th>
-      <td><p>A <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> indicating the variable name in the
-<code>rowData</code> that contains the protein grouping.</p></td>
+      <th>PEP</th>
+      <td><p>A <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> indicating the variable names in the
+<code>rowData</code> that contains the PEPs. Since, PEPs are probabilities, the
+variable must be contained in (0, 1).</p></td>
     </tr>
     <tr>
-      <th>batchCol</th>
-      <td><p>A <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> indicating the variable name in the
-<code>colData</code> of <code>object</code> that contains the batch names.</p></td>
+      <th>rowDataName</th>
+      <td><p>A <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> giving the name of the new
+variable in the <code>colData</code> where the computed FDRs will be
+stored. The name cannot already exist in the <code>colData</code>.</p></td>
     </tr>
     </table>
 
@@ -172,23 +166,56 @@ assays the <code>rowData</code> should be taken.</p></td>
     <p>A <code>QFeatures</code> object.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>A new columns, <code>.medianCV</code>, is added to the <code>colData</code> of the assay
-<code>i</code> and contains the computed median CVs.</p>
-<p><em>Watch out</em> that <code>peptideCol</code> and <code>proteinCol</code> are feature
-variables and hence taken from the <code>rowData</code>. <code>batchCol</code> is a
-sample variable and is taken from the <code>colData</code> of the <code>QFeatures</code>
-object.</p>
+    <p>The q-value of a feature (PSM, peptide, protein) is the minimum
+FDR at which that feature will be selected upon filtering
+(Savitski et al.). On the other hand, the feature PEP is the
+probability that the feature is wrongly matched and hence can be
+seen as a local FDR (Kall et al.). While filtering on PEP is
+guaranteed to control for FDR, it is usually too conservative.
+Therefore, we provide this function to convert PEP to q-values.</p>
+<p>We compute the q-value of a feature as the average of the PEPs
+associated to PSMs that have equal or greater identification
+confidence (so smaller PEP). See Kall et al. for a visual
+interpretation.</p>
+<p>We also allow inference of q-values at higher level, for instance
+computing the protein q-values from PSM PEP. This can be performed
+by supplying the <code>groupBy</code> argument. In this case, we adopt the
+best feature strategy that will take the best (smallest) PEP for
+each group (Savitski et al.).</p>
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>Käll, Lukas, John D. Storey, Michael J. MacCoss, and William
+Stafford Noble. 2008. “Posterior Error Probabilities and False
+Discovery Rates: Two Sides of the Same Coin.” Journal of Proteome
+Research 7 (1): 40–44.</p>
+<p>Savitski, Mikhail M., Mathias Wilhelm, Hannes Hahne, Bernhard
+Kuster, and Marcus Bantscheff. 2015. “A Scalable Approach for
+Protein False Discovery Rate Estimation in Large Proteomic Data
+Sets.” Molecular &amp; Cellular Proteomics: MCP 14 (9): 2394–2404.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"scp1"</span><span class='op'>)</span>
-<span class='va'>scp1</span> <span class='op'>&lt;-</span> <span class='fu'>computeMedianCV_SCoPE2</span><span class='op'>(</span><span class='va'>scp1</span>,
-                               i <span class='op'>=</span> <span class='st'>"peptides"</span>,
-                               proteinCol <span class='op'>=</span> <span class='st'>"protein"</span>,
-                               peptideCol <span class='op'>=</span> <span class='st'>"peptide"</span>,
-                               batchCol <span class='op'>=</span> <span class='st'>"Set"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='warning'>Warning: This function is deprecated and is only present in the package for replicating the SCoPE2 analysis.</span></div><div class='input'><span class='co'>## Check results</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/hist.html'>hist</a></span><span class='op'>(</span><span class='va'>scp1</span><span class='op'>[[</span><span class='st'>"peptides"</span><span class='op'>]</span><span class='op'>]</span><span class='op'>$</span><span class='va'>.MedianCV</span><span class='op'>)</span>
-</div><div class='img'><img src='computeMedianCV_SCoPE2-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='va'>scp1</span> <span class='op'>&lt;-</span> <span class='fu'>pep2qvalue</span><span class='op'>(</span><span class='va'>scp1</span>,
+                   i <span class='op'>=</span> <span class='fl'>1</span>,
+                   groupBy <span class='op'>=</span> <span class='st'>"protein"</span>,
+                   PEP <span class='op'>=</span> <span class='st'>"dart_PEP"</span>,
+                   rowDataName <span class='op'>=</span> <span class='st'>"qvalue_protein"</span><span class='op'>)</span>
+<span class='co'>## Check results</span>
+<span class='fu'><a href='rowDataToDF.html'>rowDataToDF</a></span><span class='op'>(</span><span class='va'>scp1</span>, <span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"dart_PEP"</span>, <span class='st'>"qvalue_protein"</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; DataFrame with 195 rows and 4 columns
+#&gt;              dart_PEP qvalue_protein        .assay    .rowname
+#&gt;             &lt;numeric&gt;      &lt;numeric&gt;   &lt;character&gt; &lt;character&gt;
+#&gt; PSM116299 2.51576e-03    4.49423e-04 190321S_LC...   PSM116299
+#&gt; PSM116943 1.00000e+00    2.51635e-01 190321S_LC...   PSM116943
+#&gt; PSM117524 1.24305e-11    1.25788e-23 190321S_LC...   PSM117524
+#&gt; PSM119466 1.79900e-01    2.65869e-02 190321S_LC...   PSM119466
+#&gt; PSM119691 8.39315e-05    2.09157e-08 190321S_LC...   PSM119691
+#&gt; ...               ...            ...           ...         ...
+#&gt; PSM253842 9.00309e-04    9.92207e-15 190321S_LC...   PSM253842
+#&gt; PSM253848 5.55493e-06    9.92207e-15 190321S_LC...   PSM253848
+#&gt; PSM255286 2.53061e-02    1.48655e-07 190321S_LC...   PSM255286
+#&gt; PSM255919 5.45833e-12    3.14241e-20 190321S_LC...   PSM255919
+#&gt; PSM256061 2.21415e-05    5.09691e-12 190321S_LC...   PSM256061</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
