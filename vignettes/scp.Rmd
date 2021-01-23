@@ -353,7 +353,7 @@ time, we store the q-values in a new field called `qvalue_proteins`.
 scp <- pep2qvalue(scp,
                   i = 1:3,
                   PEP = "dart_PEP",
-                  groupBy = "proteins",
+                  groupBy = "protein",
                   rowDataName = "qvalue_proteins")
 ```
 
