@@ -66,35 +66,37 @@ test_that("computeSCR", {
                  regexp = "Pattern did not match")
 })
 
-test_that("computeFDR", {
+test_that("pep2qvalue", {
   ## Correct use
-  ## Compute FDR with scp function, then isolte the result for a single peptide
-  ## and compute manually the FDR
-  fdrFromPEP <- function(x) ## this is calc_fdr from SCoPE2
-    return((cumsum(x[order(x)]) / seq_along(x))[order(order(x))])
-  computeFDR(scp1, i = 1:3, groupBy = "peptide", PEP = "dart_PEP") %>%
-    rowDataToDF(1:3, vars = c("peptide", "dart_PEP", "FDR")) %>%
-    data.frame() %>%
-    filter(peptide == "_AQLGGPEAAK_2") ->
-    test
-  expect_identical(test$FDR, fdrFromPEP(test$dart_PEP))
-  ## Message: the PEP contains missing values
+  ## Compute q-values with scp function, then compare to the known result
+  ## Test with groupBy
+  test <- rowData(pep2qvalue(scp1, 
+                             i = 1:3, 
+                             groupBy = "protein", 
+                             PEP = "dart_PEP"))
+  expect_identical(unique(test[[1]][test[[1]]$protein == "P02545", "qvalue"]),
+                   1.257876e-23)
+  ## Test missing groupBy
+  expect_identical(rowDataToDF(pep2qvalue(scp1, i = 1:3, PEP = "dart_PEP"), 1:3, "qvalue")$qvalue, 
+                   .pep2qvalue(rowDataToDF(scp1, 1:3, "dart_PEP")$dart_PEP))
+  ## Warning: the PEP contains missing values
   rowData(scp1[[1]])$dart_PEP[1] <- NA
-  expect_message(tmp <- computeFDR(scp1, i = 1:3, groupBy = "peptide", 
+  expect_warning(tmp <- pep2qvalue(scp1, i = 1:3, groupBy = "peptide", 
                                    PEP = "dart_PEP"),
-                 regexp = "missing values")
+                 regexp = "no non-missing arguments to min")
   expect_true(is.na(rowData(tmp[[1]])$dart_PEP[1]))
-  ## Error: rowData variable not fount
-  expect_error(computeFDR(scp1, i = 1, groupBy = "foo", PEP = "dart_PEP"),
+  expect_true(all(!(is.na(rowData(tmp[[1]])$dart_PEP[-1]))))
+  ## Error: rowData variable not found
+  expect_error(pep2qvalue(scp1, i = 1, groupBy = "foo", PEP = "dart_PEP"),
                regexp = paste0("not found in:\n", names(scp1)[1]))
-  expect_error(computeFDR(scp1, i = 2, groupBy = "peptide", PEP = "foo"),
+  expect_error(pep2qvalue(scp1, i = 2, groupBy = "peptide", PEP = "foo"),
                regexp = paste0("not found in:\n", names(scp1)[2]))
   ## Error: PEP must be a numeric between 0 and 1
-  expect_error(computeFDR(scp1, i = 1, groupBy = "peptide", PEP = "Length"),
+  expect_error(pep2qvalue(scp1, i = 1, groupBy = "peptide", PEP = "Length"),
                regexp = "is not a probability")
-  ## Error: the new colData variable already exists
-  expect_error(computeFDR(scp1, i = 1, groupBy = "peptide", PEP = "Length",
-                          colDataName = "SampleType"),
+  ## Error: the new rowData variable already exists
+  expect_error(pep2qvalue(scp1, i = 1, groupBy = "peptide", PEP = "Length",
+                          rowDataName = "dart_PEP"),
                regexp = "already exists")
 })
 

@@ -63,6 +63,13 @@
     sqrt(var * nna / (nna - 1L)) / mean 
 }
 
+## Internal function: compute q-values from a vector of PEPs
+## this is calc_fdr from SCoPE2
+##  x: numeric() containing probabilities 
+.pep2qvalue <- function(x) {
+    (cumsum(x[order(x)]) / seq_along(x))[order(order(x))]
+}
+
 
 ####---- Exported functions ----####
 
@@ -143,84 +150,120 @@ computeSCR <- function(object,
     object
 }
 
-##' Compute FDR from posterior error probabilities PEP
+##' Compute q-values
 ##' 
-##' The functions takes the posterior error probabilities (PEPs) from 
-##' the given assay's `rowData` and adds a new variable to it (called 
-##' `.FDR`) that contains the computed false discovery rates (FDRs). 
+##' This function computes q-values from the posterior error 
+##' probabilities (PEPs). The functions takes the PEPs from the given
+##' assay's `rowData` and adds a new variable to it that contains the
+##' computed q-values.
 ##'
 ##' @param object A `QFeatures` object
 ##' 
 ##' @param i A `numeric()` or `character()` vector indicating from 
 ##'     which assays the `rowData` should be taken.
 ##' 
-##' @param groupBy A `character(1)` indicating the variable names in the 
-##'     `rowData` that contains the grouping variable. The FDR are usually 
-##'     computed for PSMs grouped by peptide ID.
+##' @param groupBy A `character(1)` indicating the variable name in 
+##'     the `rowData` that contains the grouping variable, for 
+##'     instance to compute protein FDR. When `groupBy` is not missing,
+##'     the best feature approach is used to compute the PEP per group,
+##'     meaning that the smallest PEP is taken as the PEP of the group. 
 ##' 
 ##' @param PEP A `character(1)` indicating the variable names in the 
 ##'     `rowData` that contains the PEPs. Since, PEPs are probabilities, the 
 ##'     variable must be contained in (0, 1).
 ##'
-##' @param colDataName A `character(1)` giving the name of the new 
+##' @param rowDataName A `character(1)` giving the name of the new 
 ##'      variable in the `colData` where the computed FDRs will be 
 ##'      stored. The name cannot already exist in the `colData`.
 ##'
 ##' @return A `QFeatures` object.
 ##' 
+##' @details 
+##' 
+##' The q-value of a feature (PSM, peptide, protein) is the minimum 
+##' FDR at which that feature will be selected upon filtering 
+##' (Savitski et al.). On the other hand, the feature PEP is the 
+##' probability that the feature is wrongly matched and hence can be 
+##' seen as a local FDR (Kall et al.). While filtering on PEP is 
+##' guaranteed to control for FDR, it is usually too conservative. 
+##' Therefore, we provide this function to convert PEP to q-values. 
+##' 
+##' We compute the q-value of a feature as the average of the PEPs 
+##' associated to PSMs that have equal or greater identification 
+##' confidence (so smaller PEP). See Kall et al. for a visual 
+##' interpretation.
+##' 
+##' We also allow inference of q-values at higher level, for instance 
+##' computing the protein q-values from PSM PEP. This can be performed 
+##' by supplying the `groupBy` argument. In this case, we adopt the 
+##' best feature strategy that will take the best (smallest) PEP for 
+##' each group (Savitski et al.).
+##' 
+##' @references 
+##' 
+##' Käll, Lukas, John D. Storey, Michael J. MacCoss, and William 
+##' Stafford Noble. 2008. “Posterior Error Probabilities and False 
+##' Discovery Rates: Two Sides of the Same Coin.” Journal of Proteome
+##' Research 7 (1): 40–44.
+##' 
+##' Savitski, Mikhail M., Mathias Wilhelm, Hannes Hahne, Bernhard 
+##' Kuster, and Marcus Bantscheff. 2015. “A Scalable Approach for 
+##' Protein False Discovery Rate Estimation in Large Proteomic Data 
+##' Sets.” Molecular & Cellular Proteomics: MCP 14 (9): 2394–2404.
+##' 
 ##' @export
 ##'
 ##' @examples
 ##' data("scp1")
-##' scp1 <- computeFDR(scp1,
+##' scp1 <- pep2qvalue(scp1,
 ##'                    i = 1,
-##'                    groupBy = "Sequence",
+##'                    groupBy = "protein",
 ##'                    PEP = "dart_PEP",
-##'                    colDataName = "peptideFDR")
+##'                    rowDataName = "qvalue_protein")
 ##' ## Check results
-##' rowDataToDF(scp1, 1, c("dart_PEP", "peptideFDR"))
+##' rowDataToDF(scp1, 1, c("dart_PEP", "qvalue_protein"))
 ##' 
-computeFDR <- function(object, 
+pep2qvalue <- function(object, 
                        i, 
                        groupBy, 
                        PEP,
-                       colDataName = "FDR") {
+                       rowDataName = "qvalue") {
     if (!inherits(object, "QFeatures"))
         stop("'object' must be a QFeatures object")
     if (is.numeric(i)) i <- names(object)[i]
-    ## Check arguments: colDataName is valid
-    if (colDataName %in% colnames(colData(object)))
-        stop("The colData name '", colDataName, "' already exists. ", 
+    ## Check arguments: rowDataName is valid
+    if (rowDataName %in% unlist(rowDataNames(object)))
+        stop("The rowData name '", rowDataName, "' already exists. ", 
              "Use another name or remove that column before running ",
              "this function.")
     
-    ## Function to compute FDRs from PEPs
-    fdrFromPEP <- function(x) ## this is calc_fdr from SCoPE2
-        return((cumsum(x[order(x)]) / seq_along(x))[order(order(x))])
     
     ## Get the PEP from all assays
-    peps <- rowDataToDF(object, i, vars = c(groupBy, PEP))
+    vars <- PEP
+    if (!missing(groupBy)) vars <- c(vars, groupBy)
+    df <- rowDataToDF(object, i, vars = vars)
     
     ## Check PEP is a probability
-    pepRange <- range(peps[, PEP], na.rm = TRUE)
+    pepRange <- range(df[, PEP], na.rm = TRUE)
     if (max(pepRange) > 1 | min(pepRange < 0))
         stop(paste0("'", PEP, "' is not a probability in (0, 1)"))
     
-    ## Report missing values
-    if (anyNA(peps[, PEP]))
-        message("The 'PEP' contains missing values. No FDR will ",
-                "be computed for missing data.")
+    ## Compute the q-values 
+    if (missing(groupBy)) {
+        df$qval <- .pep2qvalue(df[, PEP])
+    } else { ## Apply grouping if supplied
+        p <- split(df[[PEP]], df[[groupBy]])
+        p <- sapply(p, min, na.rm = TRUE)
+        qval <- .pep2qvalue(p)
+        df$qval <- unname(qval[df[[groupBy]]])
+    }
     
-    ## Compute the FDR for every peptide ID separately
-    peps <- group_by(data.frame(peps), .data[[groupBy]])
-    peps <- mutate(peps, FDR = fdrFromPEP(.data[[PEP]]))
-    
-    ## Insert the FDR inside every assay
-    pepID <- paste0(peps$.assay, peps$.rowname)
+    ## Insert the q-value inside every assay rowData
+    pepID <- paste0(df$.assay, df$.rowname)
     for (ii in i) {
         rdID <- paste0(ii, rownames(object[[ii]]))
-        .FDR <- peps[match(rdID, pepID), ]$FDR
-        rowData(object@ExperimentList@listData[[ii]])[, colDataName] <- .FDR
+        rowData(object@ExperimentList@listData[[ii]])[, rowDataName] <- 
+            df[match(rdID, pepID), ]$qval
     }
     return(object)
 }
