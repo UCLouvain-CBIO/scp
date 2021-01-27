@@ -38,66 +38,66 @@ test_that(".rowCV", {
     expect_error(.rowCV(m, group, nobs = 1), 
                  regexp = "No sd can be computed")
 })
-    
+
 
 test_that("computeSCR", {
-  ## Single assay
-  test <- computeSCR(scp1, i = 1, colDataCol = "SampleType", 
-                     samplePattern = "Reference", carrierPattern = "Carrier")
-  expect_identical(rowData(test[[1]])$.meanSCR,
-                   assay(scp1[[1]])[, 2] / assay(scp1[[1]])[, 1])
-  ## Multiple assays
-  test <- computeSCR(scp1, i = 1:2, colDataCol = "SampleType", 
-                     samplePattern = "Reference", carrierPattern = "Carrier")
-  expect_identical(rowData(test[[2]])$.meanSCR,
-                   assay(scp1[[2]])[, 2] / assay(scp1[[2]])[, 1])
-  ## Warning: multiple match for carrier
-  expect_warning(test2 <- computeSCR(scp1, i = 1:2, colDataCol = "SampleType", 
-                                     samplePattern = "Reference", carrierPattern = "Carrier|Blank"),
-                 regexp = "Multiple carriers found")
-  expect_identical(test2, test)
-  ## Error: colDataCol not fount
-  expect_error(computeSCR(scp1, i = 1:2, colDataCol = "foo", 
+    ## Single assay
+    test <- computeSCR(scp1, i = 1, colDataCol = "SampleType", 
+                       samplePattern = "Reference", carrierPattern = "Carrier")
+    expect_identical(rowData(test[[1]])$.meanSCR,
+                     assay(scp1[[1]])[, 2] / assay(scp1[[1]])[, 1])
+    ## Multiple assays
+    test <- computeSCR(scp1, i = 1:2, colDataCol = "SampleType", 
+                       samplePattern = "Reference", carrierPattern = "Carrier")
+    expect_identical(rowData(test[[2]])$.meanSCR,
+                     assay(scp1[[2]])[, 2] / assay(scp1[[2]])[, 1])
+    ## Warning: multiple match for carrier
+    expect_warning(test2 <- computeSCR(scp1, i = 1:2, colDataCol = "SampleType", 
+                                       samplePattern = "Reference", carrierPattern = "Carrier|Blank"),
+                   regexp = "Multiple carriers found")
+    expect_identical(test2, test)
+    ## Error: colDataCol not fount
+    expect_error(computeSCR(scp1, i = 1:2, colDataCol = "foo", 
                             samplePattern = "Reference", carrierPattern = "Carrier|Blank"),
                  regexp = "invalid names")
-  ## Error: pattern not fount
-  expect_error(computeSCR(scp1, i = 1:2, colDataCol = "SampleType", 
-                          samplePattern = "foo", carrierPattern = "Carrier"),
+    ## Error: pattern not fount
+    expect_error(computeSCR(scp1, i = 1:2, colDataCol = "SampleType", 
+                            samplePattern = "foo", carrierPattern = "Carrier"),
                  regexp = "Pattern did not match")
 })
 
 test_that("pep2qvalue", {
-  ## Correct use
-  ## Compute q-values with scp function, then compare to the known result
-  ## Test with groupBy
-  test <- rowData(pep2qvalue(scp1, 
-                             i = 1:3, 
-                             groupBy = "protein", 
-                             PEP = "dart_PEP"))
-  expect_identical(unique(test[[1]][test[[1]]$protein == "P02545", "qvalue"]),
-                   1.257876e-23)
-  ## Test missing groupBy
-  expect_identical(rowDataToDF(pep2qvalue(scp1, i = 1:3, PEP = "dart_PEP"), 1:3, "qvalue")$qvalue, 
-                   .pep2qvalue(rowDataToDF(scp1, 1:3, "dart_PEP")$dart_PEP))
-  ## Warning: the PEP contains missing values
-  rowData(scp1[[1]])$dart_PEP[1] <- NA
-  expect_warning(tmp <- pep2qvalue(scp1, i = 1:3, groupBy = "peptide", 
-                                   PEP = "dart_PEP"),
-                 regexp = "no non-missing arguments to min")
-  expect_true(is.na(rowData(tmp[[1]])$dart_PEP[1]))
-  expect_true(all(!(is.na(rowData(tmp[[1]])$dart_PEP[-1]))))
-  ## Error: rowData variable not found
-  expect_error(pep2qvalue(scp1, i = 1, groupBy = "foo", PEP = "dart_PEP"),
-               regexp = paste0("not found in:\n", names(scp1)[1]))
-  expect_error(pep2qvalue(scp1, i = 2, groupBy = "peptide", PEP = "foo"),
-               regexp = paste0("not found in:\n", names(scp1)[2]))
-  ## Error: PEP must be a numeric between 0 and 1
-  expect_error(pep2qvalue(scp1, i = 1, groupBy = "peptide", PEP = "Length"),
-               regexp = "is not a probability")
-  ## Error: the new rowData variable already exists
-  expect_error(pep2qvalue(scp1, i = 1, groupBy = "peptide", PEP = "Length",
-                          rowDataName = "dart_PEP"),
-               regexp = "already exists")
+    ## Correct use
+    ## Compute q-values with scp function, then compare to the known result
+    ## Test with groupBy
+    test <- rowData(pep2qvalue(scp1, 
+                               i = 1:3, 
+                               groupBy = "protein", 
+                               PEP = "dart_PEP"))
+    expect_identical(unique(test[[1]][test[[1]]$protein == "P02545", "qvalue"]),
+                     1.257876e-23)
+    ## Test missing groupBy
+    expect_identical(rowDataToDF(pep2qvalue(scp1, i = 1:3, PEP = "dart_PEP"), 1:3, "qvalue")$qvalue, 
+                     .pep2qvalue(rowDataToDF(scp1, 1:3, "dart_PEP")$dart_PEP))
+    ## Warning: the PEP contains missing values
+    rowData(scp1[[1]])$dart_PEP[1] <- NA
+    expect_warning(tmp <- pep2qvalue(scp1, i = 1:3, groupBy = "peptide", 
+                                     PEP = "dart_PEP"),
+                   regexp = "no non-missing arguments to min")
+    expect_true(is.na(rowData(tmp[[1]])$dart_PEP[1]))
+    expect_true(all(!(is.na(rowData(tmp[[1]])$dart_PEP[-1]))))
+    ## Error: rowData variable not found
+    expect_error(pep2qvalue(scp1, i = 1, groupBy = "foo", PEP = "dart_PEP"),
+                 regexp = paste0("not found in:\n", names(scp1)[1]))
+    expect_error(pep2qvalue(scp1, i = 2, groupBy = "peptide", PEP = "foo"),
+                 regexp = paste0("not found in:\n", names(scp1)[2]))
+    ## Error: PEP must be a numeric between 0 and 1
+    expect_error(pep2qvalue(scp1, i = 1, groupBy = "peptide", PEP = "Length"),
+                 regexp = "is not a probability")
+    ## Error: the new rowData variable already exists
+    expect_error(pep2qvalue(scp1, i = 1, groupBy = "peptide", PEP = "Length",
+                            rowDataName = "dart_PEP"),
+                 regexp = "already exists")
 })
 
 test_that("featureCV", {
@@ -125,7 +125,7 @@ test_that("featureCV", {
 
 test_that("medianCVperCell", {
     ## Check for single assay 
-    scpfilt <- filterFeatures(scp1, ~ !is.na(Proteins))
+    scpfilt <- expect_warning(filterFeatures(scp1, ~ !is.na(Proteins)))
     scp2 <- medianCVperCell(scpfilt, i = 1, groupBy = "Proteins")
     cvs <- colMedians(featureCV(scpfilt[[1]], group = rowData(scpfilt[[1]])$Proteins, 
                                 nobs = 5, na.rm = TRUE), na.rm = TRUE)
@@ -160,17 +160,17 @@ test_that("computeMedianCV_SCoPE2", {
                                        proteinCol = "protein", 
                                        batchCol = "Set"),
         regexp = "deprecated")
-    expect_equal(scp2[["peptides"]]$.MedianCV,
-                   c(0.645293098683498, 0.773549942815159, 0.663774239146459, 
-                     0.72830710905132, 0.778688251750191, 1.03956742480134, 
-                     0.526933183452957, 0.447329625349529, 0.346740321446223, 
-                     0.441428083348158, 0.774968411920989, 0.66756262970139,
-                     1.0564230469663, 0.714686435220506, 0.977975517652186, 
-                     1.28733510164692, 0.948691932585763, NA, 0.908961764969587, 
-                     1.07509134173885, 0.71998288423204, 0.947756691696601,
-                     0.835782730630332, 0.929717820468142, 1.0011663228458, NA, 
-                     0.808254681838227, 1.09581518003356, 1.1330059279254,
-                     1.12084088292072, 0.806942496031636, 1.19054653629395, 
-                     1.1396089190922, NA, NA, NA, NA, NA))
+    expect_equal(sort(colData(scp2)$MedianCV),
+                 sort(c(0.645293098683498, 0.773549942815159, 0.663774239146459, 
+                        0.72830710905132, 0.778688251750191, 1.03956742480134, 
+                        0.526933183452957, 0.447329625349529, 0.346740321446223, 
+                        0.441428083348158, 0.774968411920989, 0.66756262970139,
+                        1.0564230469663, 0.714686435220506, 0.977975517652186, 
+                        1.28733510164692, 0.948691932585763, NA, 0.908961764969587, 
+                        1.07509134173885, 0.71998288423204, 0.947756691696601,
+                        0.835782730630332, 0.929717820468142, 1.0011663228458, NA, 
+                        0.808254681838227, 1.09581518003356, 1.1330059279254,
+                        1.12084088292072, 0.806942496031636, 1.19054653629395, 
+                        1.1396089190922, NA, NA, NA, NA, NA)))
 })
 
