@@ -453,7 +453,7 @@ featureCV <- function(x,
 ##'                                peptideCol = "peptide",
 ##'                                batchCol = "Set")
 ##' ## Check results
-##' hist(scp1[["peptides"]]$.MedianCV)
+##' hist(scp1[["peptides"]]$MedianCV)
 ##' 
 computeMedianCV_SCoPE2 <- function(object, 
                                    i, 
