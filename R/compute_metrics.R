@@ -416,7 +416,7 @@ featureCV <- function(x,
 ##' mean expression. The CV is computed only if there are more than 5 
 ##' observations per protein per cell. 
 ##' 
-##' A new columns, `.medianCV`, is added to the `colData` of the assay 
+##' A new columns, `MedianCV`, is added to the `colData` of the assay 
 ##' `i` and contains the computed median CVs.
 ##' 
 ##' *Watch out* that `peptideCol` and `proteinCol` are feature 

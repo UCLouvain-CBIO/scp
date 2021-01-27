@@ -36,7 +36,7 @@ mean expression. The CV is computed only if there are more than 5
 observations per protein per cell.
 }
 \details{
-A new columns, \code{.medianCV}, is added to the \code{colData} of the assay
+A new columns, \code{MedianCV}, is added to the \code{colData} of the assay
 \code{i} and contains the computed median CVs.
 
 \emph{Watch out} that \code{peptideCol} and \code{proteinCol} are feature
@@ -52,6 +52,6 @@ scp1 <- computeMedianCV_SCoPE2(scp1,
                                peptideCol = "peptide",
                                batchCol = "Set")
 ## Check results
-hist(scp1[["peptides"]]$.MedianCV)
+hist(colData(scp1)$MedianCV)
 
 }
