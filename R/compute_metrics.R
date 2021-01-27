@@ -490,8 +490,6 @@ computeMedianCV_SCoPE2 <- function(object,
         select(.data$colname, .data$.MedianCV) %>%
         unique ->
         CVs
-    object@ExperimentList@listData[[i]]$.MedianCV <- NA
-    colData(object@ExperimentList@listData[[i]])[CVs$colname, ".MedianCV"] <- 
-        CVs$.MedianCV
+    colData(object)[CVs$colname, "MedianCV"] <- CVs$.MedianCV
     return(object)
 }
