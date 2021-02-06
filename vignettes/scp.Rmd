@@ -14,12 +14,12 @@ bibliography: scp.bib
 date: "`r BiocStyle::doc_date()`"
 package: "`r BiocStyle::pkg_ver('scp')`"
 vignette: >
-%\VignetteIndexEntry{Single Cell Proteomics data processing and analysis}
+  %\VignetteIndexEntry{Single Cell Proteomics data processing and analysis}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-  ---
+ ---
   
-  ```{r setup, include = FALSE}
+ ```{r setup, include = FALSE}
 knitr::opts_chunk$set(
 collapse = TRUE,
 comment = "#>",
