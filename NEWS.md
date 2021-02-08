@@ -1,6 +1,16 @@
 # scp 1.1
 
+## scp 1.1.5
+
 ## scp 1.1.4
+
+- fix: removed bug in vignette header
+  <2021-02-06>
+- data: update the example data with the latest release of SCoPE2
+  <2021-02-06>
+- feat: added `removeEmptyCol` argument in `readSCP` to automatically
+  remove columns that contain only NA's
+  <2021-02-06>
 
 ## scp 1.1.3
 
