@@ -3,14 +3,14 @@ data("sampleAnnotation")
 
 
 test_that("readSCP: correct use", {
-    ## Multiple batches 
+    ## Multiple batches
     scp <- readSCP(mqScpData, 
                    sampleAnnotation, 
                    batchCol = "Set", 
                    channelCol = "Channel")
-    expect_identical(dims(scp)[, unique(mqScpData$Set)],
-                     matrix(c(334L, 433L, 109L, 321L, rep(16L, 4)), byrow = TRUE, nrow = 2, 
-                            dimnames = list(NULL, c("190222S_LCA9_X_FP94BM", "190321S_LCA10_X_FP97AG", "190321S_LCA10_X_FP97_blank_01", "190914S_LCB3_X_16plex_Set_21"))))
+    expect_identical(dims(scp)[, c("190222S_LCA9_X_FP94BM", "190321S_LCA10_X_FP97_blank_01", "190321S_LCA10_X_FP97AG", "190914S_LCB3_X_16plex_Set_21")],
+                     matrix(c(290L, 109L, 375L, 323L, rep(16L, 4)), byrow = TRUE, nrow = 2, 
+                            dimnames = list(NULL, c("190222S_LCA9_X_FP94BM", "190321S_LCA10_X_FP97_blank_01", "190321S_LCA10_X_FP97AG", "190914S_LCB3_X_16plex_Set_21"))))
     ## Note: there is something weird in this test... When executing the code locally, 
     ## the assays in `scp` are ordered alphabetically, but when runned by 
     ##  `devtools::test()`, the assays are ordered as they appear in `mqScpData`
@@ -30,8 +30,18 @@ test_that("readSCP: correct use", {
                    sampleAnnotation, batchCol = "Set", 
                    channelCol = "Channel")
     expect_identical(dims(scp),
-                     matrix(c(334L, 16L), nrow = 2, 
+                     matrix(c(290L, 16L), nrow = 2, 
                             dimnames = list(NULL, "190222S_LCA9_X_FP94BM")))
+    ## Test remove empty columns
+    scp <- readSCP(mqScpData, 
+                   sampleAnnotation, 
+                   batchCol = "Set", 
+                   channelCol = "Channel",
+                   removeEmptyCols = TRUE)
+    expect_identical(dims(scp)[, c("190222S_LCA9_X_FP94BM", "190321S_LCA10_X_FP97_blank_01", "190321S_LCA10_X_FP97AG", "190914S_LCB3_X_16plex_Set_21")],
+                     matrix(c(290L, 109L, 375L, 323L, rep(11L, 3), 16L),
+                            byrow = TRUE, nrow = 2, 
+                            dimnames = list(NULL, c("190222S_LCA9_X_FP94BM", "190321S_LCA10_X_FP97_blank_01", "190321S_LCA10_X_FP97AG", "190914S_LCB3_X_16plex_Set_21"))))
     
 })
 
@@ -44,7 +54,7 @@ test_that("readSCP: warnings", {
                                 channelCol = "Channel"),
                  regexp = "Missing metadata. The features are removed")
   expect_identical(dims(scp),
-                   matrix(c(334L, 16L), nrow = 2, 
+                   matrix(c(290L, 16L), nrow = 2, 
                           dimnames = list(NULL, "190222S_LCA9_X_FP94BM")))
   
 })

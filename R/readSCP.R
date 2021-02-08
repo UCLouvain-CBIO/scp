@@ -36,7 +36,11 @@
 ##' 
 ##' @param channelCol A `numeric(1)` or `character(1)` pointing to the
 ##'     column of `colData` that contains the column names of the
-##'     quantitive data in `featureData` (see Example).
+##'     quantitative data in `featureData` (see Example).
+##' 
+##' @param removeEmptyCols A `logical(1)`. If true, the function will
+##'     remove in each batch the columns that contain only missing 
+##'     values.
 ##' 
 ##' @param verbose A `logical(1)` indicating whether the progress of
 ##'     the data reading and formatting should be printed to the
@@ -84,6 +88,7 @@ readSCP <- function(featureData,
                     colData, 
                     batchCol, 
                     channelCol, 
+                    removeEmptyCols = FALSE,
                     verbose = TRUE,
                     ...) {
     colData <- as.data.frame(colData)
@@ -108,11 +113,18 @@ readSCP <- function(featureData,
     if (verbose) message(paste0("Splitting data based on '", batchCol, "'"))
     scp <- .splitSCE(scp, f = batchCol)
     
-    ## Add unique sample identifiers
-    if (verbose) message(paste0("Formatting sample metadata (colData)"))
+    ## Clean each element in the data list
     for (i in seq_along(scp)) {
+        ## Remove the columns that are all NA
+        if (removeEmptyCols) {
+            sel <- colSums(is.na(assay(scp[[i]]))) != nrow(scp[[i]])
+            scp[[i]] <- scp[[i]][, sel]
+        } 
+        ## Add unique sample identifiers
         colnames(scp[[i]]) <- paste0(names(scp)[[i]], "_", colnames(scp[[i]]))
     }
+    
+    if (verbose) message(paste0("Formatting sample metadata (colData)"))
     ## Create the colData 
     cd <- DataFrame(row.names = unlist(lapply(scp, colnames)))
     rownames(colData) <- paste0(colData[, batchCol], "_", 
