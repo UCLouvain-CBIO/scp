@@ -5,7 +5,15 @@
 \title{Read single-cell proteomics data as a QFeatures object from
 tabular data and metadata}
 \usage{
-readSCP(featureData, colData, batchCol, channelCol, verbose = TRUE, ...)
+readSCP(
+  featureData,
+  colData,
+  batchCol,
+  channelCol,
+  removeEmptyCols = FALSE,
+  verbose = TRUE,
+  ...
+)
 }
 \arguments{
 \item{featureData}{File or object holding the quantitative
@@ -32,7 +40,11 @@ identical (if you supply a \code{character}) or have the same index
 
 \item{channelCol}{A \code{numeric(1)} or \code{character(1)} pointing to the
 column of \code{colData} that contains the column names of the
-quantitive data in \code{featureData} (see Example).}
+quantitative data in \code{featureData} (see Example).}
+
+\item{removeEmptyCols}{A \code{logical(1)}. If true, the function will
+remove in each batch the columns that contain only missing
+values.}
 
 \item{verbose}{A \code{logical(1)} indicating whether the progress of
 the data reading and formatting should be printed to the

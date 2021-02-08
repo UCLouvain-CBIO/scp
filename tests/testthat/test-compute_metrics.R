@@ -74,8 +74,8 @@ test_that("pep2qvalue", {
                                i = 1:3, 
                                groupBy = "protein", 
                                PEP = "dart_PEP"))
-    expect_identical(unique(test[[1]][test[[1]]$protein == "P02545", "qvalue"]),
-                     1.257876e-23)
+    expect_equal(unique(test[[1]][test[[1]]$protein == "P61981", "qvalue"]),
+                 3.104949e-17)
     ## Test missing groupBy
     expect_identical(rowDataToDF(pep2qvalue(scp1, i = 1:3, PEP = "dart_PEP"), 1:3, "qvalue")$qvalue, 
                      .pep2qvalue(rowDataToDF(scp1, 1:3, "dart_PEP")$dart_PEP))
@@ -125,7 +125,7 @@ test_that("featureCV", {
 
 test_that("medianCVperCell", {
     ## Check for single assay 
-    scpfilt <- expect_warning(filterFeatures(scp1, ~ !is.na(Proteins)))
+    scpfilt <- filterFeatures(scp1, ~ !is.na(Proteins))
     scp2 <- medianCVperCell(scpfilt, i = 1, groupBy = "Proteins")
     cvs <- colMedians(featureCV(scpfilt[[1]], group = rowData(scpfilt[[1]])$Proteins, 
                                 nobs = 5, na.rm = TRUE), na.rm = TRUE)
@@ -160,17 +160,18 @@ test_that("computeMedianCV_SCoPE2", {
                                        proteinCol = "protein", 
                                        batchCol = "Set"),
         regexp = "deprecated")
-    expect_equal(sort(colData(scp2)$MedianCV),
-                 sort(c(0.645293098683498, 0.773549942815159, 0.663774239146459, 
-                        0.72830710905132, 0.778688251750191, 1.03956742480134, 
-                        0.526933183452957, 0.447329625349529, 0.346740321446223, 
-                        0.441428083348158, 0.774968411920989, 0.66756262970139,
-                        1.0564230469663, 0.714686435220506, 0.977975517652186, 
-                        1.28733510164692, 0.948691932585763, NA, 0.908961764969587, 
-                        1.07509134173885, 0.71998288423204, 0.947756691696601,
-                        0.835782730630332, 0.929717820468142, 1.0011663228458, NA, 
-                        0.808254681838227, 1.09581518003356, 1.1330059279254,
-                        1.12084088292072, 0.806942496031636, 1.19054653629395, 
-                        1.1396089190922, NA, NA, NA, NA, NA)))
+    expect_equal(colData(scp2)$MedianCV,
+                 c(1.10034826865377, 1.34292653047682, 0.802431300019918,
+                        0.931471645930315, 2.17651910606252, 0.90434499727074,
+                        NA, 0.981190810088441, 1.28138119235789, 1.15947451217436,
+                        0.914509440596025, 0.375598492225059, 0.641998310910338,
+                        0.470882074819397, 0.333988503065803, 0.56147121954162,
+                        0.55313862954806, 0.787341381739554, 0.317014929730329,
+                        0.465499300678582, 0.314786643305529, 0.877497947283059,
+                        1.88014194431252, 1.89939203158631, 1.8542062892624, NA,
+                        1.69389065225437, 1.81167597852689, 2.08036674063217, 
+                        1.67767072288498, 1.6954832360288, 1.85774199662228, 
+                        2.52324975160365, 1.8700592472943, 1.84889503513768, 
+                        1.77738360421323, 1.77727843932392, 1.78443660057601))
 })
 
