@@ -78,7 +78,7 @@ SingleCellExperiment objects." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.4</span>
       </span>
     </div>
 
@@ -126,7 +126,15 @@ spreadsheet or a <code>data.frame</code> into a QFeatures object containing
 SingleCellExperiment objects.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>readSCP</span><span class='op'>(</span><span class='va'>featureData</span>, <span class='va'>colData</span>, <span class='va'>batchCol</span>, <span class='va'>channelCol</span>, verbose <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='va'>...</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>readSCP</span><span class='op'>(</span>
+  <span class='va'>featureData</span>,
+  <span class='va'>colData</span>,
+  <span class='va'>batchCol</span>,
+  <span class='va'>channelCol</span>,
+  removeEmptyCols <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  verbose <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  <span class='va'>...</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -163,7 +171,13 @@ identical (if you supply a <code>character</code>) or have the same index
       <th>channelCol</th>
       <td><p>A <code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> or <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> pointing to the
 column of <code>colData</code> that contains the column names of the
-quantitive data in <code>featureData</code> (see Example).</p></td>
+quantitative data in <code>featureData</code> (see Example).</p></td>
+    </tr>
+    <tr>
+      <th>removeEmptyCols</th>
+      <td><p>A <code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code>. If true, the function will
+remove in each batch the columns that contain only missing
+values.</p></td>
     </tr>
     <tr>
       <th>verbose</th>
@@ -208,10 +222,10 @@ are forbidden in the <code>rowData</code>. Avoid using the following names:
         batchCol <span class='op'>=</span> <span class='st'>"Set"</span>,
         channelCol <span class='op'>=</span> <span class='st'>"Channel"</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'>Loading data as a 'SingleCellExperiment' object</span></div><div class='output co'>#&gt; <span class='message'>Splitting data based on 'Set'</span></div><div class='output co'>#&gt; <span class='message'>Formatting sample metadata (colData)</span></div><div class='output co'>#&gt; <span class='message'>Formatting data as a 'QFeatures' object</span></div><div class='output co'>#&gt; An instance of class QFeatures containing 4 assays:
-#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 334 rows and 16 columns 
+#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 290 rows and 16 columns 
 #&gt;  [2] 190321S_LCA10_X_FP97_blank_01: SingleCellExperiment with 109 rows and 16 columns 
-#&gt;  [3] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 433 rows and 16 columns 
-#&gt;  [4] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 321 rows and 16 columns </div><div class='input'>
+#&gt;  [3] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 375 rows and 16 columns 
+#&gt;  [4] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 323 rows and 16 columns </div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
