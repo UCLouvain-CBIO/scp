@@ -9,11 +9,12 @@ library(scp)
 library(scpdata)
 library(tidyverse)
 library(QFeatures)
-data("specht2019v2")
+
+scp1 <- specht2019v3()
 
 ## Randomly sample 1 SCoPE2 set from each possible combination of batch variables
 set.seed(1000)
-specht2019v2[, , 1:177] %>%
+scp1[, , 1:177] %>%
   colData %>%
   data.frame %>%
   filter(lcbatch %in% c("LCA9", "LCA10", "LCB3")) %>%
@@ -21,7 +22,7 @@ specht2019v2[, , 1:177] %>%
   sample_n(1) %>%
   pull(Set) ->
   sampledRuns
-scp1 <- specht2019v2[, , sampledRuns]
+scp1 <- scp1[, , sampledRuns]
 
 ## Sample 100 proteins from each run
 set.seed(1000)
