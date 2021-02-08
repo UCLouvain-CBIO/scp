@@ -5,7 +5,7 @@
 \alias{mqScpData}
 \title{Example MaxQuant/SCoPE2 output}
 \format{
-An object of class \code{data.frame} with 1197 rows and 139 columns.
+An object of class \code{data.frame} with 1097 rows and 149 columns.
 }
 \usage{
 data("mqScpData")
