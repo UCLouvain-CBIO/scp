@@ -17,9 +17,9 @@ vignette: >
   %\VignetteIndexEntry{Single Cell Proteomics data processing and analysis}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
- ---
+---
   
- ```{r setup, include = FALSE}
+```{r setup, include = FALSE}
 knitr::opts_chunk$set(
 collapse = TRUE,
 comment = "#>",
