@@ -94,10 +94,14 @@
 ##' @param carrierPattern A `character(1)` pattern that matches the
 ##'     carrier encoding in `colDataCol`. Only one match per assay is
 ##'     allowed, otherwise only the first match is taken
-##'
+##'     
+##' @param rowDataName A `character(1)` giving the name of the new 
+##'      variable in the `rowData` where the computed SCR will be 
+##'      stored. The name cannot already exist in any of the assay
+##'      `rowData`.
+##'     
 ##' @return A `QFeatures` object for which the `rowData` of the given
-##'     assay(s) is augmented with the mean SCR (`.meanSCR`
-##'     variable). 
+##'     assay(s) is augmented with the mean SCR. 
 ##'
 ##' @export
 ##'
@@ -107,20 +111,26 @@
 ##'                    i = 1,
 ##'                    colDataCol = "SampleType",
 ##'                    carrierPattern = "Carrier",
-##'                    samplePattern = "Blank|Macrophage|Monocyte")
+##'                    samplePattern = "Blank|Macrophage|Monocyte",
+##'                    rowDataName = "MeanSCR")
 ##' ## Check results
-##' rowDataToDF(scp1, 1, ".meanSCR")
+##' rowDataToDF(scp1, 1, "MeanSCR")
 ##' 
 computeSCR <- function(object, 
                        i, 
                        colDataCol, 
                        samplePattern, 
-                       carrierPattern) {
+                       carrierPattern,
+                       rowDataName = "MeanSCR") {
     if (!inherits(object, "QFeatures"))
         stop("'object' must be a QFeatures object")
     if (is.numeric(samplePattern)) 
         warning("The pattern is numeric. This is only allowed for replicating ",
                 "the SCoPE2 analysis and will later get defunct.")
+    if (any(unlist(rowDataNames(object)[i]) == rowDataName)) 
+        stop("The rowData name '", rowDataName, "' already exists. ", 
+             "Use another name or remove that column before running ",
+             "this function.")
     
     ## Iterate over the different assay indices
     for (ii in i) {
@@ -143,9 +153,9 @@ computeSCR <- function(object,
         carrier <- assay(object[[ii]])[, carrIdx]
         ratio <- assay(object[[ii]])[, sampIdx, drop = FALSE] / carrier
         ## Compute mean sample to carrier ratios
-        rowData(object@ExperimentList@listData[[ii]])$.meanSCR <- 
+        rowData(object@ExperimentList@listData[[ii]])[, rowDataName] <- 
             rowMeans(ratio, na.rm = TRUE)
-        ## more efficient than rowData(object[[ii]])$.meanSCR <-  ...
+        ## more efficient than rowData(object[[ii]])[, rowDataName] <-  ...
     }
     object
 }
@@ -173,8 +183,9 @@ computeSCR <- function(object,
 ##'     variable must be contained in (0, 1).
 ##'
 ##' @param rowDataName A `character(1)` giving the name of the new 
-##'      variable in the `colData` where the computed FDRs will be 
-##'      stored. The name cannot already exist in the `colData`.
+##'      variable in the `rowData` where the computed FDRs will be 
+##'      stored. The name cannot already exist in any of the assay
+##'      `rowData`.
 ##'
 ##' @return A `QFeatures` object.
 ##' 
@@ -232,7 +243,7 @@ pep2qvalue <- function(object,
         stop("'object' must be a QFeatures object")
     if (is.numeric(i)) i <- names(object)[i]
     ## Check arguments: rowDataName is valid
-    if (rowDataName %in% unlist(rowDataNames(object)))
+    if (rowDataName %in% unlist(rowDataNames(object)[i]))
         stop("The rowData name '", rowDataName, "' already exists. ", 
              "Use another name or remove that column before running ",
              "this function.")
