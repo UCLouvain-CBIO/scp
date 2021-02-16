@@ -23,8 +23,9 @@ meaning that the smallest PEP is taken as the PEP of the group.}
 variable must be contained in (0, 1).}
 
 \item{rowDataName}{A \code{character(1)} giving the name of the new
-variable in the \code{colData} where the computed FDRs will be
-stored. The name cannot already exist in the \code{colData}.}
+variable in the \code{rowData} where the computed FDRs will be
+stored. The name cannot already exist in any of the assay
+\code{rowData}.}
 }
 \value{
 A \code{QFeatures} object.

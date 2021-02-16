@@ -4,7 +4,14 @@
 \alias{computeSCR}
 \title{Compute the sample over carrier ratio (SCR)}
 \usage{
-computeSCR(object, i, colDataCol, samplePattern, carrierPattern)
+computeSCR(
+  object,
+  i,
+  colDataCol,
+  samplePattern,
+  carrierPattern,
+  rowDataName = "MeanSCR"
+)
 }
 \arguments{
 \item{object}{A \code{QFeatures} object.}
@@ -21,11 +28,15 @@ sample encoding in \code{colDataCol}.}
 \item{carrierPattern}{A \code{character(1)} pattern that matches the
 carrier encoding in \code{colDataCol}. Only one match per assay is
 allowed, otherwise only the first match is taken}
+
+\item{rowDataName}{A \code{character(1)} giving the name of the new
+variable in the \code{rowData} where the computed SCR will be
+stored. The name cannot already exist in any of the assay
+\code{rowData}.}
 }
 \value{
 A \code{QFeatures} object for which the \code{rowData} of the given
-assay(s) is augmented with the mean SCR (\code{.meanSCR}
-variable).
+assay(s) is augmented with the mean SCR.
 }
 \description{
 The function computes the ratio of the intensities of sample
@@ -38,8 +49,9 @@ scp1 <- computeSCR(scp1,
                    i = 1,
                    colDataCol = "SampleType",
                    carrierPattern = "Carrier",
-                   samplePattern = "Blank|Macrophage|Monocyte")
+                   samplePattern = "Blank|Macrophage|Monocyte",
+                   rowDataName = "MeanSCR")
 ## Check results
-rowDataToDF(scp1, 1, ".meanSCR")
+rowDataToDF(scp1, 1, "MeanSCR")
 
 }

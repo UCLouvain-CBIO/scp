@@ -44,12 +44,12 @@ test_that("computeSCR", {
     ## Single assay
     test <- computeSCR(scp1, i = 1, colDataCol = "SampleType", 
                        samplePattern = "Reference", carrierPattern = "Carrier")
-    expect_identical(rowData(test[[1]])$.meanSCR,
+    expect_identical(rowData(test[[1]])$MeanSCR,
                      assay(scp1[[1]])[, 2] / assay(scp1[[1]])[, 1])
     ## Multiple assays
     test <- computeSCR(scp1, i = 1:2, colDataCol = "SampleType", 
                        samplePattern = "Reference", carrierPattern = "Carrier")
-    expect_identical(rowData(test[[2]])$.meanSCR,
+    expect_identical(rowData(test[[2]])$MeanSCR,
                      assay(scp1[[2]])[, 2] / assay(scp1[[2]])[, 1])
     ## Warning: multiple match for carrier
     expect_warning(test2 <- computeSCR(scp1, i = 1:2, colDataCol = "SampleType", 
@@ -64,6 +64,11 @@ test_that("computeSCR", {
     expect_error(computeSCR(scp1, i = 1:2, colDataCol = "SampleType", 
                             samplePattern = "foo", carrierPattern = "Carrier"),
                  regexp = "Pattern did not match")
+    ## Error: the new rowData variable already exists
+    expect_error(computeSCR(scp1, i = 1:2, colDataCol = "SampleType", 
+                            samplePattern = "Reference", carrierPattern = "Carrier",
+                            rowDataName = "dart_PEP"),
+                 regexp = "already exists")
 })
 
 test_that("pep2qvalue", {
