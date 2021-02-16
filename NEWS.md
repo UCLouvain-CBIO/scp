@@ -2,6 +2,9 @@
 
 ## scp 1.1.5
 
+- feat: added a `rowDataName` argument to `computeSCR`
+  <2021-02-08>
+
 ## scp 1.1.4
 
 - fix: removed bug in vignette header
@@ -88,39 +91,3 @@ packages
 ## scp 0.99.0
 
 - Bioconductor submission
-
-# scp 0.1
-
-## scp 0.1.3
-
-- refactor: renamed the `groupCol` to `groupBy` and `pepCol` to `PEP`
-  in `computeFDR`.
-  <2020-12-08>
-- refactor: renamed `computeMedianCV` to `computeMedianCV_SCoPE2` 
-  and deprecated the function. The function will be preserved for 
-  backward compatibility with the replication of the SCoPE2 analysis
-  (Specht et al. 2020). Instead, a new function is implemented and 
-  called `medianCVperCell`. See 
-  [issue#7](https://github.com/UCLouvain-CBIO/scp/issues/7) for more 
-  information
-  <2020-12-07>
-
-## scp 0.1.2
-
-- deprecated: removed the `transferColDataToAssay`. You should better 
-  use the `getWithColData` function from `MultiAssayExperiment`.
-  <2020-12-01>
-
-## scp 0.1.1
-
-- refactor: renamed all `obj` arguments by `object`
-  <2020-12-01>
-- feat: new function `normalizeSCP` that allow normalizing an assay in a 
-  `QFeatures` object that contains `SingleCellExperiment` objects
-  <2020-11-30>
-
-## scp 0.1.0
-
-- `scp` package acceptance on Bioconductor!!
-  <2020-10-15 Thu>
-
