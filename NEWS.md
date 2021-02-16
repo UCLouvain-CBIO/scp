@@ -2,6 +2,7 @@
 
 ## scp 1.1.5
 
+- docs: improved vignette <2021-02-16>
 - feat: added a `rowDataName` argument to `computeSCR`
   <2021-02-08>
 
