@@ -60,9 +60,15 @@ feature. The ratios are averaged within the assay." />
 
 
 
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -123,7 +129,14 @@ channels over the intentisty of the carrier channel for each
 feature. The ratios are averaged within the assay.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>computeSCR</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>i</span>, <span class='va'>colDataCol</span>, <span class='va'>samplePattern</span>, <span class='va'>carrierPattern</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>computeSCR</span><span class='op'>(</span>
+  <span class='va'>object</span>,
+  <span class='va'>i</span>,
+  <span class='va'>colDataCol</span>,
+  <span class='va'>samplePattern</span>,
+  <span class='va'>carrierPattern</span>,
+  rowDataName <span class='op'>=</span> <span class='st'>"MeanSCR"</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -153,13 +166,19 @@ sample encoding in <code>colDataCol</code>.</p></td>
 carrier encoding in <code>colDataCol</code>. Only one match per assay is
 allowed, otherwise only the first match is taken</p></td>
     </tr>
+    <tr>
+      <th>rowDataName</th>
+      <td><p>A <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> giving the name of the new
+variable in the <code>rowData</code> where the computed SCR will be
+stored. The name cannot already exist in any of the assay
+<code>rowData</code>.</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A <code>QFeatures</code> object for which the <code>rowData</code> of the given
-assay(s) is augmented with the mean SCR (<code>.meanSCR</code>
-variable).</p>
+assay(s) is augmented with the mean SCR.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"scp1"</span><span class='op'>)</span>
@@ -167,11 +186,12 @@ variable).</p>
                    i <span class='op'>=</span> <span class='fl'>1</span>,
                    colDataCol <span class='op'>=</span> <span class='st'>"SampleType"</span>,
                    carrierPattern <span class='op'>=</span> <span class='st'>"Carrier"</span>,
-                   samplePattern <span class='op'>=</span> <span class='st'>"Blank|Macrophage|Monocyte"</span><span class='op'>)</span>
+                   samplePattern <span class='op'>=</span> <span class='st'>"Blank|Macrophage|Monocyte"</span>,
+                   rowDataName <span class='op'>=</span> <span class='st'>"MeanSCR"</span><span class='op'>)</span>
 <span class='co'>## Check results</span>
-<span class='fu'><a href='rowDataToDF.html'>rowDataToDF</a></span><span class='op'>(</span><span class='va'>scp1</span>, <span class='fl'>1</span>, <span class='st'>".meanSCR"</span><span class='op'>)</span>
+<span class='fu'><a href='rowDataToDF.html'>rowDataToDF</a></span><span class='op'>(</span><span class='va'>scp1</span>, <span class='fl'>1</span>, <span class='st'>"MeanSCR"</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; DataFrame with 166 rows and 3 columns
-#&gt;             .meanSCR        .assay    .rowname
+#&gt;              MeanSCR        .assay    .rowname
 #&gt;            &lt;numeric&gt;   &lt;character&gt; &lt;character&gt;
 #&gt; PSM3773    0.0155105 190321S_LC...     PSM3773
 #&gt; PSM9078    0.0174443 190321S_LC...     PSM9078
@@ -208,6 +228,8 @@ variable).</p>
 
   
 
+
+  
 
   </body>
 </html>

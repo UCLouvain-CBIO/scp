@@ -57,9 +57,15 @@
 
 
 
+  
+
+  
+
   </head>
 
   <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-news">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -119,6 +125,9 @@
 <div id="scp-115" class="section level2">
 <h2 class="hasAnchor">
 <a href="#scp-115" class="anchor"></a>scp 1.1.5</h2>
+<ul>
+<li>feat: added a <code>rowDataName</code> argument to <code>computeSCR</code> &lt;2021-02-08&gt;</li>
+</ul>
 </div>
 <div id="scp-114" class="section level2">
 <h2 class="hasAnchor">
@@ -217,41 +226,6 @@
 </ul>
 </div>
 </div>
-    <div id="scp-01" class="section level1">
-<h1 class="page-header" data-toc-text="0.1">
-<a href="#scp-01" class="anchor"></a>scp 0.1</h1>
-<div id="scp-013" class="section level2">
-<h2 class="hasAnchor">
-<a href="#scp-013" class="anchor"></a>scp 0.1.3</h2>
-<ul>
-<li>refactor: renamed the <code>groupCol</code> to <code>groupBy</code> and <code>pepCol</code> to <code>PEP</code> in <code>computeFDR</code>. &lt;2020-12-08&gt;</li>
-<li>refactor: renamed <code>computeMedianCV</code> to <code>computeMedianCV_SCoPE2</code> and deprecated the function. The function will be preserved for backward compatibility with the replication of the SCoPE2 analysis (Specht et al. 2020). Instead, a new function is implemented and called <code>medianCVperCell</code>. See <a href="https://github.com/UCLouvain-CBIO/scp/issues/7">issue<a href='https://github.com/UCLouvain-CBIO/scp/issues/7'>#7</a></a> for more information &lt;2020-12-07&gt;</li>
-</ul>
-</div>
-<div id="scp-012" class="section level2">
-<h2 class="hasAnchor">
-<a href="#scp-012" class="anchor"></a>scp 0.1.2</h2>
-<ul>
-<li>deprecated: removed the <code>transferColDataToAssay</code>. You should better use the <code>getWithColData</code> function from <code>MultiAssayExperiment</code>. &lt;2020-12-01&gt;</li>
-</ul>
-</div>
-<div id="scp-011" class="section level2">
-<h2 class="hasAnchor">
-<a href="#scp-011" class="anchor"></a>scp 0.1.1</h2>
-<ul>
-<li>refactor: renamed all <code>obj</code> arguments by <code>object</code> &lt;2020-12-01&gt;</li>
-<li>feat: new function <code>normalizeSCP</code> that allow normalizing an assay in a <code>QFeatures</code> object that contains <code>SingleCellExperiment</code> objects &lt;2020-11-30&gt;</li>
-</ul>
-</div>
-<div id="scp-010" class="section level2">
-<h2 class="hasAnchor">
-<a href="#scp-010" class="anchor"></a>scp 0.1.0</h2>
-<ul>
-<li>
-<code>scp</code> package acceptance on Bioconductor!! &lt;2020-10-15 Thu&gt;</li>
-</ul>
-</div>
-</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -277,6 +251,8 @@
 
   
 
+
+  
 
   </body>
 </html>
