@@ -73,7 +73,7 @@
                         <h4 data-toc-skip class="author">Laurent Gatto</h4>
                                     <h4 data-toc-skip class="author">Christophe Vanderaa</h4>
                         
-            <h4 data-toc-skip class="date">16 February 2021</h4>
+            <h4 data-toc-skip class="date">17 February 2021</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/master/vignettes/scp.Rmd"><code>vignettes/scp.Rmd</code></a></small>
       <div class="hidden name"><code>scp.Rmd</code></div>
@@ -376,11 +376,11 @@
     <span class="va">data.frame</span> <span class="op">%&gt;%</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">MeanSCR</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.02</span>, <span class="fl">0.1</span><span class="op">)</span>,
+    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_vline</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="fl">200</span>, <span class="fl">0.1</span><span class="op">)</span>,
                lty <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_log10</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><img src="scp_files/figure-html/plot_SCR-1.png" width="700"></p>
-<p>Most values are close to 0.02 (dashed line). This is expected because the experimental ratio between single cells and the carrier is 1/200. There are a few PSMs that stand out of the distribution and have a much higher signal than expected, indicating something wrong happened during the quantification of those PSMs. We therefore filter out PSMs with an average SCR higher than 0.1 (solide line). This is again easily performed using the <code>filterFeatures</code> functions.</p>
+<p>The expected ratio between single cells and the carrier is 1/200 (dashed line). We can see that the distribution mode is slightly shifted towards higher ratios with a mode around 0.01. However, there are a few PSMs that stand out of the distribution and have a much higher signal than expected, indicating something wrong happened during the quantification of those PSMs. We therefore filter out PSMs with an average SCR higher than 0.1 (solide line). This is again easily performed using the <code>filterFeatures</code> functions.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">scp</span> <span class="op">&lt;-</span> <span class="fu">filterFeatures</span><span class="op">(</span><span class="va">scp</span>,
                       <span class="op">~</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">MeanSCR</span><span class="op">)</span> <span class="op">&amp;</span>
