@@ -230,7 +230,7 @@ readSingleCellExperiment <- function(table,
     ## Check that f is a factor
     if (is.character(f)) {
       if (length(f) != 1) 
-          stop("Character must be of lenght one.")
+          stop("'f' must be of lenght one")
       if (f %in% colnames(rowData(x))) {
           f <- rowData(x)[, f]
       }
@@ -238,7 +238,7 @@ readSingleCellExperiment <- function(table,
           f <- colData(x)[, f]
       }
       else {
-          stop(f, " not found in any feature/phenodata variables.")
+          stop("'", f, "' not found in rowData or colData")
       }
       if (!is.factor(f)) 
           f <- factor(f)
