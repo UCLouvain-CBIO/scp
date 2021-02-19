@@ -1,6 +1,28 @@
 data("mqScpData")
 data("sampleAnnotation")
 
+test_that(".splitSCE", {
+    m <- matrix(1:100, ncol = 10,
+                dimnames = list(paste0("row", 1:10),
+                                paste0("col", 1:10)))
+    sce <- SingleCellExperiment(assay = m, 
+                                rowData = DataFrame(rowDataCol = 1:nrow(m)%%3),
+                                colData = DataFrame(colDataCol = 1:ncol(m)%%5))
+    ## Split by row
+    expect_identical(length(.splitSCE(sce, "rowDataCol")), 3L)
+    ## Split by col
+    expect_identical(length(.splitSCE(sce, "colDataCol")), 5L)
+    ## Error: variable not found
+    expect_error(.splitSCE(sce, "foo"),
+                 regexp = "not found")
+    ## Error: cannot split using more than 1 variable
+    expect_error(.splitSCE(sce, c("Set", "protein")),
+             regexp = "must be of lenght one")
+    ## Error: factor is too short
+    expect_error(.splitSCE(sce, factor(1:3)),
+                 regexp = "not compatible with dim")
+})
+
 
 test_that("readSCP: correct use", {
     ## Multiple batches
