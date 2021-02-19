@@ -2,6 +2,12 @@
 
 ## scp 1.1.5
 
+- deprecation: thanks to the new normalization method in `medianCVperCell`, 
+  'computeMedianCV_SCoPE2' is now deprecated and should no longer be 
+  used. <2021-02-19>
+- feat: added a new normalization method to `medianCVperCell`. The 
+  `SCoPE2` normalization method can now reproduce the results from 
+  SCoPE2. <2021-02-19>
 - docs: improved vignette <2021-02-16>
 - feat: added a `rowDataName` argument to `computeSCR`
   <2021-02-08>
