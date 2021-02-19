@@ -1,29 +1,6 @@
 
 ####---- Internal functions ----####
 
-
-## Internal function to efficiently extract expression data to long
-## format. The efficiency is seen when nNA's are present and `na.rm ==
-## TRUE`. Meta
-.assayToLongDF <- function(object, 
-                           colDataCols, 
-                           rowDataCols, 
-                           i, 
-                           na.rm = TRUE) {
-    if (length(i) > 1) stop("Multiple assays are not supported (yet).")
-    dat <- assay(object[[i]])
-    if (na.rm) sel <- which(!is.na(dat), arr.ind = TRUE) else sel <- TRUE
-    DataFrame(colname = colnames(dat)[sel[, 2]],
-              rowname = rownames(dat)[sel[, 1]],
-              colData(object)[colnames(dat)[sel[, 2]], 
-                              colDataCols, 
-                              drop = FALSE],
-              rowData(object[[i]])[rownames(dat)[sel[, 1]], 
-                                   rowDataCols, 
-                                   drop = FALSE],
-              value = dat[sel])
-}
-
 ## Internal function: compute coefficient of variation for each column, 
 ## taking into account the grouping structure of the rows
 ## This code is inspired from MSnbase::rowsd
@@ -48,7 +25,8 @@
                   group = group, 
                   reorder = reorder, 
                   na.rm = na.rm)
-    nna[nna < nobs] <- NA ## return NA if nna <= 1 (similar to sd)
+    ## Return NA if nna < nobs. This behaviour is similar to sd
+    nna[nna < nobs] <- NA
     ## Compute mean
     mean <- rowsum(x, 
                    group = group, 
@@ -304,10 +282,10 @@ pep2qvalue <- function(object,
 ##' @param groupBy  A `character(1)` indicating the variable name in 
 ##'     the `rowData` that contains the feature grouping.
 ##' 
-##' @param nobs An `integer(1)` indicating how many observations should
-##'     at least be considered for computing the CV. Since no CV can 
-##'     be computed for less than 2 observations, `nobs` should at 
-##'     least be 2. 
+##' @param nobs An `integer(1)` indicating how many observations 
+##'     (features) should at least be considered for computing the CV.
+##'     Since no CV can be computed for less than 2 observations, 
+##'     `nobs` should at least be 2. 
 ##' 
 ##' @param na.rm A `logical(1)` indicating whether missing data should
 ##'      be removed before computation.
@@ -319,14 +297,22 @@ pep2qvalue <- function(object,
 ##' @param norm A `character()` of normalization methods that will be 
 ##'     sequentially applied. Available methods and additional 
 ##'     information about normalization can be found in 
-##'     [MsCoreUtils::normalizeMethods]. `norm = "none"` will not 
-##'     normalize the data (default).
+##'     [MsCoreUtils::normalizeMethods]. You can also specify
+##'     `norm = "SCoPE2"` to reproduce the normalization performed 
+##'     before computing the CVs as suggested by Specht et al. 
+##'     `norm = "none"` will not normalize the data (default)
 ##' 
 ##' @param ... Additional arguments that are passed to the 
 ##'     normalization method. 
 ##'     
 ##' @return A `QFeatures` object. 
 ##' 
+##' @references Specht, Harrison, Edward Emmott, Aleksandra A. Petelski,
+##'     R. Gray Huffman, David H. Perlman, Marco Serra, Peter Kharchenko, 
+##'     Antonius Koller, and Nikolai Slavov. 2021. “Single-Cell Proteomic
+##'      and Transcriptomic Analysis of Macrophage Heterogeneity Using 
+##'      SCoPE2.” Genome Biology 22 (1): 50.
+##'      
 ##' @export
 ##'
 ##' @importFrom matrixStats colMedians
@@ -344,6 +330,7 @@ pep2qvalue <- function(object,
 ##' ## Check results
 ##' hist(scp1$MedianCV)
 ##' 
+##' @rdname medianCVperCell
 medianCVperCell <- function(object,
                             i,
                             groupBy,
@@ -382,17 +369,25 @@ medianCVperCell <- function(object,
                          ...)
         ## Compute the median CV per sample
         medCVs[colnames(cvs)] <- colMedians(cvs, na.rm = TRUE)
-        ## Warn when nobs is too high
-        if (any(is.na(medCVs[colnames(cvs)])))
-            warning("The median CV is NA for at least one column in ",
-                    "assay ", ii, ". Try a smaller value for 'nobs'.")
     }
+    ## Warn the median CV cannot be computed for some cells
+    if (any(is.na(medCVs)))
+        warning("The median CV could not be computed for one or more ",
+                "samples. You may want to try a smaller value for ",
+                "'nobs'.\n")
     ## Store the medians CVs in the colData
     colData(object)[names(medCVs), colDataName] <- medCVs
     return(object)
 }
 
 ## TODO discuss whether to export this??
+## 
+## @param x A `SingleCellExperiment` object
+##     
+## @param group A `factor()` that indicates how features (rows) should
+##    be grouped. The CVs are computed for each group separately. 
+##      
+## @rdname medianCVperCell
 featureCV <- function(x, 
                       group, 
                       na.rm = TRUE,
@@ -403,7 +398,10 @@ featureCV <- function(x,
     if (!inherits(x, "SingleCellExperiment"))
         stop("'x' must inherit from a 'SingleCellExperiment'")
     ## Optional normalization(s)   
-    if (!identical(norm, "none")) {
+    if (identical(norm, "SCoPE2")) {
+        xnorm <- .normalizeSCP(x, method = "div.median")
+        assay(x) <- sweep(assay(x), 1, rowMeans(assay(xnorm), na.rm = TRUE), "/")
+    } else if (!identical(norm, "none")) {
         for(normi in norm)
             x <- .normalizeSCP(x, method = normi, ...)
     }
@@ -471,36 +469,11 @@ computeMedianCV_SCoPE2 <- function(object,
                                    peptideCol, 
                                    proteinCol, 
                                    batchCol) {
-    warning("This function is deprecated and is only present in the ",
-            "package for replicating the SCoPE2 analysis.")
-    ## Extract the expression data and metadata as long format
-    object %>%
-        .assayToLongDF(i = i, 
-                       rowDataCols = c(peptideCol, proteinCol), 
-                       colDataCols = c(batchCol)) %>%
-        data.frame %>%
-        ## Normalize cells with median
-        group_by(.data$colname) %>%
-        mutate(norm_q1 = .data$value / median(.data$value, na.rm = TRUE)) %>%
-        ## Normalize peptides per Set with mean of cell normalized expression
-        group_by(.data[[peptideCol]], .data[[batchCol]]) %>%
-        mutate(norm_q = .data$value / mean(.data$norm_q1, na.rm = TRUE)) %>%
-        ## Compute the protein CV in every cell
-        group_by(.data[[proteinCol]], .data$colname) %>%
-        mutate(norm_q_sd = sd(.data$norm_q, na.rm = TRUE),
-               norm_q_mean = mean(.data$norm_q, na.rm = TRUE),
-               cvq = .data$norm_q_sd / .data$norm_q_mean) %>%
-        ## Remove CVs that were computed based on few data points
-        group_by(.data[[proteinCol]], .data$colname) %>%
-        mutate(cvn = sum(!is.na(.data$norm_q))) %>%
-        dplyr::filter(.data$cvn > 5) %>%
-        ## Compute the median CV per cell
-        group_by(.data$colname) %>%
-        mutate(.MedianCV = median(.data$cvq, na.rm = TRUE)) %>%
-        ## Store the cell median CV in the colData
-        select(.data$colname, .data$.MedianCV) %>%
-        unique ->
-        CVs
-    colData(object)[CVs$colname, "MedianCV"] <- CVs$.MedianCV
-    return(object)
+    stop("'computeMedianCV_SCoPE2' is deprecated and should no longer be used.\n",
+            "To reproduce the SCoPE2 script, you can now use ",
+            "'medianCVperCell' with the following arguments:\n",
+            " - 'norm' = \"SCoPE2\"\n",
+            " - 'nobs' = 6\n",
+            "Make sure to provide the peptide data in separate assays ", 
+            "so that the normalization factors are computed per batch.\n")
 }

@@ -24,10 +24,10 @@ which assays the \code{rowData} should be taken.}
 \item{groupBy}{A \code{character(1)} indicating the variable name in
 the \code{rowData} that contains the feature grouping.}
 
-\item{nobs}{An \code{integer(1)} indicating how many observations should
-at least be considered for computing the CV. Since no CV can
-be computed for less than 2 observations, \code{nobs} should at
-least be 2.}
+\item{nobs}{An \code{integer(1)} indicating how many observations
+(features) should at least be considered for computing the CV.
+Since no CV can be computed for less than 2 observations,
+\code{nobs} should at least be 2.}
 
 \item{na.rm}{A \code{logical(1)} indicating whether missing data should
 be removed before computation.}
@@ -39,8 +39,10 @@ stored. The name cannot already exist in the \code{colData}.}
 \item{norm}{A \code{character()} of normalization methods that will be
 sequentially applied. Available methods and additional
 information about normalization can be found in
-\link[MsCoreUtils:normalize]{MsCoreUtils::normalizeMethods}. \code{norm = "none"} will not
-normalize the data (default).}
+\link[MsCoreUtils:normalize]{MsCoreUtils::normalizeMethods}. You can also specify
+\code{norm = "SCoPE2"} to reproduce the normalization performed
+before computing the CVs as suggested by Specht et al.
+\code{norm = "none"} will not normalize the data (default)}
 
 \item{...}{Additional arguments that are passed to the
 normalization method.}
@@ -78,4 +80,11 @@ scp1 <- medianCVperCell(scp1,
 ## Check results
 hist(scp1$MedianCV)
 
+}
+\references{
+Specht, Harrison, Edward Emmott, Aleksandra A. Petelski,
+R. Gray Huffman, David H. Perlman, Marco Serra, Peter Kharchenko,
+Antonius Koller, and Nikolai Slavov. 2021. “Single-Cell Proteomic
+and Transcriptomic Analysis of Macrophage Heterogeneity Using
+SCoPE2.” Genome Biology 22 (1): 50.
 }

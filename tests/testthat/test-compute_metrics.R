@@ -126,6 +126,14 @@ test_that("featureCV", {
                             na.rm = TRUE),
                      featureCV(x = sce, group = rowData(sce)$group, 
                                norm = c("div.median", "sum"), na.rm = TRUE))
+    ## SCoPE2 normalization: the normalization factor is computed by
+    ## dividing columns by the median and then dividing rows by the mean.
+    nf <- sweep(m, 2, colMedians(m, na.rm = TRUE), "/")
+    nf <- rowMeans(nf, na.rm = TRUE)
+    expect_identical(.rowCV(sweep(m, 1, nf, "/"), group = group, 
+                            reorder = TRUE, na.rm = TRUE),
+                     featureCV(x = sce, group = rowData(sce)$group, 
+                               norm = "SCoPE2", na.rm = TRUE))
 })
 
 test_that("medianCVperCell", {
@@ -147,7 +155,7 @@ test_that("medianCVperCell", {
     expect_true(all(is.na(colData(scp2)[colnames(scp2)[[3]], "MedianCV"])))
     ## Warning: all computed median CV are NA (nobs is too high)
     expect_warning(medianCVperCell(scpfilt, i = 1, groupBy = "Proteins", nobs = 100),
-                   regexp = "The median CV is NA for at least one column")
+                   regexp = "The median CV could not be computed for one or more")
     ## Error: the colData name already exists
     expect_error(medianCVperCell(scpfilt, i = 1:5, groupBy = "Proteins",
                                  colData = "SampleType"),
@@ -159,24 +167,11 @@ test_that("medianCVperCell", {
 })
 
 test_that("computeMedianCV_SCoPE2", {
-    expect_warning(
+    expect_error(
         scp2 <- computeMedianCV_SCoPE2(scp1, i = "peptides", 
                                        peptideCol = "peptide", 
                                        proteinCol = "protein", 
                                        batchCol = "Set"),
         regexp = "deprecated")
-    expect_equal(colData(scp2)$MedianCV,
-                 c(1.10034826865377, 1.34292653047682, 0.802431300019918,
-                        0.931471645930315, 2.17651910606252, 0.90434499727074,
-                        NA, 0.981190810088441, 1.28138119235789, 1.15947451217436,
-                        0.914509440596025, 0.375598492225059, 0.641998310910338,
-                        0.470882074819397, 0.333988503065803, 0.56147121954162,
-                        0.55313862954806, 0.787341381739554, 0.317014929730329,
-                        0.465499300678582, 0.314786643305529, 0.877497947283059,
-                        1.88014194431252, 1.89939203158631, 1.8542062892624, NA,
-                        1.69389065225437, 1.81167597852689, 2.08036674063217, 
-                        1.67767072288498, 1.6954832360288, 1.85774199662228, 
-                        2.52324975160365, 1.8700592472943, 1.84889503513768, 
-                        1.77738360421323, 1.77727843932392, 1.78443660057601))
 })
 
