@@ -1,5 +1,9 @@
 # scp 1.1
 
+## scp 1.1.6
+
+
+
 ## scp 1.1.5
 
 - deprecation: thanks to the new normalization method in `medianCVperCell`, 
