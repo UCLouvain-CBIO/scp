@@ -416,53 +416,17 @@ featureCV <- function(x,
 ##' (Deprecated) Compute the median coefficient of variation (CV) per 
 ##' cell
 ##' 
-##' This function was implemented using the code provide in the SCoPE2
-##' analysis (Specht et al. 2020). The function computes for each cell
-##' the median CV. The expression data is normalized twice. First, 
-##' cell median expression is used as normalization factor, then, the
-##' mean for each batch and peptide. The CV is then computed for each
-##' protein in each cell. CV is the standard deviation divided by the 
-##' mean expression. The CV is computed only if there are more than 5 
-##' observations per protein per cell. 
+##' This function is deprecated and should no longer be used. To 
+##' reproduce the SCoPE2 script, you can now use `medianCVperCell`
+##' with the following arguments:
 ##' 
-##' A new columns, `MedianCV`, is added to the `colData` of the assay 
-##' `i` and contains the computed median CVs.
+##' - `norm = "SCoPE2"`
+##' - `nobs = 6`
 ##' 
-##' *Watch out* that `peptideCol` and `proteinCol` are feature 
-##' variables and hence taken from the `rowData`. `batchCol` is a 
-##' sample variable and is taken from the `colData` of the `QFeatures` 
-##' object.
-##'
-##' @param object A `QFeatures` object
-##'
-##' @param i  A `numeric()` or `character()` vector indicating from which 
-##'     assays the `rowData` should be taken.
-##' 
-##' @param peptideCol  A `character(1)` indicating the variable name in the 
-##'     `rowData` that contains the peptide grouping.
-##' 
-##' @param proteinCol A `character(1)` indicating the variable name in the 
-##'     `rowData` that contains the protein grouping.
-##' 
-##' @param batchCol A `character(1)` indicating the variable name in the 
-##'     `colData` of `object` that contains the batch names.
-##'     
-##' @return A `QFeatures` object. 
+##' Make sure to provide the peptide data in separate assays so that 
+##' the normalization factors are computed per batch.
 ##' 
 ##' @export
-##'
-##' @importFrom stats median sd
-##' @importFrom rlang .data
-##'
-##' @examples
-##' data("scp1")
-##' scp1 <- computeMedianCV_SCoPE2(scp1,
-##'                                i = "peptides",
-##'                                proteinCol = "protein",
-##'                                peptideCol = "peptide",
-##'                                batchCol = "Set")
-##' ## Check results
-##' hist(colData(scp1)$MedianCV)
 ##' 
 computeMedianCV_SCoPE2 <- function(object, 
                                    i, 

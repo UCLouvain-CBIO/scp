@@ -7,51 +7,17 @@ cell}
 \usage{
 computeMedianCV_SCoPE2(object, i, peptideCol, proteinCol, batchCol)
 }
-\arguments{
-\item{object}{A \code{QFeatures} object}
-
-\item{i}{A \code{numeric()} or \code{character()} vector indicating from which
-assays the \code{rowData} should be taken.}
-
-\item{peptideCol}{A \code{character(1)} indicating the variable name in the
-\code{rowData} that contains the peptide grouping.}
-
-\item{proteinCol}{A \code{character(1)} indicating the variable name in the
-\code{rowData} that contains the protein grouping.}
-
-\item{batchCol}{A \code{character(1)} indicating the variable name in the
-\code{colData} of \code{object} that contains the batch names.}
-}
-\value{
-A \code{QFeatures} object.
-}
 \description{
-This function was implemented using the code provide in the SCoPE2
-analysis (Specht et al. 2020). The function computes for each cell
-the median CV. The expression data is normalized twice. First,
-cell median expression is used as normalization factor, then, the
-mean for each batch and peptide. The CV is then computed for each
-protein in each cell. CV is the standard deviation divided by the
-mean expression. The CV is computed only if there are more than 5
-observations per protein per cell.
+This function is deprecated and should no longer be used. To
+reproduce the SCoPE2 script, you can now use \code{medianCVperCell}
+with the following arguments:
 }
 \details{
-A new columns, \code{MedianCV}, is added to the \code{colData} of the assay
-\code{i} and contains the computed median CVs.
-
-\emph{Watch out} that \code{peptideCol} and \code{proteinCol} are feature
-variables and hence taken from the \code{rowData}. \code{batchCol} is a
-sample variable and is taken from the \code{colData} of the \code{QFeatures}
-object.
+\itemize{
+\item \code{norm = "SCoPE2"}
+\item \code{nobs = 6}
 }
-\examples{
-data("scp1")
-scp1 <- computeMedianCV_SCoPE2(scp1,
-                               i = "peptides",
-                               proteinCol = "protein",
-                               peptideCol = "peptide",
-                               batchCol = "Set")
-## Check results
-hist(colData(scp1)$MedianCV)
 
+Make sure to provide the peptide data in separate assays so that
+the normalization factors are computed per batch.
 }
