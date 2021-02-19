@@ -42,14 +42,9 @@ cell — computeMedianCV_SCoPE2 • scp</title>
 
 <meta property="og:title" content="(Deprecated) Compute the median coefficient of variation (CV) per
 cell — computeMedianCV_SCoPE2" />
-<meta property="og:description" content="This function was implemented using the code provide in the SCoPE2
-analysis (Specht et al. 2020). The function computes for each cell
-the median CV. The expression data is normalized twice. First,
-cell median expression is used as normalization factor, then, the
-mean for each batch and peptide. The CV is then computed for each
-protein in each cell. CV is the standard deviation divided by the
-mean expression. The CV is computed only if there are more than 5
-observations per protein per cell." />
+<meta property="og:description" content="This function is deprecated and should no longer be used. To
+reproduce the SCoPE2 script, you can now use medianCVperCell
+with the following arguments:" />
 
 
 
@@ -89,7 +84,7 @@ observations per protein per cell." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.5</span>
       </span>
     </div>
 
@@ -132,14 +127,9 @@ cell</h1>
     </div>
 
     <div class="ref-description">
-    <p>This function was implemented using the code provide in the SCoPE2
-analysis (Specht et al. 2020). The function computes for each cell
-the median CV. The expression data is normalized twice. First,
-cell median expression is used as normalization factor, then, the
-mean for each batch and peptide. The CV is then computed for each
-protein in each cell. CV is the standard deviation divided by the
-mean expression. The CV is computed only if there are more than 5
-observations per protein per cell.</p>
+    <p>This function is deprecated and should no longer be used. To
+reproduce the SCoPE2 script, you can now use <code>medianCVperCell</code>
+with the following arguments:</p>
     </div>
 
     <pre class="usage"><span class='fu'>computeMedianCV_SCoPE2</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>i</span>, <span class='va'>peptideCol</span>, <span class='va'>proteinCol</span>, <span class='va'>batchCol</span><span class='op'>)</span></pre>
@@ -149,53 +139,37 @@ observations per protein per cell.</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>object</th>
-      <td><p>A <code>QFeatures</code> object</p></td>
+      <td><p>NULL</p></td>
     </tr>
     <tr>
       <th>i</th>
-      <td><p>A <code><a href='https://rdrr.io/r/base/numeric.html'>numeric()</a></code> or <code><a href='https://rdrr.io/r/base/character.html'>character()</a></code> vector indicating from which
-assays the <code>rowData</code> should be taken.</p></td>
+      <td><p>NULL</p></td>
     </tr>
     <tr>
       <th>peptideCol</th>
-      <td><p>A <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> indicating the variable name in the
-<code>rowData</code> that contains the peptide grouping.</p></td>
+      <td><p>NULL</p></td>
     </tr>
     <tr>
       <th>proteinCol</th>
-      <td><p>A <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> indicating the variable name in the
-<code>rowData</code> that contains the protein grouping.</p></td>
+      <td><p>NULL</p></td>
     </tr>
     <tr>
       <th>batchCol</th>
-      <td><p>A <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> indicating the variable name in the
-<code>colData</code> of <code>object</code> that contains the batch names.</p></td>
+      <td><p>NULL</p></td>
     </tr>
     </table>
 
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>A <code>QFeatures</code> object.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>A new columns, <code>MedianCV</code>, is added to the <code>colData</code> of the assay
-<code>i</code> and contains the computed median CVs.</p>
-<p><em>Watch out</em> that <code>peptideCol</code> and <code>proteinCol</code> are feature
-variables and hence taken from the <code>rowData</code>. <code>batchCol</code> is a
-sample variable and is taken from the <code>colData</code> of the <code>QFeatures</code>
-object.</p>
+    
+<ul>
+<li><p><code>norm = "SCoPE2"</code></p></li>
+<li><p><code>nobs = 6</code></p></li>
+</ul>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"scp1"</span><span class='op'>)</span>
-<span class='va'>scp1</span> <span class='op'>&lt;-</span> <span class='fu'>computeMedianCV_SCoPE2</span><span class='op'>(</span><span class='va'>scp1</span>,
-                               i <span class='op'>=</span> <span class='st'>"peptides"</span>,
-                               proteinCol <span class='op'>=</span> <span class='st'>"protein"</span>,
-                               peptideCol <span class='op'>=</span> <span class='st'>"peptide"</span>,
-                               batchCol <span class='op'>=</span> <span class='st'>"Set"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='warning'>Warning: This function is deprecated and is only present in the package for replicating the SCoPE2 analysis.</span></div><div class='input'><span class='co'>## Check results</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/hist.html'>hist</a></span><span class='op'>(</span><span class='fu'>colData</span><span class='op'>(</span><span class='va'>scp1</span><span class='op'>)</span><span class='op'>$</span><span class='va'>MedianCV</span><span class='op'>)</span>
-</div><div class='img'><img src='computeMedianCV_SCoPE2-1.png' alt='' width='700' height='433' /></div><div class='input'>
-</div></pre>
+<p>Make sure to provide the peptide data from separate assays so that
+the normalization factors are computed per batch.</p>
+
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

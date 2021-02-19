@@ -79,7 +79,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.5</span>
       </span>
     </div>
 
@@ -122,10 +122,16 @@
     <div id="scp-11" class="section level1">
 <h1 class="page-header" data-toc-text="1.1">
 <a href="#scp-11" class="anchor"></a>scp 1.1</h1>
+<div id="scp-116" class="section level2">
+<h2 class="hasAnchor">
+<a href="#scp-116" class="anchor"></a>scp 1.1.6</h2>
+</div>
 <div id="scp-115" class="section level2">
 <h2 class="hasAnchor">
 <a href="#scp-115" class="anchor"></a>scp 1.1.5</h2>
 <ul>
+<li>deprecation: thanks to the new normalization method in <code>medianCVperCell</code>, ‘computeMedianCV_SCoPE2’ is now deprecated and should no longer be used. &lt;2021-02-19&gt;</li>
+<li>feat: added a new normalization method to <code>medianCVperCell</code>. The <code>SCoPE2</code> normalization method can now reproduce the results from SCoPE2. &lt;2021-02-19&gt;</li>
 <li>docs: improved vignette &lt;2021-02-16&gt;</li>
 <li>feat: added a <code>rowDataName</code> argument to <code>computeSCR</code> &lt;2021-02-08&gt;</li>
 </ul>
@@ -153,7 +159,7 @@
 <ul>
 <li>docs: improved the description of the <code>scp</code> data structure in the vignette &lt;2021-01-05&gt;</li>
 <li>refactor: renamed the <code>groupCol</code> to <code>groupBy</code> and <code>pepCol</code> to <code>PEP</code> in <code>computeFDR</code>. &lt;2020-12-08&gt;</li>
-<li>refactor: renamed <code>computeMedianCV</code> to <code>computeMedianCV_SCoPE2</code> and deprecated the function. The function will be preserved for backward compatibility with the replication of the SCoPE2 analysis (Specht et al. 2020). Instead, a new function is implemented and called <code>medianCVperCell</code>. See <a href="https://github.com/UCLouvain-CBIO/scp/issues/7">issue<a href='https://github.com/UCLouvain-CBIO/scp/issues/7'>#7</a></a> for more information &lt;2020-12-07&gt;</li>
+<li>refactor: renamed <code>computeMedianCV</code> to <code>computeMedianCV_SCoPE2</code> and deprecated the function. The function will be preserved for backward compatibility with the replication of the SCoPE2 analysis (Specht et al. 2020). Instead, a new function is implemented and called <code>medianCVperCell</code>. See <a href="https://github.com/UCLouvain-CBIO/scp/issues/7" class="external-link">issue<a href='https://github.com/UCLouvain-CBIO/scp/issues/7'>#7</a></a> for more information &lt;2020-12-07&gt;</li>
 </ul>
 </div>
 <div id="scp-111" class="section level2">
@@ -200,7 +206,7 @@
 <li>Adapted the vignette to remove warnings and fix missing PCA plot. &lt;2020-10-14 Wed&gt;</li>
 <li>
 <code>README.md</code>: extended the installation guide, providing both a stable and a devel installation. &lt;2020-10-13 Tue&gt;</li>
-<li>Removed the <code>LazyLoad</code> from the <code>DESCRIPTION</code> file and adapted the data loading (eg <code><a href="https://rdrr.io/r/utils/data.html">data(scp1)</a></code> to <code><a href="https://rdrr.io/r/utils/data.html">data("scp1")</a></code>) &lt;2020-10-13 Tue&gt;</li>
+<li>Removed the <code>LazyLoad</code> from the <code>DESCRIPTION</code> file and adapted the data loading (eg <code><a href="https://rdrr.io/r/utils/data.html" class="external-link">data(scp1)</a></code> to <code><a href="https://rdrr.io/r/utils/data.html" class="external-link">data("scp1")</a></code>) &lt;2020-10-13 Tue&gt;</li>
 <li>Documentation: added data collection description for the 3 example datasets &lt;2020-10-13 Tue&gt;</li>
 </ul>
 </div>
