@@ -423,11 +423,16 @@ featureCV <- function(x,
 ##' - `norm = "SCoPE2"`
 ##' - `nobs = 6`
 ##' 
-##' Make sure to provide the peptide data in separate assays so that 
+##' Make sure to provide the peptide data from separate assays so that 
 ##' the normalization factors are computed per batch.
 ##' 
+##' @param object NULL
+##' @param i NULL
+##' @param peptideCol NULL
+##' @param proteinCol NULL
+##' @param batchCol NULL
+##'
 ##' @export
-##' 
 computeMedianCV_SCoPE2 <- function(object, 
                                    i, 
                                    peptideCol, 
@@ -438,6 +443,6 @@ computeMedianCV_SCoPE2 <- function(object,
             "'medianCVperCell' with the following arguments:\n",
             " - 'norm' = \"SCoPE2\"\n",
             " - 'nobs' = 6\n",
-            "Make sure to provide the peptide data in separate assays ", 
+            "Make sure to provide the peptide data from separate assays ", 
             "so that the normalization factors are computed per batch.\n")
 }
