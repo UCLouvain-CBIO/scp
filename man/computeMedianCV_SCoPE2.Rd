@@ -7,6 +7,17 @@ cell}
 \usage{
 computeMedianCV_SCoPE2(object, i, peptideCol, proteinCol, batchCol)
 }
+\arguments{
+\item{object}{NULL}
+
+\item{i}{NULL}
+
+\item{peptideCol}{NULL}
+
+\item{proteinCol}{NULL}
+
+\item{batchCol}{NULL}
+}
 \description{
 This function is deprecated and should no longer be used. To
 reproduce the SCoPE2 script, you can now use \code{medianCVperCell}
@@ -18,6 +29,6 @@ with the following arguments:
 \item \code{nobs = 6}
 }
 
-Make sure to provide the peptide data in separate assays so that
+Make sure to provide the peptide data from separate assays so that
 the normalization factors are computed per batch.
 }
