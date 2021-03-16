@@ -10,6 +10,7 @@ readSCP(
   colData,
   batchCol,
   channelCol,
+  suffix = NULL,
   removeEmptyCols = FALSE,
   verbose = TRUE,
   ...
@@ -41,6 +42,12 @@ identical (if you supply a \code{character}) or have the same index
 \item{channelCol}{A \code{numeric(1)} or \code{character(1)} pointing to the
 column of \code{colData} that contains the column names of the
 quantitative data in \code{featureData} (see Example).}
+
+\item{suffix}{A \code{character()} giving the suffix of the column
+names in each assay. The length of the vector must equal the
+number of quantification channels and must contain unique
+character elements. If NULL, the names of the quantification
+columns in \code{featureData} are taken as suffix.}
 
 \item{removeEmptyCols}{A \code{logical(1)}. If true, the function will
 remove in each batch the columns that contain only missing
@@ -81,7 +88,7 @@ data("sampleAnnotation")
 ## Format the tables into a QFeatures object
 readSCP(featureData = mqScpData,
         colData = sampleAnnotation,
-        batchCol = "Set",
+        batchCol = "Raw.file",
         channelCol = "Channel")
 
 }
