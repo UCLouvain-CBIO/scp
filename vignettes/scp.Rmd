@@ -133,7 +133,7 @@ The two tables are supplied to the `readSCP` function.
 scp <- readSCP(featureData = mqScpData,
                colData = sampleAnnotation,
                channelCol = "Channel",
-               batchCol = "Set")
+               batchCol = "Raw.file")
 ```
 
 As indicated by the output on the console, `readSCP` proceeds as follows:
@@ -149,7 +149,9 @@ stored in the column named `Channel` in `sampleAnnotation`.
 2. The `SingleCellExperiment` object is then split according to
 batch. The split is performed depending on the `batchCol` field in
 `featureData`, in this case the data will be split according to the
-`Set` column in `mqScpData`.
+`Raw.file` column in `mqScpData`. `Raw.file` contains the names of the 
+acquisition runs that was used by MaxQuant to retrieve the raw data 
+files.
 
 3. The sample metadata is generated from the supplied `colData`. Note 
 that in  order for `readSCP` to correctly match the feature data 
@@ -190,7 +192,7 @@ argument `removeEmptyCols = TRUE`.
 scp <- readSCP(featureData = mqScpData,
                colData = sampleAnnotation,
                channelCol = "Channel",
-               batchCol = "Set",
+               batchCol = "Raw.file",
                removeEmptyCols = TRUE)
 scp
 ```
@@ -850,7 +852,7 @@ Next, we need to provide a design matrix and the batch annotation to
 in our case `SampleType`.
 
 ```{r prepare_batch_correction}
-batch <- colData(sce)$Set
+batch <- colData(sce)$Raw.file
 model <- model.matrix(~ SampleType, data = colData(sce))
 ```
 
@@ -954,29 +956,28 @@ The UMAP plot is a very interesting plot for large datasets. A UMAP on
 this small example dataset is not useful but is shown for
 illustration.
 
-
 # Monitoring data processing
 
 The `QFeatures` plot shows the quantitative data for a features at the
 different expression levels. For instance, suppose we are interested
-in the protein *LMNA* (protein ID is `P02545`). A useful QC is to
+in the protein *Plastin-2* (protein ID is `P13796`). A useful QC is to
 monitor the data processing at the PSM, peptide and protein
 level. This can easily be done thanks to the `QFeatures`
 framework. Using the `subsetByFeature`, we can extract the protein of
 interest and its related features in the other assays. The data is
-formated to a long format table that can easily be plugged in the
+formatted to a long format table that can easily be plugged in the
 `ggplot2` visualization tool.
 
 ```{r monitor_plot, warning = FALSE, fig.width = 10, fig.height = 10, out.width = "100%"}
 scp %>%
-    ## Get the features related to LMNA (P02545)
-    subsetByFeature("P02545") %>%
+    ## Get the features related to Plastin-2 (P13796)
+    subsetByFeature("P13796") %>%
     ## Format the `QFeatures` to a long format table
-    longFormat(colDataCols = c("Set", "SampleType", "Channel")) %>%
+    longFormat(colDataCols = c("Raw.file", "SampleType", "Channel")) %>%
     data.frame %>%
     ## This is used to preserve ordering of the samples and assays in ggplot2
     mutate(assay = factor(assay, levels = names(scp)),
-           Channel = sub("RI", "TMT-", Channel),
+           Channel = sub("Reporter.intensity.", "TMT-", Channel),
            Channel = factor(Channel, levels = unique(Channel))) %>%
     ## Start plotting
     ggplot(aes(x = Channel, y = value, group = rowname, col = SampleType)) +
@@ -992,13 +993,10 @@ scp %>%
           legend.position = "bottom")
 ```
 
-This graph helps to keep track of the data processing and highlights
-anomalies in the data. For instance, we can see that no data were
-recorded for 5 channels (TMT-12 to 16). Those channels contain either
-macrophages or monocytes (from the experimental design) and are
-expected to contain information. Thanks to this diagnostic plot, we
-reported the issue to Specht and colleagues and this led to version 3
-of the SCoPE2 dataset.
+This graph helps to keep track of the data processing. We can see how
+the different PSMs are progressively aggregated to peptides and then 
+to proteins as well as how the normalization, imputation or batch 
+correction impact the distribution of the quantifications.
 
 # Session information {-}
 
