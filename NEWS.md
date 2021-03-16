@@ -2,7 +2,8 @@
 
 ## scp 1.1.6
 
-
+- feature: `readSCP` now allows for a `suffix` argument to better 
+  customize the sample names. 
 
 ## scp 1.1.5
 
