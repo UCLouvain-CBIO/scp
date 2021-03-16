@@ -38,6 +38,12 @@
 ##'     column of `colData` that contains the column names of the
 ##'     quantitative data in `featureData` (see Example).
 ##' 
+##' @param suffix A `character()` giving the suffix of the column 
+##'     names in each assay. The length of the vector must equal the
+##'     number of quantification channels and must contain unique 
+##'     character elements. If NULL, the names of the quantification 
+##'     columns in `featureData` are taken as suffix. 
+##' 
 ##' @param removeEmptyCols A `logical(1)`. If true, the function will
 ##'     remove in each batch the columns that contain only missing 
 ##'     values.
@@ -81,20 +87,32 @@
 ##' ## Format the tables into a QFeatures object
 ##' readSCP(featureData = mqScpData,
 ##'         colData = sampleAnnotation,
-##'         batchCol = "Set",
+##'         batchCol = "Raw.file",
 ##'         channelCol = "Channel")
 ##' 
 readSCP <- function(featureData, 
                     colData, 
                     batchCol, 
-                    channelCol, 
+                    channelCol,
+                    suffix = NULL,
                     removeEmptyCols = FALSE,
                     verbose = TRUE,
                     ...) {
     colData <- as.data.frame(colData)
+    
+    ## Get the column contain the expression data
+    ecol <- unique(colData[, channelCol])
+    ## Get the sample suffix
+    if (is.null(suffix))
+        suffix <- ecol
+    else {
+        if (length(suffix) != length(ecol)) 
+            stop("Length of 'suffix' should equal the number of ", 
+                 "quantification channels (n = ", length(ecol), ")")
+    }
+    
     ## Create the SingleCellExperiment object
     if (verbose) message("Loading data as a 'SingleCellExperiment' object")
-    ecol <- unique(colData[, channelCol])
     scp <- readSingleCellExperiment(table = featureData, 
                                     ecol = ecol, 
                                     ...)
@@ -115,13 +133,13 @@ readSCP <- function(featureData,
     
     ## Clean each element in the data list
     for (i in seq_along(scp)) {
+        ## Add unique sample identifiers
+        colnames(scp[[i]]) <- paste0(names(scp)[[i]], "_", suffix)
         ## Remove the columns that are all NA
         if (removeEmptyCols) {
             sel <- colSums(is.na(assay(scp[[i]]))) != nrow(scp[[i]])
             scp[[i]] <- scp[[i]][, sel]
         } 
-        ## Add unique sample identifiers
-        colnames(scp[[i]]) <- paste0(names(scp)[[i]], "_", colnames(scp[[i]]))
     }
     
     if (verbose) message(paste0("Formatting sample metadata (colData)"))

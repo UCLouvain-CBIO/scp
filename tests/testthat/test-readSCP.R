@@ -16,8 +16,8 @@ test_that(".splitSCE", {
     expect_error(.splitSCE(sce, "foo"),
                  regexp = "not found")
     ## Error: cannot split using more than 1 variable
-    expect_error(.splitSCE(sce, c("Set", "protein")),
-             regexp = "must be of lenght one")
+    expect_error(.splitSCE(sce, c("Raw.file", "protein")),
+                 regexp = "must be of lenght one")
     ## Error: factor is too short
     expect_error(.splitSCE(sce, factor(1:3)),
                  regexp = "not compatible with dim")
@@ -28,76 +28,96 @@ test_that("readSCP: correct use", {
     ## Multiple batches
     scp <- readSCP(mqScpData, 
                    sampleAnnotation, 
-                   batchCol = "Set", 
+                   batchCol = "Raw.file", 
                    channelCol = "Channel")
-    expect_identical(dims(scp)[, c("190222S_LCA9_X_FP94BM", "190321S_LCA10_X_FP97_blank_01", "190321S_LCA10_X_FP97AG", "190914S_LCB3_X_16plex_Set_21")],
-                     matrix(c(290L, 109L, 375L, 323L, rep(16L, 4)), byrow = TRUE, nrow = 2, 
-                            dimnames = list(NULL, c("190222S_LCA9_X_FP94BM", "190321S_LCA10_X_FP97_blank_01", "190321S_LCA10_X_FP97AG", "190914S_LCB3_X_16plex_Set_21"))))
-    ## Note: there is something weird in this test... When executing the code locally, 
-    ## the assays in `scp` are ordered alphabetically, but when runned by 
-    ##  `devtools::test()`, the assays are ordered as they appear in `mqScpData`
-    ## hence the need for `dims(scp)[, unique(mqScpData$Set)]` to avoid an error
-    
+    expect_identical(sort(names(scp)), sort(unique(mqScpData$Raw.file)))
+    expect_true(all(dims(scp)[2, ] == 16L))
+    expect_true(sum(dims(scp)[1, ]) == nrow(mqScpData))
     ## Make sure all rownames start with "PSM"
     expect_true(all(grepl("^PSM", unlist(rownames(scp)))))
-    expect_true(all(grepl("^PSM", unlist(rownames(scp@ExperimentList@listData$`190222S_LCA9_X_FP94BM`)))))
-    ## Make sur the column names are as expected
-    expectedCols <- paste0(rep(unique(mqScpData$Set), 16), "_",
-                           rep(paste0("RI", 1:16), each = 4))
+    ## Make sure the column names are as expected
+    expectedCols <- paste0(rep(unique(mqScpData$Raw.file), 16), "_",
+                           rep(paste0("Reporter.intensity.", 1:16), each = 4))
     expect_true(all(unlist(colnames(scp)) %in% as.character(expectedCols)))
-    
     ## Single batch
-    scp <- readSCP(mqScpData %>% 
-                     dplyr::filter(Set == "190222S_LCA9_X_FP94BM"), 
-                   sampleAnnotation, batchCol = "Set", 
+    onebatch <- mqScpData %>% 
+        dplyr::filter(Raw.file == "190222S_LCA9_X_FP94BM")
+    scp <- readSCP(onebatch, 
+                   sampleAnnotation, 
+                   batchCol = "Raw.file", 
                    channelCol = "Channel")
-    expect_identical(dims(scp),
-                     matrix(c(290L, 16L), nrow = 2, 
-                            dimnames = list(NULL, "190222S_LCA9_X_FP94BM")))
+    expect_identical(dims(scp)[1, ],
+                     c("190222S_LCA9_X_FP94BM" = nrow(onebatch)))
+    expect_identical(dims(scp)[2, ],
+                     c("190222S_LCA9_X_FP94BM" = 16L))
     ## Test remove empty columns
     scp <- readSCP(mqScpData, 
                    sampleAnnotation, 
-                   batchCol = "Set", 
+                   batchCol = "Raw.file", 
                    channelCol = "Channel",
                    removeEmptyCols = TRUE)
-    expect_identical(dims(scp)[, c("190222S_LCA9_X_FP94BM", "190321S_LCA10_X_FP97_blank_01", "190321S_LCA10_X_FP97AG", "190914S_LCB3_X_16plex_Set_21")],
-                     matrix(c(290L, 109L, 375L, 323L, rep(11L, 3), 16L),
-                            byrow = TRUE, nrow = 2, 
-                            dimnames = list(NULL, c("190222S_LCA9_X_FP94BM", "190321S_LCA10_X_FP97_blank_01", "190321S_LCA10_X_FP97AG", "190914S_LCB3_X_16plex_Set_21"))))
-    
+    expect_identical(sort(names(scp)), sort(unique(mqScpData$Raw.file)))
+    expect_true(all(dims(scp)[2, ] == c(rep(11, 3), 16)))
+    expect_true(sum(dims(scp)[1, ]) == nrow(mqScpData))
+    ## Test suffix
+    scp <- readSCP(mqScpData, 
+                   sampleAnnotation, 
+                   batchCol = "Raw.file", 
+                   channelCol = "Channel",
+                   suffix = paste0("TMT", 1:16))
+    expectedCols <- paste0(rep(unique(mqScpData$Raw.file), 16), "_",
+                           rep(paste0("TMT", 1:16), each = 4))
+    expect_true(all(unlist(colnames(scp)) %in% as.character(expectedCols)))
 })
 
 test_that("readSCP: warnings", {
-  ## Missing batch in metadata 
-  expect_warning(scp <- readSCP(mqScpData, 
-                                sampleAnnotation  %>% 
-                                  dplyr::filter(Set == "190222S_LCA9_X_FP94BM"), 
-                                batchCol = "Set", 
-                                channelCol = "Channel"),
-                 regexp = "Missing metadata. The features are removed")
-  expect_identical(dims(scp),
-                   matrix(c(290L, 16L), nrow = 2, 
-                          dimnames = list(NULL, "190222S_LCA9_X_FP94BM")))
-  
+    ## Missing batch in metadata 
+    expect_warning(scp <- readSCP(mqScpData,
+                                  dplyr::filter(sampleAnnotation, 
+                                                Raw.file == "190222S_LCA9_X_FP94BM"), 
+                                  batchCol = "Raw.file", 
+                                  channelCol = "Channel"),
+                   regexp = "Missing metadata. The features are removed")
+    expect_identical(names(scp), "190222S_LCA9_X_FP94BM")
+    expect_identical(dims(scp)[2, ], c("190222S_LCA9_X_FP94BM" = 16L))
+    expect_identical(dims(scp)[1, ], c("190222S_LCA9_X_FP94BM" = sum(mqScpData$Raw.file == "190222S_LCA9_X_FP94BM")))
+    
+})
+
+test_that("readSCP: error", {
+    ## Suffix has not correct size 
+    expect_error(scp <- readSCP(mqScpData, 
+                                sampleAnnotation, 
+                                batchCol = "Raw.file", 
+                                channelCol = "Channel",
+                                suffix = (1:2)),
+                 regex = "'suffix' should equal the number")
+    ## Suffix is not unique
+    expect_error(scp <- readSCP(mqScpData, 
+                                sampleAnnotation, 
+                                batchCol = "Raw.file", 
+                                channelCol = "Channel",
+                                suffix = rep(1, 16)),
+                 regex = "All colname identifiers in assays must be unique")
 })
 
 test_that("readSingleCellExperiment: correct use", {
-  sce <- readSingleCellExperiment(mqScpData, 
-                                  ecol = grep("RI[0-9]*$",
-                                              colnames(mqScpData)))
-  ## Make sure dimensions are correct
-  expect_identical(dim(sce),
-                   c(nrow(mqScpData), 16L))
-  ## Make sure class is correct
-  expect_true(inherits(sce, "SingleCellExperiment"))
+    sce <- readSingleCellExperiment(mqScpData, 
+                                    ecol = grep("Reporter.intensity.[0-9]*$",
+                                                colnames(mqScpData)))
+    ## Make sure dimensions are correct
+    expect_identical(dim(sce),
+                     c(nrow(mqScpData), 16L))
+    ## Make sure class is correct
+    expect_true(inherits(sce, "SingleCellExperiment"))
 })
 
 test_that("readSingleCellExperiment: error", {
-  ## Some names in the rowData are not allowed by RangedSummarizedExperiment
-  badData <- mqScpData
-  badData$seqnames <- 1
-  sce <- readSingleCellExperiment(badData, 
-                                  ecol = grep("RI[0-9]*$",
-                                              colnames(badData)))
-  expect_error(sce[1, ], regexp = "cannot have columns named \"seqnames\"")
+    ## Some names in the rowData are not allowed by RangedSummarizedExperiment
+    badData <- mqScpData
+    badData$seqnames <- 1
+    sce <- readSingleCellExperiment(badData, 
+                                    ecol = grep("Reporter.intensity.[0-9]*$",
+                                                colnames(badData)))
+    expect_error(sce[1, ], regexp = "cannot have columns named \"seqnames\"")
 })
