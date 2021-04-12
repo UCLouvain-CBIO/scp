@@ -64,10 +64,10 @@ test_that("readSCP: correct use", {
                    sampleAnnotation, 
                    batchCol = "Raw.file", 
                    channelCol = "Channel",
-                   suffix = paste0("TMT", 1:16))
-    expectedCols <- paste0(rep(unique(mqScpData$Raw.file), 16), "_",
-                           rep(paste0("TMT", 1:16), each = 4))
-    expect_true(all(unlist(colnames(scp)) %in% as.character(expectedCols)))
+                   suffix = paste0("_TMT", 1:16))
+    expectedCols <- paste0(rep(unique(mqScpData$Raw.file), 16), 
+                           rep(paste0("_TMT", 1:16), each = 4))
+    expect_true(all(unlist(colnames(scp)) %in% expectedCols))
 })
 
 test_that("readSCP: warnings", {
@@ -91,14 +91,16 @@ test_that("readSCP: error", {
                                 batchCol = "Raw.file", 
                                 channelCol = "Channel",
                                 suffix = (1:2)),
-                 regex = "'suffix' should equal the number")
+                 regex = "invalid rownames length")
     ## Suffix is not unique
-    expect_error(scp <- readSCP(mqScpData, 
+    expect_error(expect_warning(
+        scp <- readSCP(mqScpData, 
                                 sampleAnnotation, 
                                 batchCol = "Raw.file", 
                                 channelCol = "Channel",
                                 suffix = rep(1, 16)),
-                 regex = "All colname identifiers in assays must be unique")
+        regexp = "non-unique values"),
+        regex = "duplicate 'row.names'")
 })
 
 test_that("readSingleCellExperiment: correct use", {

@@ -39,8 +39,8 @@
 ##'     quantitative data in `featureData` (see Example).
 ##' 
 ##' @param suffix A `character()` giving the suffix of the column 
-##'     names in each assay. The length of the vector must equal the
-##'     number of quantification channels and must contain unique 
+##'     names in each assay. The length of the vector should equal the
+##'     number of quantification channels and should contain unique 
 ##'     character elements. If NULL, the names of the quantification 
 ##'     columns in `featureData` are taken as suffix. 
 ##' 
@@ -105,11 +105,6 @@ readSCP <- function(featureData,
     ## Get the sample suffix
     if (is.null(suffix))
         suffix <- ecol
-    else {
-        if (length(suffix) != length(ecol)) 
-            stop("Length of 'suffix' should equal the number of ", 
-                 "quantification channels (n = ", length(ecol), ")")
-    }
     
     ## Create the SingleCellExperiment object
     if (verbose) message("Loading data as a 'SingleCellExperiment' object")
@@ -124,7 +119,7 @@ readSCP <- function(featureData,
     if (any(mis)) {
         warning("Missing metadata. The features are removed for ", 
                 paste0(unique(rowData(scp)[mis, batchCol]), collapse = ", "))
-      scp <- scp[!mis, ]
+        scp <- scp[!mis, ]
     }
     
     ## Split the SingleCellExperiment object by batch column
@@ -134,7 +129,7 @@ readSCP <- function(featureData,
     ## Clean each element in the data list
     for (i in seq_along(scp)) {
         ## Add unique sample identifiers
-        colnames(scp[[i]]) <- paste0(names(scp)[[i]], "_", suffix)
+        colnames(scp[[i]]) <- paste0(names(scp)[[i]], suffix)
         ## Remove the columns that are all NA
         if (removeEmptyCols) {
             sel <- colSums(is.na(assay(scp[[i]]))) != nrow(scp[[i]])
@@ -145,8 +140,7 @@ readSCP <- function(featureData,
     if (verbose) message(paste0("Formatting sample metadata (colData)"))
     ## Create the colData 
     cd <- DataFrame(row.names = unlist(lapply(scp, colnames)))
-    rownames(colData) <- paste0(colData[, batchCol], "_", 
-                                  colData[, channelCol])
+    rownames(colData) <- paste0(colData[, batchCol], suffix)
     cd <- cbind(cd, colData[rownames(cd), ])
     
     ## Store the data as a QFeatures object and add the experimental
@@ -247,19 +241,19 @@ readSingleCellExperiment <- function(table,
                       f) {
     ## Check that f is a factor
     if (is.character(f)) {
-      if (length(f) != 1) 
-          stop("'f' must be of lenght one")
-      if (f %in% colnames(rowData(x))) {
-          f <- rowData(x)[, f]
-      }
-      else if (f %in% colnames(colData(x))) {
-          f <- colData(x)[, f]
-      }
-      else {
-          stop("'", f, "' not found in rowData or colData")
-      }
-      if (!is.factor(f)) 
-          f <- factor(f)
+        if (length(f) != 1) 
+            stop("'f' must be of lenght one")
+        if (f %in% colnames(rowData(x))) {
+            f <- rowData(x)[, f]
+        }
+        else if (f %in% colnames(colData(x))) {
+            f <- colData(x)[, f]
+        }
+        else {
+            stop("'", f, "' not found in rowData or colData")
+        }
+        if (!is.factor(f)) 
+            f <- factor(f)
     }
     ## Check that the factor matches one of the dimensions
     if (!length(f) %in% dim(x)) 
