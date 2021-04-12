@@ -33,6 +33,7 @@ Suggests:
     testthat,
     knitr,
     BiocStyle,
+    BiocCheck,
     rmarkdown,
     patchwork,
     ggplot2,
