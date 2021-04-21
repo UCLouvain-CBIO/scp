@@ -36,9 +36,9 @@ test_that("readSCP: correct use", {
     ## Make sure all rownames start with "PSM"
     expect_true(all(grepl("^PSM", unlist(rownames(scp)))))
     ## Make sure the column names are as expected
-    expectedCols <- paste0(rep(unique(mqScpData$Raw.file), 16), "_",
+    expectedCols <- paste0(rep(unique(mqScpData$Raw.file), 16), 
                            rep(paste0("Reporter.intensity.", 1:16), each = 4))
-    expect_true(all(unlist(colnames(scp)) %in% as.character(expectedCols)))
+    expect_identical(character(0), setdiff(unlist(colnames(scp)), as.character(expectedCols)))
     ## Single batch
     onebatch <- mqScpData %>% 
         dplyr::filter(Raw.file == "190222S_LCA9_X_FP94BM")
