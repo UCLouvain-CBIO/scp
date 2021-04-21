@@ -73,7 +73,7 @@
                         <h4 data-toc-skip class="author">Laurent Gatto</h4>
                                     <h4 data-toc-skip class="author">Christophe Vanderaa</h4>
                         
-            <h4 data-toc-skip class="date">19 February 2021</h4>
+            <h4 data-toc-skip class="date">21 April 2021</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/master/vignettes/scp.Rmd" class="external-link"><code>vignettes/scp.Rmd</code></a></small>
       <div class="hidden name"><code>scp.Rmd</code></div>
@@ -114,41 +114,41 @@
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"mqScpData"</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">mqScpData</span><span class="op">)</span>
-<span class="co">#&gt; [1] 1097  149</span>
+<span class="co">#&gt; [1] 1361  149</span>
 <span class="va">mqScpData</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>
-<span class="co">#&gt;                                                                            uid</span>
-<span class="co">#&gt; 1       _(Acetyl (Protein N-term))ALSDADVQK_ 2 0.0042795 190222S_LCA9_X_FP94BM</span>
-<span class="co">#&gt; 2       _(Acetyl (Protein N-term))ASSDIQVK_ 2 0.0052312 190321S_LCA10_X_FP97AG</span>
-<span class="co">#&gt; 3         _(Acetyl (Protein N-term))ASSDIQVK_ 2 0.017122 190222S_LCA9_X_FP94BM</span>
-<span class="co">#&gt; 4        _(Acetyl (Protein N-term))SSSPVNVK_ 2 0.0058549 190222S_LCA9_X_FP94BM</span>
-<span class="co">#&gt; 5  _(Acetyl (Protein N-term))SSSPVNVK_ 2 0.047975 190914S_LCB3_X_16plex_Set_21</span>
-<span class="co">#&gt; 6                             _AAAASPR_ 2 0.53163 190914S_LCB3_X_16plex_Set_21</span>
-<span class="co">#&gt; 7                      _AADPPAENSSAPEAEQGGAE_ 3 0.015944 190222S_LCA9_X_FP94BM</span>
-<span class="co">#&gt; 8                                  _AAIGLLAR_ 2 0.23439 190321S_LCA10_X_FP97AG</span>
-<span class="co">#&gt; 9                                   _AAPASTK_ 2 0.42206 190321S_LCA10_X_FP97AG</span>
-<span class="co">#&gt; 10                            _AAPASTK_ 2 0.47383 190914S_LCB3_X_16plex_Set_21</span>
-<span class="co">#&gt;                Sequence Length           Modifications</span>
-<span class="co">#&gt; 1             ALSDADVQK      9 Acetyl (Protein N-term)</span>
-<span class="co">#&gt; 2              ASSDIQVK      8 Acetyl (Protein N-term)</span>
-<span class="co">#&gt; 3              ASSDIQVK      8 Acetyl (Protein N-term)</span>
-<span class="co">#&gt; 4              SSSPVNVK      8 Acetyl (Protein N-term)</span>
-<span class="co">#&gt; 5              SSSPVNVK      8 Acetyl (Protein N-term)</span>
-<span class="co">#&gt; 6               AAAASPR      7              Unmodified</span>
-<span class="co">#&gt; 7  AADPPAENSSAPEAEQGGAE     20              Unmodified</span>
-<span class="co">#&gt; 8              AAIGLLAR      8              Unmodified</span>
-<span class="co">#&gt; 9               AAPASTK      7              Unmodified</span>
-<span class="co">#&gt; 10              AAPASTK      7              Unmodified</span>
-<span class="co">#&gt;                       Modified.sequence</span>
-<span class="co">#&gt; 1  _(Acetyl (Protein N-term))ALSDADVQK_</span>
-<span class="co">#&gt; 2   _(Acetyl (Protein N-term))ASSDIQVK_</span>
-<span class="co">#&gt; 3   _(Acetyl (Protein N-term))ASSDIQVK_</span>
-<span class="co">#&gt; 4   _(Acetyl (Protein N-term))SSSPVNVK_</span>
-<span class="co">#&gt; 5   _(Acetyl (Protein N-term))SSSPVNVK_</span>
-<span class="co">#&gt; 6                             _AAAASPR_</span>
-<span class="co">#&gt; 7                _AADPPAENSSAPEAEQGGAE_</span>
-<span class="co">#&gt; 8                            _AAIGLLAR_</span>
-<span class="co">#&gt; 9                             _AAPASTK_</span>
-<span class="co">#&gt; 10                            _AAPASTK_</span></code></pre></div>
+<span class="co">#&gt;                                                                                 uid</span>
+<span class="co">#&gt; 1          _(Acetyl (Protein N-term))ATNFLAHEK_ 2 0.00052636 190321S_LCA10_X_FP97AG</span>
+<span class="co">#&gt; 2           _(Acetyl (Protein N-term))ATNFLAHEK_ 2 0.00058789 190222S_LCA9_X_FP94BM</span>
+<span class="co">#&gt; 3  _(Acetyl (Protein N-term))SHTILLVQPTK_ 2 4.0315e-24 190914S_LCB3_X_16plex_Set_21</span>
+<span class="co">#&gt; 4         _(Acetyl (Protein N-term))SHTILLVQPTK_ 2 4.7622e-06 190222S_LCA9_X_FP94BM</span>
+<span class="co">#&gt; 5        _(Acetyl (Protein N-term))SHTILLVQPTK_ 2 6.8709e-09 190321S_LCA10_X_FP97AG</span>
+<span class="co">#&gt; 6               _(Acetyl (Protein N-term))SLVIPEK_ 2 0.053705 190222S_LCA9_X_FP94BM</span>
+<span class="co">#&gt; 7          _(Acetyl (Protein N-term))SLVIPEK_ 2 0.0595 190914S_LCB3_X_16plex_Set_21</span>
+<span class="co">#&gt; 8            _(Acetyl (Protein N-term))VDREQLVQK_ 2 0.004872 190321S_LCA10_X_FP97AG</span>
+<span class="co">#&gt; 9                                        _AAGLALK_ 2 0.020042 190222S_LCA9_X_FP94BM</span>
+<span class="co">#&gt; 10                                      _AAGLALK_ 2 0.038752 190321S_LCA10_X_FP97AG</span>
+<span class="co">#&gt;       Sequence Length           Modifications</span>
+<span class="co">#&gt; 1    ATNFLAHEK      9 Acetyl (Protein N-term)</span>
+<span class="co">#&gt; 2    ATNFLAHEK      9 Acetyl (Protein N-term)</span>
+<span class="co">#&gt; 3  SHTILLVQPTK     11 Acetyl (Protein N-term)</span>
+<span class="co">#&gt; 4  SHTILLVQPTK     11 Acetyl (Protein N-term)</span>
+<span class="co">#&gt; 5  SHTILLVQPTK     11 Acetyl (Protein N-term)</span>
+<span class="co">#&gt; 6      SLVIPEK      7 Acetyl (Protein N-term)</span>
+<span class="co">#&gt; 7      SLVIPEK      7 Acetyl (Protein N-term)</span>
+<span class="co">#&gt; 8    VDREQLVQK      9 Acetyl (Protein N-term)</span>
+<span class="co">#&gt; 9      AAGLALK      7              Unmodified</span>
+<span class="co">#&gt; 10     AAGLALK      7              Unmodified</span>
+<span class="co">#&gt;                         Modified.sequence</span>
+<span class="co">#&gt; 1    _(Acetyl (Protein N-term))ATNFLAHEK_</span>
+<span class="co">#&gt; 2    _(Acetyl (Protein N-term))ATNFLAHEK_</span>
+<span class="co">#&gt; 3  _(Acetyl (Protein N-term))SHTILLVQPTK_</span>
+<span class="co">#&gt; 4  _(Acetyl (Protein N-term))SHTILLVQPTK_</span>
+<span class="co">#&gt; 5  _(Acetyl (Protein N-term))SHTILLVQPTK_</span>
+<span class="co">#&gt; 6      _(Acetyl (Protein N-term))SLVIPEK_</span>
+<span class="co">#&gt; 7      _(Acetyl (Protein N-term))SLVIPEK_</span>
+<span class="co">#&gt; 8    _(Acetyl (Protein N-term))VDREQLVQK_</span>
+<span class="co">#&gt; 9                               _AAGLALK_</span>
+<span class="co">#&gt; 10                              _AAGLALK_</span></code></pre></div>
 <p>In order to convert this tabular data to a <code>scp</code>-compatible <code>QFeatures</code> object, we need to provide a <strong>metadata table</strong> where rows contain sample information and columns must contain at least:</p>
 <ul>
 <li>The name of the batch the sample was acquired in</li>
@@ -159,85 +159,150 @@
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sampleAnnotation"</span><span class="op">)</span>
 <span class="va">sampleAnnotation</span>
-<span class="co">#&gt;                              Set Channel SampleType lcbatch sortday digest</span>
-<span class="co">#&gt; 1          190222S_LCA9_X_FP94BM     RI1    Carrier    LCA9      s8      N</span>
-<span class="co">#&gt; 2          190222S_LCA9_X_FP94BM     RI2  Reference    LCA9      s8      N</span>
-<span class="co">#&gt; 3          190222S_LCA9_X_FP94BM     RI3     Unused    LCA9      s8      N</span>
-<span class="co">#&gt; 4          190222S_LCA9_X_FP94BM     RI4   Monocyte    LCA9      s8      N</span>
-<span class="co">#&gt; 5          190222S_LCA9_X_FP94BM     RI5      Blank    LCA9      s8      N</span>
-<span class="co">#&gt; 6          190222S_LCA9_X_FP94BM     RI6   Monocyte    LCA9      s8      N</span>
-<span class="co">#&gt; 7          190222S_LCA9_X_FP94BM     RI7 Macrophage    LCA9      s8      N</span>
-<span class="co">#&gt; 8          190222S_LCA9_X_FP94BM     RI8 Macrophage    LCA9      s8      N</span>
-<span class="co">#&gt; 9          190222S_LCA9_X_FP94BM     RI9 Macrophage    LCA9      s8      N</span>
-<span class="co">#&gt; 10         190222S_LCA9_X_FP94BM    RI10 Macrophage    LCA9      s8      N</span>
-<span class="co">#&gt; 11         190222S_LCA9_X_FP94BM    RI11 Macrophage    LCA9      s8      N</span>
-<span class="co">#&gt; 12         190222S_LCA9_X_FP94BM    RI12     Unused    LCA9      s8      N</span>
-<span class="co">#&gt; 13         190222S_LCA9_X_FP94BM    RI13     Unused    LCA9      s8      N</span>
-<span class="co">#&gt; 14         190222S_LCA9_X_FP94BM    RI14     Unused    LCA9      s8      N</span>
-<span class="co">#&gt; 15         190222S_LCA9_X_FP94BM    RI15     Unused    LCA9      s8      N</span>
-<span class="co">#&gt; 16         190222S_LCA9_X_FP94BM    RI16     Unused    LCA9      s8      N</span>
-<span class="co">#&gt; 17        190321S_LCA10_X_FP97AG     RI1    Carrier   LCA10      s8      Q</span>
-<span class="co">#&gt; 18        190321S_LCA10_X_FP97AG     RI2  Reference   LCA10      s8      Q</span>
-<span class="co">#&gt; 19        190321S_LCA10_X_FP97AG     RI3     Unused   LCA10      s8      Q</span>
-<span class="co">#&gt; 20        190321S_LCA10_X_FP97AG     RI4 Macrophage   LCA10      s8      Q</span>
-<span class="co">#&gt; 21        190321S_LCA10_X_FP97AG     RI5   Monocyte   LCA10      s8      Q</span>
-<span class="co">#&gt; 22        190321S_LCA10_X_FP97AG     RI6 Macrophage   LCA10      s8      Q</span>
-<span class="co">#&gt; 23        190321S_LCA10_X_FP97AG     RI7 Macrophage   LCA10      s8      Q</span>
-<span class="co">#&gt; 24        190321S_LCA10_X_FP97AG     RI8 Macrophage   LCA10      s8      Q</span>
-<span class="co">#&gt; 25        190321S_LCA10_X_FP97AG     RI9 Macrophage   LCA10      s8      Q</span>
-<span class="co">#&gt; 26        190321S_LCA10_X_FP97AG    RI10 Macrophage   LCA10      s8      Q</span>
-<span class="co">#&gt; 27        190321S_LCA10_X_FP97AG    RI11 Macrophage   LCA10      s8      Q</span>
-<span class="co">#&gt; 28        190321S_LCA10_X_FP97AG    RI12     Unused   LCA10      s8      Q</span>
-<span class="co">#&gt; 29        190321S_LCA10_X_FP97AG    RI13     Unused   LCA10      s8      Q</span>
-<span class="co">#&gt; 30        190321S_LCA10_X_FP97AG    RI14     Unused   LCA10      s8      Q</span>
-<span class="co">#&gt; 31        190321S_LCA10_X_FP97AG    RI15     Unused   LCA10      s8      Q</span>
-<span class="co">#&gt; 32        190321S_LCA10_X_FP97AG    RI16     Unused   LCA10      s8      Q</span>
-<span class="co">#&gt; 33  190914S_LCB3_X_16plex_Set_21     RI1    Carrier    LCB3      s9      R</span>
-<span class="co">#&gt; 34  190914S_LCB3_X_16plex_Set_21     RI2  Reference    LCB3      s9      R</span>
-<span class="co">#&gt; 35  190914S_LCB3_X_16plex_Set_21     RI3     Unused    LCB3      s9      R</span>
-<span class="co">#&gt; 36  190914S_LCB3_X_16plex_Set_21     RI4     Unused    LCB3      s9      R</span>
-<span class="co">#&gt; 37  190914S_LCB3_X_16plex_Set_21     RI5 Macrophage    LCB3      s9      R</span>
-<span class="co">#&gt; 38  190914S_LCB3_X_16plex_Set_21     RI6 Macrophage    LCB3      s9      R</span>
-<span class="co">#&gt; 39  190914S_LCB3_X_16plex_Set_21     RI7      Blank    LCB3      s9      R</span>
-<span class="co">#&gt; 40  190914S_LCB3_X_16plex_Set_21     RI8   Monocyte    LCB3      s9      R</span>
-<span class="co">#&gt; 41  190914S_LCB3_X_16plex_Set_21     RI9 Macrophage    LCB3      s9      R</span>
-<span class="co">#&gt; 42  190914S_LCB3_X_16plex_Set_21    RI10   Monocyte    LCB3      s9      R</span>
-<span class="co">#&gt; 43  190914S_LCB3_X_16plex_Set_21    RI11      Blank    LCB3      s9      R</span>
-<span class="co">#&gt; 44  190914S_LCB3_X_16plex_Set_21    RI12 Macrophage    LCB3      s9      R</span>
-<span class="co">#&gt; 45  190914S_LCB3_X_16plex_Set_21    RI13 Macrophage    LCB3      s9      R</span>
-<span class="co">#&gt; 46  190914S_LCB3_X_16plex_Set_21    RI14 Macrophage    LCB3      s9      R</span>
-<span class="co">#&gt; 47  190914S_LCB3_X_16plex_Set_21    RI15 Macrophage    LCB3      s9      R</span>
-<span class="co">#&gt; 48  190914S_LCB3_X_16plex_Set_21    RI16 Macrophage    LCB3      s9      R</span>
-<span class="co">#&gt; 49 190321S_LCA10_X_FP97_blank_01     RI1      Blank   LCA10      s8   &lt;NA&gt;</span>
-<span class="co">#&gt; 50 190321S_LCA10_X_FP97_blank_01     RI2      Blank   LCA10      s8   &lt;NA&gt;</span>
-<span class="co">#&gt; 51 190321S_LCA10_X_FP97_blank_01     RI3      Blank   LCA10      s8   &lt;NA&gt;</span>
-<span class="co">#&gt; 52 190321S_LCA10_X_FP97_blank_01     RI4      Blank   LCA10      s8   &lt;NA&gt;</span>
-<span class="co">#&gt; 53 190321S_LCA10_X_FP97_blank_01     RI5      Blank   LCA10      s8   &lt;NA&gt;</span>
-<span class="co">#&gt; 54 190321S_LCA10_X_FP97_blank_01     RI6      Blank   LCA10      s8   &lt;NA&gt;</span>
-<span class="co">#&gt; 55 190321S_LCA10_X_FP97_blank_01     RI7      Blank   LCA10      s8   &lt;NA&gt;</span>
-<span class="co">#&gt; 56 190321S_LCA10_X_FP97_blank_01     RI8      Blank   LCA10      s8   &lt;NA&gt;</span>
-<span class="co">#&gt; 57 190321S_LCA10_X_FP97_blank_01     RI9      Blank   LCA10      s8   &lt;NA&gt;</span>
-<span class="co">#&gt; 58 190321S_LCA10_X_FP97_blank_01    RI10      Blank   LCA10      s8   &lt;NA&gt;</span>
-<span class="co">#&gt; 59 190321S_LCA10_X_FP97_blank_01    RI11      Blank   LCA10      s8   &lt;NA&gt;</span>
-<span class="co">#&gt; 60 190321S_LCA10_X_FP97_blank_01    RI12      Blank   LCA10      s8   &lt;NA&gt;</span>
-<span class="co">#&gt; 61 190321S_LCA10_X_FP97_blank_01    RI13      Blank   LCA10      s8   &lt;NA&gt;</span>
-<span class="co">#&gt; 62 190321S_LCA10_X_FP97_blank_01    RI14      Blank   LCA10      s8   &lt;NA&gt;</span>
-<span class="co">#&gt; 63 190321S_LCA10_X_FP97_blank_01    RI15      Blank   LCA10      s8   &lt;NA&gt;</span>
-<span class="co">#&gt; 64 190321S_LCA10_X_FP97_blank_01    RI16      Blank   LCA10      s8   &lt;NA&gt;</span></code></pre></div>
+<span class="co">#&gt;                         Raw.file               Channel SampleType lcbatch</span>
+<span class="co">#&gt; 1          190222S_LCA9_X_FP94BM  Reporter.intensity.1    Carrier    LCA9</span>
+<span class="co">#&gt; 2          190222S_LCA9_X_FP94BM  Reporter.intensity.2  Reference    LCA9</span>
+<span class="co">#&gt; 3          190222S_LCA9_X_FP94BM  Reporter.intensity.3     Unused    LCA9</span>
+<span class="co">#&gt; 4          190222S_LCA9_X_FP94BM  Reporter.intensity.4   Monocyte    LCA9</span>
+<span class="co">#&gt; 5          190222S_LCA9_X_FP94BM  Reporter.intensity.5      Blank    LCA9</span>
+<span class="co">#&gt; 6          190222S_LCA9_X_FP94BM  Reporter.intensity.6   Monocyte    LCA9</span>
+<span class="co">#&gt; 7          190222S_LCA9_X_FP94BM  Reporter.intensity.7 Macrophage    LCA9</span>
+<span class="co">#&gt; 8          190222S_LCA9_X_FP94BM  Reporter.intensity.8 Macrophage    LCA9</span>
+<span class="co">#&gt; 9          190222S_LCA9_X_FP94BM  Reporter.intensity.9 Macrophage    LCA9</span>
+<span class="co">#&gt; 10         190222S_LCA9_X_FP94BM Reporter.intensity.10 Macrophage    LCA9</span>
+<span class="co">#&gt; 11         190222S_LCA9_X_FP94BM Reporter.intensity.11 Macrophage    LCA9</span>
+<span class="co">#&gt; 12         190222S_LCA9_X_FP94BM Reporter.intensity.12     Unused    LCA9</span>
+<span class="co">#&gt; 13         190222S_LCA9_X_FP94BM Reporter.intensity.13     Unused    LCA9</span>
+<span class="co">#&gt; 14         190222S_LCA9_X_FP94BM Reporter.intensity.14     Unused    LCA9</span>
+<span class="co">#&gt; 15         190222S_LCA9_X_FP94BM Reporter.intensity.15     Unused    LCA9</span>
+<span class="co">#&gt; 16         190222S_LCA9_X_FP94BM Reporter.intensity.16     Unused    LCA9</span>
+<span class="co">#&gt; 17        190321S_LCA10_X_FP97AG  Reporter.intensity.1    Carrier   LCA10</span>
+<span class="co">#&gt; 18        190321S_LCA10_X_FP97AG  Reporter.intensity.2  Reference   LCA10</span>
+<span class="co">#&gt; 19        190321S_LCA10_X_FP97AG  Reporter.intensity.3     Unused   LCA10</span>
+<span class="co">#&gt; 20        190321S_LCA10_X_FP97AG  Reporter.intensity.4 Macrophage   LCA10</span>
+<span class="co">#&gt; 21        190321S_LCA10_X_FP97AG  Reporter.intensity.5   Monocyte   LCA10</span>
+<span class="co">#&gt; 22        190321S_LCA10_X_FP97AG  Reporter.intensity.6 Macrophage   LCA10</span>
+<span class="co">#&gt; 23        190321S_LCA10_X_FP97AG  Reporter.intensity.7 Macrophage   LCA10</span>
+<span class="co">#&gt; 24        190321S_LCA10_X_FP97AG  Reporter.intensity.8 Macrophage   LCA10</span>
+<span class="co">#&gt; 25        190321S_LCA10_X_FP97AG  Reporter.intensity.9 Macrophage   LCA10</span>
+<span class="co">#&gt; 26        190321S_LCA10_X_FP97AG Reporter.intensity.10 Macrophage   LCA10</span>
+<span class="co">#&gt; 27        190321S_LCA10_X_FP97AG Reporter.intensity.11 Macrophage   LCA10</span>
+<span class="co">#&gt; 28        190321S_LCA10_X_FP97AG Reporter.intensity.12     Unused   LCA10</span>
+<span class="co">#&gt; 29        190321S_LCA10_X_FP97AG Reporter.intensity.13     Unused   LCA10</span>
+<span class="co">#&gt; 30        190321S_LCA10_X_FP97AG Reporter.intensity.14     Unused   LCA10</span>
+<span class="co">#&gt; 31        190321S_LCA10_X_FP97AG Reporter.intensity.15     Unused   LCA10</span>
+<span class="co">#&gt; 32        190321S_LCA10_X_FP97AG Reporter.intensity.16     Unused   LCA10</span>
+<span class="co">#&gt; 33  190914S_LCB3_X_16plex_Set_21  Reporter.intensity.1    Carrier    LCB3</span>
+<span class="co">#&gt; 34  190914S_LCB3_X_16plex_Set_21  Reporter.intensity.2  Reference    LCB3</span>
+<span class="co">#&gt; 35  190914S_LCB3_X_16plex_Set_21  Reporter.intensity.3     Unused    LCB3</span>
+<span class="co">#&gt; 36  190914S_LCB3_X_16plex_Set_21  Reporter.intensity.4     Unused    LCB3</span>
+<span class="co">#&gt; 37  190914S_LCB3_X_16plex_Set_21  Reporter.intensity.5 Macrophage    LCB3</span>
+<span class="co">#&gt; 38  190914S_LCB3_X_16plex_Set_21  Reporter.intensity.6 Macrophage    LCB3</span>
+<span class="co">#&gt; 39  190914S_LCB3_X_16plex_Set_21  Reporter.intensity.7      Blank    LCB3</span>
+<span class="co">#&gt; 40  190914S_LCB3_X_16plex_Set_21  Reporter.intensity.8   Monocyte    LCB3</span>
+<span class="co">#&gt; 41  190914S_LCB3_X_16plex_Set_21  Reporter.intensity.9 Macrophage    LCB3</span>
+<span class="co">#&gt; 42  190914S_LCB3_X_16plex_Set_21 Reporter.intensity.10   Monocyte    LCB3</span>
+<span class="co">#&gt; 43  190914S_LCB3_X_16plex_Set_21 Reporter.intensity.11      Blank    LCB3</span>
+<span class="co">#&gt; 44  190914S_LCB3_X_16plex_Set_21 Reporter.intensity.12 Macrophage    LCB3</span>
+<span class="co">#&gt; 45  190914S_LCB3_X_16plex_Set_21 Reporter.intensity.13 Macrophage    LCB3</span>
+<span class="co">#&gt; 46  190914S_LCB3_X_16plex_Set_21 Reporter.intensity.14 Macrophage    LCB3</span>
+<span class="co">#&gt; 47  190914S_LCB3_X_16plex_Set_21 Reporter.intensity.15 Macrophage    LCB3</span>
+<span class="co">#&gt; 48  190914S_LCB3_X_16plex_Set_21 Reporter.intensity.16 Macrophage    LCB3</span>
+<span class="co">#&gt; 49 190321S_LCA10_X_FP97_blank_01  Reporter.intensity.1      Blank   LCA10</span>
+<span class="co">#&gt; 50 190321S_LCA10_X_FP97_blank_01  Reporter.intensity.2      Blank   LCA10</span>
+<span class="co">#&gt; 51 190321S_LCA10_X_FP97_blank_01  Reporter.intensity.3      Blank   LCA10</span>
+<span class="co">#&gt; 52 190321S_LCA10_X_FP97_blank_01  Reporter.intensity.4      Blank   LCA10</span>
+<span class="co">#&gt; 53 190321S_LCA10_X_FP97_blank_01  Reporter.intensity.5      Blank   LCA10</span>
+<span class="co">#&gt; 54 190321S_LCA10_X_FP97_blank_01  Reporter.intensity.6      Blank   LCA10</span>
+<span class="co">#&gt; 55 190321S_LCA10_X_FP97_blank_01  Reporter.intensity.7      Blank   LCA10</span>
+<span class="co">#&gt; 56 190321S_LCA10_X_FP97_blank_01  Reporter.intensity.8      Blank   LCA10</span>
+<span class="co">#&gt; 57 190321S_LCA10_X_FP97_blank_01  Reporter.intensity.9      Blank   LCA10</span>
+<span class="co">#&gt; 58 190321S_LCA10_X_FP97_blank_01 Reporter.intensity.10      Blank   LCA10</span>
+<span class="co">#&gt; 59 190321S_LCA10_X_FP97_blank_01 Reporter.intensity.11      Blank   LCA10</span>
+<span class="co">#&gt; 60 190321S_LCA10_X_FP97_blank_01 Reporter.intensity.12      Blank   LCA10</span>
+<span class="co">#&gt; 61 190321S_LCA10_X_FP97_blank_01 Reporter.intensity.13      Blank   LCA10</span>
+<span class="co">#&gt; 62 190321S_LCA10_X_FP97_blank_01 Reporter.intensity.14      Blank   LCA10</span>
+<span class="co">#&gt; 63 190321S_LCA10_X_FP97_blank_01 Reporter.intensity.15      Blank   LCA10</span>
+<span class="co">#&gt; 64 190321S_LCA10_X_FP97_blank_01 Reporter.intensity.16      Blank   LCA10</span>
+<span class="co">#&gt;    sortday digest</span>
+<span class="co">#&gt; 1       s8      N</span>
+<span class="co">#&gt; 2       s8      N</span>
+<span class="co">#&gt; 3       s8      N</span>
+<span class="co">#&gt; 4       s8      N</span>
+<span class="co">#&gt; 5       s8      N</span>
+<span class="co">#&gt; 6       s8      N</span>
+<span class="co">#&gt; 7       s8      N</span>
+<span class="co">#&gt; 8       s8      N</span>
+<span class="co">#&gt; 9       s8      N</span>
+<span class="co">#&gt; 10      s8      N</span>
+<span class="co">#&gt; 11      s8      N</span>
+<span class="co">#&gt; 12      s8      N</span>
+<span class="co">#&gt; 13      s8      N</span>
+<span class="co">#&gt; 14      s8      N</span>
+<span class="co">#&gt; 15      s8      N</span>
+<span class="co">#&gt; 16      s8      N</span>
+<span class="co">#&gt; 17      s8      Q</span>
+<span class="co">#&gt; 18      s8      Q</span>
+<span class="co">#&gt; 19      s8      Q</span>
+<span class="co">#&gt; 20      s8      Q</span>
+<span class="co">#&gt; 21      s8      Q</span>
+<span class="co">#&gt; 22      s8      Q</span>
+<span class="co">#&gt; 23      s8      Q</span>
+<span class="co">#&gt; 24      s8      Q</span>
+<span class="co">#&gt; 25      s8      Q</span>
+<span class="co">#&gt; 26      s8      Q</span>
+<span class="co">#&gt; 27      s8      Q</span>
+<span class="co">#&gt; 28      s8      Q</span>
+<span class="co">#&gt; 29      s8      Q</span>
+<span class="co">#&gt; 30      s8      Q</span>
+<span class="co">#&gt; 31      s8      Q</span>
+<span class="co">#&gt; 32      s8      Q</span>
+<span class="co">#&gt; 33      s9      R</span>
+<span class="co">#&gt; 34      s9      R</span>
+<span class="co">#&gt; 35      s9      R</span>
+<span class="co">#&gt; 36      s9      R</span>
+<span class="co">#&gt; 37      s9      R</span>
+<span class="co">#&gt; 38      s9      R</span>
+<span class="co">#&gt; 39      s9      R</span>
+<span class="co">#&gt; 40      s9      R</span>
+<span class="co">#&gt; 41      s9      R</span>
+<span class="co">#&gt; 42      s9      R</span>
+<span class="co">#&gt; 43      s9      R</span>
+<span class="co">#&gt; 44      s9      R</span>
+<span class="co">#&gt; 45      s9      R</span>
+<span class="co">#&gt; 46      s9      R</span>
+<span class="co">#&gt; 47      s9      R</span>
+<span class="co">#&gt; 48      s9      R</span>
+<span class="co">#&gt; 49      s8   &lt;NA&gt;</span>
+<span class="co">#&gt; 50      s8   &lt;NA&gt;</span>
+<span class="co">#&gt; 51      s8   &lt;NA&gt;</span>
+<span class="co">#&gt; 52      s8   &lt;NA&gt;</span>
+<span class="co">#&gt; 53      s8   &lt;NA&gt;</span>
+<span class="co">#&gt; 54      s8   &lt;NA&gt;</span>
+<span class="co">#&gt; 55      s8   &lt;NA&gt;</span>
+<span class="co">#&gt; 56      s8   &lt;NA&gt;</span>
+<span class="co">#&gt; 57      s8   &lt;NA&gt;</span>
+<span class="co">#&gt; 58      s8   &lt;NA&gt;</span>
+<span class="co">#&gt; 59      s8   &lt;NA&gt;</span>
+<span class="co">#&gt; 60      s8   &lt;NA&gt;</span>
+<span class="co">#&gt; 61      s8   &lt;NA&gt;</span>
+<span class="co">#&gt; 62      s8   &lt;NA&gt;</span>
+<span class="co">#&gt; 63      s8   &lt;NA&gt;</span>
+<span class="co">#&gt; 64      s8   &lt;NA&gt;</span></code></pre></div>
 <p>The two tables are supplied to the <code>readSCP</code> function.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readSCP.html">readSCP</a></span><span class="op">(</span>featureData <span class="op">=</span> <span class="va">mqScpData</span>,
                colData <span class="op">=</span> <span class="va">sampleAnnotation</span>,
                channelCol <span class="op">=</span> <span class="st">"Channel"</span>,
-               batchCol <span class="op">=</span> <span class="st">"Set"</span><span class="op">)</span>
+               batchCol <span class="op">=</span> <span class="st">"Raw.file"</span><span class="op">)</span>
 <span class="co">#&gt; Loading data as a 'SingleCellExperiment' object</span>
-<span class="co">#&gt; Splitting data based on 'Set'</span>
+<span class="co">#&gt; Splitting data based on 'Raw.file'</span>
 <span class="co">#&gt; Formatting sample metadata (colData)</span>
 <span class="co">#&gt; Formatting data as a 'QFeatures' object</span></code></pre></div>
 <p>As indicated by the output on the console, <code>readSCP</code> proceeds as follows:</p>
 <ol style="list-style-type: decimal">
 <li><p>If <code>featureData</code> is the path to a CSV file, it reads the file using <code>read.csv</code>. The table is converted to a <code>SingleCellExperiment</code> object. <code>readSCP</code> needs to know in which field(s) the quantitative data is stored. Those field name(s) is/are provided by the <code>channelCol</code> field in the <code>metaData</code> table. So in this example, the column names holding the quantitative data in <code>mqScpData</code> are stored in the column named <code>Channel</code> in <code>sampleAnnotation</code>.</p></li>
-<li><p>The <code>SingleCellExperiment</code> object is then split according to batch. The split is performed depending on the <code>batchCol</code> field in <code>featureData</code>, in this case the data will be split according to the <code>Set</code> column in <code>mqScpData</code>.</p></li>
+<li><p>The <code>SingleCellExperiment</code> object is then split according to batch. The split is performed depending on the <code>batchCol</code> field in <code>featureData</code>, in this case the data will be split according to the <code>Raw.file</code> column in <code>mqScpData</code>. <code>Raw.file</code> contains the names of the acquisition runs that was used by MaxQuant to retrieve the raw data files.</p></li>
 <li><p>The sample metadata is generated from the supplied <code>colData</code>. Note that in order for <code>readSCP</code> to correctly match the feature data with the metadata, <code>colData</code> must contain the same <code>batchCol</code> field with batch names.</p></li>
 <li><p>Finally, the split feature data and the sample metadata are stored in a single <code>QFeatures</code> object.</p></li>
 </ol>
@@ -245,10 +310,10 @@
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">scp</span>
 <span class="co">#&gt; An instance of class QFeatures containing 4 assays:</span>
-<span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 290 rows and 16 columns </span>
+<span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 395 rows and 16 columns </span>
 <span class="co">#&gt;  [2] 190321S_LCA10_X_FP97_blank_01: SingleCellExperiment with 109 rows and 16 columns </span>
-<span class="co">#&gt;  [3] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 375 rows and 16 columns </span>
-<span class="co">#&gt;  [4] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 323 rows and 16 columns</span></code></pre></div>
+<span class="co">#&gt;  [3] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 487 rows and 16 columns </span>
+<span class="co">#&gt;  [4] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 370 rows and 16 columns</span></code></pre></div>
 <p>We can see that the <code>scp</code> object we created is a <code>QFeatures</code> object containing 4 assays. Each assay has an associated name, this is the batch name that was used for splitting. We can also see that each assay is a <code>SingleCellExperiment</code> object. The rows represent the peptide to spectrum matches (PSMs), the number vary depending on the batch. Finally, all three assays contains 16 columns that correspond to the 16 TMT channels recorded during the 4 MS runs.</p>
 <div id="special-case-empty-columns" class="section level2">
 <h2 class="hasAnchor">
@@ -258,18 +323,18 @@
 <code class="sourceCode R"><span class="va">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readSCP.html">readSCP</a></span><span class="op">(</span>featureData <span class="op">=</span> <span class="va">mqScpData</span>,
                colData <span class="op">=</span> <span class="va">sampleAnnotation</span>,
                channelCol <span class="op">=</span> <span class="st">"Channel"</span>,
-               batchCol <span class="op">=</span> <span class="st">"Set"</span>,
+               batchCol <span class="op">=</span> <span class="st">"Raw.file"</span>,
                removeEmptyCols <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co">#&gt; Loading data as a 'SingleCellExperiment' object</span>
-<span class="co">#&gt; Splitting data based on 'Set'</span>
+<span class="co">#&gt; Splitting data based on 'Raw.file'</span>
 <span class="co">#&gt; Formatting sample metadata (colData)</span>
 <span class="co">#&gt; Formatting data as a 'QFeatures' object</span>
 <span class="va">scp</span>
 <span class="co">#&gt; An instance of class QFeatures containing 4 assays:</span>
-<span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 290 rows and 11 columns </span>
+<span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 395 rows and 11 columns </span>
 <span class="co">#&gt;  [2] 190321S_LCA10_X_FP97_blank_01: SingleCellExperiment with 109 rows and 11 columns </span>
-<span class="co">#&gt;  [3] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 375 rows and 11 columns </span>
-<span class="co">#&gt;  [4] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 323 rows and 16 columns</span></code></pre></div>
+<span class="co">#&gt;  [3] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 487 rows and 11 columns </span>
+<span class="co">#&gt;  [4] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 370 rows and 16 columns</span></code></pre></div>
 <p>See here that the 3 first assays contain 11 columns that correspond to the TMT-11 labels and the last assay contains 16 columns that correspond to the TMT-16 labels.</p>
 </div>
 </div>
@@ -314,10 +379,10 @@
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">dims</span><span class="op">(</span><span class="va">scp</span><span class="op">)</span>
 <span class="co">#&gt;      190222S_LCA9_X_FP94BM 190321S_LCA10_X_FP97_blank_01 190321S_LCA10_X_FP97AG</span>
-<span class="co">#&gt; [1,]                   240                            60                    271</span>
+<span class="co">#&gt; [1,]                   283                            60                    318</span>
 <span class="co">#&gt; [2,]                    11                            11                     11</span>
 <span class="co">#&gt;      190914S_LCB3_X_16plex_Set_21</span>
-<span class="co">#&gt; [1,]                          180</span>
+<span class="co">#&gt; [1,]                          200</span>
 <span class="co">#&gt; [2,]                           16</span></code></pre></div>
 <p>Actually, a <code>QFeatures</code> object can be seen as a three-order array: <span class="math inline">\(features \times samples \times assay\)</span>. Hence, <code>QFeatures</code> supports three-order subsetting <code>x[rows, columns, assays]</code>. We first select the assays that have sufficient PSMs (the number of rows is greater than 150), and then subset the <code>scp</code> object for the assays that meet the criterion.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
@@ -329,9 +394,9 @@
 <span class="co">#&gt;   removing 11 colData rownames not in sampleMap 'primary'</span>
 <span class="va">scp</span>
 <span class="co">#&gt; An instance of class QFeatures containing 3 assays:</span>
-<span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 240 rows and 11 columns </span>
-<span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 271 rows and 11 columns </span>
-<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 180 rows and 16 columns</span></code></pre></div>
+<span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 283 rows and 11 columns </span>
+<span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 318 rows and 11 columns </span>
+<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 200 rows and 16 columns</span></code></pre></div>
 <p>Notice the <code>190321S_LCA10_X_FP97_blank_01</code> sample was removed because it did not contain sufficient features, as expected from a blank run. This could also have been the case for failed runs.</p>
 </div>
 <div id="filter-features-based-on-scp-metrics" class="section level2">
@@ -437,9 +502,9 @@ Conceptual illustration of feature aggregation.
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">scp</span>
 <span class="co">#&gt; An instance of class QFeatures containing 3 assays:</span>
-<span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 213 rows and 11 columns </span>
-<span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 243 rows and 11 columns </span>
-<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 163 rows and 16 columns</span></code></pre></div>
+<span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 239 rows and 11 columns </span>
+<span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 277 rows and 11 columns </span>
+<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 186 rows and 16 columns</span></code></pre></div>
 <p>The PSMs are aggregated over the <code>fcol</code> feature variable, here peptides. We also need to supply an aggregating function that will tell how to combine the quantitative data of the PSMs to aggregate. We here aggregate the PSM data using the median value per sample thanks to the <code>matrixStats:colMedians</code> function. Other functions can be used and we refer to <code>?aggregateFeatures</code> for more information about available aggregation functions. The <code>aggregateFeaturesOverAssays</code> function will create a new assay for each aggregated assay. We name the aggregated assays using the original names and appending <code>peptides_</code> at the start.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/aggregateFeaturesOverAssays.html">aggregateFeaturesOverAssays</a></span><span class="op">(</span><span class="va">scp</span>,
@@ -451,12 +516,12 @@ Conceptual illustration of feature aggregation.
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">scp</span>
 <span class="co">#&gt; An instance of class QFeatures containing 6 assays:</span>
-<span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 213 rows and 11 columns </span>
-<span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 243 rows and 11 columns </span>
-<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 163 rows and 16 columns </span>
-<span class="co">#&gt;  [4] peptides_190222S_LCA9_X_FP94BM: SingleCellExperiment with 211 rows and 11 columns </span>
-<span class="co">#&gt;  [5] peptides_190321S_LCA10_X_FP97AG: SingleCellExperiment with 243 rows and 11 columns </span>
-<span class="co">#&gt;  [6] peptides_190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 163 rows and 16 columns</span></code></pre></div>
+<span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 239 rows and 11 columns </span>
+<span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 277 rows and 11 columns </span>
+<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 186 rows and 16 columns </span>
+<span class="co">#&gt;  [4] peptides_190222S_LCA9_X_FP94BM: SingleCellExperiment with 239 rows and 11 columns </span>
+<span class="co">#&gt;  [5] peptides_190321S_LCA10_X_FP97AG: SingleCellExperiment with 277 rows and 11 columns </span>
+<span class="co">#&gt;  [6] peptides_190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 185 rows and 16 columns</span></code></pre></div>
 <p>Under the hood, the <code>QFeatures</code> architecture preserves the relationship between the aggregated assays. See <code>?AssayLinks</code> for more information on relationships between assays.</p>
 </div>
 <div id="join-the-scope2-sets-in-one-assay" class="section level1">
@@ -466,21 +531,18 @@ Conceptual illustration of feature aggregation.
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">scp</span> <span class="op">&lt;-</span> <span class="fu">joinAssays</span><span class="op">(</span><span class="va">scp</span>,
                   i <span class="op">=</span> <span class="fl">4</span><span class="op">:</span><span class="fl">6</span>,
-                  name <span class="op">=</span> <span class="st">"peptides"</span><span class="op">)</span>
-<span class="co">#&gt; Warning: 'experiments' dropped; see 'metadata'</span>
-<span class="co">#&gt; harmonizing input:</span>
-<span class="co">#&gt;   removing 38 sampleMap rows not in names(experiments)</span></code></pre></div>
+                  name <span class="op">=</span> <span class="st">"peptides"</span><span class="op">)</span></code></pre></div>
 <p>In this case, one new assay is created in the <code>scp</code> object that combines the data from assay 4 to 6. The samples are always distinct so the number of column in the new assay (here <span class="math inline">\(48\)</span>) will always equals the sum of the columns in the assays to join (here <span class="math inline">\(16 + 16 + 16\)</span>). The feature in the joined assay might contain less features than the sum of the rows of the assays to join since common features between assays are joined in a single row.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">scp</span>
 <span class="co">#&gt; An instance of class QFeatures containing 7 assays:</span>
-<span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 213 rows and 11 columns </span>
-<span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 243 rows and 11 columns </span>
-<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 163 rows and 16 columns </span>
-<span class="co">#&gt;  [4] peptides_190222S_LCA9_X_FP94BM: SingleCellExperiment with 211 rows and 11 columns </span>
-<span class="co">#&gt;  [5] peptides_190321S_LCA10_X_FP97AG: SingleCellExperiment with 243 rows and 11 columns </span>
-<span class="co">#&gt;  [6] peptides_190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 163 rows and 16 columns </span>
-<span class="co">#&gt;  [7] peptides: SingleCellExperiment with 369 rows and 38 columns</span></code></pre></div>
+<span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 239 rows and 11 columns </span>
+<span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 277 rows and 11 columns </span>
+<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 186 rows and 16 columns </span>
+<span class="co">#&gt;  [4] peptides_190222S_LCA9_X_FP94BM: SingleCellExperiment with 239 rows and 11 columns </span>
+<span class="co">#&gt;  [5] peptides_190321S_LCA10_X_FP97AG: SingleCellExperiment with 277 rows and 11 columns </span>
+<span class="co">#&gt;  [6] peptides_190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 185 rows and 16 columns </span>
+<span class="co">#&gt;  [7] peptides: SingleCellExperiment with 432 rows and 38 columns</span></code></pre></div>
 </div>
 <div id="filter-single-cells" class="section level1">
 <h1 class="hasAnchor">
@@ -493,25 +555,25 @@ Conceptual illustration of feature aggregation.
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">scp</span>
 <span class="co">#&gt; An instance of class QFeatures containing 7 assays:</span>
-<span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 213 rows and 11 columns </span>
-<span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 243 rows and 11 columns </span>
-<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 163 rows and 16 columns </span>
-<span class="co">#&gt;  [4] peptides_190222S_LCA9_X_FP94BM: SingleCellExperiment with 211 rows and 11 columns </span>
-<span class="co">#&gt;  [5] peptides_190321S_LCA10_X_FP97AG: SingleCellExperiment with 243 rows and 11 columns </span>
-<span class="co">#&gt;  [6] peptides_190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 163 rows and 16 columns </span>
-<span class="co">#&gt;  [7] peptides: SingleCellExperiment with 369 rows and 38 columns</span>
+<span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 239 rows and 11 columns </span>
+<span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 277 rows and 11 columns </span>
+<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 186 rows and 16 columns </span>
+<span class="co">#&gt;  [4] peptides_190222S_LCA9_X_FP94BM: SingleCellExperiment with 239 rows and 11 columns </span>
+<span class="co">#&gt;  [5] peptides_190321S_LCA10_X_FP97AG: SingleCellExperiment with 277 rows and 11 columns </span>
+<span class="co">#&gt;  [6] peptides_190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 185 rows and 16 columns </span>
+<span class="co">#&gt;  [7] peptides: SingleCellExperiment with 432 rows and 38 columns</span>
 <span class="va">scp</span> <span class="op">&lt;-</span> <span class="va">scp</span><span class="op">[</span>, <span class="va">scp</span><span class="op">$</span><span class="va">SampleType</span> <span class="op">%in%</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Blank"</span>, <span class="st">"Macrophage"</span>, <span class="st">"Monocyte"</span><span class="op">)</span>, <span class="op">]</span></code></pre></div>
 <p>The subsetting removes unwanted samples from all assays. The filtered data set contains the same number of assays with the same number of features, but the number of columns (hence sampled) decreased.</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">scp</span>
 <span class="co">#&gt; An instance of class QFeatures containing 7 assays:</span>
-<span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 213 rows and 8 columns </span>
-<span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 243 rows and 8 columns </span>
-<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 163 rows and 12 columns </span>
-<span class="co">#&gt;  [4] peptides_190222S_LCA9_X_FP94BM: SingleCellExperiment with 211 rows and 8 columns </span>
-<span class="co">#&gt;  [5] peptides_190321S_LCA10_X_FP97AG: SingleCellExperiment with 243 rows and 8 columns </span>
-<span class="co">#&gt;  [6] peptides_190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 163 rows and 12 columns </span>
-<span class="co">#&gt;  [7] peptides: SingleCellExperiment with 369 rows and 28 columns</span></code></pre></div>
+<span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 239 rows and 8 columns </span>
+<span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 277 rows and 8 columns </span>
+<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 186 rows and 12 columns </span>
+<span class="co">#&gt;  [4] peptides_190222S_LCA9_X_FP94BM: SingleCellExperiment with 239 rows and 8 columns </span>
+<span class="co">#&gt;  [5] peptides_190321S_LCA10_X_FP97AG: SingleCellExperiment with 277 rows and 8 columns </span>
+<span class="co">#&gt;  [6] peptides_190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 185 rows and 12 columns </span>
+<span class="co">#&gt;  [7] peptides: SingleCellExperiment with 432 rows and 28 columns</span></code></pre></div>
 </div>
 <div id="filter-based-on-the-median-relative-intensity" class="section level2">
 <h2 class="hasAnchor">
@@ -525,10 +587,18 @@ Conceptual illustration of feature aggregation.
           na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">-&gt;</span>
     <span class="va">medians</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">medians</span><span class="op">)</span>
-<span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI4 190222S_LCA9_X_FP94BM_RI5 190222S_LCA9_X_FP94BM_RI6 </span>
-<span class="co">#&gt;                 0.8799056                 0.5134779                 0.8390115 </span>
-<span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI7 190222S_LCA9_X_FP94BM_RI8 190222S_LCA9_X_FP94BM_RI9 </span>
-<span class="co">#&gt;                 0.4410601                 1.2305046                 1.0139141</span></code></pre></div>
+<span class="co">#&gt; 190222S_LCA9_X_FP94BMReporter.intensity.4 </span>
+<span class="co">#&gt;                                 0.7572816 </span>
+<span class="co">#&gt; 190222S_LCA9_X_FP94BMReporter.intensity.5 </span>
+<span class="co">#&gt;                                 0.4766553 </span>
+<span class="co">#&gt; 190222S_LCA9_X_FP94BMReporter.intensity.6 </span>
+<span class="co">#&gt;                                 0.8314786 </span>
+<span class="co">#&gt; 190222S_LCA9_X_FP94BMReporter.intensity.7 </span>
+<span class="co">#&gt;                                 0.4127720 </span>
+<span class="co">#&gt; 190222S_LCA9_X_FP94BMReporter.intensity.8 </span>
+<span class="co">#&gt;                                 1.0302978 </span>
+<span class="co">#&gt; 190222S_LCA9_X_FP94BMReporter.intensity.9 </span>
+<span class="co">#&gt;                                 0.8830915</span></code></pre></div>
 <p>The computed medians are then inserted in the <code>colData</code>.</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">colData</span><span class="op">(</span><span class="va">scp</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">medians</span><span class="op">)</span>, <span class="st">"MedianRI"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">medians</span></code></pre></div>
@@ -604,13 +674,13 @@ Conceptual illustration of feature aggregation.
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">scp</span>
 <span class="co">#&gt; An instance of class QFeatures containing 9 assays:</span>
-<span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 213 rows and 6 columns </span>
-<span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 243 rows and 7 columns </span>
-<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 163 rows and 4 columns </span>
+<span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 239 rows and 6 columns </span>
+<span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 277 rows and 6 columns </span>
+<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 186 rows and 6 columns </span>
 <span class="co">#&gt;  ...</span>
-<span class="co">#&gt;  [7] peptides: SingleCellExperiment with 369 rows and 17 columns </span>
-<span class="co">#&gt;  [8] peptides_norm_col: SingleCellExperiment with 369 rows and 17 columns </span>
-<span class="co">#&gt;  [9] peptides_norm: SingleCellExperiment with 369 rows and 17 columns</span></code></pre></div>
+<span class="co">#&gt;  [7] peptides: SingleCellExperiment with 432 rows and 18 columns </span>
+<span class="co">#&gt;  [8] peptides_norm_col: SingleCellExperiment with 432 rows and 18 columns </span>
+<span class="co">#&gt;  [9] peptides_norm: SingleCellExperiment with 432 rows and 18 columns</span></code></pre></div>
 <p>Let’s point out</p>
 </div>
 <div id="remove-peptides-with-high-missing-rate" class="section level2">
@@ -651,13 +721,13 @@ Conceptual illustration of feature aggregation.
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">scp</span>
 <span class="co">#&gt; An instance of class QFeatures containing 11 assays:</span>
-<span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 213 rows and 6 columns </span>
-<span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 243 rows and 7 columns </span>
-<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 163 rows and 4 columns </span>
+<span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 239 rows and 6 columns </span>
+<span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 277 rows and 6 columns </span>
+<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 186 rows and 6 columns </span>
 <span class="co">#&gt;  ...</span>
-<span class="co">#&gt;  [9] peptides_norm: SingleCellExperiment with 357 rows and 17 columns </span>
-<span class="co">#&gt;  [10] peptides_log: SingleCellExperiment with 357 rows and 17 columns </span>
-<span class="co">#&gt;  [11] proteins: SingleCellExperiment with 89 rows and 17 columns</span></code></pre></div>
+<span class="co">#&gt;  [9] peptides_norm: SingleCellExperiment with 413 rows and 18 columns </span>
+<span class="co">#&gt;  [10] peptides_log: SingleCellExperiment with 413 rows and 18 columns </span>
+<span class="co">#&gt;  [11] proteins: SingleCellExperiment with 94 rows and 18 columns</span></code></pre></div>
 <p>After the second aggregation, the <code>proteins</code> assay in this example contains quantitative information for 89 proteins in 15 single-cells.</p>
 </div>
 <div id="process-the-protein-data" class="section level1">
@@ -695,7 +765,7 @@ Conceptual illustration of feature aggregation.
     <span class="va">assay</span> <span class="op">%&gt;%</span>
     <span class="va">is.na</span> <span class="op">%&gt;%</span>
     <span class="va">mean</span>
-<span class="co">#&gt; [1] 0.2326504</span></code></pre></div>
+<span class="co">#&gt; [1] 0.3291962</span></code></pre></div>
 <p>The average missingness in the <code>proteins</code> assay is around 25 %. Including more samples and hence more batches can increase the missingness up to 70 % as seen for the complete SCoPE2 dataset (<span class="citation">Specht et al. (2021)</span>). Whether imputation is beneficial or deleterious for the data will not be discussed in this vignette. But taking those missing value into account is essential to avoid artefacts in downstream analyses. The data imputation is performed using the K nearest neighbors algorithm, with k = 3. This is available from the <code>impute</code> mehtod. More details about the arguments can be found in <code><a href="https://rdrr.io/pkg/impute/man/impute.knn.html" class="external-link">?impute::impute.knn</a></code>.</p>
 <div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">scp</span> <span class="op">&lt;-</span> <span class="fu">impute</span><span class="op">(</span><span class="va">scp</span>,
@@ -722,10 +792,10 @@ Conceptual illustration of feature aggregation.
 <code class="sourceCode R"><span class="va">sce</span> <span class="op">&lt;-</span> <span class="fu">getWithColData</span><span class="op">(</span><span class="va">scp</span>, <span class="st">"proteins_norm"</span><span class="op">)</span>
 <span class="co">#&gt; Warning: 'experiments' dropped; see 'metadata'</span>
 <span class="co">#&gt; harmonizing input:</span>
-<span class="co">#&gt;   removing 136 sampleMap rows not in names(experiments)</span></code></pre></div>
+<span class="co">#&gt;   removing 144 sampleMap rows not in names(experiments)</span></code></pre></div>
 <p>Next, we need to provide a design matrix and the batch annotation to <code>Combat</code>. The design matrix allows to protect variables of interest, in our case <code>SampleType</code>.</p>
 <div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">batch</span> <span class="op">&lt;-</span> <span class="fu">colData</span><span class="op">(</span><span class="va">sce</span><span class="op">)</span><span class="op">$</span><span class="va">Set</span>
+<code class="sourceCode R"><span class="va">batch</span> <span class="op">&lt;-</span> <span class="fu">colData</span><span class="op">(</span><span class="va">sce</span><span class="op">)</span><span class="op">$</span><span class="va">Raw.file</span>
 <span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span><span class="op">~</span> <span class="va">SampleType</span>, data <span class="op">=</span> <span class="fu">colData</span><span class="op">(</span><span class="va">sce</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>We then load and call <code>ComBat</code> and overwrite the data matrix. Recall the data matrix can be accessed using the <code>assay</code> function.</p>
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
@@ -797,17 +867,17 @@ Conceptual illustration of feature aggregation.
 <div id="monitoring-data-processing" class="section level1">
 <h1 class="hasAnchor">
 <a href="#monitoring-data-processing" class="anchor"></a>Monitoring data processing</h1>
-<p>The <code>QFeatures</code> plot shows the quantitative data for a features at the different expression levels. For instance, suppose we are interested in the protein <em>LMNA</em> (protein ID is <code>P02545</code>). A useful QC is to monitor the data processing at the PSM, peptide and protein level. This can easily be done thanks to the <code>QFeatures</code> framework. Using the <code>subsetByFeature</code>, we can extract the protein of interest and its related features in the other assays. The data is formated to a long format table that can easily be plugged in the <code>ggplot2</code> visualization tool.</p>
+<p>The <code>QFeatures</code> plot shows the quantitative data for a features at the different expression levels. For instance, suppose we are interested in the protein <em>Plastin-2</em> (protein ID is <code>P13796</code>). A useful QC is to monitor the data processing at the PSM, peptide and protein level. This can easily be done thanks to the <code>QFeatures</code> framework. Using the <code>subsetByFeature</code>, we can extract the protein of interest and its related features in the other assays. The data is formatted to a long format table that can easily be plugged in the <code>ggplot2</code> visualization tool.</p>
 <div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">scp</span> <span class="op">%&gt;%</span>
-    <span class="co">## Get the features related to LMNA (P02545)</span>
-    <span class="fu">subsetByFeature</span><span class="op">(</span><span class="st">"P02545"</span><span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="co">## Get the features related to Plastin-2 (P13796)</span>
+    <span class="fu">subsetByFeature</span><span class="op">(</span><span class="st">"P13796"</span><span class="op">)</span> <span class="op">%&gt;%</span>
     <span class="co">## Format the `QFeatures` to a long format table</span>
-    <span class="fu">longFormat</span><span class="op">(</span>colDataCols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Set"</span>, <span class="st">"SampleType"</span>, <span class="st">"Channel"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
+    <span class="fu">longFormat</span><span class="op">(</span>colDataCols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Raw.file"</span>, <span class="st">"SampleType"</span>, <span class="st">"Channel"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
     <span class="va">data.frame</span> <span class="op">%&gt;%</span>
     <span class="co">## This is used to preserve ordering of the samples and assays in ggplot2</span>
     <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>assay <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">assay</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">scp</span><span class="op">)</span><span class="op">)</span>,
-           Channel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"RI"</span>, <span class="st">"TMT-"</span>, <span class="va">Channel</span><span class="op">)</span>,
+           Channel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"Reporter.intensity."</span>, <span class="st">"TMT-"</span>, <span class="va">Channel</span><span class="op">)</span>,
            Channel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">Channel</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">Channel</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span>
     <span class="co">## Start plotting</span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Channel</span>, y <span class="op">=</span> <span class="va">value</span>, group <span class="op">=</span> <span class="va">rowname</span>, col <span class="op">=</span> <span class="va">SampleType</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
@@ -822,12 +892,12 @@ Conceptual illustration of feature aggregation.
           strip.text <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>hjust <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>,
           legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></code></pre></div>
 <p><img src="scp_files/figure-html/monitor_plot-1.png" width="100%"></p>
-<p>This graph helps to keep track of the data processing and highlights anomalies in the data. For instance, we can see that no data were recorded for 5 channels (TMT-12 to 16). Those channels contain either macrophages or monocytes (from the experimental design) and are expected to contain information. Thanks to this diagnostic plot, we reported the issue to Specht and colleagues and this led to version 3 of the SCoPE2 dataset.</p>
+<p>This graph helps to keep track of the data processing. We can see how the different PSMs are progressively aggregated to peptides and then to proteins as well as how the normalization, imputation or batch correction impact the distribution of the quantifications.</p>
 </div>
 <div id="session-information" class="section level1 unnumbered">
 <h1 class="hasAnchor">
 <a href="#session-information" class="anchor"></a>Session information</h1>
-<pre><code>R Under development (unstable) (2021-02-11 r79990)
+<pre><code>R Under development (unstable) (2021-04-15 r80175)
 Platform: x86_64-pc-linux-gnu (64-bit)
 Running under: Ubuntu 20.04.2 LTS
 
@@ -847,69 +917,72 @@ attached base packages:
 [8] methods   base     
 
 other attached packages:
- [1] scater_1.19.10               SingleCellExperiment_1.13.10
- [3] sva_3.39.0                   BiocParallel_1.25.4         
- [5] genefilter_1.73.1            mgcv_1.8-33                 
- [7] nlme_3.1-152                 dplyr_1.0.4                 
+ [1] scater_1.19.11               SingleCellExperiment_1.13.14
+ [3] sva_3.39.0                   BiocParallel_1.25.5         
+ [5] genefilter_1.73.1            mgcv_1.8-34                 
+ [7] nlme_3.1-152                 dplyr_1.0.5                 
  [9] magrittr_2.0.1               ggplot2_3.3.3               
-[11] scp_1.1.5                    QFeatures_1.1.1             
-[13] MultiAssayExperiment_1.17.11 SummarizedExperiment_1.21.1 
-[15] Biobase_2.51.0               GenomicRanges_1.43.3        
-[17] GenomeInfoDb_1.27.6          IRanges_2.25.6              
-[19] S4Vectors_0.29.7             BiocGenerics_0.37.1         
+[11] scp_1.1.5                    QFeatures_1.1.3             
+[13] MultiAssayExperiment_1.17.22 SummarizedExperiment_1.21.3 
+[15] Biobase_2.51.0               GenomicRanges_1.43.4        
+[17] GenomeInfoDb_1.27.11         IRanges_2.25.9              
+[19] S4Vectors_0.29.15            BiocGenerics_0.37.2         
 [21] MatrixGenerics_1.3.1         matrixStats_0.58.0          
-[23] BiocStyle_2.19.1            
+[23] BiocStyle_2.19.2            
 
 loaded via a namespace (and not attached):
- [1] ggbeeswarm_0.6.0          colorspace_2.0-0         
- [3] ellipsis_0.3.1            rprojroot_2.0.2          
- [5] scuttle_1.1.15            XVector_0.31.1           
- [7] BiocNeighbors_1.9.4       fs_1.5.0                 
- [9] farver_2.0.3              bit64_4.0.5              
-[11] RSpectra_0.16-0           AnnotationDbi_1.53.1     
-[13] splines_4.1.0             sparseMatrixStats_1.3.6  
-[15] cachem_1.0.4              impute_1.65.0            
-[17] knitr_1.31                annotate_1.69.0          
-[19] png_0.1-7                 uwot_0.1.10              
-[21] BiocManager_1.30.10       compiler_4.1.0           
-[23] httr_1.4.2                assertthat_0.2.1         
-[25] Matrix_1.3-2              fastmap_1.1.0            
-[27] lazyeval_0.2.2            limma_3.47.8             
-[29] BiocSingular_1.7.2        htmltools_0.5.1.1        
-[31] tools_4.1.0               rsvd_1.0.3               
-[33] gtable_0.3.0              glue_1.4.2               
-[35] GenomeInfoDbData_1.2.4    Rcpp_1.0.6               
-[37] pkgdown_1.6.1.9000        vctrs_0.3.6              
-[39] Biostrings_2.59.2         DelayedMatrixStats_1.13.5
-[41] xfun_0.21                 stringr_1.4.0            
-[43] beachmat_2.7.6            lifecycle_1.0.0          
-[45] irlba_2.3.3               XML_3.99-0.5             
-[47] edgeR_3.33.2              zlibbioc_1.37.0          
-[49] MASS_7.3-53.1             scales_1.1.1             
-[51] ragg_1.1.0                ProtGenerics_1.23.7      
-[53] AnnotationFilter_1.15.0   yaml_2.2.1               
-[55] gridExtra_2.3             memoise_2.0.0            
-[57] stringi_1.5.3             RSQLite_2.2.3            
-[59] highr_0.8                 desc_1.2.0               
-[61] ScaledMatrix_0.99.2       rlang_0.4.10             
-[63] pkgconfig_2.0.3           systemfonts_1.0.1        
-[65] bitops_1.0-6              evaluate_0.14            
-[67] lattice_0.20-41           purrr_0.3.4              
-[69] labeling_0.4.2            bit_4.0.4                
-[71] tidyselect_1.1.0          bookdown_0.21            
-[73] R6_2.5.0                  generics_0.1.0           
-[75] DelayedArray_0.17.7       DBI_1.1.1                
-[77] pillar_1.4.7              withr_2.4.1              
-[79] MsCoreUtils_1.3.2         survival_3.2-7           
-[81] KEGGREST_1.31.1           RCurl_1.98-1.2           
-[83] tibble_3.0.6              crayon_1.4.1             
-[85] rmarkdown_2.7             viridis_0.5.1            
-[87] locfit_1.5-9.4            grid_4.1.0               
-[89] FNN_1.1.3                 blob_1.2.1               
-[91] digest_0.6.27             xtable_1.8-4             
-[93] textshaping_0.3.0         munsell_0.5.0            
-[95] viridisLite_0.3.0         beeswarm_0.2.3           
-[97] vipor_0.4.5              </code></pre>
+  [1] ggbeeswarm_0.6.0          colorspace_2.0-0         
+  [3] ellipsis_0.3.1            rprojroot_2.0.2          
+  [5] scuttle_1.1.18            XVector_0.31.1           
+  [7] BiocNeighbors_1.9.4       fs_1.5.0                 
+  [9] clue_0.3-59               farver_2.1.0             
+ [11] bit64_4.0.5               RSpectra_0.16-0          
+ [13] AnnotationDbi_1.53.1      fansi_0.4.2              
+ [15] splines_4.1.0             sparseMatrixStats_1.3.7  
+ [17] cachem_1.0.4              impute_1.65.0            
+ [19] knitr_1.32                jsonlite_1.7.2           
+ [21] annotate_1.69.2           cluster_2.1.1            
+ [23] png_0.1-7                 uwot_0.1.10              
+ [25] BiocManager_1.30.12       compiler_4.1.0           
+ [27] httr_1.4.2                Matrix_1.3-2             
+ [29] fastmap_1.1.0             lazyeval_0.2.2           
+ [31] limma_3.47.12             BiocSingular_1.7.2       
+ [33] htmltools_0.5.1.1         tools_4.1.0              
+ [35] rsvd_1.0.5                gtable_0.3.0             
+ [37] glue_1.4.2                GenomeInfoDbData_1.2.4   
+ [39] Rcpp_1.0.6                jquerylib_0.1.3          
+ [41] pkgdown_1.6.1.9001        vctrs_0.3.7              
+ [43] Biostrings_2.59.2         DelayedMatrixStats_1.13.5
+ [45] xfun_0.22                 stringr_1.4.0            
+ [47] beachmat_2.7.7            irlba_2.3.3              
+ [49] lifecycle_1.0.0           XML_3.99-0.6             
+ [51] edgeR_3.33.3              zlibbioc_1.37.0          
+ [53] MASS_7.3-53.1             scales_1.1.1             
+ [55] ragg_1.1.2                ProtGenerics_1.23.9      
+ [57] AnnotationFilter_1.15.0   yaml_2.2.1               
+ [59] gridExtra_2.3             memoise_2.0.0            
+ [61] sass_0.3.1                stringi_1.5.3            
+ [63] RSQLite_2.2.6             highr_0.9                
+ [65] desc_1.3.0                ScaledMatrix_0.99.2      
+ [67] rlang_0.4.10              pkgconfig_2.0.3          
+ [69] systemfonts_1.0.1         bitops_1.0-6             
+ [71] evaluate_0.14             lattice_0.20-41          
+ [73] purrr_0.3.4               labeling_0.4.2           
+ [75] bit_4.0.4                 tidyselect_1.1.0         
+ [77] bookdown_0.21             R6_2.5.0                 
+ [79] generics_0.1.0            DelayedArray_0.17.10     
+ [81] DBI_1.1.1                 pillar_1.6.0             
+ [83] withr_2.4.2               MsCoreUtils_1.3.3        
+ [85] survival_3.2-10           KEGGREST_1.31.1          
+ [87] RCurl_1.98-1.3            tibble_3.1.1             
+ [89] crayon_1.4.1              utf8_1.2.1               
+ [91] rmarkdown_2.7             viridis_0.6.0            
+ [93] locfit_1.5-9.4            grid_4.1.0               
+ [95] FNN_1.1.3                 blob_1.2.1               
+ [97] digest_0.6.27             xtable_1.8-4             
+ [99] textshaping_0.3.3         munsell_0.5.0            
+[101] viridisLite_0.4.0         beeswarm_0.3.1           
+[103] vipor_0.4.5               bslib_0.2.4              </code></pre>
 </div>
 <div id="reference" class="section level1 unnumbered">
 <h1 class="hasAnchor">
@@ -948,11 +1021,13 @@ Tyanova, Stefka, Tikira Temu, and Juergen Cox. 2016. <span>“The <span>MaxQuant
 
 
       <footer><div class="copyright">
-  <p>Developed by Christophe Vanderaa, Laurent Gatto.</p>
+  <p></p>
+<p>Developed by Christophe Vanderaa, Laurent Gatto.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.6.1.9000.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link external-link">pkgdown</a> 1.6.1.9001.</p>
 </div>
 
       </footer>
