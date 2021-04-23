@@ -7,4 +7,3 @@ docs
 ^\.github$
 .editorconfig
 .git
-inst/extdata
