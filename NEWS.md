@@ -1,9 +1,5 @@
 # scp 1.1
 
-## scp 1.1.7
-
-(nothing yet)
-
 ## scp 1.1.6
 
 - feature: `readSCP` now allows for a `suffix` argument to better 
