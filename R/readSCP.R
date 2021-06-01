@@ -31,8 +31,10 @@
 ##' @param batchCol A `numeric(1)` or `character(1)` pointing to the
 ##'     column of `featureData` and `colData` that contain the batch
 ##'     names. Make sure that the column name in both table are either
-##'     identical (if you supply a `character`) or have the same index
-##'     (if you supply a `numeric`).
+##'     identical and syntactically valid (if you supply a `character`)
+##'     or have the same index (if you supply a `numeric`). Note that
+##'     characters can be converted to syntactically valid names using
+##'     `make.names`
 ##' 
 ##' @param channelCol A `numeric(1)` or `character(1)` pointing to the
 ##'     column of `colData` that contains the column names of the
@@ -98,6 +100,13 @@ readSCP <- function(featureData,
                     removeEmptyCols = FALSE,
                     verbose = TRUE,
                     ...) {
+    ## Check the batch column name
+    if (!identical(make.names(batchCol), batchCol)) 
+        stop("'batchCol' is not a syntactically valid column name. ",
+             "See '?make.names' for converting the column names to ",
+             "valid names, e.g. '", batchCol, "' -> '", 
+             make.names(batchCol), "'")
+    
     colData <- as.data.frame(colData)
     
     ## Get the column contain the expression data
@@ -108,6 +117,7 @@ readSCP <- function(featureData,
     
     ## Create the SingleCellExperiment object
     if (verbose) message("Loading data as a 'SingleCellExperiment' object")
+    browser()
     scp <- readSingleCellExperiment(table = featureData, 
                                     ecol = ecol, 
                                     ...)
