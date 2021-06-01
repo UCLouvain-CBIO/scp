@@ -1,17 +1,25 @@
+# scp 1.3
+
+- New devel (Bioc 3.14)
+
+# scp 1.2
+
+- New stable release (Bioc 3.13)
+
 # scp 1.1
 
 ## scp 1.1.6
 
-- feature: `readSCP` now allows for a `suffix` argument to better 
+- feature: `readSCP` now allows for a `suffix` argument to better
   customize the sample names. <2021-03-17>
 
 ## scp 1.1.5
 
-- deprecation: thanks to the new normalization method in `medianCVperCell`, 
-  'computeMedianCV_SCoPE2' is now deprecated and should no longer be 
+- deprecation: thanks to the new normalization method in `medianCVperCell`,
+  'computeMedianCV_SCoPE2' is now deprecated and should no longer be
   used. <2021-02-19>
-- feat: added a new normalization method to `medianCVperCell`. The 
-  `SCoPE2` normalization method can now reproduce the results from 
+- feat: added a new normalization method to `medianCVperCell`. The
+  `SCoPE2` normalization method can now reproduce the results from
   SCoPE2. <2021-02-19>
 - docs: improved vignette <2021-02-16>
 - feat: added a `rowDataName` argument to `computeSCR`
@@ -29,28 +37,28 @@
 
 ## scp 1.1.3
 
-- docs: improved the manual page for `pep2qvalue` and the 
-  corresponding section in the vignette. 
+- docs: improved the manual page for `pep2qvalue` and the
+  corresponding section in the vignette.
   <2021-01-23>
-- refactor: reimplemented the `computeFDR` to catch up with the new 
+- refactor: reimplemented the `computeFDR` to catch up with the new
   release of SCoPE2. `computeFDR` was renamed to `pep2qvalue`. This
   is more in line with the theory. Also adapted the unit tests.
   <2021-01-23>
 
 ## scp 1.1.2
 
-- docs: improved the description of the `scp` data structure in the 
-  vignette 
+- docs: improved the description of the `scp` data structure in the
+  vignette
   <2021-01-05>
 - refactor: renamed the `groupCol` to `groupBy` and `pepCol` to `PEP`
   in `computeFDR`.
   <2020-12-08>
-- refactor: renamed `computeMedianCV` to `computeMedianCV_SCoPE2` 
-  and deprecated the function. The function will be preserved for 
+- refactor: renamed `computeMedianCV` to `computeMedianCV_SCoPE2`
+  and deprecated the function. The function will be preserved for
   backward compatibility with the replication of the SCoPE2 analysis
-  (Specht et al. 2020). Instead, a new function is implemented and 
-  called `medianCVperCell`. See 
-  [issue#7](https://github.com/UCLouvain-CBIO/scp/issues/7) for more 
+  (Specht et al. 2020). Instead, a new function is implemented and
+  called `medianCVperCell`. See
+  [issue#7](https://github.com/UCLouvain-CBIO/scp/issues/7) for more
   information
   <2020-12-07>
 
@@ -80,12 +88,12 @@
   <2020-10-14 Wed>
 - Adapted the vignette to remove warnings and fix missing PCA plot.
   <2020-10-14 Wed>
-- `README.md`: extended the installation guide, providing both a 
+- `README.md`: extended the installation guide, providing both a
   stable and a devel installation. <2020-10-13 Tue>
-- Removed the `LazyLoad` from the `DESCRIPTION` file and adapted the 
+- Removed the `LazyLoad` from the `DESCRIPTION` file and adapted the
   data loading (eg `data(scp1)` to `data("scp1")`)
   <2020-10-13 Tue>
-- Documentation: added data collection description for the 3 example 
+- Documentation: added data collection description for the 3 example
   datasets
   <2020-10-13 Tue>
 
@@ -97,7 +105,7 @@
 ## scp 0.99.1
 
 - Maintainer subscribed to bioc-devel mailing list
-- Removed `infIsNA`, the implementation was moved to the `QFeatures` 
+- Removed `infIsNA`, the implementation was moved to the `QFeatures`
 packages
 
 ## scp 0.99.0
