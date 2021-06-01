@@ -36,16 +36,18 @@ meta data.}
 \item{batchCol}{A \code{numeric(1)} or \code{character(1)} pointing to the
 column of \code{featureData} and \code{colData} that contain the batch
 names. Make sure that the column name in both table are either
-identical (if you supply a \code{character}) or have the same index
-(if you supply a \code{numeric}).}
+identical and syntactically valid (if you supply a \code{character})
+or have the same index (if you supply a \code{numeric}). Note that
+characters can be converted to syntactically valid names using
+\code{make.names}}
 
 \item{channelCol}{A \code{numeric(1)} or \code{character(1)} pointing to the
 column of \code{colData} that contains the column names of the
 quantitative data in \code{featureData} (see Example).}
 
 \item{suffix}{A \code{character()} giving the suffix of the column
-names in each assay. The length of the vector must equal the
-number of quantification channels and must contain unique
+names in each assay. The length of the vector should equal the
+number of quantification channels and should contain unique
 character elements. If NULL, the names of the quantification
 columns in \code{featureData} are taken as suffix.}
 
