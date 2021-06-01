@@ -80,7 +80,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.0</span>
       </span>
     </div>
 
@@ -120,71 +120,62 @@
       <small>Source: <a href='https://github.com/UCLouvain-CBIO/scp/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
+    <div id="scp-13" class="section level1">
+<h1 class="page-header" data-toc-text="1.3">
+<a href="#scp-13" class="anchor" aria-hidden="true"></a>scp 1.3</h1>
+<ul><li>New devel (Bioc 3.14)</li>
+</ul></div>
+    <div id="scp-12" class="section level1">
+<h1 class="page-header" data-toc-text="1.2">
+<a href="#scp-12" class="anchor" aria-hidden="true"></a>scp 1.2</h1>
+<ul><li>New stable release (Bioc 3.13)</li>
+</ul></div>
     <div id="scp-11" class="section level1">
 <h1 class="page-header" data-toc-text="1.1">
 <a href="#scp-11" class="anchor" aria-hidden="true"></a>scp 1.1</h1>
-<div id="scp-117" class="section level2">
-<h2 class="hasAnchor">
-<a href="#scp-117" class="anchor" aria-hidden="true"></a>scp 1.1.7</h2>
-<p>(nothing yet)</p>
-</div>
 <div id="scp-116" class="section level2">
 <h2 class="hasAnchor">
 <a href="#scp-116" class="anchor" aria-hidden="true"></a>scp 1.1.6</h2>
-<ul>
-<li>feature: <code>readSCP</code> now allows for a <code>suffix</code> argument to better customize the sample names. &lt;2021-03-17&gt;</li>
-</ul>
-</div>
+<ul><li>feature: <code>readSCP</code> now allows for a <code>suffix</code> argument to better customize the sample names. &lt;2021-03-17&gt;</li>
+</ul></div>
 <div id="scp-115" class="section level2">
 <h2 class="hasAnchor">
 <a href="#scp-115" class="anchor" aria-hidden="true"></a>scp 1.1.5</h2>
-<ul>
-<li>deprecation: thanks to the new normalization method in <code>medianCVperCell</code>, ‘computeMedianCV_SCoPE2’ is now deprecated and should no longer be used. &lt;2021-02-19&gt;</li>
+<ul><li>deprecation: thanks to the new normalization method in <code>medianCVperCell</code>, ‘computeMedianCV_SCoPE2’ is now deprecated and should no longer be used. &lt;2021-02-19&gt;</li>
 <li>feat: added a new normalization method to <code>medianCVperCell</code>. The <code>SCoPE2</code> normalization method can now reproduce the results from SCoPE2. &lt;2021-02-19&gt;</li>
 <li>docs: improved vignette &lt;2021-02-16&gt;</li>
 <li>feat: added a <code>rowDataName</code> argument to <code>computeSCR</code> &lt;2021-02-08&gt;</li>
-</ul>
-</div>
+</ul></div>
 <div id="scp-114" class="section level2">
 <h2 class="hasAnchor">
 <a href="#scp-114" class="anchor" aria-hidden="true"></a>scp 1.1.4</h2>
-<ul>
-<li>fix: removed bug in vignette header &lt;2021-02-06&gt;</li>
+<ul><li>fix: removed bug in vignette header &lt;2021-02-06&gt;</li>
 <li>data: update the example data with the latest release of SCoPE2 &lt;2021-02-06&gt;</li>
 <li>feat: added <code>removeEmptyCol</code> argument in <code>readSCP</code> to automatically remove columns that contain only NA’s &lt;2021-02-06&gt;</li>
-</ul>
-</div>
+</ul></div>
 <div id="scp-113" class="section level2">
 <h2 class="hasAnchor">
 <a href="#scp-113" class="anchor" aria-hidden="true"></a>scp 1.1.3</h2>
-<ul>
-<li>docs: improved the manual page for <code>pep2qvalue</code> and the corresponding section in the vignette. &lt;2021-01-23&gt;</li>
+<ul><li>docs: improved the manual page for <code>pep2qvalue</code> and the corresponding section in the vignette. &lt;2021-01-23&gt;</li>
 <li>refactor: reimplemented the <code>computeFDR</code> to catch up with the new release of SCoPE2. <code>computeFDR</code> was renamed to <code>pep2qvalue</code>. This is more in line with the theory. Also adapted the unit tests. &lt;2021-01-23&gt;</li>
-</ul>
-</div>
+</ul></div>
 <div id="scp-112" class="section level2">
 <h2 class="hasAnchor">
 <a href="#scp-112" class="anchor" aria-hidden="true"></a>scp 1.1.2</h2>
-<ul>
-<li>docs: improved the description of the <code>scp</code> data structure in the vignette &lt;2021-01-05&gt;</li>
+<ul><li>docs: improved the description of the <code>scp</code> data structure in the vignette &lt;2021-01-05&gt;</li>
 <li>refactor: renamed the <code>groupCol</code> to <code>groupBy</code> and <code>pepCol</code> to <code>PEP</code> in <code>computeFDR</code>. &lt;2020-12-08&gt;</li>
-<li>refactor: renamed <code>computeMedianCV</code> to <code>computeMedianCV_SCoPE2</code> and deprecated the function. The function will be preserved for backward compatibility with the replication of the SCoPE2 analysis (Specht et al. 2020). Instead, a new function is implemented and called <code>medianCVperCell</code>. See <a href="https://github.com/UCLouvain-CBIO/scp/issues/7" class="external-link">issue<a href='https://github.com/UCLouvain-CBIO/scp/issues/7'>#7</a></a> for more information &lt;2020-12-07&gt;</li>
-</ul>
-</div>
+<li>refactor: renamed <code>computeMedianCV</code> to <code>computeMedianCV_SCoPE2</code> and deprecated the function. The function will be preserved for backward compatibility with the replication of the SCoPE2 analysis (Specht et al. 2020). Instead, a new function is implemented and called <code>medianCVperCell</code>. See <a href="https://github.com/UCLouvain-CBIO/scp/issues/7" class="external-link">issue#7</a> for more information &lt;2020-12-07&gt;</li>
+</ul></div>
 <div id="scp-111" class="section level2">
 <h2 class="hasAnchor">
 <a href="#scp-111" class="anchor" aria-hidden="true"></a>scp 1.1.1</h2>
-<ul>
-<li>Fix news file</li>
-</ul>
-</div>
+<ul><li>Fix news file</li>
+</ul></div>
 <div id="scp-110" class="section level2">
 <h2 class="hasAnchor">
 <a href="#scp-110" class="anchor" aria-hidden="true"></a>scp 1.1.0</h2>
-<ul>
-<li>New devel (Bioc 3.13)</li>
-</ul>
-</div>
+<ul><li>New devel (Bioc 3.13)</li>
+</ul></div>
 </div>
     <div id="scp-10" class="section level1">
 <h1 class="page-header" data-toc-text="1.0">
@@ -192,10 +183,8 @@
 <div id="scp-100" class="section level2">
 <h2 class="hasAnchor">
 <a href="#scp-100" class="anchor" aria-hidden="true"></a>scp 1.0.0</h2>
-<ul>
-<li>New stable release (Bioc 3.12)</li>
-</ul>
-</div>
+<ul><li>New stable release (Bioc 3.12)</li>
+</ul></div>
 </div>
     <div id="scp-099" class="section level1">
 <h1 class="page-header" data-toc-text="0.99">
@@ -203,44 +192,34 @@
 <div id="scp-0994" class="section level2">
 <h2 class="hasAnchor">
 <a href="#scp-0994" class="anchor" aria-hidden="true"></a>scp 0.99.4</h2>
-<ul>
-<li>Update installation instructions &lt;2020-10-14 Wed&gt;</li>
-</ul>
-</div>
+<ul><li>Update installation instructions &lt;2020-10-14 Wed&gt;</li>
+</ul></div>
 <div id="scp-0993" class="section level2">
 <h2 class="hasAnchor">
 <a href="#scp-0993" class="anchor" aria-hidden="true"></a>scp 0.99.3</h2>
-<ul>
-<li>fix: solved ‘invalid subsetting’ issue &lt;2020-10-14 Wed&gt;</li>
+<ul><li>fix: solved ‘invalid subsetting’ issue &lt;2020-10-14 Wed&gt;</li>
 <li>Adapted the vignette to remove warnings and fix missing PCA plot. &lt;2020-10-14 Wed&gt;</li>
 <li>
 <code>README.md</code>: extended the installation guide, providing both a stable and a devel installation. &lt;2020-10-13 Tue&gt;</li>
-<li>Removed the <code>LazyLoad</code> from the <code>DESCRIPTION</code> file and adapted the data loading (eg <code><a href="https://rdrr.io/r/utils/data.html" class="external-link">data(scp1)</a></code> to <code><a href="https://rdrr.io/r/utils/data.html" class="external-link">data("scp1")</a></code>) &lt;2020-10-13 Tue&gt;</li>
+<li>Removed the <code>LazyLoad</code> from the <code>DESCRIPTION</code> file and adapted the data loading (eg <code>data(scp1)</code> to <code>data("scp1")</code>) &lt;2020-10-13 Tue&gt;</li>
 <li>Documentation: added data collection description for the 3 example datasets &lt;2020-10-13 Tue&gt;</li>
-</ul>
-</div>
+</ul></div>
 <div id="scp-0992" class="section level2">
 <h2 class="hasAnchor">
 <a href="#scp-0992" class="anchor" aria-hidden="true"></a>scp 0.99.2</h2>
-<ul>
-<li>fix: <code>computeFDR</code> can handle missing values (see issue <a href='https://github.com/UCLouvain-CBIO/scp/issues/12'>#12</a>) &lt;2020-10-02 Fri&gt;</li>
-</ul>
-</div>
+<ul><li>fix: <code>computeFDR</code> can handle missing values (see issue <a href='https://github.com/UCLouvain-CBIO/scp/issues/12'>#12</a>) &lt;2020-10-02 Fri&gt;</li>
+</ul></div>
 <div id="scp-0991" class="section level2">
 <h2 class="hasAnchor">
 <a href="#scp-0991" class="anchor" aria-hidden="true"></a>scp 0.99.1</h2>
-<ul>
-<li>Maintainer subscribed to bioc-devel mailing list</li>
+<ul><li>Maintainer subscribed to bioc-devel mailing list</li>
 <li>Removed <code>infIsNA</code>, the implementation was moved to the <code>QFeatures</code> packages</li>
-</ul>
-</div>
+</ul></div>
 <div id="scp-0990" class="section level2">
 <h2 class="hasAnchor">
 <a href="#scp-0990" class="anchor" aria-hidden="true"></a>scp 0.99.0</h2>
-<ul>
-<li>Bioconductor submission</li>
-</ul>
-</div>
+<ul><li>Bioconductor submission</li>
+</ul></div>
 </div>
   </div>
 

@@ -62,8 +62,6 @@ SingleCellExperiment objects." />
 
 
 
-<!-- dependencies from examples -->
-
 
   
 
@@ -87,7 +85,7 @@ SingleCellExperiment objects." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.0</span>
       </span>
     </div>
 
@@ -135,7 +133,7 @@ spreadsheet or a <code>data.frame</code> into a QFeatures object containing
 SingleCellExperiment objects.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>readSCP</span><span class='op'>(</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>readSCP</span><span class='op'>(</span>
   <span class='va'>featureData</span>,
   <span class='va'>colData</span>,
   <span class='va'>batchCol</span>,
@@ -144,7 +142,7 @@ SingleCellExperiment objects.</p>
   removeEmptyCols <span class='op'>=</span> <span class='cn'>FALSE</span>,
   verbose <span class='op'>=</span> <span class='cn'>TRUE</span>,
   <span class='va'>...</span>
-<span class='op'>)</span></pre>
+<span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -152,7 +150,7 @@ SingleCellExperiment objects.</p>
     <tr>
       <th>featureData</th>
       <td><p>File or object holding the quantitative
-data. Can be either a <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> with the path to a
+data. Can be either a <code>character(1)</code> with the path to a
 text-based spreadsheet (comma-separated values by default, but
 see <code>...</code>) or an object that can be coerced to a
 <code>data.frame</code>. It is advised not to encode characters as
@@ -171,7 +169,7 @@ meta data.</p></td>
     </tr>
     <tr>
       <th>batchCol</th>
-      <td><p>A <code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> or <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> pointing to the
+      <td><p>A <code>numeric(1)</code> or <code>character(1)</code> pointing to the
 column of <code>featureData</code> and <code>colData</code> that contain the batch
 names. Make sure that the column name in both table are either
 identical (if you supply a <code>character</code>) or have the same index
@@ -179,7 +177,7 @@ identical (if you supply a <code>character</code>) or have the same index
     </tr>
     <tr>
       <th>channelCol</th>
-      <td><p>A <code><a href='https://rdrr.io/r/base/numeric.html'>numeric(1)</a></code> or <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> pointing to the
+      <td><p>A <code>numeric(1)</code> or <code>character(1)</code> pointing to the
 column of <code>colData</code> that contains the column names of the
 quantitative data in <code>featureData</code> (see Example).</p></td>
     </tr>
@@ -193,13 +191,13 @@ columns in <code>featureData</code> are taken as suffix.</p></td>
     </tr>
     <tr>
       <th>removeEmptyCols</th>
-      <td><p>A <code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code>. If true, the function will
+      <td><p>A <code>logical(1)</code>. If true, the function will
 remove in each batch the columns that contain only missing
 values.</p></td>
     </tr>
     <tr>
       <th>verbose</th>
-      <td><p>A <code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code> indicating whether the progress of
+      <td><p>A <code>logical(1)</code> indicating whether the progress of
 the data reading and formatting should be printed to the
 console. Default is <code>TRUE</code>.</p></td>
     </tr>
@@ -227,24 +225,29 @@ are forbidden in the <code>rowData</code>. Avoid using the following names:
     <p>Laurent Gatto, Christophe Vanderaa</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>
-<span class='co'>## Load an example table containing MaxQuant output</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"mqScpData"</span><span class='op'>)</span>
-
-<span class='co'>## Load the (user-generated) annotation table</span>
-<span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"sampleAnnotation"</span><span class='op'>)</span>
-
-<span class='co'>## Format the tables into a QFeatures object</span>
-<span class='fu'>readSCP</span><span class='op'>(</span>featureData <span class='op'>=</span> <span class='va'>mqScpData</span>,
-        colData <span class='op'>=</span> <span class='va'>sampleAnnotation</span>,
-        batchCol <span class='op'>=</span> <span class='st'>"Raw.file"</span>,
-        channelCol <span class='op'>=</span> <span class='st'>"Channel"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Loading data as a 'SingleCellExperiment' object</span></div><div class='output co'>#&gt; <span class='message'>Splitting data based on 'Raw.file'</span></div><div class='output co'>#&gt; <span class='message'>Formatting sample metadata (colData)</span></div><div class='output co'>#&gt; <span class='message'>Formatting data as a 'QFeatures' object</span></div><div class='output co'>#&gt; An instance of class QFeatures containing 4 assays:
-#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 395 rows and 16 columns 
-#&gt;  [2] 190321S_LCA10_X_FP97_blank_01: SingleCellExperiment with 109 rows and 16 columns 
-#&gt;  [3] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 487 rows and 16 columns 
-#&gt;  [4] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 370 rows and 16 columns </div><div class='input'>
-</div></pre>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'></span>
+<span class='r-in'><span class='co'>## Load an example table containing MaxQuant output</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"mqScpData"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Load the (user-generated) annotation table</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"sampleAnnotation"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'>## Format the tables into a QFeatures object</span></span>
+<span class='r-in'><span class='fu'>readSCP</span><span class='op'>(</span>featureData <span class='op'>=</span> <span class='va'>mqScpData</span>,</span>
+<span class='r-in'>        colData <span class='op'>=</span> <span class='va'>sampleAnnotation</span>,</span>
+<span class='r-in'>        batchCol <span class='op'>=</span> <span class='st'>"Raw.file"</span>,</span>
+<span class='r-in'>        channelCol <span class='op'>=</span> <span class='st'>"Channel"</span><span class='op'>)</span></span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Loading data as a 'SingleCellExperiment' object</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Splitting data based on 'Raw.file'</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Formatting sample metadata (colData)</span>
+<span class='r-msg co'><span class='r-pr'>#&gt;</span> Formatting data as a 'QFeatures' object</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> An instance of class QFeatures containing 4 assays:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 395 rows and 16 columns </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [2] 190321S_LCA10_X_FP97_blank_01: SingleCellExperiment with 109 rows and 16 columns </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [3] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 487 rows and 16 columns </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [4] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 370 rows and 16 columns </span>
+<span class='r-in'></span>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

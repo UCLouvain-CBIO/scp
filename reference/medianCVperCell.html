@@ -67,8 +67,6 @@ before computing the CVs. Multiple normalizations are possible." />
 
 
 
-<!-- dependencies from examples -->
-
 
   
 
@@ -92,7 +90,7 @@ before computing the CVs. Multiple normalizations are possible." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.0</span>
       </span>
     </div>
 
@@ -146,7 +144,7 @@ a cell. The quantification matrix can be optionally normalized
 before computing the CVs. Multiple normalizations are possible.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>medianCVperCell</span><span class='op'>(</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>medianCVperCell</span><span class='op'>(</span>
   <span class='va'>object</span>,
   <span class='va'>i</span>,
   <span class='va'>groupBy</span>,
@@ -155,7 +153,7 @@ before computing the CVs. Multiple normalizations are possible.</p>
   colDataName <span class='op'>=</span> <span class='st'>"MedianCV"</span>,
   norm <span class='op'>=</span> <span class='st'>"none"</span>,
   <span class='va'>...</span>
-<span class='op'>)</span></pre>
+<span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -171,24 +169,24 @@ which assays the <code>rowData</code> should be taken.</p></td>
     </tr>
     <tr>
       <th>groupBy</th>
-      <td><p>A <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> indicating the variable name in
+      <td><p>A <code>character(1)</code> indicating the variable name in
 the <code>rowData</code> that contains the feature grouping.</p></td>
     </tr>
     <tr>
       <th>nobs</th>
-      <td><p>An <code><a href='https://rdrr.io/r/base/integer.html'>integer(1)</a></code> indicating how many observations
+      <td><p>An <code>integer(1)</code> indicating how many observations
 (features) should at least be considered for computing the CV.
 Since no CV can be computed for less than 2 observations,
 <code>nobs</code> should at least be 2.</p></td>
     </tr>
     <tr>
       <th>na.rm</th>
-      <td><p>A <code><a href='https://rdrr.io/r/base/logical.html'>logical(1)</a></code> indicating whether missing data should
+      <td><p>A <code>logical(1)</code> indicating whether missing data should
 be removed before computation.</p></td>
     </tr>
     <tr>
       <th>colDataName</th>
-      <td><p>A <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> giving the name of the new
+      <td><p>A <code>character(1)</code> giving the name of the new
 variable in the <code>colData</code> where the computed CVs will be
 stored. The name cannot already exist in the <code>colData</code>.</p></td>
     </tr>
@@ -226,19 +224,21 @@ and Transcriptomic Analysis of Macrophage Heterogeneity Using
 SCoPE2.” Genome Biology 22 (1): 50.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"scp1"</span><span class='op'>)</span>
-<span class='va'>scp1</span> <span class='op'>&lt;-</span> <span class='fu'>filterFeatures</span><span class='op'>(</span><span class='va'>scp1</span>, <span class='op'>~</span> <span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span><span class='op'>(</span><span class='va'>Proteins</span><span class='op'>)</span><span class='op'>)</span>
-<span class='va'>scp1</span> <span class='op'>&lt;-</span> <span class='fu'>medianCVperCell</span><span class='op'>(</span><span class='va'>scp1</span>, 
-                        i <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>,
-                        groupBy <span class='op'>=</span> <span class='st'>"Proteins"</span>,
-                        nobs <span class='op'>=</span> <span class='fl'>5</span>,
-                        na.rm <span class='op'>=</span> <span class='cn'>TRUE</span>,
-                        colDataName <span class='op'>=</span> <span class='st'>"MedianCV"</span>,
-                        norm <span class='op'>=</span> <span class='st'>"div.median"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='warning'>Warning: The median CV could not be computed for one or more samples. You may want to try a smaller value for 'nobs'.</span></div><div class='input'><span class='co'>## Check results</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/hist.html'>hist</a></span><span class='op'>(</span><span class='va'>scp1</span><span class='op'>$</span><span class='va'>MedianCV</span><span class='op'>)</span>
-</div><div class='img'><img src='medianCVperCell-1.png' alt='' width='700' height='433' /></div><div class='input'>
-</div></pre>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"scp1"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>scp1</span> <span class='op'>&lt;-</span> <span class='fu'>filterFeatures</span><span class='op'>(</span><span class='va'>scp1</span>, <span class='op'>~</span> <span class='op'>!</span><span class='fu'><a href='https://rdrr.io/r/base/NA.html'>is.na</a></span><span class='op'>(</span><span class='va'>Proteins</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>scp1</span> <span class='op'>&lt;-</span> <span class='fu'>medianCVperCell</span><span class='op'>(</span><span class='va'>scp1</span>, </span>
+<span class='r-in'>                        i <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>,</span>
+<span class='r-in'>                        groupBy <span class='op'>=</span> <span class='st'>"Proteins"</span>,</span>
+<span class='r-in'>                        nobs <span class='op'>=</span> <span class='fl'>5</span>,</span>
+<span class='r-in'>                        na.rm <span class='op'>=</span> <span class='cn'>TRUE</span>,</span>
+<span class='r-in'>                        colDataName <span class='op'>=</span> <span class='st'>"MedianCV"</span>,</span>
+<span class='r-in'>                        norm <span class='op'>=</span> <span class='st'>"div.median"</span><span class='op'>)</span></span>
+<span class='r-wrn co'><span class='r-pr'>#&gt;</span> <span class='warning'>Warning: </span>The median CV could not be computed for one or more samples. You may want to try a smaller value for 'nobs'.</span>
+<span class='r-in'><span class='co'>## Check results</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/graphics/hist.html'>hist</a></span><span class='op'>(</span><span class='va'>scp1</span><span class='op'>$</span><span class='va'>MedianCV</span><span class='op'>)</span></span>
+<span class='r-plt'><img src='medianCVperCell-1.png' alt='' width='700' height='433' /></span>
+<span class='r-in'></span>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

@@ -60,8 +60,6 @@ feature. The ratios are averaged within the assay." />
 
 
 
-<!-- dependencies from examples -->
-
 
   
 
@@ -85,7 +83,7 @@ feature. The ratios are averaged within the assay." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.0</span>
       </span>
     </div>
 
@@ -132,14 +130,14 @@ channels over the intentisty of the carrier channel for each
 feature. The ratios are averaged within the assay.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>computeSCR</span><span class='op'>(</span>
+    <div class="ref-usage sourceCode"><pre class='sourceCode r'><code><span class='fu'>computeSCR</span><span class='op'>(</span>
   <span class='va'>object</span>,
   <span class='va'>i</span>,
   <span class='va'>colDataCol</span>,
   <span class='va'>samplePattern</span>,
   <span class='va'>carrierPattern</span>,
   rowDataName <span class='op'>=</span> <span class='st'>"MeanSCR"</span>
-<span class='op'>)</span></pre>
+<span class='op'>)</span></code></pre></div>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -155,23 +153,23 @@ assay(s) the SCR needs to be computed.</p></td>
     </tr>
     <tr>
       <th>colDataCol</th>
-      <td><p>A <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> indicating the variable to take
+      <td><p>A <code>character(1)</code> indicating the variable to take
 from <code>colData(object)</code> that gives the sample annotation.</p></td>
     </tr>
     <tr>
       <th>samplePattern</th>
-      <td><p>A <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> pattern that matches the
+      <td><p>A <code>character(1)</code> pattern that matches the
 sample encoding in <code>colDataCol</code>.</p></td>
     </tr>
     <tr>
       <th>carrierPattern</th>
-      <td><p>A <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> pattern that matches the
+      <td><p>A <code>character(1)</code> pattern that matches the
 carrier encoding in <code>colDataCol</code>. Only one match per assay is
 allowed, otherwise only the first match is taken</p></td>
     </tr>
     <tr>
       <th>rowDataName</th>
-      <td><p>A <code><a href='https://rdrr.io/r/base/character.html'>character(1)</a></code> giving the name of the new
+      <td><p>A <code>character(1)</code> giving the name of the new
 variable in the <code>rowData</code> where the computed SCR will be
 stored. The name cannot already exist in any of the assay
 <code>rowData</code>.</p></td>
@@ -184,30 +182,31 @@ stored. The name cannot already exist in any of the assay
 assay(s) is augmented with the mean SCR.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"scp1"</span><span class='op'>)</span>
-<span class='va'>scp1</span> <span class='op'>&lt;-</span> <span class='fu'>computeSCR</span><span class='op'>(</span><span class='va'>scp1</span>, 
-                   i <span class='op'>=</span> <span class='fl'>1</span>,
-                   colDataCol <span class='op'>=</span> <span class='st'>"SampleType"</span>,
-                   carrierPattern <span class='op'>=</span> <span class='st'>"Carrier"</span>,
-                   samplePattern <span class='op'>=</span> <span class='st'>"Blank|Macrophage|Monocyte"</span>,
-                   rowDataName <span class='op'>=</span> <span class='st'>"MeanSCR"</span><span class='op'>)</span>
-<span class='co'>## Check results</span>
-<span class='fu'><a href='rowDataToDF.html'>rowDataToDF</a></span><span class='op'>(</span><span class='va'>scp1</span>, <span class='fl'>1</span>, <span class='st'>"MeanSCR"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; DataFrame with 166 rows and 3 columns
-#&gt;              MeanSCR        .assay    .rowname
-#&gt;            &lt;numeric&gt;   &lt;character&gt; &lt;character&gt;
-#&gt; PSM3773    0.0155105 190321S_LC...     PSM3773
-#&gt; PSM9078    0.0174443 190321S_LC...     PSM9078
-#&gt; PSM9858    0.0139988 190321S_LC...     PSM9858
-#&gt; PSM11744   0.0328429 190321S_LC...    PSM11744
-#&gt; PSM21752         NaN 190321S_LC...    PSM21752
-#&gt; ...              ...           ...         ...
-#&gt; PSM732069 0.02229932 190321S_LC...   PSM732069
-#&gt; PSM735396 0.03061429 190321S_LC...   PSM735396
-#&gt; PSM744756 0.00688987 190321S_LC...   PSM744756
-#&gt; PSM745037 0.12040831 190321S_LC...   PSM745037
-#&gt; PSM745130 0.03799723 190321S_LC...   PSM745130</div><div class='input'>
-</div></pre>
+    <div class="ref-examples sourceCode"><pre class='sourceCode r'><code><span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='st'>"scp1"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>scp1</span> <span class='op'>&lt;-</span> <span class='fu'>computeSCR</span><span class='op'>(</span><span class='va'>scp1</span>, </span>
+<span class='r-in'>                   i <span class='op'>=</span> <span class='fl'>1</span>,</span>
+<span class='r-in'>                   colDataCol <span class='op'>=</span> <span class='st'>"SampleType"</span>,</span>
+<span class='r-in'>                   carrierPattern <span class='op'>=</span> <span class='st'>"Carrier"</span>,</span>
+<span class='r-in'>                   samplePattern <span class='op'>=</span> <span class='st'>"Blank|Macrophage|Monocyte"</span>,</span>
+<span class='r-in'>                   rowDataName <span class='op'>=</span> <span class='st'>"MeanSCR"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='co'>## Check results</span></span>
+<span class='r-in'><span class='fu'><a href='rowDataToDF.html'>rowDataToDF</a></span><span class='op'>(</span><span class='va'>scp1</span>, <span class='fl'>1</span>, <span class='st'>"MeanSCR"</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> DataFrame with 166 rows and 3 columns</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>              MeanSCR        .assay    .rowname</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>            &lt;numeric&gt;   &lt;character&gt; &lt;character&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> PSM3773    0.0155105 190321S_LC...     PSM3773</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> PSM9078    0.0174443 190321S_LC...     PSM9078</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> PSM9858    0.0139988 190321S_LC...     PSM9858</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> PSM11744   0.0328429 190321S_LC...    PSM11744</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> PSM21752         NaN 190321S_LC...    PSM21752</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ...              ...           ...         ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> PSM732069 0.02229932 190321S_LC...   PSM732069</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> PSM735396 0.03061429 190321S_LC...   PSM735396</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> PSM744756 0.00688987 190321S_LC...   PSM744756</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> PSM745037 0.12040831 190321S_LC...   PSM745037</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> PSM745130 0.03799723 190321S_LC...   PSM745130</span>
+<span class='r-in'></span>
+</code></pre></div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
