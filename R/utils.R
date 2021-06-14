@@ -1,12 +1,8 @@
 ##' Extract the `rowData` of a `QFeatures` object to a 
 ##' `DataFrame`
 ##'
-##' The methods takes the `rowData` of one or more given assay in a
-##' `QFeatures` object and combines the data in a single `DataFrame`.
-##' 
-##' Along with the reuired `rowData` an additional `.assay` variable
-##' is created and holds the assay name from which the metadata was
-##' taken.
+##' This function is deprecated. You should rather use
+##'  [QFeatures::rbindRowData`]`
 ##' 
 ##' @param object A `QFeatures` object
 ##'
@@ -21,31 +17,12 @@
 ##'     
 ##' @export
 ##'
-##' @importFrom MultiAssayExperiment ExperimentList experiments
-##'
-##' @examples
-##' ## Extract the peptide length and sequence from the first 3 assays
-##' data("scp1")
-##' rowDataToDF(scp1, i = 1:3, c("Length", "Sequence"))
-##' 
 rowDataToDF <- function(object, 
                         i, 
                         vars) {
-    if (!inherits(object, "QFeatures")) stop("'object' must be a QFeatures object")
-    if (is.numeric(i)) i <- names(object)[i]
-    ## Make sure that the variables to extract are present in the rowData
-    mis <- vapply(experiments(object)[i], 
-                  function(x) any(!vars %in% colnames(rowData(x))),
-                  logical(1))
-    if (any(mis)) 
-        stop("rowData variable(s) not found in:\n", 
-             paste(i[mis], collapse = ", "))
-    ## Extract the rowData and add from which assay it was extracted
-    out <- lapply(i, function(ii) {
-        x <- rowData(object[[ii]])[, vars, drop = FALSE]
-        cbind(x, .assay = ii, .rowname = rownames(x))
-    })
-    do.call(rbind, out)
+    warning("This function is deprecated. It has been replaced by ",
+            "'QFeatures::rbindRowData'")
+    object
 }
 
 ##' Aggregate features over multiple assays
