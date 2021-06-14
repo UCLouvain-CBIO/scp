@@ -64,7 +64,7 @@ scp1 <- pep2qvalue(scp1,
                    PEP = "dart_PEP",
                    rowDataName = "qvalue_protein")
 ## Check results
-rowDataToDF(scp1, 1, c("dart_PEP", "qvalue_protein"))
+rowData(scp1)[[1]][, c("dart_PEP", "qvalue_protein"))]
 
 }
 \references{
