@@ -27,7 +27,7 @@ ev %>%
     ## keep sets selected in scp1
     filter(Raw.file %in% names(scp1) &
                ## keep only a few proteins
-               protein %in% rowDataToDF(scp1, 1:3, "protein")$protein) ->
+               protein %in% rbindRowData(scp1, 1:3)$protein) ->
     samples
 
 ## Add the blank sample

@@ -21,17 +21,6 @@ A \code{DataFrame} object with the \code{rowData} row-binded over
 the required assays.
 }
 \description{
-The methods takes the \code{rowData} of one or more given assay in a
-\code{QFeatures} object and combines the data in a single \code{DataFrame}.
-}
-\details{
-Along with the reuired \code{rowData} an additional \code{.assay} variable
-is created and holds the assay name from which the metadata was
-taken.
-}
-\examples{
-## Extract the peptide length and sequence from the first 3 assays
-data("scp1")
-rowDataToDF(scp1, i = 1:3, c("Length", "Sequence"))
-
+This function is deprecated. You should rather use
+[QFeatures::rbindRowData\verb{]}
 }
