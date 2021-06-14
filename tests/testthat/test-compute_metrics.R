@@ -82,8 +82,8 @@ test_that("pep2qvalue", {
     expect_equal(unique(test[[1]][test[[1]]$protein == "P61981", "qvalue"]),
                  3.104949e-17)
     ## Test missing groupBy
-    expect_identical(rowDataToDF(pep2qvalue(scp1, i = 1:3, PEP = "dart_PEP"), 1:3, "qvalue")$qvalue, 
-                     .pep2qvalue(rowDataToDF(scp1, 1:3, "dart_PEP")$dart_PEP))
+    expect_identical(rbindRowData(pep2qvalue(scp1, i = 1:3, PEP = "dart_PEP"), 1:3, "qvalue")$qvalue, 
+                     .pep2qvalue(rbindRowData(scp1, 1:3, "dart_PEP")$dart_PEP))
     ## Warning: the PEP contains missing values
     rowData(scp1[[1]])$dart_PEP[1] <- NA
     expect_warning(tmp <- pep2qvalue(scp1, i = 1:3, groupBy = "peptide", 

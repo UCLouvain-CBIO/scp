@@ -92,7 +92,7 @@
 ##'                    samplePattern = "Blank|Macrophage|Monocyte",
 ##'                    rowDataName = "MeanSCR")
 ##' ## Check results
-##' rowDataToDF(scp1, 1, "MeanSCR")
+##' rowData(scp1)[[1]][, "MeanSCR"]
 ##' 
 computeSCR <- function(object, 
                        i, 
@@ -210,7 +210,7 @@ computeSCR <- function(object,
 ##'                    PEP = "dart_PEP",
 ##'                    rowDataName = "qvalue_protein")
 ##' ## Check results
-##' rowDataToDF(scp1, 1, c("dart_PEP", "qvalue_protein"))
+##' rowData(scp1)[[1]][, c("dart_PEP", "qvalue_protein"))]
 ##' 
 pep2qvalue <- function(object, 
                        i, 
@@ -230,7 +230,7 @@ pep2qvalue <- function(object,
     ## Get the PEP from all assays
     vars <- PEP
     if (!missing(groupBy)) vars <- c(vars, groupBy)
-    df <- rowDataToDF(object, i, vars = vars)
+    df <- rbindRowData(object, i)[, vars, drop = FALSE]
     
     ## Check PEP is a probability
     pepRange <- range(df[, PEP], na.rm = TRUE)
