@@ -63,14 +63,14 @@
 ##' @param i A `character()` or `integer()` indicating for which
 ##'     assay(s) the SCR needs to be computed.
 ##' 
-##' @param colDataCol A `character(1)` indicating the variable to take
+##' @param colvar A `character(1)` indicating the variable to take
 ##'     from `colData(object)` that gives the sample annotation.
 ##' 
 ##' @param samplePattern A `character(1)` pattern that matches the
-##'     sample encoding in `colDataCol`.
+##'     sample encoding in `colvar`.
 ##' 
 ##' @param carrierPattern A `character(1)` pattern that matches the
-##'     carrier encoding in `colDataCol`. Only one match per assay is
+##'     carrier encoding in `colvar`. Only one match per assay is
 ##'     allowed, otherwise only the first match is taken
 ##'     
 ##' @param rowDataName A `character(1)` giving the name of the new 
@@ -87,7 +87,7 @@
 ##' data("scp1")
 ##' scp1 <- computeSCR(scp1, 
 ##'                    i = 1,
-##'                    colDataCol = "SampleType",
+##'                    colvar = "SampleType",
 ##'                    carrierPattern = "Carrier",
 ##'                    samplePattern = "Blank|Macrophage|Monocyte",
 ##'                    rowDataName = "MeanSCR")
@@ -96,7 +96,7 @@
 ##' 
 computeSCR <- function(object, 
                        i, 
-                       colDataCol, 
+                       colvar, 
                        samplePattern, 
                        carrierPattern,
                        rowDataName = "MeanSCR") {
@@ -112,7 +112,7 @@ computeSCR <- function(object,
     
     ## Iterate over the different assay indices
     for (ii in i) {
-        annot <- colData(object)[colnames(object[[ii]]), ][, colDataCol]
+        annot <- colData(object)[colnames(object[[ii]]), ][, colvar]
         ## Get the corresponding indices
         if (is.numeric(samplePattern)) {
             sampIdx <- samplePattern[samplePattern <= length(annot)]
@@ -210,7 +210,7 @@ computeSCR <- function(object,
 ##'                    PEP = "dart_PEP",
 ##'                    rowDataName = "qvalue_protein")
 ##' ## Check results
-##' rowData(scp1)[[1]][, c("dart_PEP", "qvalue_protein"))]
+##' rowData(scp1)[[1]][, c("dart_PEP", "qvalue_protein")]
 ##' 
 pep2qvalue <- function(object, 
                        i, 
@@ -226,11 +226,15 @@ pep2qvalue <- function(object,
              "Use another name or remove that column before running ",
              "this function.")
     
+    ## Get the rowData from all assays
+    df <- rbindRowData(object, i)
     
-    ## Get the PEP from all assays
+    ## Check groupNy and PEP
     vars <- PEP
     if (!missing(groupBy)) vars <- c(vars, groupBy)
-    df <- rbindRowData(object, i)[, vars, drop = FALSE]
+    if (any(!vars %in% colnames(df))) 
+        stop("Variable(s) not found in the 'rowData'. Make sure 'PEP'",
+             "and 'groupBy' are present in all selected assays.")
     
     ## Check PEP is a probability
     pepRange <- range(df[, PEP], na.rm = TRUE)
@@ -248,7 +252,7 @@ pep2qvalue <- function(object,
     }
     
     ## Insert the q-value inside every assay rowData
-    pepID <- paste0(df$.assay, df$.rowname)
+    pepID <- paste0(df$assay, df$rowname)
     for (ii in i) {
         rdID <- paste0(ii, rownames(object[[ii]]))
         rowData(object@ExperimentList@listData[[ii]])[, rowDataName] <- 

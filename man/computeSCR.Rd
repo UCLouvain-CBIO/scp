@@ -7,7 +7,7 @@
 computeSCR(
   object,
   i,
-  colDataCol,
+  colvar,
   samplePattern,
   carrierPattern,
   rowDataName = "MeanSCR"
@@ -19,14 +19,14 @@ computeSCR(
 \item{i}{A \code{character()} or \code{integer()} indicating for which
 assay(s) the SCR needs to be computed.}
 
-\item{colDataCol}{A \code{character(1)} indicating the variable to take
+\item{colvar}{A \code{character(1)} indicating the variable to take
 from \code{colData(object)} that gives the sample annotation.}
 
 \item{samplePattern}{A \code{character(1)} pattern that matches the
-sample encoding in \code{colDataCol}.}
+sample encoding in \code{colvar}.}
 
 \item{carrierPattern}{A \code{character(1)} pattern that matches the
-carrier encoding in \code{colDataCol}. Only one match per assay is
+carrier encoding in \code{colvar}. Only one match per assay is
 allowed, otherwise only the first match is taken}
 
 \item{rowDataName}{A \code{character(1)} giving the name of the new
@@ -47,7 +47,7 @@ feature. The ratios are averaged within the assay.
 data("scp1")
 scp1 <- computeSCR(scp1, 
                    i = 1,
-                   colDataCol = "SampleType",
+                   colvar = "SampleType",
                    carrierPattern = "Carrier",
                    samplePattern = "Blank|Macrophage|Monocyte",
                    rowDataName = "MeanSCR")
