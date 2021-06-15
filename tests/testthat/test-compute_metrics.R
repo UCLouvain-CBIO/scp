@@ -42,30 +42,30 @@ test_that(".rowCV", {
 
 test_that("computeSCR", {
     ## Single assay
-    test <- computeSCR(scp1, i = 1, colDataCol = "SampleType", 
+    test <- computeSCR(scp1, i = 1, colvar = "SampleType", 
                        samplePattern = "Reference", carrierPattern = "Carrier")
     expect_identical(rowData(test[[1]])$MeanSCR,
                      assay(scp1[[1]])[, 2] / assay(scp1[[1]])[, 1])
     ## Multiple assays
-    test <- computeSCR(scp1, i = 1:2, colDataCol = "SampleType", 
+    test <- computeSCR(scp1, i = 1:2, colvar = "SampleType", 
                        samplePattern = "Reference", carrierPattern = "Carrier")
     expect_identical(rowData(test[[2]])$MeanSCR,
                      assay(scp1[[2]])[, 2] / assay(scp1[[2]])[, 1])
     ## Warning: multiple match for carrier
-    expect_warning(test2 <- computeSCR(scp1, i = 1:2, colDataCol = "SampleType", 
+    expect_warning(test2 <- computeSCR(scp1, i = 1:2, colvar = "SampleType", 
                                        samplePattern = "Reference", carrierPattern = "Carrier|Blank"),
                    regexp = "Multiple carriers found")
     expect_identical(test2, test)
-    ## Error: colDataCol not fount
-    expect_error(computeSCR(scp1, i = 1:2, colDataCol = "foo", 
+    ## Error: colvar not fount
+    expect_error(computeSCR(scp1, i = 1:2, colvar = "foo", 
                             samplePattern = "Reference", carrierPattern = "Carrier|Blank"),
                  regexp = "invalid names")
     ## Error: pattern not fount
-    expect_error(computeSCR(scp1, i = 1:2, colDataCol = "SampleType", 
+    expect_error(computeSCR(scp1, i = 1:2, colvar = "SampleType", 
                             samplePattern = "foo", carrierPattern = "Carrier"),
                  regexp = "Pattern did not match")
     ## Error: the new rowData variable already exists
-    expect_error(computeSCR(scp1, i = 1:2, colDataCol = "SampleType", 
+    expect_error(computeSCR(scp1, i = 1:2, colvar = "SampleType", 
                             samplePattern = "Reference", carrierPattern = "Carrier",
                             rowDataName = "dart_PEP"),
                  regexp = "already exists")
@@ -82,8 +82,8 @@ test_that("pep2qvalue", {
     expect_equal(unique(test[[1]][test[[1]]$protein == "P61981", "qvalue"]),
                  3.104949e-17)
     ## Test missing groupBy
-    expect_identical(rbindRowData(pep2qvalue(scp1, i = 1:3, PEP = "dart_PEP"), 1:3, "qvalue")$qvalue, 
-                     .pep2qvalue(rbindRowData(scp1, 1:3, "dart_PEP")$dart_PEP))
+    expect_identical(rbindRowData(pep2qvalue(scp1, i = 1:3, PEP = "dart_PEP"), 1:3)$qvalue, 
+                     .pep2qvalue(rbindRowData(scp1, 1:3)$dart_PEP))
     ## Warning: the PEP contains missing values
     rowData(scp1[[1]])$dart_PEP[1] <- NA
     expect_warning(tmp <- pep2qvalue(scp1, i = 1:3, groupBy = "peptide", 
@@ -93,9 +93,9 @@ test_that("pep2qvalue", {
     expect_true(all(!(is.na(rowData(tmp[[1]])$dart_PEP[-1]))))
     ## Error: rowData variable not found
     expect_error(pep2qvalue(scp1, i = 1, groupBy = "foo", PEP = "dart_PEP"),
-                 regexp = paste0("not found in:\n", names(scp1)[1]))
+                 regexp = "not found")
     expect_error(pep2qvalue(scp1, i = 2, groupBy = "peptide", PEP = "foo"),
-                 regexp = paste0("not found in:\n", names(scp1)[2]))
+                 regexp = "not found")
     ## Error: PEP must be a numeric between 0 and 1
     expect_error(pep2qvalue(scp1, i = 1, groupBy = "peptide", PEP = "Length"),
                  regexp = "is not a probability")

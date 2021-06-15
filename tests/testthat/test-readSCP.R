@@ -7,11 +7,11 @@ test_that(".splitSCE", {
                                 paste0("col", 1:10)))
     sce <- SingleCellExperiment(assay = m, 
                                 rowData = DataFrame(rowDataCol = 1:nrow(m)%%3),
-                                colData = DataFrame(colDataCol = 1:ncol(m)%%5))
+                                colData = DataFrame(colvar = 1:ncol(m)%%5))
     ## Split by row
     expect_identical(length(.splitSCE(sce, "rowDataCol")), 3L)
     ## Split by col
-    expect_identical(length(.splitSCE(sce, "colDataCol")), 5L)
+    expect_identical(length(.splitSCE(sce, "colvar")), 5L)
     ## Error: variable not found
     expect_error(.splitSCE(sce, "foo"),
                  regexp = "not found")

@@ -1,5 +1,12 @@
 # scp 1.3
 
+# scp 1.3.1
+
+- refactor: deprecated `rowDataToDF`. This function is now replaced by
+  `QFeatures::rbindRowData`. 
+
+# scp 1.3.0
+
 - New devel (Bioc 3.14)
 
 # scp 1.2

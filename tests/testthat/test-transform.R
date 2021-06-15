@@ -23,23 +23,23 @@ test_that("divideByReference", {
     ## Correct use
     ## Single assay
     test <- divideByReference(scp1, i = "190321S_LCA10_X_FP97AG", 
-                              colDataCol = "SampleType", samplePattern = ".",
+                              colvar = "SampleType", samplePattern = ".",
                               refPattern = "Reference") 
     expect_identical(assay(test[[1]]), assay(scp1[[1]])/assay(scp1[[1]])[, 2])
     ## Multiple assays 
-    test <- divideByReference(scp1, i = 1:3, colDataCol = "SampleType", 
+    test <- divideByReference(scp1, i = 1:3, colvar = "SampleType", 
                               samplePattern = ".", refPattern = "Reference") 
     expect_identical(assay(test[[2]]), assay(scp1[[2]])/assay(scp1[[2]])[, 2])
     ## Error: reference not found
-    expect_error(divideByReference(scp1, i = 1:3, colDataCol = "SampleType", 
+    expect_error(divideByReference(scp1, i = 1:3, colvar = "SampleType", 
                                    samplePattern = ".", refPattern = "foo"),
                  regexp = "The reference pattern 'foo' did not match")
     ## Error: sample not found
-    expect_error(divideByReference(scp1, i = 1:3, colDataCol = "SampleType", 
+    expect_error(divideByReference(scp1, i = 1:3, colvar = "SampleType", 
                                    samplePattern = "foo", refPattern = "Reference"),
                  regexp = "The sample pattern 'foo' did not match")
     ## Warning: multiple references found
-    expect_warning(divideByReference(scp1, i = 1:3, colDataCol = "SampleType", 
+    expect_warning(divideByReference(scp1, i = 1:3, colvar = "SampleType", 
                                      samplePattern = ".", refPattern = "."),
                    regexp = "Only the first match will be used")
 })
