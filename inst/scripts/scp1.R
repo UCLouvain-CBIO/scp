@@ -33,10 +33,10 @@ rbindRowData(scp1, seq_along(scp1)) %>%
     group_by(peptide) %>%
     mutate(nprots = length(unique(protein))) %>%
     filter(nprots == 1) %>%
-    group_by(.assay) %>%
+    group_by(assay) %>%
     filter(protein %in% sample(unique(protein), 100)) ->
     l
-l <- split(l$psm, f = l$.assay)
+l <- split(l$psm, f = l$assay)
 scp1 <- scp1[l, ]
 
 ## Aggregate to peptides

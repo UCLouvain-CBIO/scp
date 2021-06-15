@@ -52,7 +52,7 @@
 ##' Divide assay columns by a reference column
 ##'
 ##' The function divides the sample columns by a reference column. The sample 
-##' and reference columns are defined based on the provided `colDataCol` 
+##' and reference columns are defined based on the provided `colvar` 
 ##' variable and on regular expression matching.
 ##' 
 ##' The supplied assay(s) are replaced with the values computed after reference
@@ -63,15 +63,15 @@
 ##' @param i A `numeric()` or `character()` vector indicating from which 
 ##'     assays the `rowData` should be taken.
 ##' 
-##' @param colDataCol A `character(1)` indicating the variable to take from 
+##' @param colvar A `character(1)` indicating the variable to take from 
 ##'     `colData(object)` that gives the sample annotation.
 ##' 
 ##' @param samplePattern A `character(1)` pattern that matches the sample 
-##'     encoding in `colDataCol`. By default all samples are devided (using the
+##'     encoding in `colvar`. By default all samples are devided (using the
 ##'     regex wildcard `.`).
 ##' 
 ##' @param refPattern A `character(1)` pattern that matches the carrier 
-##'     encoding in `colDataCol`. Only one match per assay is allowed, otherwise
+##'     encoding in `colvar`. Only one match per assay is allowed, otherwise
 ##'     only the first match is taken
 ##'
 ##' @return A `QFeatures` object
@@ -82,20 +82,20 @@
 ##' data("scp1")
 ##' scp1 <- divideByReference(scp1, 
 ##'                           i = 1, 
-##'                           colDataCol = "SampleType",
+##'                           colvar = "SampleType",
 ##'                           samplePattern = "Macrophage",
 ##'                           refPattern = "Ref")
 ##'                           
 divideByReference <- function(object, 
                               i, 
-                              colDataCol, 
+                              colvar, 
                               samplePattern = ".", 
                               refPattern) {
     ## Check arguments
     if (!inherits(object, "QFeatures")) stop("'object' must be a QFeatures object")
     for (ii in i){
         ## Get the reference channel 
-        annot <- colData(object)[colnames(object[[ii]]), ][, colDataCol]
+        annot <- colData(object)[colnames(object[[ii]]), ][, colvar]
         refIdx <- grep(refPattern, annot)
         sampIdx <- grep(samplePattern, annot)
         if (!length(refIdx)) 

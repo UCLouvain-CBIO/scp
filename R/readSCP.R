@@ -117,7 +117,6 @@ readSCP <- function(featureData,
     
     ## Create the SingleCellExperiment object
     if (verbose) message("Loading data as a 'SingleCellExperiment' object")
-    browser()
     scp <- readSingleCellExperiment(table = featureData, 
                                     ecol = ecol, 
                                     ...)

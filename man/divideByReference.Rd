@@ -4,7 +4,7 @@
 \alias{divideByReference}
 \title{Divide assay columns by a reference column}
 \usage{
-divideByReference(object, i, colDataCol, samplePattern = ".", refPattern)
+divideByReference(object, i, colvar, samplePattern = ".", refPattern)
 }
 \arguments{
 \item{object}{A \code{QFeatures} object}
@@ -12,15 +12,15 @@ divideByReference(object, i, colDataCol, samplePattern = ".", refPattern)
 \item{i}{A \code{numeric()} or \code{character()} vector indicating from which
 assays the \code{rowData} should be taken.}
 
-\item{colDataCol}{A \code{character(1)} indicating the variable to take from
+\item{colvar}{A \code{character(1)} indicating the variable to take from
 \code{colData(object)} that gives the sample annotation.}
 
 \item{samplePattern}{A \code{character(1)} pattern that matches the sample
-encoding in \code{colDataCol}. By default all samples are devided (using the
+encoding in \code{colvar}. By default all samples are devided (using the
 regex wildcard \code{.}).}
 
 \item{refPattern}{A \code{character(1)} pattern that matches the carrier
-encoding in \code{colDataCol}. Only one match per assay is allowed, otherwise
+encoding in \code{colvar}. Only one match per assay is allowed, otherwise
 only the first match is taken}
 }
 \value{
@@ -28,7 +28,7 @@ A \code{QFeatures} object
 }
 \description{
 The function divides the sample columns by a reference column. The sample
-and reference columns are defined based on the provided \code{colDataCol}
+and reference columns are defined based on the provided \code{colvar}
 variable and on regular expression matching.
 }
 \details{
@@ -39,7 +39,7 @@ division.
 data("scp1")
 scp1 <- divideByReference(scp1, 
                           i = 1, 
-                          colDataCol = "SampleType",
+                          colvar = "SampleType",
                           samplePattern = "Macrophage",
                           refPattern = "Ref")
                           
