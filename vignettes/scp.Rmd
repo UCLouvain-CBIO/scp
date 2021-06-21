@@ -99,93 +99,42 @@ small example data by subsetting the MaxQuant `evidence.txt` table
 provided in the SCoPE2 landmark paper (@Specht2021-jm). The 
 `mqScpData` table is a typical example of what you would get after 
 reading in a CSV file using `read.csv` or `read.table`. See 
-`?mqScpData` for more information about the table content.
+`?mqScpData` for more information about the table content. 
 
-```{r load_mqScpData}
+```{r}
 data("mqScpData")
-dim(mqScpData)
-mqScpData[1:10, 1:5]
 ```
 
-In order to convert this tabular data to a `scp`-compatible
-`QFeatures` object, we need to provide a **metadata table** where rows
-contain sample information and columns must contain at least:
+We also provide an example of a sample metadata table that provides 
+useful information about the samples that are present in the example 
+data. See `?sampleAnnotation` for more information about the table
+content.
 
-* The name of the batch the sample was acquired in
-* The name of the channel the sample was acquired in
-
-Any additional information about the samples will be stored in the
-`colData`.
-
-We provide an example of such a data frame. It was formatted from the
-annotation table provided in the SCoPE2 article. See
-`?sampleAnnotation` for more information about the table content.
-
-```{r load_sampleAnnotation}
+```{r}
 data("sampleAnnotation")
-sampleAnnotation
 ```
 
-The two tables are supplied to the `readSCP` function.
+As a note, the example sample data contains 5 different types of samples
+(`SampleType`) that can be found in a TMT-based SCP data set: 
 
-```{r readSCP}
-scp <- readSCP(featureData = mqScpData,
-               colData = sampleAnnotation,
-               channelCol = "Channel",
-               batchCol = "Raw.file")
+```{r}
+table(sampleAnnotation$SampleType)
 ```
 
-As indicated by the output on the console, `readSCP` proceeds as follows:
+* The carrier channels (`Carrier`) contain 200 cell equivalents and
+  are meant to boost the peptide identification rate.
+* The normalization channels (`Reference`) contain 5 cell equivalents
+  and are used to partially correct for between-run variation.
+* The unused channels (`Unused`) are channels that are left empty due
+  to isotopic cross-contamination by the carrier channel.
+* The blank channels (`Blank`) contain samples that do not contain any
+  cell but are processed as single-cell samples.
+* The single-cell sample channels contain the single-cell samples of
+  interest, that are macrophage (`Macrophage`) or monocyte
+  (`Monocyte`).
 
-1. If `featureData` is the path to a CSV file, it reads the file using
-`read.csv`. The table is converted to a `SingleCellExperiment`
-object. `readSCP` needs to know in which field(s) the quantitative
-data is stored. Those field name(s) is/are provided by the
-`channelCol` field in the `metaData` table. So in this example, the
-column names holding the quantitative data in `mqScpData` are
-stored in the column named `Channel` in `sampleAnnotation`.
-
-2. The `SingleCellExperiment` object is then split according to
-batch. The split is performed depending on the `batchCol` field in
-`featureData`, in this case the data will be split according to the
-`Raw.file` column in `mqScpData`. `Raw.file` contains the names of the 
-acquisition runs that was used by MaxQuant to retrieve the raw data 
-files.
-
-3. The sample metadata is generated from the supplied `colData`. Note 
-that in  order for `readSCP` to correctly match the feature data 
-with the metadata, `colData` must contain the same `batchCol` field
-with batch names.
-
-4. Finally, the split feature data and the sample metadata are stored
-in a single `QFeatures` object.
-
-Here is a compact overview of the data:
-
-```{r overview}
-scp
-```
-
-We can see that the `scp` object we created is a `QFeatures` object
-containing 4 assays. Each assay has an associated name, this is the
-batch name that was used for splitting. We can also see that each
-assay is a `SingleCellExperiment` object. The rows represent the
-peptide to spectrum matches (PSMs), the number vary depending on the
-batch. Finally, all three assays contains 16 columns that correspond
-to the 16 TMT channels recorded during the 4 MS runs.
-
-## Special case: empty columns
-
-The SCoPE2 data we provide as an example contains runs that were 
-acquired with two TMT protocols. The 3 first assays were acquired 
-using the TMT-11 protocol and the last assay was acquired 
-using a TMT-16 protocol. When exporting the table, the authors 
-combined the data in a single table, were missing channels in the 
-TMT-11 data are filled with `NA`. This is essential when working in 
-table format, but since `scp` keeps the runs separated we can allow for
-different number of channels per run. `readSCP` can automatically 
-detect and remove columns that contain only `NA`s, by supplying the
-argument `removeEmptyCols = TRUE`.
+Using `readSCP`, we combine both tables in a `QFeatures` object 
+formatted as described above. 
 
 ```{r readSCP2}
 scp <- readSCP(featureData = mqScpData,
@@ -199,6 +148,10 @@ scp
 See here that the 3 first assays contain 11 columns that correspond to
 the TMT-11 labels and the last assay contains 16 columns that 
 correspond to the TMT-16 labels.
+
+**Important**: More details about the usage of `readSCP` and how to 
+read your own data set are provided in the `Load data using readSCP` 
+[vignette](https://uclouvain-cbio.github.io/scp/articles/read_scp.html). 
 
 # Clean missing data
 
@@ -828,7 +781,7 @@ scp[["proteins_norm"]] %>%
 ## Batch correction
 
 A very important step for processing SCP data is to correct for batch
-effects.  Batch effects are caused by technical variation occuring
+effects.  Batch effects are caused by technical variation occurring
 during different MS runs. Since only a small number of single-cells
 can be acquired at once, batch effects are unavoidable.
 
