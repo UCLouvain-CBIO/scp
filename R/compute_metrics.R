@@ -299,7 +299,8 @@ pep2qvalue <- function(object,
 ##'      stored. The name cannot already exist in the `colData`.
 ##' 
 ##' @param norm A `character()` of normalization methods that will be 
-##'     sequentially applied. Available methods and additional 
+##'     sequentially applied to each feature (row) in each assay. 
+##'     Available methods and additional 
 ##'     information about normalization can be found in 
 ##'     [MsCoreUtils::normalizeMethods]. You can also specify
 ##'     `norm = "SCoPE2"` to reproduce the normalization performed 
@@ -384,8 +385,6 @@ medianCVperCell <- function(object,
     return(object)
 }
 
-## TODO discuss whether to export this??
-## 
 ## @param x A `SingleCellExperiment` object
 ##     
 ## @param group A `factor()` that indicates how features (rows) should
