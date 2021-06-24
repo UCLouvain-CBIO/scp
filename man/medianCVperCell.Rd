@@ -37,7 +37,8 @@ variable in the \code{colData} where the computed CVs will be
 stored. The name cannot already exist in the \code{colData}.}
 
 \item{norm}{A \code{character()} of normalization methods that will be
-sequentially applied. Available methods and additional
+sequentially applied to each feature (row) in each assay.
+Available methods and additional
 information about normalization can be found in
 \link[MsCoreUtils:normalize]{MsCoreUtils::normalizeMethods}. You can also specify
 \code{norm = "SCoPE2"} to reproduce the normalization performed
