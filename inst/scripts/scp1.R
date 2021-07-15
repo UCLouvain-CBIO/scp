@@ -28,15 +28,14 @@ scp1 <- scp1[, , sampledRuns]
 set.seed(1000)
 rbindRowData(scp1, seq_along(scp1)) %>%
     data.frame %>% 
-    select(peptide, protein) %>% 
-    rownames_to_column("psm") %>%
+    select(rowname, peptide, protein, assay) %>% 
     group_by(peptide) %>%
     mutate(nprots = length(unique(protein))) %>%
     filter(nprots == 1) %>%
     group_by(assay) %>%
     filter(protein %in% sample(unique(protein), 100)) ->
     l
-l <- split(l$psm, f = l$assay)
+l <- split(l$rowname, f = l$assay)
 scp1 <- scp1[l, ]
 
 ## Aggregate to peptides
@@ -53,6 +52,8 @@ scp1 <- aggregateFeatures(scp1, i = "peptides", fcol = "protein",
 
 ## Keep only the PSM, joined peptide and protein data
 scp1 <- scp1[, , !grepl("pep_", names(scp1))]
+scp1 <- addAssayLink(scp1, from = 1:3, to = 4, 
+                     varFrom = rep("peptide", 3), varTo = "peptide")
 
 ## Save the data 
 format(object.size(scp1), units = "MB", digits = 2)
