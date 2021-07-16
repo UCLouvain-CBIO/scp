@@ -1,22 +1,22 @@
 ---
 title: "Single Cell Proteomics data processing and analysis"
 author:
-  - name: Laurent Gatto
-  - name: Christophe Vanderaa
+    - name: Laurent Gatto
+    - name: Christophe Vanderaa
 output:
-  BiocStyle::html_document:
-    self_contained: yes
-    toc: true
-    toc_float: true
-    toc_depth: 2
-    code_folding: show
+    BiocStyle::html_document:
+        self_contained: yes
+        toc: true
+        toc_float: true
+        toc_depth: 2
+        code_folding: show
 bibliography: scp.bib
 date: "`r BiocStyle::doc_date()`"
 package: "`r BiocStyle::pkg_ver('scp')`"
 vignette: >
-  %\VignetteIndexEntry{Single Cell Proteomics data processing and analysis}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
+    %\VignetteIndexEntry{Single Cell Proteomics data processing and analysis}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include = FALSE}
@@ -90,6 +90,8 @@ can easily be extended with new algorithms. Suggestions, feature
 requests or bug reports are warmly welcome. Feel free to open an issue
 in the 
 [GitHub repository](https://github.com/UCLouvain-CBIO/scp/issues).
+
+
 
 This workflow can be applied to any MS-based SCP data. The minimal 
 requirement to follow this workflow is that the data should contain 
@@ -934,8 +936,10 @@ illustration.
 
 # Monitoring data processing
 
-The `QFeatures` plot shows the quantitative data for a features at the
-different expression levels. For instance, suppose we are interested
+`QFeatures` keeps the links between the different assays along the 
+processing of the data. This greatly facilitates the visualization of
+the quantitative data for a features at the different processing 
+levels. For instance, suppose we are interested
 in the protein *Plastin-2* (protein ID is `P13796`). A useful QC is to
 monitor the data processing at the PSM, peptide and protein
 level. This can easily be done thanks to the `QFeatures`
@@ -973,6 +977,9 @@ This graph helps to keep track of the data processing. We can see how
 the different PSMs are progressively aggregated to peptides and then 
 to proteins as well as how the normalization, imputation or batch 
 correction impact the distribution of the quantifications.
+
+We have dedicated a separate [vignette](https://rformassspectrometry.github.io/QFeatures/articles/Visualization.html) that describes more in details
+how to visualize and explore data in a `QFeatures` object. 
 
 # Session information {-}
 
