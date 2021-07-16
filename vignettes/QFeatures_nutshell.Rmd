@@ -47,7 +47,7 @@ Those links are stored as part as the `QFeatures` object and connect
 the assays together. We load an example dataset from the `scp` package
 that is formatted as an `QFeatures` object and plot those connection.
 
-```{r hierarchy, out.width="200px"}
+```{r hierarchy, message = FALSE, out.width = "600px"}
 library(scp)
 data("scp1")
 plot(scp1)
@@ -108,14 +108,14 @@ rbindRowData(scp1, i = 1:5)
 The sample metadata is retrieved using `colData` on the `QFeatures`
 object. 
 
-```{r}
+```{r colData}
 colData(scp1)
 ```
 
 Note that you can easily access a `colData` column using the `$` 
 operator. See here how we extract the sample types from the `colData`.
 
-```{r}
+```{r colData_dollar}
 scp1$SampleType
 ```
 
@@ -136,7 +136,7 @@ Suppose that we want to focus only on the first MS batch
 (`190321S_LCA10_X_FP97AG`) for separate processing of the data.
 Subsetting the `QFeatures` object for that assay is simply:
 
-```{r}
+```{r subset_assay}
 scp1[, , "190321S_LCA10_X_FP97AG"]
 ```
 
@@ -155,7 +155,7 @@ different samples are either technical controls or single-cells
 (macrophages and monocytes). Suppose we are only interested in 
 macrophages, we can subset the data as follows:
 
-```{r}
+```{r, subset_samples}
 scp1[, scp1$SampleType == "Macrophage", ]
 ```
 
@@ -173,7 +173,7 @@ features of interest, it will also take the features that are linked
 to that feature. Here is an example, suppose we are interested in the 
 `P45880` protein.
 
-```{r}
+```{r subset_features}
 scp1["P45880", , ]
 ```
 
@@ -203,7 +203,7 @@ You can also subset the data based on the feature missingness using
 `filterNA`. In this example, we filter out proteins with more than 
 70 \% missing data. 
 
-```{r}
+```{r, filterNA}
 filterNA(scp1, i = "proteins", pNA = 0.7)
 ```
 
@@ -247,7 +247,7 @@ takes an assay from the `Qfeatures` object and that aggregates its
 features with respect to a grouping variable in the `rowData` (`fcol`)
 and an aggregation function. 
 
-```{r}
+```{r aggregateFeatures}
 aggregateFeatures(scp1, i = "190321S_LCA10_X_FP97AG", fcol = "protein",
                   name = "190321S_LCA10_X_FP97AG_aggr", 
                   fun = MsCoreUtils::robustSummary)
@@ -268,7 +268,7 @@ interface to a wide variety of normalization methods. See
 normalization methods. Below, we normalize the samples so that they 
 are mean centered.
 
-```{r}
+```{r normalize}
 normalize(scp1, "proteins", method = "center.mean", 
           name = "proteins_mcenter")
 ```
@@ -292,7 +292,7 @@ facilitate the transformation of the quantitative data. We here show
 its usage by transforming the protein data using a base 2 logarithm 
 with a pseudo-count of one.
 
-```{r}
+```{r logTransform}
 logTransform(scp1, i = "proteins", base = 2, pc = 1, 
              name = "proteins_log")
 ```
@@ -305,7 +305,7 @@ list of available methods is given by `?MsCoreUtils::impute_matrix`.
 We demonstrate the use of this function by replacing missing data 
 using KNN imputation. 
 
-```{r}
+```{r impute}
 anyNA(assay(scp1, "proteins"))
 scp1 <- impute(scp1, i = "proteins", method ="knn", k = 3)
 anyNA(assay(scp1, "proteins"))
@@ -322,7 +322,7 @@ You can easily convert one data format to another. For example, we
 plot the parental ion fraction (measure of spectral purity) for each 
 of the three MS batches. 
 
-```{r, message = FALSE, fig.width = 6.5}
+```{r vis1, message = FALSE, fig.width = 6.5}
 rd <- rbindRowData(scp1, i = 1:3) 
 library("ggplot2")
 ggplot(data.frame(rd)) +
