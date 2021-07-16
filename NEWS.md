@@ -1,5 +1,9 @@
 # scp 1.3
 
+# scp 1.3.2
+
+- docs: created a `QFeatures` recap vignette
+
 # scp 1.3.1
 
 - refactor: deprecated `rowDataToDF`. This function is now replaced by
