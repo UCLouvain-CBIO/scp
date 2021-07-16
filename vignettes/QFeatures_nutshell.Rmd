@@ -14,7 +14,7 @@ bibliography: scp.bib
 date: "`r BiocStyle::doc_date()`"
 package: "`r BiocStyle::pkg_ver('scp')`"
 vignette: >
-    %\VignetteIndexEntry{Single Cell Proteomics data processing and analysis}
+    %\VignetteIndexEntry{QFeatures in a nutshell}
     %\VignetteEngine{knitr::rmarkdown}
     %\VignetteEncoding{UTF-8}
 ---
