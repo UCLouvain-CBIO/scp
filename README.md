@@ -13,7 +13,7 @@ objects.
 
 ## Installation
 
-To install the stable version from Bioconductor:
+To install the **stable version** from Bioconductor:
 
 ```
 if (!requireNamespace("BiocManager"))
@@ -21,9 +21,16 @@ if (!requireNamespace("BiocManager"))
 BiocManager::install("scp")
 ```
 
-To install the development version from GitHub:
+To install the **development version** from GitHub, you first need to 
+ensure that you are using the `devel` release of Bioconductor and make
+sure your installed libraries are valid. Then, you can install `scp` 
+from Github.
 
 ```
+## Get the latests version of Bioconductor
+BiocManager::install(version = "devel")
+stopifnot(BiocManager::valid())
+## Get the latests version of scp from GitHub
 BiocManager::install("UCLouvain-CBIO/scp")
 ```
 
