@@ -301,14 +301,32 @@ The `computeSCR` function expects the following input:
 * The `QFeatures` dataset
 * The assay name(s) or index/indices for which the SCR should be
 computed
-* The sample metadata variable pointing to the channel annotation
-* A string pattern (following regular expression syntax) that uniquely
-identifies the carrier channel in each batch
-* A string pattern (following regular expression syntax) that
-identifies the samples to divide
+* `colvar`: the variable in the sample metadata (`colData`) that hold
+  the information used to discriminate sample channels from carrier 
+  channels. 
+* `carrierPattern`: a string pattern (following regular expression 
+  syntax) that identifies the carrier channel in each batch.
+* `samplePattern`: a string pattern (following regular expression 
+  syntax) that identifies the samples to divide.
+
+Optionally, you can also provide the following arguments: 
+
+* `rowDataName`: the name of the column in the `rowData` where to 
+  store the computed SCR for each feature. 
+* `sampleFUN`: when multiple samples are present in an assay, there 
+  are as many SCR as there are samples that need to be summarized to 
+  a single value per feature. `sampleFUN` tells which function to use 
+  for summarizing the sample values before computing the SCR; the 
+  default is the `mean`.
+* `carrierFUN`: some designs might include several carriers per run 
+  (not the case in this example). Similarly to `sampleFUN`,
+  `carrierFUN` tells which function to use for summarizing the carrier
+  values before computing the SCR; the default is the same function as
+  `sampleFUN`.
 
 The function creates a new field in the `rowData` of the assays. We 
-store the computed SCR in the `rowData` and call it `MeanSCR`.
+compute the average SCR for each PSM and store it in the corresponding
+`rowData`, under the `MeanSCR` column.
 
 ```{r computeSCR}
 scp <- computeSCR(scp,
@@ -316,6 +334,7 @@ scp <- computeSCR(scp,
                   colvar = "SampleType",
                   carrierPattern = "Carrier",
                   samplePattern = "Macrophage|Monocyte",
+                  sampleFUN = "mean",
                   rowDataName = "MeanSCR")
 ```
 
