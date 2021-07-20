@@ -451,8 +451,9 @@ Remember there currently are three assays containing the PSM data.
 scp
 ```
 
-The PSMs are aggregated over the `fcol` feature variable, here
-peptides. We also need to supply an aggregating function that will
+The PSMs are aggregated over the `fcol` feature variable, here the
+modified peptide sequence. We also need to supply an aggregating 
+function that will
 tell how to combine the quantitative data of the PSMs to aggregate. We
 here aggregate the PSM data using the median value per sample thanks
 to the `matrixStats:colMedians` function. Other functions can be used 
@@ -465,7 +466,7 @@ the aggregated assays using the original names and appending
 ```{r aggregate_peptides, message = FALSE}
 scp <- aggregateFeaturesOverAssays(scp,
                                    i = 1:3,
-                                   fcol = "peptide",
+                                   fcol = "Modified.sequence",
                                    name = paste0("peptides_", names(scp)),
                                    fun = matrixStats::colMedians, na.rm = TRUE)
 ```
