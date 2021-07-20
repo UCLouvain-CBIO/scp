@@ -6,7 +6,7 @@
 ## This code is inspired from MSnbase::rowsd
 ##' @importFrom stats median sd
 .rowCV <- function(x, 
-                   group, 
+                   group,
                    nobs = 2,
                    reorder = FALSE, 
                    na.rm = FALSE) {
@@ -73,6 +73,21 @@
 ##'     carrier encoding in `colvar`. Only one match per assay is
 ##'     allowed, otherwise only the first match is taken
 ##'     
+##' @param sampleFUN A `character(1)` or `function` that provides the 
+##'     summarization function to use (eg mean, sum, media, max, ...).
+##'     Only used when the pattern matches multiple samples. Default 
+##'     is `mean`. Note for custom function, `na.rm = TRUE` is passed
+##'     to `sampleFUN` to ignore missing values, make sure to provide 
+##'     a function that accepts this argument.
+##'     
+##' @param carrierFUN A `character(1)` or `function` that provides the 
+##'     summarization function to use (eg mean, sum, media, max, ...).
+##'     Only used when the pattern matches multiple carriers. Default 
+##'     is the same function as `sampleFUN`. Note for custom function,
+##'     `na.rm = TRUE` is passed to `carrierFUN` to ignore missing 
+##'     values, make sure to provide a function that accepts this 
+##'     argument.
+##'     
 ##' @param rowDataName A `character(1)` giving the name of the new 
 ##'      variable in the `rowData` where the computed SCR will be 
 ##'      stored. The name cannot already exist in any of the assay
@@ -90,6 +105,7 @@
 ##'                    colvar = "SampleType",
 ##'                    carrierPattern = "Carrier",
 ##'                    samplePattern = "Blank|Macrophage|Monocyte",
+##'                    sampleFUN = "mean",
 ##'                    rowDataName = "MeanSCR")
 ##' ## Check results
 ##' rowData(scp1)[[1]][, "MeanSCR"]
@@ -98,8 +114,10 @@ computeSCR <- function(object,
                        i, 
                        colvar, 
                        samplePattern, 
+                       sampleFUN = "mean",
                        carrierPattern,
-                       rowDataName = "MeanSCR") {
+                       carrierFUN = sampleFUN,
+                       rowDataName = "SCR") {
     if (!inherits(object, "QFeatures"))
         stop("'object' must be a QFeatures object")
     if (is.numeric(samplePattern)) 
@@ -119,21 +137,26 @@ computeSCR <- function(object,
         } else {
             sampIdx <- grep(samplePattern, annot)
         }
+        if (!length(sampIdx)) stop("No match found with 'samplePattern = ", 
+                                   samplePattern, "'.")
         carrIdx <- grep(carrierPattern, annot)
-        if (length(carrIdx) > 1) {
-            warning("Multiple carriers found in assay '", names(object)[ii], 
-                    "'. Only the first match will be used")
-            carrIdx <- carrIdx[1]
-        } 
-        if (any(!c(length(carrIdx), length(sampIdx))))
-            stop("Pattern did not match a sample or carrier channel.")
-        ## Compute ratios
-        carrier <- assay(object[[ii]])[, carrIdx]
-        ratio <- assay(object[[ii]])[, sampIdx, drop = FALSE] / carrier
-        ## Compute mean sample to carrier ratios
+        if (!length(carrIdx)) stop("No match found with 'carrierPattern = ", 
+                                   carrierPattern, "'.")
+        ## Get sample data
+        samp <- assay(object[[ii]])[, sampIdx, drop = FALSE]
+        if (ncol(samp) > 1)
+            samp <- apply(samp, 1, sampleFUN, na.rm = TRUE)
+        ## Get carrier data
+        carrier <- assay(object[[ii]])[, carrIdx, drop = FALSE]
+        if (ncol(carrier) > 1)
+            carrier <- apply(carrier, 1, carrierFUN, na.rm = TRUE)
+        ## Compute ratio
+        ratio <- unname(samp / carrier)
+        ## Store ratio in rowData
         rowData(object@ExperimentList@listData[[ii]])[, rowDataName] <- 
-            rowMeans(ratio, na.rm = TRUE)
-        ## more efficient than rowData(object[[ii]])[, rowDataName] <-  ...
+            ratio
+        ## more efficient than 
+        ## rowData(object[[ii]])[, rowDataName] <-  ratio
     }
     object
 }
