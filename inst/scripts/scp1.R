@@ -55,6 +55,15 @@ scp1 <- scp1[, , !grepl("pep_", names(scp1))]
 scp1 <- addAssayLink(scp1, from = 1:3, to = 4, 
                      varFrom = rep("peptide", 3), varTo = "peptide")
 
+## Rename the rowData to standard names 
+rd <- rowData(scp1)
+rd <- lapply(rd, function(x) {
+    colnames(x) <- sub("Leading.razor.protein.y", "Leading.razor.protein", 
+                       colnames(x))
+    x
+})
+rowData(scp1) <- rd
+
 ## Save the data 
 format(object.size(scp1), units = "MB", digits = 2)
 save(scp1, file = file.path("data/scp1.rda"), 
