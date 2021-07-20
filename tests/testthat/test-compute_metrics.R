@@ -93,8 +93,8 @@ test_that("pep2qvalue", {
                                i = 1:3, 
                                groupBy = "protein", 
                                PEP = "dart_PEP"))
-    expect_equal(unique(test[[1]][test[[1]]$protein == "P82979", "qvalue"]),
-                 1.212598e-06)
+    expect_equal(unique(test[[1]][test[[1]]$protein == "P61981", "qvalue"]),
+                 3.104949e-17)
     ## Test missing groupBy
     expect_identical(rbindRowData(pep2qvalue(scp1, i = 1:3, PEP = "dart_PEP"), 1:3)$qvalue, 
                      .pep2qvalue(rbindRowData(scp1, 1:3)$dart_PEP))

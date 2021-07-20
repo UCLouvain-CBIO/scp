@@ -390,14 +390,15 @@ scp <- pep2qvalue(scp,
 We also allow to compute q-values at peptide or protein level rather
 than PSM. In this case, you need to supply the `groupBy` argument. 
 Suppose we want to compute the q-values at protein level, we can fetch
-the protein information stored under `protein` in the `rowData`. This 
-time, we store the q-values in a new field called `qvalue_proteins`. 
+the protein information stored under `Leading.razor.protein` in the 
+`rowData`. This time, we store the q-values in a new field called
+`qvalue_proteins`. 
 
 ```{r compute_qvalues2}
 scp <- pep2qvalue(scp,
                   i = 1:3,
                   PEP = "dart_PEP",
-                  groupBy = "protein",
+                  groupBy = "Leading.razor.protein",
                   rowDataName = "qvalue_proteins")
 ```
 
@@ -608,7 +609,7 @@ that is supplied, here `MedianCV`.
 ```{r medianCVperCell}
 scp <- medianCVperCell(scp,
                        i = 1:3,
-                       groupBy = "protein",
+                       groupBy = "Leading.razor.protein",
                        nobs = 5, 
                        norm = "div.median",
                        na.rm = TRUE,
@@ -736,7 +737,7 @@ peptide data to protein data using the `aggregateFeatures` function.
 scp <- aggregateFeatures(scp,
                          i = "peptides_log",
                          name = "proteins",
-                         fcol = "protein",
+                         fcol = "Leading.razor.protein",
                          fun = matrixStats::colMedians, na.rm = TRUE)
 ```
 
