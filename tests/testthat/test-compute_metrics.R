@@ -44,26 +44,40 @@ test_that("computeSCR", {
     ## Single assay
     test <- computeSCR(scp1, i = 1, colvar = "SampleType", 
                        samplePattern = "Reference", carrierPattern = "Carrier")
-    expect_identical(rowData(test[[1]])$MeanSCR,
-                     assay(scp1[[1]])[, 2] / assay(scp1[[1]])[, 1])
+    expect_identical(rowData(test[[1]])$SCR,
+                     unname(assay(scp1[[1]])[, 2] / assay(scp1[[1]])[, 1]))
     ## Multiple assays
     test <- computeSCR(scp1, i = 1:2, colvar = "SampleType", 
                        samplePattern = "Reference", carrierPattern = "Carrier")
-    expect_identical(rowData(test[[2]])$MeanSCR,
-                     assay(scp1[[2]])[, 2] / assay(scp1[[2]])[, 1])
-    ## Warning: multiple match for carrier
-    expect_warning(test2 <- computeSCR(scp1, i = 1:2, colvar = "SampleType", 
-                                       samplePattern = "Reference", carrierPattern = "Carrier|Blank"),
-                   regexp = "Multiple carriers found")
-    expect_identical(test2, test)
+    expect_identical(rowData(test[[2]])$SCR,
+                     unname(assay(scp1[[2]])[, 2] / assay(scp1[[2]])[, 1]))
+    ## Multiple match for carrier: compute mean carrier
+    test <- computeSCR(scp1, i = 1:2, colvar = "SampleType", 
+                        samplePattern = "Reference", carrierPattern = "Carrier|Blank",
+                        carrierFUN = "mean")
+    expect_identical(rowData(test[[2]])$SCR,
+                     unname(assay(scp1[[2]])[, 2] / rowMeans(assay(scp1[[2]])[, c(1, 5)], na.rm = TRUE)))
+    ## Multiple match for sample: compute median instead of mean, and 
+    ## test rowDataName
+    test <- computeSCR(scp1, i = 1:2, colvar = "SampleType", 
+                       samplePattern = "Macrophage", carrierPattern = "Carrier|Blank",
+                       carrierFUN = "mean", sampleFUN = "median", 
+                       rowDataName = "medianSCR")
+    expect_identical(rowData(test[[2]])$medianSCR,
+                     unname(rowMedians(assay(scp1[[2]])[, 7:11], na.rm = TRUE) /
+                                rowMeans(assay(scp1[[2]])[, c(1, 5)], na.rm = TRUE)))
     ## Error: colvar not fount
     expect_error(computeSCR(scp1, i = 1:2, colvar = "foo", 
                             samplePattern = "Reference", carrierPattern = "Carrier|Blank"),
                  regexp = "invalid names")
-    ## Error: pattern not fount
+    ## Error: sample pattern not found
     expect_error(computeSCR(scp1, i = 1:2, colvar = "SampleType", 
                             samplePattern = "foo", carrierPattern = "Carrier"),
-                 regexp = "Pattern did not match")
+                 regexp = "No match.*samplePattern")
+    ## Error: carrier pattern not found
+    expect_error(computeSCR(scp1, i = 1:2, colvar = "SampleType", 
+                            samplePattern = "Ref", carrierPattern = "foo"),
+                 regexp = "No match.*carrierPattern")
     ## Error: the new rowData variable already exists
     expect_error(computeSCR(scp1, i = 1:2, colvar = "SampleType", 
                             samplePattern = "Reference", carrierPattern = "Carrier",
@@ -79,8 +93,8 @@ test_that("pep2qvalue", {
                                i = 1:3, 
                                groupBy = "protein", 
                                PEP = "dart_PEP"))
-    expect_equal(unique(test[[1]][test[[1]]$protein == "P61981", "qvalue"]),
-                 3.104949e-17)
+    expect_equal(unique(test[[1]][test[[1]]$protein == "P82979", "qvalue"]),
+                 1.212598e-06)
     ## Test missing groupBy
     expect_identical(rbindRowData(pep2qvalue(scp1, i = 1:3, PEP = "dart_PEP"), 1:3)$qvalue, 
                      .pep2qvalue(rbindRowData(scp1, 1:3)$dart_PEP))
