@@ -2,6 +2,9 @@
 
 # scp 1.3.2
 
+- feat: `computeSCR` now allows for user supplied function that will
+  summarize the values from multiple samples and multiple carrier. 
+- docs: used more standard variable names in scp vignette.
 - docs: created a `QFeatures` recap vignette
 
 # scp 1.3.1
