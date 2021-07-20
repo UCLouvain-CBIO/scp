@@ -95,15 +95,17 @@
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor" aria-hidden="true"></a>Installation</h2>
 <p>To install the <strong>stable version</strong> from Bioconductor:</p>
-<pre><code>if (!requireNamespace("BiocManager"))
-    install.packages("BiocManager")
-BiocManager::install("scp")</code></pre>
-<p>To install the <strong>development version</strong> from GitHub, you first need to ensure that you are using the <code>devel</code> release of Bioconductor and make sure your installed libraries are valid. Then, you can install <code>scp</code> from Github.</p>
-<pre><code>## Get the latests version of Bioconductor
-BiocManager::install(version = "devel")
-stopifnot(BiocManager::valid())
-## Get the latests version of scp from GitHub
-BiocManager::install("UCLouvain-CBIO/scp")</code></pre>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span>
+<span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"scp"</span><span class="op">)</span></code></pre></div>
+<p>To install the <strong>devel version</strong> from GitHub, you first need to ensure that you are using the <code>devel</code> release of Bioconductor and make sure your installed libraries are valid.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html" class="external-link">install</a></span><span class="op">(</span>version <span class="op">=</span> <span class="st">"devel"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/valid.html" class="external-link">valid</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p>Then, you can install <code>scp</code> from Github.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"UCLouvain-CBIO/scp"</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="asking-for-help" class="section level2">
 <h2 class="hasAnchor">
