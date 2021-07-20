@@ -62,7 +62,6 @@ SingleCellExperiment objects." />
 
 
 
-
   
 
   
@@ -85,7 +84,7 @@ SingleCellExperiment objects." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.1</span>
       </span>
     </div>
 
@@ -96,6 +95,21 @@ SingleCellExperiment objects." />
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/QFeatures_nutshell.html">QFeatures in a nutshell</a>
+    </li>
+    <li>
+      <a href="../articles/read_scp.html">Load Single-Cell Proteomics data using `readSCP`</a>
+    </li>
+  </ul>
 </li>
 <li>
   <a href="../news/index.html">Changelog</a>
@@ -172,8 +186,10 @@ meta data.</p></td>
       <td><p>A <code>numeric(1)</code> or <code>character(1)</code> pointing to the
 column of <code>featureData</code> and <code>colData</code> that contain the batch
 names. Make sure that the column name in both table are either
-identical (if you supply a <code>character</code>) or have the same index
-(if you supply a <code>numeric</code>).</p></td>
+identical and syntactically valid (if you supply a <code>character</code>)
+or have the same index (if you supply a <code>numeric</code>). Note that
+characters can be converted to syntactically valid names using
+<code>make.names</code></p></td>
     </tr>
     <tr>
       <th>channelCol</th>
@@ -184,8 +200,8 @@ quantitative data in <code>featureData</code> (see Example).</p></td>
     <tr>
       <th>suffix</th>
       <td><p>A <code><a href='https://rdrr.io/r/base/character.html'>character()</a></code> giving the suffix of the column
-names in each assay. The length of the vector must equal the
-number of quantification channels and must contain unique
+names in each assay. The length of the vector should equal the
+number of quantification channels and should contain unique
 character elements. If NULL, the names of the quantification
 columns in <code>featureData</code> are taken as suffix.</p></td>
     </tr>
@@ -243,8 +259,8 @@ are forbidden in the <code>rowData</code>. Avoid using the following names:
 <span class='r-msg co'><span class='r-pr'>#&gt;</span> Formatting data as a 'QFeatures' object</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span> An instance of class QFeatures containing 4 assays:</span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 395 rows and 16 columns </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  [2] 190321S_LCA10_X_FP97_blank_01: SingleCellExperiment with 109 rows and 16 columns </span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>  [3] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 487 rows and 16 columns </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [2] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 487 rows and 16 columns </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>  [3] 190321S_LCA10_X_FP97_blank_01: SingleCellExperiment with 109 rows and 16 columns </span>
 <span class='r-out co'><span class='r-pr'>#&gt;</span>  [4] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 370 rows and 16 columns </span>
 <span class='r-in'></span>
 </code></pre></div>

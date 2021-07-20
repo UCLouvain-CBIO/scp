@@ -61,7 +61,6 @@ computed q-values." />
 
 
 
-
   
 
   
@@ -84,7 +83,7 @@ computed q-values." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.1</span>
       </span>
     </div>
 
@@ -95,6 +94,21 @@ computed q-values." />
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/QFeatures_nutshell.html">QFeatures in a nutshell</a>
+    </li>
+    <li>
+      <a href="../articles/read_scp.html">Load Single-Cell Proteomics data using `readSCP`</a>
+    </li>
+  </ul>
 </li>
 <li>
   <a href="../news/index.html">Changelog</a>
@@ -209,21 +223,21 @@ Sets.” Molecular &amp; Cellular Proteomics: MCP 14 (9): 2394–2404.</p>
 <span class='r-in'>                   PEP <span class='op'>=</span> <span class='st'>"dart_PEP"</span>,</span>
 <span class='r-in'>                   rowDataName <span class='op'>=</span> <span class='st'>"qvalue_protein"</span><span class='op'>)</span></span>
 <span class='r-in'><span class='co'>## Check results</span></span>
-<span class='r-in'><span class='fu'><a href='rowDataToDF.html'>rowDataToDF</a></span><span class='op'>(</span><span class='va'>scp1</span>, <span class='fl'>1</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"dart_PEP"</span>, <span class='st'>"qvalue_protein"</span><span class='op'>)</span><span class='op'>)</span></span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> DataFrame with 166 rows and 4 columns</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>              dart_PEP qvalue_protein        .assay    .rowname</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span>             &lt;numeric&gt;      &lt;numeric&gt;   &lt;character&gt; &lt;character&gt;</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> PSM3773   7.78683e-05    1.24198e-16 190321S_LC...     PSM3773</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> PSM9078   3.51840e-01    7.55061e-02 190321S_LC...     PSM9078</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> PSM9858   1.54857e-04    7.83117e-07 190321S_LC...     PSM9858</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> PSM11744  1.00000e+00    2.28967e-01 190321S_LC...    PSM11744</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> PSM21752  3.42850e-01    5.52325e-02 190321S_LC...    PSM21752</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> ...               ...            ...           ...         ...</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> PSM732069 4.89848e-05    4.41181e-09 190321S_LC...   PSM732069</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> PSM735396 3.89829e-07    1.24198e-16 190321S_LC...   PSM735396</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> PSM744756 1.54479e-06    7.82514e-08 190321S_LC...   PSM744756</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> PSM745037 4.44010e-01    1.14849e-01 190321S_LC...   PSM745037</span>
-<span class='r-out co'><span class='r-pr'>#&gt;</span> PSM745130 2.07957e-04    1.83409e-10 190321S_LC...   PSM745130</span>
+<span class='r-in'><span class='fu'>rowData</span><span class='op'>(</span><span class='va'>scp1</span><span class='op'>)</span><span class='op'>[[</span><span class='fl'>1</span><span class='op'>]</span><span class='op'>]</span><span class='op'>[</span>, <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"dart_PEP"</span>, <span class='st'>"qvalue_protein"</span><span class='op'>)</span><span class='op'>]</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> DataFrame with 166 rows and 2 columns</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>              dart_PEP qvalue_protein</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>             &lt;numeric&gt;      &lt;numeric&gt;</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> PSM3773   7.78683e-05    1.24198e-16</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> PSM9078   3.51840e-01    7.55061e-02</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> PSM9858   1.54857e-04    7.83117e-07</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> PSM11744  1.00000e+00    2.28967e-01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> PSM21752  3.42850e-01    5.52325e-02</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ...               ...            ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> PSM732069 4.89848e-05    4.41181e-09</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> PSM735396 3.89829e-07    1.24198e-16</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> PSM744756 1.54479e-06    7.82514e-08</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> PSM745037 4.44010e-01    1.14849e-01</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> PSM745130 2.07957e-04    1.83409e-10</span>
 <span class='r-in'></span>
 </code></pre></div>
   </div>

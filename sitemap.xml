@@ -4,7 +4,13 @@
     <loc>/404.html</loc>
   </url>
   <url>
+    <loc>/articles/QFeatures_nutshell.html</loc>
+  </url>
+  <url>
     <loc>/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>/articles/read_scp.html</loc>
   </url>
   <url>
     <loc>/articles/scp.html</loc>

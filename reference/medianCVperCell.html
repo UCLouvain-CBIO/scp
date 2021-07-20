@@ -67,7 +67,6 @@ before computing the CVs. Multiple normalizations are possible." />
 
 
 
-
   
 
   
@@ -90,7 +89,7 @@ before computing the CVs. Multiple normalizations are possible." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.1</span>
       </span>
     </div>
 
@@ -101,6 +100,21 @@ before computing the CVs. Multiple normalizations are possible." />
 </li>
 <li>
   <a href="../reference/index.html">Reference</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/QFeatures_nutshell.html">QFeatures in a nutshell</a>
+    </li>
+    <li>
+      <a href="../articles/read_scp.html">Load Single-Cell Proteomics data using `readSCP`</a>
+    </li>
+  </ul>
 </li>
 <li>
   <a href="../news/index.html">Changelog</a>
@@ -193,7 +207,8 @@ stored. The name cannot already exist in the <code>colData</code>.</p></td>
     <tr>
       <th>norm</th>
       <td><p>A <code><a href='https://rdrr.io/r/base/character.html'>character()</a></code> of normalization methods that will be
-sequentially applied. Available methods and additional
+sequentially applied to each feature (row) in each assay.
+Available methods and additional
 information about normalization can be found in
 MsCoreUtils::normalizeMethods. You can also specify
 <code>norm = "SCoPE2"</code> to reproduce the normalization performed
