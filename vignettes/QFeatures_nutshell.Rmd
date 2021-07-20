@@ -171,21 +171,21 @@ subsetByColData(scp1, scp1$SampleType == "Macrophage")
 Subsetting for features does more than simply subsetting for the 
 features of interest, it will also take the features that are linked 
 to that feature. Here is an example, suppose we are interested in the 
-`P45880` protein.
+`Q02878` protein.
 
 ```{r subset_features}
-scp1["P45880", , ]
+scp1["Q02878", , ]
 ```
 
 You can see it indeed retrieved that protein from the `proteins` assay,
-but it also retrieved 3 associated peptides in the `peptides` assay
-and 3 associated PSMs in 2 different MS runs. 
+but it also retrieved 11 associated peptides in the `peptides` assay
+and 19 associated PSMs in 2 different MS runs. 
 
 An alternative that results in exactly the same output is using the 
 `subsetByColData` method. 
 
 ```{r, subsetByFeature}
-subsetByFeature(scp1, "P45880")
+subsetByFeature(scp1, "Q02878")
 ```
 
 You can also subset features based on the `rowData`. This is performed

@@ -9,8 +9,10 @@ computeSCR(
   i,
   colvar,
   samplePattern,
+  sampleFUN = "mean",
   carrierPattern,
-  rowDataName = "MeanSCR"
+  carrierFUN = sampleFUN,
+  rowDataName = "SCR"
 )
 }
 \arguments{
@@ -25,9 +27,24 @@ from \code{colData(object)} that gives the sample annotation.}
 \item{samplePattern}{A \code{character(1)} pattern that matches the
 sample encoding in \code{colvar}.}
 
+\item{sampleFUN}{A \code{character(1)} or \code{function} that provides the
+summarization function to use (eg mean, sum, media, max, ...).
+Only used when the pattern matches multiple samples. Default
+is \code{mean}. Note for custom function, \code{na.rm = TRUE} is passed
+to \code{sampleFUN} to ignore missing values, make sure to provide
+a function that accepts this argument.}
+
 \item{carrierPattern}{A \code{character(1)} pattern that matches the
 carrier encoding in \code{colvar}. Only one match per assay is
 allowed, otherwise only the first match is taken}
+
+\item{carrierFUN}{A \code{character(1)} or \code{function} that provides the
+summarization function to use (eg mean, sum, media, max, ...).
+Only used when the pattern matches multiple carriers. Default
+is the same function as \code{sampleFUN}. Note for custom function,
+\code{na.rm = TRUE} is passed to \code{carrierFUN} to ignore missing
+values, make sure to provide a function that accepts this
+argument.}
 
 \item{rowDataName}{A \code{character(1)} giving the name of the new
 variable in the \code{rowData} where the computed SCR will be
@@ -50,6 +67,7 @@ scp1 <- computeSCR(scp1,
                    colvar = "SampleType",
                    carrierPattern = "Carrier",
                    samplePattern = "Blank|Macrophage|Monocyte",
+                   sampleFUN = "mean",
                    rowDataName = "MeanSCR")
 ## Check results
 rowData(scp1)[[1]][, "MeanSCR"]
