@@ -97,27 +97,32 @@ This workflow can be applied to any MS-based SCP data. The minimal
 requirement to follow this workflow is that the data should contain 
 the following information: 
 
-- One field in both the feature data and the sample data that gives
+- `Raw.file`: field in both the feature data and the sample data that gives
   the names of the batches or MS runs or MS files.
-- One field in the sample data that links to columns in the 
+- `Channel`: field in the sample data that links to columns in the 
   quantification data and that allows to link samples to MS channels 
   (more details in another 
   [vignette](https://uclouvain-cbio.github.io/scp/articles/read_scp.html)).
-- One field in the sample data that provides the type of sample that
-  is acquired (carrier, blank, reference, single-cell). Only needed 
+- `SampleType`: field in the sample data that provides the type of sample
+  that is acquired (carrier, blank, reference, single-cell). Only needed 
   for multiplexing experiments.
-- One field in the feature data that marks contaminant peptides.
-- One field in the feature data that marks reverse peptides.
-- One field in the feature data that provides spectral purity.
-- One field in the feature data that provides peptide posterior error
-  probabilities.
-- One field in the feature data that provides the peptide identifiers.
-- One field in the feature data that provides the protein identifiers.
+- `Potential.contaminant`:  field in the feature data that marks 
+  contaminant peptides.
+- `Reverse`: field in the feature data that marks reverse peptides.
+- `PIF`: field in the feature data that provides spectral purity.
+- `PEP` or `dart_PEP`: field in the feature data that provides peptide
+  posterior error probabilities.
+- `Modified.sequence`: field in the feature data that provides the
+  peptide identifiers.
+- `Leading.razor.protein`: field in the feature data that provides the
+  protein identifiers.
 - At least one field in the feature data that contains quantification
-  values. 
+  values. In this case, there are 16 quantification columns named as
+  `Reporter.intensity.` followed by an index (`1` to `16`).
 
 Each required field will be described more in detail in the 
-corresponding sections. 
+corresponding sections. Names can be adapted by the user to 
+more meaningful ones or adapted to other output tables. 
 
 # Read in SCP data
 
