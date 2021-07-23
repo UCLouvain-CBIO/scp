@@ -2,7 +2,7 @@
 
 # scp 1.3.3
 
-- Nothing yet
+- docs: included `QFeatures` plot in the vignette
 
 # scp 1.3.2
 
