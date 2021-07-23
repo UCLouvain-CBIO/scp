@@ -185,6 +185,15 @@ correspond to the TMT-16 labels.
 **Important**: More details about the usage of `readSCP` and how to 
 read your own data set are provided in the `Load data using readSCP` 
 [vignette](https://uclouvain-cbio.github.io/scp/articles/read_scp.html). 
+ 
+Another way to get an overview of the scp object is to plot the 
+`QFeatures` object. This will create a graph where each node is an
+assay and links between assays are denoted as edges. 
+
+```{r plot1}
+plot(scp)
+```
+
 
 # Clean missing data
 
@@ -485,10 +494,15 @@ are unchanged. This allows to keep track of the data processing.
 scp
 ```
 
-
 Under the hood, the `QFeatures` architecture preserves the
 relationship between the aggregated assays. See `?AssayLinks` for more
-information on relationships between assays.
+information on relationships between assays. This is illustrated on 
+the `QFeatures` plot:
+
+```{r plot2}
+plot(scp)
+```
+
 
 # Join the SCoPE2 sets in one assay
 
@@ -511,8 +525,8 @@ equals the sum of the columns in the assays to join (here $16 + 16 +
 the sum of the rows of the assays to join since common features
 between assays are joined in a single row.
 
-```{r show_join}
-scp
+```{r plot3}
+plot(scp)
 ```
 
 # Filter single-cells
@@ -696,13 +710,12 @@ scp <- sweep(scp,
              name = "peptides_norm")
 ```
 
-Notice each call to `sweep` created a new assay.
+Notice each call to `sweep` created a new assay. Let's have a look to
+the current stat of the `QFeatures` plot:
 
-```{r show_sweep}
-scp
+```{r plot4}
+plot(scp)
 ```
-
-Let's point out 
 
 ## Remove peptides with high missing rate
 
@@ -880,6 +893,13 @@ addAssay(scp,
     addAssayLinkOneToOne(from = "proteins_norm",
                          to = "proteins_batchC") ->
     scp
+```
+
+For the last time, we plot the overview of the fully processed data 
+set:
+
+```{r plot5}
+plot(scp)
 ```
 
 # Dimension reduction
