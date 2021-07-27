@@ -3,6 +3,7 @@
 # scp 1.3.3
 
 - docs: included `QFeatures` plot in the vignette
+- docs: created a vignette about advanced usage of `scp`
 
 # scp 1.3.2
 
