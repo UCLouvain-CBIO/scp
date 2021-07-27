@@ -1,0 +1,333 @@
+---
+title: "Advanced usage of `scp`"
+author:
+    - name: Laurent Gatto
+    - name: Christophe Vanderaa
+output:
+    BiocStyle::html_document:
+        self_contained: yes
+        toc: true
+        toc_float: true
+        toc_depth: 2
+        code_folding: show
+bibliography: scp.bib
+date: "`r BiocStyle::doc_date()`"
+package: "`r BiocStyle::pkg_ver('scp')`"
+vignette: >
+    %\VignetteIndexEntry{Advanced usage of `scp`}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+    collapse = TRUE,
+    comment = "#>",
+    crop = NULL ## Related to https://stat.ethz.ch/pipermail/bioc-devel/2020-April/016656.html
+)
+```
+
+# About this vignette
+
+This vignette is dedicated to advanced users and to method developers.
+It assumes that you are already familiar with `QFeatures` and `scp` 
+and that you are looking for more flexibility in the analysis of your 
+single-cell proteomics (SCP) data. In fact, `scp` provides wrapper
+functions around generic functions and metrics. However, advanced 
+users may want to apply or develop their own features. The `QFeatures`
+class offers a flexible data container while guaranteeing data
+consistency. 
+
+In this vignette, you will learn how to: 
+
+- Modify the quantitative data
+- Modify the sample metadata
+- Modify the feature metadata
+- Create a new function for `scp` 
+
+As a general guideline, you can add/remove/update data in a 
+`QFeatures` in 4 main steps: 
+
+1. Gather the data to change and other required data involved in the 
+   processing.
+2. Apply the transformation/computation.
+3. Insert the changes in the `QFeatures` object. 
+4. Make sure the updated `QFeatures` object is still valid. 
+
+To illustrate the different topics, we will load the `scp1` example 
+data.
+
+```{r, message = FALSE}
+library(scp)
+data("scp1")
+scp1
+```
+
+# Modify the quantitative data
+
+To illustrate how to modify quantitative data, we will implement a
+`normByType` function that will normalize the feature (row) for each
+cell type separately. This function is probably not relevant for a 
+real case analysis, but it provides a good example of a custom data 
+processing. The process presented in this section is applicable to any
+custom function that takes at least a **matrix-like object** as input 
+and returns a matrix-like object as output. 
+
+```{r}
+normByType <- function(x, type) {
+    ## Check argument
+    stopifnot(length(type) == ncol(x))
+    ## Normalize for each type separately
+    for (i in type) {
+        ## Get normalization factor
+        nf <- rowMedians(x[, type == i], na.rm = TRUE)
+        ## Perform normalization
+        x[, type == i] <- x[, type == i] / nf
+    }
+    ## Return normalized data
+    x
+}
+```
+
+Suppose we want to apply the function to the `proteins` assay, we need
+to first extract that assay. We here need to transfer the sample 
+metadata from the `QFeatures` object to the extracted 
+`SingleCellExperiment` in order to get the sample types required by
+the `normByType` function. We therefore use `getWithColData`. 
+
+```{r}
+sce <- getWithColData(scp1, "proteins")
+sce
+```
+
+Next, we can apply the data transformation to the quantitative data. 
+As mentioned above, our function expects a matrix-like object as an 
+input, so we use the `assay` function. We then update the 
+`SingleCellExperiment` object. 
+
+```{r}
+mnorm <- normByType(assay(sce), type = sce$SampleType)
+assay(sce) <- mnorm
+```
+
+We are now faced with 2 possibilities: either we want to create a new 
+assay or we want to overwrite an existing assay. In both cases we need
+to make sure your data is still valid after data transformation. 
+
+## Create a new assay
+
+Creating a new assay has the advantage that you don't modify an 
+existing assay and hence limit the risk of introducing inconsistency
+in the data and avoid losing intermediate steps of the data 
+processing. 
+
+We add the transformed assay using the `addAssay` function, then link
+the parent assay to the transformed assay using `addAssayLinkOneToOne`.
+Note that if each row name in the parent assay does not match exactly 
+one row in the child assay, you can also use `addAssayLink` that will 
+require a linking variable in the `rowData`. 
+
+```{r}
+scp1 <- addAssay(scp1, sce, name = "proteinsNorm")
+scp1 <- addAssayLinkOneToOne(scp1, from = "proteins", to = "proteinsNorm")
+scp1
+```
+
+## Overwrite an existing assay
+
+Overwriting an existing assay has the advantage to limit the memory 
+consumption as compared to adding a new assay. You can overwrite an 
+assay simply by replacing the target assay in its corresponding slot.
+
+```{r, eval = FALSE}
+scp1[["proteins"]] <- sce
+```
+
+## Check for validity 
+
+Applying custom changes to the data increases the risk for data 
+inconsistencies. You can however verify that a `QFeatures` object is
+still valid after some processing thanks to the `validObject` function.
+
+```{r}
+validObject(scp1)
+```
+
+If the function detects no issues in the data, it will return `TRUE`.
+Otherwise the function will throw an informative error that should 
+guide the user to identifying the issue.
+
+# Modify the sample metadata
+
+To illustrate how to modify the sample metadata, we will compute the 
+average expression in each sample and include to the `colData` of the 
+`QFeatures` object. This is typically performed when computing QC 
+metrics for sample filtering. So, we first extract the required data, 
+in this case the quantitative values, and compute the sample-wise 
+average protein expression.
+
+```{r}
+m <- assay(scp1, "proteins")
+meanExprs <- colMeans(m, na.rm = TRUE)
+meanExprs
+```
+
+Next, we insert the computed averages into the `colData`. You need to
+make sure to match sample names because an extracted assay may not 
+contain all samples and may be in a different order compared to the
+`colData`. 
+
+```{r}
+colData(scp1)[names(meanExprs), "meanProtExprs"] <- meanExprs
+```
+
+The new sample variable `meanProtExprs` is now accessible for filtering
+or plotting. The `$` operator makes it straightforward to access the
+new data. 
+
+```{r}
+hist(log2(scp1$meanProtExprs))
+```
+
+To make sure that the process did not corrupt the `colData`, we advise
+to verify the data is still valid. 
+
+```{r}
+validObject(scp1)
+```
+
+# Modify the feature metadata
+
+We will again illustrate how to modify the feature metadata with an 
+example. We here demonstrate how to add the number of samples in which
+each feature is detected for the three first assays (PSM assays). The
+challenge here is that the metric needs to be computed for each assay
+separately and inserted in the corresponding assay. 
+
+We will take advantage of the replacement function for `rowData` as 
+implemented in `QFeatures`. It expects a list-like object where names 
+indicate in which assays we want to modify the `rowData` and each 
+element contains a table with the replacement values. 
+
+We therefore compute the metrics for each assay separately and store
+the results in a named `List`. 
+
+```{r}
+## Initialize the List object that will store the computed values
+res <- List()
+## We compute the metric for the first 3 assays
+for (i in 1:3) {
+    ## We get the quantitative values for the current assay
+    m <- assay(scp1[[i]])
+    ## We compute the number of samples in which each features is detected
+    n <- rowSums(!is.na(m) & m != 0)
+    ## We store the result as a DataFrame in the List
+    res[[i]] <- DataFrame(nbSamples = n)
+}
+names(res) <- names(scp1)[1:3]
+res
+res[[1]]
+```
+
+Now that we have a `List` of `DataFrame`s, we can update the object.
+
+```{r}
+rowData(scp1) <- res
+```
+
+The new feature variable `nbSamples` is now accessible for filtering
+or plotting. The `rbindRowData` function facilitates the access the
+new data. 
+
+```{r}
+library("ggplot2")
+rd <- rbindRowData(scp1, i = 1:3)
+ggplot(data.frame(rd)) +
+    aes(x = nbSamples) +
+    geom_histogram(bins = 16) +
+    facet_wrap(~ assay)
+```
+
+To make sure that the process did not corrupt the `rowData` in any 
+assay, we advise to verify the data is still valid. 
+
+```{r}
+validObject(scp1)
+```
+
+# Create a new function for `scp` 
+
+The modifying data in a `QFeatures` involves a multiple-step process.
+Creating a wrapper function that would take care of those different 
+steps in a single line of code is a good habit to reduce the length of
+analysis scripts and hence making it easier to understand and less 
+error-prone. 
+
+We will wrap the last example in a new function that we call
+`computeNbDetectedSamples`. 
+
+```{r}
+computeNbDetectedSamples <- function(object, i) {
+    res <- List()
+    for (ii in i) {
+        m <- assay(object[[ii]])
+        n <- rowSums(!is.na(m) & m != 0)
+        res[[ii]] <- DataFrame(nbSamples = n)
+    }
+    names(res) <- names(object)[i]
+    rowData(object) <- res
+    stopifnot(validObject(object))
+    object
+}
+```
+
+Thanks to this new function, the previous section now simply boils 
+down to running: 
+
+```{r}
+scp1 <- computeNbDetectedSamples(scp1, i = 1:3)
+```
+
+Keep in mind a few recommendations when creating a new function for 
+`scp`: 
+
+- The function should take a `QFeatures` object as input (and more 
+  arguments if needed) and return a `QFeatures` object as output. This
+  will make workflows much easier to understand.
+- Allow user to select assays (if required) either as numeric, character,
+  or logical. 
+- Use conventional argument names: when naming an argument, try to 
+  match the names that already exist. For instance, selecting assays 
+  is passed through the `i` argument, selecting `rowData` variables is 
+  passed through `rowvars` and selecting `colData` variables is passed
+  through `colvars`.
+- Follow the `rformassspectrometry` 
+  [coding style](https://rformassspectrometry.github.io/RforMassSpectrometry/articles/RforMassSpectrometry.html#coding-style)
+
+# What's next?
+
+So you developed a new metric or method and believe it might benefit 
+the community? We would love to hear about your improvements and 
+eventually include your new functionality into `scp` or associate your
+new package to our documentation. Please, raise an
+[issue](https://github.com/UCLouvain-CBIO/scp/issues/new/choose) in
+our Github repository to suggest your improvements or, better, submit 
+your code as a 
+[pull request](https://github.com/UCLouvain-CBIO/scp/compare). 
+
+# Session information {-}
+
+```{r setup2, include = FALSE}
+knitr::opts_chunk$set(
+    collapse = TRUE,
+    comment = "",
+    crop = NULL
+)
+```
+
+
+```{r sessioninfo, echo=FALSE}
+sessionInfo()
+```
+
+# Reference

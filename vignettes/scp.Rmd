@@ -98,27 +98,27 @@ requirement to follow this workflow is that the data should contain
 the following information: 
 
 - `Raw.file`: field in both the feature data and the sample data that gives
-  the names of the batches or MS runs or MS files.
+the names of the batches or MS runs or MS files.
 - `Channel`: field in the sample data that links to columns in the 
-  quantification data and that allows to link samples to MS channels 
-  (more details in another 
-  [vignette](https://uclouvain-cbio.github.io/scp/articles/read_scp.html)).
+quantification data and that allows to link samples to MS channels 
+(more details in another 
+[vignette](https://uclouvain-cbio.github.io/scp/articles/read_scp.html)).
 - `SampleType`: field in the sample data that provides the type of sample
-  that is acquired (carrier, blank, reference, single-cell). Only needed 
-  for multiplexing experiments.
+that is acquired (carrier, blank, reference, single-cell). Only needed 
+for multiplexing experiments.
 - `Potential.contaminant`:  field in the feature data that marks 
-  contaminant peptides.
+contaminant peptides.
 - `Reverse`: field in the feature data that marks reverse peptides.
 - `PIF`: field in the feature data that provides spectral purity.
 - `PEP` or `dart_PEP`: field in the feature data that provides peptide
-  posterior error probabilities.
+posterior error probabilities.
 - `Modified.sequence`: field in the feature data that provides the
-  peptide identifiers.
+peptide identifiers.
 - `Leading.razor.protein`: field in the feature data that provides the
-  protein identifiers.
+protein identifiers.
 - At least one field in the feature data that contains quantification
-  values. In this case, there are 16 quantification columns named as
-  `Reporter.intensity.` followed by an index (`1` to `16`).
+values. In this case, there are 16 quantification columns named as
+`Reporter.intensity.` followed by an index (`1` to `16`).
 
 Each required field will be described more in detail in the 
 corresponding sections. Names can be adapted by the user to 
@@ -155,16 +155,16 @@ table(sampleAnnotation$SampleType)
 ```
 
 * The carrier channels (`Carrier`) contain 200 cell equivalents and
-  are meant to boost the peptide identification rate.
+are meant to boost the peptide identification rate.
 * The normalization channels (`Reference`) contain 5 cell equivalents
-  and are used to partially correct for between-run variation.
+and are used to partially correct for between-run variation.
 * The unused channels (`Unused`) are channels that are left empty due
-  to isotopic cross-contamination by the carrier channel.
+to isotopic cross-contamination by the carrier channel.
 * The blank channels (`Blank`) contain samples that do not contain any
-  cell but are processed as single-cell samples.
+cell but are processed as single-cell samples.
 * The single-cell sample channels contain the single-cell samples of
-  interest, that are macrophage (`Macrophage`) or monocyte
-  (`Monocyte`).
+interest, that are macrophage (`Macrophage`) or monocyte
+(`Monocyte`).
 
 Using `readSCP`, we combine both tables in a `QFeatures` object 
 formatted as described above. 
@@ -185,7 +185,7 @@ correspond to the TMT-16 labels.
 **Important**: More details about the usage of `readSCP` and how to 
 read your own data set are provided in the `Load data using readSCP` 
 [vignette](https://uclouvain-cbio.github.io/scp/articles/read_scp.html). 
- 
+
 Another way to get an overview of the scp object is to plot the 
 `QFeatures` object. This will create a graph where each node is an
 assay and links between assays are denoted as edges. 
@@ -316,27 +316,27 @@ The `computeSCR` function expects the following input:
 * The assay name(s) or index/indices for which the SCR should be
 computed
 * `colvar`: the variable in the sample metadata (`colData`) that hold
-  the information used to discriminate sample channels from carrier 
-  channels. 
+the information used to discriminate sample channels from carrier 
+channels. 
 * `carrierPattern`: a string pattern (following regular expression 
-  syntax) that identifies the carrier channel in each batch.
+syntax) that identifies the carrier channel in each batch.
 * `samplePattern`: a string pattern (following regular expression 
-  syntax) that identifies the samples to divide.
+syntax) that identifies the samples to divide.
 
 Optionally, you can also provide the following arguments: 
 
 * `rowDataName`: the name of the column in the `rowData` where to 
-  store the computed SCR for each feature. 
+store the computed SCR for each feature. 
 * `sampleFUN`: when multiple samples are present in an assay, there 
-  are as many SCR as there are samples that need to be summarized to 
-  a single value per feature. `sampleFUN` tells which function to use 
-  for summarizing the sample values before computing the SCR; the 
-  default is the `mean`.
+are as many SCR as there are samples that need to be summarized to 
+a single value per feature. `sampleFUN` tells which function to use 
+for summarizing the sample values before computing the SCR; the 
+default is the `mean`.
 * `carrierFUN`: some designs might include several carriers per run 
-  (not the case in this example). Similarly to `sampleFUN`,
-  `carrierFUN` tells which function to use for summarizing the carrier
-  values before computing the SCR; the default is the same function as
-  `sampleFUN`.
+(not the case in this example). Similarly to `sampleFUN`,
+`carrierFUN` tells which function to use for summarizing the carrier
+values before computing the SCR; the default is the same function as
+`sampleFUN`.
 
 The function creates a new field in the `rowData` of the assays. We 
 compute the average SCR for each PSM and store it in the corresponding
@@ -357,8 +357,7 @@ SCR. We collect the `rowData` from several assays in a single table
 `DataFrame` using the `rbindRowData` function from `QFeatures`.
 
 ```{r plot_SCR, warning=FALSE, message=FALSE}
-scp %>%
-    rbindRowData(i = 1:3) %>%
+rbindRowData(scp, i = 1:3) %>%
     data.frame %>%
     ggplot(aes(x = MeanSCR)) +
     geom_histogram() +
@@ -572,13 +571,12 @@ the `apply` function. The data matrix can be extracted from a
 `MARGIN = 2` means that we compute the median by column. 
 
 ```{r compute_colMedians}
-scp[["peptides"]] %>%
-    assay %>%
-    apply(MARGIN = 2, 
-          FUN = median, 
-          na.rm = TRUE) ->
-    medians
-head(medians)
+medians <- apply(assay(scp[["peptides"]]),
+                 MARGIN = 2, 
+                 FUN = median, 
+                 na.rm = TRUE) ->
+    
+    head(medians)
 ```
 
 The computed medians are then inserted in the `colData`.
@@ -591,8 +589,7 @@ Looking at the distribution of the median per cell can highlight
 low-quality cells.
 
 ```{r plot_medianRI, warning=FALSE, message=FALSE}
-scp %>%
-    colData %>%
+colData(scp) %>%
     data.frame %>%
     ggplot() +
     aes(x = MedianRI, 
@@ -645,8 +642,7 @@ distribution helps defining a threshold that filters out single-cells
 that contain noisy quantification.
 
 ```{r plot_medianCV, message = FALSE, warning = FALSE}
-scp %>%
-    getWithColData("peptides") %>%
+getWithColData(scp, "peptides") %>%
     colData %>%
     data.frame %>%
     ggplot(aes(x = MedianCV,
@@ -786,22 +782,20 @@ peptide level, we subtract by the statistic (median or mean) instead
 of dividing.
 
 ```{r normalize_center}
-scp %>%
-    ## Center columns with median
-    sweep(i = "proteins",
-          MARGIN = 2,
-          FUN = "-",
-          STATS = colMedians(assay(scp[["proteins"]]),
-                             na.rm = TRUE),
-          name = "proteins_norm_col") %>%
-    ## Center rows with mean
-    sweep(i = "proteins_norm_col",
-          MARGIN = 1,
-          FUN = "-",
-          STATS = rowMeans(assay(.[["proteins_norm_col"]]),
-                           na.rm = TRUE),
-          name = "proteins_norm") ->
-    scp
+## Center columns with median
+scp <- sweep(scp, i = "proteins",
+             MARGIN = 2,
+             FUN = "-",
+             STATS = colMedians(assay(scp[["proteins"]]),
+                                na.rm = TRUE),
+             name = "proteins_norm_col")
+## Center rows with mean
+scp <- sweep(scp, i = "proteins_norm_col",
+             MARGIN = 1,
+             FUN = "-",
+             STATS = rowMeans(assay(.[["proteins_norm_col"]]),
+                              na.rm = TRUE),
+             name = "proteins_norm")
 ```
 
 
@@ -887,12 +881,12 @@ Finally, we add the batch corrected assay to the `QFeatures` object
 and create the feature links.
 
 ```{r add_batch_correction}
-addAssay(scp,
-         y = sce,
-         name = "proteins_batchC") %>%
-    addAssayLinkOneToOne(from = "proteins_norm",
-                         to = "proteins_batchC") ->
-    scp
+scp <- addAssay(scp,
+                y = sce,
+                name = "proteins_batchC")
+scp <- addAssayLinkOneToOne(scp, 
+                            from = "proteins_norm",
+                            to = "proteins_batchC")
 ```
 
 For the last time, we plot the overview of the fully processed data 
@@ -995,9 +989,8 @@ formatted to a long format table that can easily be plugged in the
 `ggplot2` visualization tool.
 
 ```{r monitor_plot, warning = FALSE, fig.width = 10, fig.height = 10, out.width = "100%"}
-scp %>%
-    ## Get the features related to Plastin-2 (P13796)
-    subsetByFeature("P13796") %>%
+## Get the features related to Plastin-2 (P13796)
+subsetByFeature(scp, "P13796") %>%
     ## Format the `QFeatures` to a long format table
     longFormat(colvars = c("Raw.file", "SampleType", "Channel")) %>%
     data.frame %>%
