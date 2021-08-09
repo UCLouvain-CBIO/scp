@@ -215,6 +215,10 @@ jobs:
           cd preprocessCore
           R CMD INSTALL --configure-args="--disable-threading"  .
 
+      - name: Manually install latest QFeatures
+        run: |
+          BiocManager::install("UCLouvain-CBIO/QFeatures")
+        shell: Rscript {0}
 
       - name: Session info
         run: |
