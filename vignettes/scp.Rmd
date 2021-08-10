@@ -792,7 +792,7 @@ scp <- sweep(scp, i = "proteins",
 scp <- sweep(scp, i = "proteins_norm_col",
              MARGIN = 1,
              FUN = "-",
-             STATS = rowMeans(assay(.[["proteins_norm_col"]]),
+             STATS = rowMeans(assay(scp[["proteins_norm_col"]]),
                               na.rm = TRUE),
              name = "proteins_norm")
 ```
