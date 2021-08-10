@@ -574,9 +574,8 @@ the `apply` function. The data matrix can be extracted from a
 medians <- apply(assay(scp[["peptides"]]),
                  MARGIN = 2, 
                  FUN = median, 
-                 na.rm = TRUE) ->
-    
-    head(medians)
+                 na.rm = TRUE)
+head(medians)
 ```
 
 The computed medians are then inserted in the `colData`.
