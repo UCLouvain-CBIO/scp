@@ -217,7 +217,7 @@ jobs:
 
       - name: Manually install latest QFeatures
         run: |
-          BiocManager::install("UCLouvain-CBIO/QFeatures")
+          BiocManager::install("RforMassSpectrometry/QFeatures")
         shell: Rscript {0}
 
       - name: Session info
