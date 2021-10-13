@@ -571,10 +571,7 @@ the `apply` function. The data matrix can be extracted from a
 `MARGIN = 2` means that we compute the median by column. 
 
 ```{r compute_colMedians}
-medians <- apply(assay(scp[["peptides"]]),
-                 MARGIN = 2, 
-                 FUN = median, 
-                 na.rm = TRUE)
+medians <- colMedians(assay(scp[["peptides"]]), na.rm = TRUE)
 head(medians)
 ```
 
