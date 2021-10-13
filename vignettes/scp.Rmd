@@ -564,21 +564,12 @@ We compute the median relative reporter ion intensity for each cell
 separately and apply a filter based on this statistic. This procedure
 recalls that of library size filtering commonly performed in scRNA-Seq
 data analysis, where the library size is the sum of the counts in each
-single cell. We will store the median intensity in the `colData`. The 
-medians are computed for every sample from the quantitative data using 
-the `apply` function. The data matrix can be extracted from a 
-`SingleCellExperiment` using the `assay` function. Setting 
-`MARGIN = 2` means that we compute the median by column. 
+single cell. We compute and store the median intensity in the 
+`colData`. 
 
 ```{r compute_colMedians}
 medians <- colMedians(assay(scp[["peptides"]]), na.rm = TRUE)
-head(medians)
-```
-
-The computed medians are then inserted in the `colData`.
-
-```{r}
-colData(scp)[names(medians), "MedianRI"] <- medians
+scp$MedianRI <- medians
 ```
 
 Looking at the distribution of the median per cell can highlight
