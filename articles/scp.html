@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.3</span>
       </span>
     </div>
 
@@ -84,14 +84,14 @@
 
       
 
-      </header><script src="scp_files/header-attrs-2.10/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Single Cell Proteomics data processing and analysis</h1>
                         <h4 data-toc-skip class="author">Laurent Gatto</h4>
                                     <h4 data-toc-skip class="author">Christophe Vanderaa</h4>
                         
-            <h4 data-toc-skip class="date">10 August 2021</h4>
+            <h4 data-toc-skip class="date">13 October 2021</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/master/vignettes/scp.Rmd" class="external-link"><code>vignettes/scp.Rmd</code></a></small>
       <div class="hidden name"><code>scp.Rmd</code></div>
@@ -378,7 +378,25 @@ Conceptual illustration of feature aggregation.
                                    i <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,
                                    fcol <span class="op">=</span> <span class="st">"Modified.sequence"</span>,
                                    name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"peptides_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">scp</span><span class="op">)</span><span class="op">)</span>,
-                                   fun <span class="op">=</span> <span class="fu">matrixStats</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/matrixStats/man/rowMedians.html" class="external-link">colMedians</a></span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+                                   fun <span class="op">=</span> <span class="fu">matrixStats</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/matrixStats/man/rowMedians.html" class="external-link">colMedians</a></span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="co">#&gt; Warning: The dim() method for DataFrameList objects is deprecated. Please use</span>
+<span class="co">#&gt;   dims() on these objects instead.</span>
+<span class="co">#&gt; Warning: The nrow() method for DataFrameList objects is deprecated. Please use</span>
+<span class="co">#&gt;   nrows() on these objects instead.</span>
+<span class="co">#&gt; Warning: The ncol() method for CompressedSplitDataFrameList objects is</span>
+<span class="co">#&gt;   deprecated. Please use ncols() on these objects instead.</span>
+<span class="co">#&gt; Warning: The dim() method for DataFrameList objects is deprecated. Please use</span>
+<span class="co">#&gt;   dims() on these objects instead.</span>
+<span class="co">#&gt; Warning: The nrow() method for DataFrameList objects is deprecated. Please use</span>
+<span class="co">#&gt;   nrows() on these objects instead.</span>
+<span class="co">#&gt; Warning: The ncol() method for CompressedSplitDataFrameList objects is</span>
+<span class="co">#&gt;   deprecated. Please use ncols() on these objects instead.</span>
+<span class="co">#&gt; Warning: The dim() method for DataFrameList objects is deprecated. Please use</span>
+<span class="co">#&gt;   dims() on these objects instead.</span>
+<span class="co">#&gt; Warning: The nrow() method for DataFrameList objects is deprecated. Please use</span>
+<span class="co">#&gt;   nrows() on these objects instead.</span>
+<span class="co">#&gt; Warning: The ncol() method for CompressedSplitDataFrameList objects is</span>
+<span class="co">#&gt;   deprecated. Please use ncols() on these objects instead.</span></code></pre></div>
 <p>Notice that 3 new assays were created in the <code>scp</code> object. Those new assays contain the aggregated features while the three first assays are unchanged. This allows to keep track of the data processing.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">scp</span>
@@ -443,23 +461,9 @@ Conceptual illustration of feature aggregation.
 <a href="#filter-based-on-the-median-relative-intensity" class="anchor" aria-hidden="true"></a>Filter based on the median relative intensity</h2>
 <p>We compute the median relative reporter ion intensity for each cell separately and apply a filter based on this statistic. This procedure recalls that of library size filtering commonly performed in scRNA-Seq data analysis, where the library size is the sum of the counts in each single cell. We will store the median intensity in the <code>colData</code>. The medians are computed for every sample from the quantitative data using the <code>apply</code> function. The data matrix can be extracted from a <code>SingleCellExperiment</code> using the <code>assay</code> function. Setting <code>MARGIN = 2</code> means that we compute the median by column.</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">medians</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">scp</span><span class="op">[[</span><span class="st">"peptides"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,
-                 MARGIN <span class="op">=</span> <span class="fl">2</span>, 
-                 FUN <span class="op">=</span> <span class="va">median</span>, 
-                 na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">medians</span> <span class="op">&lt;-</span> <span class="fu">colMedians</span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">scp</span><span class="op">[[</span><span class="st">"peptides"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">medians</span><span class="op">)</span>
-<span class="co">#&gt; 190222S_LCA9_X_FP94BMReporter.intensity.4 </span>
-<span class="co">#&gt;                                 0.7718510 </span>
-<span class="co">#&gt; 190222S_LCA9_X_FP94BMReporter.intensity.5 </span>
-<span class="co">#&gt;                                 0.4766553 </span>
-<span class="co">#&gt; 190222S_LCA9_X_FP94BMReporter.intensity.6 </span>
-<span class="co">#&gt;                                 0.8716372 </span>
-<span class="co">#&gt; 190222S_LCA9_X_FP94BMReporter.intensity.7 </span>
-<span class="co">#&gt;                                 0.4127720 </span>
-<span class="co">#&gt; 190222S_LCA9_X_FP94BMReporter.intensity.8 </span>
-<span class="co">#&gt;                                 1.0345995 </span>
-<span class="co">#&gt; 190222S_LCA9_X_FP94BMReporter.intensity.9 </span>
-<span class="co">#&gt;                                 0.8830915</span></code></pre></div>
+<span class="co">#&gt; [1] 0.7718510 0.4766553 0.8716372 0.4127720 1.0345995 0.8830915</span></code></pre></div>
 <p>The computed medians are then inserted in the <code>colData</code>.</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">colData</span><span class="op">(</span><span class="va">scp</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">medians</span><span class="op">)</span>, <span class="st">"MedianRI"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">medians</span></code></pre></div>
@@ -567,7 +571,13 @@ Conceptual illustration of feature aggregation.
                          fun <span class="op">=</span> <span class="fu">matrixStats</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/matrixStats/man/rowMedians.html" class="external-link">colMedians</a></span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co">#&gt; Your quantitative and row data contain missing values. Please read the</span>
 <span class="co">#&gt; relevant section(s) in the aggregateFeatures manual page regarding the</span>
-<span class="co">#&gt; effects of missing values on data aggregation.</span></code></pre></div>
+<span class="co">#&gt; effects of missing values on data aggregation.</span>
+<span class="co">#&gt; Warning: The dim() method for DataFrameList objects is deprecated. Please use</span>
+<span class="co">#&gt;   dims() on these objects instead.</span>
+<span class="co">#&gt; Warning: The nrow() method for DataFrameList objects is deprecated. Please use</span>
+<span class="co">#&gt;   nrows() on these objects instead.</span>
+<span class="co">#&gt; Warning: The ncol() method for CompressedSplitDataFrameList objects is</span>
+<span class="co">#&gt;   deprecated. Please use ncols() on these objects instead.</span></code></pre></div>
 <p>The only difference between <code>aggregateFeatures</code> and <code>aggregateFeaturesOverAssays</code> is that the second function can aggregate several assay at once whereas the former only takes one assay to aggregate. Hence, only a single assay, <code>proteins</code>, was created in the <code>scp</code> object.</p>
 <div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">scp</span>
@@ -639,9 +649,7 @@ Conceptual illustration of feature aggregation.
 <p>We first extract the assay to process.</p>
 <div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sce</span> <span class="op">&lt;-</span> <span class="fu">getWithColData</span><span class="op">(</span><span class="va">scp</span>, <span class="st">"proteins_norm"</span><span class="op">)</span>
-<span class="co">#&gt; Warning: 'experiments' dropped; see 'metadata'</span>
-<span class="co">#&gt; harmonizing input:</span>
-<span class="co">#&gt;   removing 144 sampleMap rows not in names(experiments)</span></code></pre></div>
+<span class="co">#&gt; Warning: 'experiments' dropped; see 'metadata'</span></code></pre></div>
 <p>Next, we need to provide a design matrix and the batch annotation to <code>Combat</code>. The design matrix allows to protect variables of interest, in our case <code>SampleType</code>.</p>
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">batch</span> <span class="op">&lt;-</span> <span class="fu">colData</span><span class="op">(</span><span class="va">sce</span><span class="op">)</span><span class="op">$</span><span class="va">Raw.file</span>
@@ -751,9 +759,9 @@ Conceptual illustration of feature aggregation.
 <div id="session-information" class="section level1 unnumbered">
 <h1 class="hasAnchor">
 <a href="#session-information" class="anchor" aria-hidden="true"></a>Session information</h1>
-<pre><code>R version 4.1.0 (2021-05-18)
+<pre><code>R version 4.1.1 (2021-08-10)
 Platform: x86_64-pc-linux-gnu (64-bit)
-Running under: Ubuntu 20.04.2 LTS
+Running under: Ubuntu 20.04.3 LTS
 
 Matrix products: default
 BLAS/LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.8.so
@@ -771,73 +779,74 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] scater_1.21.3               scuttle_1.3.1              
- [3] SingleCellExperiment_1.15.1 sva_3.41.0                 
- [5] BiocParallel_1.27.2         genefilter_1.75.0          
- [7] mgcv_1.8-36                 nlme_3.1-152               
- [9] dplyr_1.0.7                 magrittr_2.0.1             
-[11] ggplot2_3.3.5               scp_1.3.3                  
-[13] QFeatures_1.3.7             MultiAssayExperiment_1.19.5
-[15] SummarizedExperiment_1.23.1 Biobase_2.53.0             
-[17] GenomicRanges_1.45.0        GenomeInfoDb_1.29.3        
-[19] IRanges_2.27.0              S4Vectors_0.31.0           
-[21] BiocGenerics_0.39.1         MatrixGenerics_1.5.3       
-[23] matrixStats_0.60.0          BiocStyle_2.21.3           
+ [1] scater_1.21.8                scuttle_1.3.1               
+ [3] SingleCellExperiment_1.15.2  sva_3.41.0                  
+ [5] BiocParallel_1.27.17         genefilter_1.75.1           
+ [7] mgcv_1.8-38                  nlme_3.1-153                
+ [9] dplyr_1.0.7                  magrittr_2.0.1              
+[11] ggplot2_3.3.5                scp_1.3.3                   
+[13] QFeatures_1.3.7              MultiAssayExperiment_1.19.16
+[15] SummarizedExperiment_1.23.5  Biobase_2.53.0              
+[17] GenomicRanges_1.45.0         GenomeInfoDb_1.29.8         
+[19] IRanges_2.27.2               S4Vectors_0.31.5            
+[21] BiocGenerics_0.39.2          MatrixGenerics_1.5.4        
+[23] matrixStats_0.61.0           BiocStyle_2.21.3            
 
 loaded via a namespace (and not attached):
   [1] ggbeeswarm_0.6.0          colorspace_2.0-2         
   [3] ellipsis_0.3.2            rprojroot_2.0.2          
   [5] XVector_0.33.0            BiocNeighbors_1.11.0     
-  [7] fs_1.5.0                  clue_0.3-59              
+  [7] fs_1.5.0                  clue_0.3-60              
   [9] farver_2.1.0              ggrepel_0.9.1            
  [11] bit64_4.0.5               RSpectra_0.16-0          
  [13] AnnotationDbi_1.55.1      fansi_0.5.0              
- [15] splines_4.1.0             sparseMatrixStats_1.5.2  
- [17] cachem_1.0.5              impute_1.67.0            
- [19] knitr_1.33                jsonlite_1.7.2           
+ [15] splines_4.1.1             sparseMatrixStats_1.5.3  
+ [17] cachem_1.0.6              impute_1.67.0            
+ [19] knitr_1.36                jsonlite_1.7.2           
  [21] annotate_1.71.0           cluster_2.1.2            
  [23] png_0.1-7                 uwot_0.1.10              
- [25] BiocManager_1.30.16       compiler_4.1.0           
+ [25] BiocManager_1.30.16       compiler_4.1.1           
  [27] httr_1.4.2                Matrix_1.3-4             
  [29] fastmap_1.1.0             lazyeval_0.2.2           
- [31] limma_3.49.4              BiocSingular_1.9.1       
- [33] htmltools_0.5.1.1         tools_4.1.0              
- [35] rsvd_1.0.5                igraph_1.2.6             
- [37] gtable_0.3.0              glue_1.4.2               
- [39] GenomeInfoDbData_1.2.6    Rcpp_1.0.7               
- [41] jquerylib_0.1.4           pkgdown_1.6.1.9001       
- [43] vctrs_0.3.8               Biostrings_2.61.2        
- [45] DelayedMatrixStats_1.15.2 xfun_0.25                
- [47] stringr_1.4.0             beachmat_2.9.0           
- [49] irlba_2.3.3               lifecycle_1.0.0          
- [51] XML_3.99-0.6              edgeR_3.35.0             
- [53] zlibbioc_1.39.0           MASS_7.3-54              
- [55] scales_1.1.1              ragg_1.1.3               
- [57] ProtGenerics_1.25.1       parallel_4.1.0           
- [59] AnnotationFilter_1.17.1   yaml_2.2.1               
- [61] gridExtra_2.3             memoise_2.0.0            
- [63] sass_0.4.0                stringi_1.7.3            
- [65] RSQLite_2.2.7             highr_0.9                
- [67] desc_1.3.0                ScaledMatrix_1.1.0       
- [69] rlang_0.4.11              pkgconfig_2.0.3          
- [71] systemfonts_1.0.2         bitops_1.0-7             
- [73] evaluate_0.14             lattice_0.20-44          
- [75] purrr_0.3.4               labeling_0.4.2           
- [77] bit_4.0.4                 tidyselect_1.1.1         
- [79] bookdown_0.22             R6_2.5.0                 
- [81] generics_0.1.0            DelayedArray_0.19.1      
- [83] DBI_1.1.1                 pillar_1.6.2             
- [85] withr_2.4.2               MsCoreUtils_1.5.0        
- [87] survival_3.2-11           KEGGREST_1.33.0          
- [89] RCurl_1.98-1.3            tibble_3.1.3             
- [91] crayon_1.4.1              utf8_1.2.2               
- [93] rmarkdown_2.10            viridis_0.6.1            
- [95] locfit_1.5-9.4            grid_4.1.0               
- [97] FNN_1.1.3                 blob_1.2.2               
- [99] digest_0.6.27             xtable_1.8-4             
-[101] textshaping_0.3.5         munsell_0.5.0            
-[103] viridisLite_0.4.0         beeswarm_0.4.0           
-[105] vipor_0.4.5               bslib_0.2.5.1            </code></pre>
+ [31] limma_3.49.4              cli_3.0.1                
+ [33] BiocSingular_1.9.1        htmltools_0.5.2          
+ [35] tools_4.1.1               rsvd_1.0.5               
+ [37] igraph_1.2.6              gtable_0.3.0             
+ [39] glue_1.4.2                GenomeInfoDbData_1.2.7   
+ [41] Rcpp_1.0.7                jquerylib_0.1.4          
+ [43] pkgdown_1.9000.9000.9000  vctrs_0.3.8              
+ [45] Biostrings_2.61.2         DelayedMatrixStats_1.15.4
+ [47] xfun_0.26                 stringr_1.4.0            
+ [49] beachmat_2.9.1            irlba_2.3.3              
+ [51] lifecycle_1.0.1           XML_3.99-0.8             
+ [53] edgeR_3.35.1              zlibbioc_1.39.0          
+ [55] MASS_7.3-54               scales_1.1.1             
+ [57] ragg_1.1.3                ProtGenerics_1.25.1      
+ [59] parallel_4.1.1            AnnotationFilter_1.17.1  
+ [61] yaml_2.2.1                gridExtra_2.3            
+ [63] memoise_2.0.0             sass_0.4.0               
+ [65] stringi_1.7.5             RSQLite_2.2.8            
+ [67] highr_0.9                 desc_1.4.0               
+ [69] ScaledMatrix_1.1.0        rlang_0.99.0.9000        
+ [71] pkgconfig_2.0.3           systemfonts_1.0.2        
+ [73] bitops_1.0-7              evaluate_0.14            
+ [75] lattice_0.20-45           purrr_0.3.4              
+ [77] labeling_0.4.2            bit_4.0.4                
+ [79] tidyselect_1.1.1          bookdown_0.24            
+ [81] R6_2.5.1                  generics_0.1.0           
+ [83] DelayedArray_0.19.4       DBI_1.1.1                
+ [85] pillar_1.6.3              withr_2.4.2              
+ [87] MsCoreUtils_1.5.0         survival_3.2-13          
+ [89] KEGGREST_1.33.0           RCurl_1.98-1.5           
+ [91] tibble_3.1.5              crayon_1.4.1             
+ [93] utf8_1.2.2                rmarkdown_2.11           
+ [95] viridis_0.6.1             locfit_1.5-9.4           
+ [97] grid_4.1.1                FNN_1.1.3                
+ [99] blob_1.2.2                digest_0.6.28            
+[101] xtable_1.8-4              textshaping_0.3.5        
+[103] munsell_0.5.0             viridisLite_0.4.0        
+[105] beeswarm_0.4.0            vipor_0.4.5              
+[107] bslib_0.3.1              </code></pre>
 </div>
 <div id="reference" class="section level1 unnumbered">
 <h1 class="hasAnchor">
@@ -882,7 +891,7 @@ Tyanova, Stefka, Tikira Temu, and Juergen Cox. 2016. <span>“The <span>MaxQuant
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link external-link">pkgdown</a> 1.6.1.9001.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link external-link">pkgdown</a> 1.9000.9000.9000.</p>
 </div>
 
       </footer>
