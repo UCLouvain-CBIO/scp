@@ -459,16 +459,12 @@ Conceptual illustration of feature aggregation.
 <div id="filter-based-on-the-median-relative-intensity" class="section level2">
 <h2 class="hasAnchor">
 <a href="#filter-based-on-the-median-relative-intensity" class="anchor" aria-hidden="true"></a>Filter based on the median relative intensity</h2>
-<p>We compute the median relative reporter ion intensity for each cell separately and apply a filter based on this statistic. This procedure recalls that of library size filtering commonly performed in scRNA-Seq data analysis, where the library size is the sum of the counts in each single cell. We will store the median intensity in the <code>colData</code>. The medians are computed for every sample from the quantitative data using the <code>apply</code> function. The data matrix can be extracted from a <code>SingleCellExperiment</code> using the <code>assay</code> function. Setting <code>MARGIN = 2</code> means that we compute the median by column.</p>
+<p>We compute the median relative reporter ion intensity for each cell separately and apply a filter based on this statistic. This procedure recalls that of library size filtering commonly performed in scRNA-Seq data analysis, where the library size is the sum of the counts in each single cell. We compute and store the median intensity in the <code>colData</code>.</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">medians</span> <span class="op">&lt;-</span> <span class="fu">colMedians</span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">scp</span><span class="op">[[</span><span class="st">"peptides"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">medians</span><span class="op">)</span>
-<span class="co">#&gt; [1] 0.7718510 0.4766553 0.8716372 0.4127720 1.0345995 0.8830915</span></code></pre></div>
-<p>The computed medians are then inserted in the <code>colData</code>.</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">colData</span><span class="op">(</span><span class="va">scp</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">medians</span><span class="op">)</span>, <span class="st">"MedianRI"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">medians</span></code></pre></div>
+<span class="va">scp</span><span class="op">$</span><span class="va">MedianRI</span> <span class="op">&lt;-</span> <span class="va">medians</span></code></pre></div>
 <p>Looking at the distribution of the median per cell can highlight low-quality cells.</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">colData</span><span class="op">(</span><span class="va">scp</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
     <span class="va">data.frame</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
@@ -484,7 +480,7 @@ Conceptual illustration of feature aggregation.
 <h2 class="hasAnchor">
 <a href="#filter-based-on-the-median-cv" class="anchor" aria-hidden="true"></a>Filter based on the median CV</h2>
 <p>The median CV measures the consistency of quantification for a group of peptides that belong to a protein. We remove cells that exhibit high median CV over the different proteins. We compute the median CV per cell using the <code>computeMedianCV</code> function from the <code>scp</code> package. The function takes the <code>peptides</code> assay and computes the CV for each protein in each cell. To perform this, we must supply the name of the <code>rowData</code> field that contains the protein information through the <code>groupBy</code> argument. We also only want to compute CVs if we have at least 5 peptides per protein. Finally, we also perform a normalization and divide the columns by the median. The computed median CVs are automatically stored in the <code>colData</code> under the name that is supplied, here <code>MedianCV</code>.</p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/medianCVperCell.html">medianCVperCell</a></span><span class="op">(</span><span class="va">scp</span>,
                        i <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,
                        groupBy <span class="op">=</span> <span class="st">"Leading.razor.protein"</span>,
@@ -493,7 +489,7 @@ Conceptual illustration of feature aggregation.
                        na.rm <span class="op">=</span> <span class="cn">TRUE</span>,
                        colDataName <span class="op">=</span> <span class="st">"MedianCV"</span><span class="op">)</span></code></pre></div>
 <p>The computed CVs are stored in the <code>colData</code> of the <code>peptides</code> assay and holds the median CV per cell computed using at least 5 observations (peptides). The main interest of computing the median CV per cell is to filter cells with reliable quantification. The blank samples are not expected to have reliable quantifications and hence can be used to estimate an empirical null distribution of the CV. This distribution helps defining a threshold that filters out single-cells that contain noisy quantification.</p>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">getWithColData</span><span class="op">(</span><span class="va">scp</span>, <span class="st">"peptides"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
     <span class="va">colData</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
     <span class="va">data.frame</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
@@ -503,10 +499,10 @@ Conceptual illustration of feature aggregation.
     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fl">0.65</span><span class="op">)</span></code></pre></div>
 <p><img src="scp_files/figure-html/plot_medianCV-1.png" width="700"></p>
 <p>We can see that the protein quantification for single-cells are much more consistent than for blank samples. Based on the distribution of the blanks, we decide to keep the cells that have a median CV lower than 0.65. Note this example is inaccurate because the null distribution is based on only 3 blank samples, but more sets could lead to a better estimation of the CV null distribution.</p>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">scp</span> <span class="op">&lt;-</span> <span class="va">scp</span><span class="op">[</span>, <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">scp</span><span class="op">$</span><span class="va">MedianCV</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">scp</span><span class="op">$</span><span class="va">MedianCV</span> <span class="op">&lt;</span> <span class="fl">0.65</span>, <span class="op">]</span></code></pre></div>
 <p>We can now remove the blank samples since all QC metrics are now computed.</p>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">scp</span> <span class="op">&lt;-</span> <span class="va">scp</span><span class="op">[</span>, <span class="va">scp</span><span class="op">$</span><span class="va">SampleType</span> <span class="op">!=</span> <span class="st">"Blank"</span>, <span class="op">]</span></code></pre></div>
 </div>
 </div>
@@ -518,7 +514,7 @@ Conceptual illustration of feature aggregation.
 <h2 class="hasAnchor">
 <a href="#normalization" class="anchor" aria-hidden="true"></a>Normalization</h2>
 <p>The columns (samples) of the peptide data are first normalized by dividing the relative intensities by the median relative intensities. Then, the rows (peptides) are normalized by dividing the relative intensities by the mean relative intensities. The normalized data is stored in a separate assay. This normalization procedure is suggested in the SCoPE2 analysis and is applied using the <code>sweep</code> method. Beside the dataset and the assay to normalize, the method expects a <code>MARGIN</code>, that is either row-wise (<code>1</code>) or column-wise (<code>2</code>) transformation, the <code>FUN</code> function to apply and <code>STATS</code>, a vector of values to apply. More conventional normalization procedure can be found in <code><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-processing.html" class="external-link">?QFeatures::normalize</a></code>.</p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Divide columns by median</span>
 <span class="va">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-processing.html" class="external-link">sweep</a></span><span class="op">(</span><span class="va">scp</span>, 
              i <span class="op">=</span> <span class="st">"peptides"</span>,
@@ -534,7 +530,7 @@ Conceptual illustration of feature aggregation.
              STATS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowMeans</a></span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">scp</span><span class="op">[[</span><span class="st">"peptides_norm_col"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,  na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,
              name <span class="op">=</span> <span class="st">"peptides_norm"</span><span class="op">)</span></code></pre></div>
 <p>Notice each call to <code>sweep</code> created a new assay. Let’s have a look to the current stat of the <code>QFeatures</code> plot:</p>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scp</span><span class="op">)</span></code></pre></div>
 <p><img src="scp_files/figure-html/plot4-1.png" width="700"></p>
 </div>
@@ -542,7 +538,7 @@ Conceptual illustration of feature aggregation.
 <h2 class="hasAnchor">
 <a href="#remove-peptides-with-high-missing-rate" class="anchor" aria-hidden="true"></a>Remove peptides with high missing rate</h2>
 <p>Peptides that contain many missing values are not informative. Therefore, another common procedure is to remove higly missing data. In this example, we remove peptides with more than 99 % missing data. This is done using the <code>filterNA</code> function from <code>QFeatures</code>.</p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-missing-data.html" class="external-link">filterNA</a></span><span class="op">(</span><span class="va">scp</span>,
                 i <span class="op">=</span> <span class="st">"peptides_norm"</span>,
                 pNA <span class="op">=</span> <span class="fl">0.99</span><span class="op">)</span></code></pre></div>
@@ -551,7 +547,7 @@ Conceptual illustration of feature aggregation.
 <h2 class="hasAnchor">
 <a href="#log-transformation" class="anchor" aria-hidden="true"></a>Log-transformation</h2>
 <p>In this vignette, we perform log2-transformation using the <code>logTransform</code> method from <code>QFeatures</code>. Other log-transformation can be applied by changing the <code>base</code> argument.</p>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-processing.html" class="external-link">logTransform</a></span><span class="op">(</span><span class="va">scp</span>,
                     base <span class="op">=</span> <span class="fl">2</span>,
                     i <span class="op">=</span> <span class="st">"peptides_norm"</span>,
@@ -563,7 +559,7 @@ Conceptual illustration of feature aggregation.
 <h1 class="hasAnchor">
 <a href="#aggregate-peptide-data-to-protein-data" class="anchor" aria-hidden="true"></a>Aggregate peptide data to protein data</h1>
 <p>Similarly to aggregating PSM data to peptide data, we can aggregate peptide data to protein data using the <code>aggregateFeatures</code> function.</p>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-aggregate.html" class="external-link">aggregateFeatures</a></span><span class="op">(</span><span class="va">scp</span>,
                          i <span class="op">=</span> <span class="st">"peptides_log"</span>,
                          name <span class="op">=</span> <span class="st">"proteins"</span>,
@@ -579,7 +575,7 @@ Conceptual illustration of feature aggregation.
 <span class="co">#&gt; Warning: The ncol() method for CompressedSplitDataFrameList objects is</span>
 <span class="co">#&gt;   deprecated. Please use ncols() on these objects instead.</span></code></pre></div>
 <p>The only difference between <code>aggregateFeatures</code> and <code>aggregateFeaturesOverAssays</code> is that the second function can aggregate several assay at once whereas the former only takes one assay to aggregate. Hence, only a single assay, <code>proteins</code>, was created in the <code>scp</code> object.</p>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">scp</span>
 <span class="co">#&gt; An instance of class QFeatures containing 11 assays:</span>
 <span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 239 rows and 6 columns </span>
@@ -599,7 +595,7 @@ Conceptual illustration of feature aggregation.
 <h2 class="hasAnchor">
 <a href="#normalization-1" class="anchor" aria-hidden="true"></a>Normalization</h2>
 <p>Normalization is performed similarly to peptide normalization. We use the same functions, but since the data were log-transformed at the peptide level, we subtract by the statistic (median or mean) instead of dividing.</p>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Center columns with median</span>
 <span class="va">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-processing.html" class="external-link">sweep</a></span><span class="op">(</span><span class="va">scp</span>, i <span class="op">=</span> <span class="st">"proteins"</span>,
              MARGIN <span class="op">=</span> <span class="fl">2</span>,
@@ -619,14 +615,14 @@ Conceptual illustration of feature aggregation.
 <h2 class="hasAnchor">
 <a href="#imputation" class="anchor" aria-hidden="true"></a>Imputation</h2>
 <p>The protein data contains a lot of missing values.</p>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">scp</span><span class="op">[[</span><span class="st">"proteins_norm"</span><span class="op">]</span><span class="op">]</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
     <span class="va">assay</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
     <span class="va">is.na</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
     <span class="va">mean</span>
 <span class="co">#&gt; [1] 0.3291962</span></code></pre></div>
 <p>The average missingness in the <code>proteins</code> assay is around 25 %. Including more samples and hence more batches can increase the missingness up to 70 % as seen for the complete SCoPE2 dataset (<span class="citation">Specht et al. (2021)</span>). Whether imputation is beneficial or deleterious for the data will not be discussed in this vignette. But taking those missing value into account is essential to avoid artefacts in downstream analyses. The data imputation is performed using the K nearest neighbors algorithm, with k = 3. This is available from the <code>impute</code> mehtod. More details about the arguments can be found in <code><a href="https://rdrr.io/pkg/impute/man/impute.knn.html" class="external-link">?impute::impute.knn</a></code>.</p>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/impute.html" class="external-link">impute</a></span><span class="op">(</span><span class="va">scp</span>,
               i <span class="op">=</span> <span class="st">"proteins_norm"</span>,
               method <span class="op">=</span> <span class="st">"knn"</span>,
@@ -634,7 +630,7 @@ Conceptual illustration of feature aggregation.
               maxp <span class="op">=</span> <span class="cn">Inf</span>, rng.seed <span class="op">=</span> <span class="fl">1234</span><span class="op">)</span>
 <span class="co">#&gt; Loading required namespace: impute</span></code></pre></div>
 <p>Note that after imputation, no value are missing.</p>
-<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">scp</span><span class="op">[[</span><span class="st">"proteins_norm"</span><span class="op">]</span><span class="op">]</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
     <span class="va">assay</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
     <span class="va">is.na</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
@@ -647,21 +643,21 @@ Conceptual illustration of feature aggregation.
 <p>A very important step for processing SCP data is to correct for batch effects. Batch effects are caused by technical variation occurring during different MS runs. Since only a small number of single-cells can be acquired at once, batch effects are unavoidable.</p>
 <p>The <code>ComBat</code> function from the <code>sva</code> package can be used to perform batch correction as it is performed in the SCoPE2 analysis. We do not claim that <code>ComBat</code> is the best algorithm for batch correcting SCP data and other batch correcting methods could be used using the same procedure.</p>
 <p>We first extract the assay to process.</p>
-<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sce</span> <span class="op">&lt;-</span> <span class="fu">getWithColData</span><span class="op">(</span><span class="va">scp</span>, <span class="st">"proteins_norm"</span><span class="op">)</span>
 <span class="co">#&gt; Warning: 'experiments' dropped; see 'metadata'</span></code></pre></div>
 <p>Next, we need to provide a design matrix and the batch annotation to <code>Combat</code>. The design matrix allows to protect variables of interest, in our case <code>SampleType</code>.</p>
-<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">batch</span> <span class="op">&lt;-</span> <span class="fu">colData</span><span class="op">(</span><span class="va">sce</span><span class="op">)</span><span class="op">$</span><span class="va">Raw.file</span>
 <span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span><span class="op">~</span> <span class="va">SampleType</span>, data <span class="op">=</span> <span class="fu">colData</span><span class="op">(</span><span class="va">sce</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>We then load and call <code>ComBat</code> and overwrite the data matrix. Recall the data matrix can be accessed using the <code>assay</code> function.</p>
-<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">sva</span><span class="op">)</span>
 <span class="fu">assay</span><span class="op">(</span><span class="va">sce</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sva/man/ComBat.html" class="external-link">ComBat</a></span><span class="op">(</span>dat <span class="op">=</span> <span class="fu">assay</span><span class="op">(</span><span class="va">sce</span><span class="op">)</span>,
                      batch <span class="op">=</span> <span class="va">batch</span>,
                      mod <span class="op">=</span> <span class="va">model</span><span class="op">)</span></code></pre></div>
 <p>Finally, we add the batch corrected assay to the <code>QFeatures</code> object and create the feature links.</p>
-<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-class.html" class="external-link">addAssay</a></span><span class="op">(</span><span class="va">scp</span>,
                 y <span class="op">=</span> <span class="va">sce</span>,
                 name <span class="op">=</span> <span class="st">"proteins_batchC"</span><span class="op">)</span>
@@ -669,7 +665,7 @@ Conceptual illustration of feature aggregation.
                             from <span class="op">=</span> <span class="st">"proteins_norm"</span>,
                             to <span class="op">=</span> <span class="st">"proteins_batchC"</span><span class="op">)</span></code></pre></div>
 <p>For the last time, we plot the overview of the fully processed data set:</p>
-<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scp</span><span class="op">)</span></code></pre></div>
 <p><img src="scp_files/figure-html/plot5-1.png" width="700"></p>
 </div>
@@ -678,7 +674,7 @@ Conceptual illustration of feature aggregation.
 <h1 class="hasAnchor">
 <a href="#dimension-reduction" class="anchor" aria-hidden="true"></a>Dimension reduction</h1>
 <p>Because each assay contains <code>SingelCellExperiment</code> objects, we can easily apply methods developed in the scRNA-Seq field. A useful package for dimension reduction on single-cell data is the <code>scater</code>.</p>
-<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://bioconductor.org/packages/scater/" class="external-link">scater</a></span><span class="op">)</span>
 <span class="co">#&gt; Loading required package: SingleCellExperiment</span>
 <span class="co">#&gt; Loading required package: scuttle</span></code></pre></div>
@@ -687,7 +683,7 @@ Conceptual illustration of feature aggregation.
 <h2 class="hasAnchor">
 <a href="#pca" class="anchor" aria-hidden="true"></a>PCA</h2>
 <p>PCA can be computed using the <code>runPCA</code> method. It returns a <code>SingleCellExperiment</code> object for which the dimension reduction results are stored in the <code>reducedDim</code> slot.</p>
-<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">scp</span><span class="op">[[</span><span class="st">"proteins_batchC"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scater/man/runPCA.html" class="external-link">runPCA</a></span><span class="op">(</span><span class="va">scp</span><span class="op">[[</span><span class="st">"proteins_batchC"</span><span class="op">]</span><span class="op">]</span>,
                                    ncomponents <span class="op">=</span> <span class="fl">5</span>,
                                    ntop <span class="op">=</span> <span class="cn">Inf</span>,
@@ -695,7 +691,7 @@ Conceptual illustration of feature aggregation.
                                    exprs_values <span class="op">=</span> <span class="fl">1</span>,
                                    name <span class="op">=</span> <span class="st">"PCA"</span><span class="op">)</span></code></pre></div>
 <p>The computed PCA can be displayed using the <code>plotReducedDim</code> function. The <code>dimred</code> arguments should give the name of the dimension reduction results to plot, here we called it <code>PCA</code>. The samples are colored by type of sample.</p>
-<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotReducedDim.html" class="external-link">plotReducedDim</a></span><span class="op">(</span><span class="va">scp</span><span class="op">[[</span><span class="st">"proteins_batchC"</span><span class="op">]</span><span class="op">]</span>,
                dimred <span class="op">=</span> <span class="st">"PCA"</span>,
                colour_by <span class="op">=</span> <span class="st">"SampleType"</span>,
@@ -707,7 +703,7 @@ Conceptual illustration of feature aggregation.
 <h2 class="hasAnchor">
 <a href="#umap" class="anchor" aria-hidden="true"></a>UMAP</h2>
 <p>Similarly to PCA, we can compute a UMAP using the <code>runUMAP</code> method. Note however that the UMAP implementation requires a initialization, usually provided by PCA. The previous PCA results are used automatically when supplying <code>dimred = "PCA"</code> (<code>PCA</code> is the name of the dimension reduction result that we supplied in the previous section).</p>
-<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">scp</span><span class="op">[[</span><span class="st">"proteins_batchC"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scater/man/runUMAP.html" class="external-link">runUMAP</a></span><span class="op">(</span><span class="va">scp</span><span class="op">[[</span><span class="st">"proteins_batchC"</span><span class="op">]</span><span class="op">]</span>,
                                     ncomponents <span class="op">=</span> <span class="fl">2</span>,
                                     ntop <span class="op">=</span> <span class="cn">Inf</span>,
@@ -717,7 +713,7 @@ Conceptual illustration of feature aggregation.
                                     dimred <span class="op">=</span> <span class="st">"PCA"</span>,
                                     name <span class="op">=</span> <span class="st">"UMAP"</span><span class="op">)</span></code></pre></div>
 <p>The computed UMAP can be displayed using the <code>plotReducedDim</code> function. The <code>dimred</code> arguments gives the name of the dimension reduction results to plot, here we called it <code>UMAP</code>. The samples are colored by type of sample.</p>
-<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotReducedDim.html" class="external-link">plotReducedDim</a></span><span class="op">(</span><span class="va">scp</span><span class="op">[[</span><span class="st">"proteins_batchC"</span><span class="op">]</span><span class="op">]</span>,
                dimred <span class="op">=</span> <span class="st">"UMAP"</span>,
                colour_by <span class="op">=</span> <span class="st">"SampleType"</span>,
@@ -730,7 +726,7 @@ Conceptual illustration of feature aggregation.
 <h1 class="hasAnchor">
 <a href="#monitoring-data-processing" class="anchor" aria-hidden="true"></a>Monitoring data processing</h1>
 <p><code>QFeatures</code> keeps the links between the different assays along the processing of the data. This greatly facilitates the visualization of the quantitative data for a features at the different processing levels. For instance, suppose we are interested in the protein <em>Plastin-2</em> (protein ID is <code>P13796</code>). A useful QC is to monitor the data processing at the PSM, peptide and protein level. This can easily be done thanks to the <code>QFeatures</code> framework. Using the <code>subsetByFeature</code>, we can extract the protein of interest and its related features in the other assays. The data is formatted to a long format table that can easily be plugged in the <code>ggplot2</code> visualization tool.</p>
-<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co">## Get the features related to Plastin-2 (P13796)</span>
 <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-subsetBy.html" class="external-link">subsetByFeature</a></span><span class="op">(</span><span class="va">scp</span>, <span class="st">"P13796"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
     <span class="co">## Format the `QFeatures` to a long format table</span>
