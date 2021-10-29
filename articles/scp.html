@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.1</span>
       </span>
     </div>
 
@@ -123,7 +123,7 @@
 <div class="section level1">
 <h1 id="before-you-start">Before you start<a class="anchor" aria-label="anchor" href="#before-you-start"></a>
 </h1>
-<p>This vignette will guide you through some common steps of mass spectrometry-based single-cell proteomics (SCP) data analysis. SCP is an emerging field and further research is required to develop a principled analysis workflow. Therefore, we <strong>do not guarantee</strong> that the steps presented here are the best steps for this type of data analysis. This vignette performs the steps that were described in the SCoPE2 landmark paper (<span class="citation">Specht et al. (2021)</span>). We hope to convince the reader that, although the workflow is probably not optimal, <code>scp</code> has the full potential to perform standardized and principled data analysis. All functions presented here are comprehensively documented, highly modular, can easily be extended with new algorithms. Suggestions, feature requests or bug reports are warmly welcome. Feel free to open an issue in the <a href="https://github.com/UCLouvain-CBIO/scp/issues" class="external-link">GitHub repository</a>.</p>
+<p>This vignette will guide you through some common steps of mass spectrometry-based single-cell proteomics (SCP) data analysis. SCP is an emerging field and further research is required to develop a principled analysis workflow. Therefore, we <strong>do not guarantee</strong> that the steps presented here are the best steps for this type of data analysis. This vignette performs the steps that were described in the SCoPE2 landmark paper (<span class="citation">Specht et al. (2021)</span>) and that were reproduced in another work using the <code>scp</code> package (<span class="citation">Vanderaa and Gatto (2021)</span>). The replication on the full SCoPE2 dataset using <code>scp</code> is available in <a href="https://uclouvain-cbio.github.io/SCP.replication/articles/SCoPE2.html" class="external-link">this vignette</a>. We hope to convince the reader that, although the workflow is probably not optimal, <code>scp</code> has the full potential to perform standardized and principled data analysis. All functions presented here are comprehensively documented, highly modular, can easily be extended with new algorithms. Suggestions, feature requests or bug reports are warmly welcome. Feel free to open an issue in the <a href="https://github.com/UCLouvain-CBIO/scp/issues" class="external-link">GitHub repository</a>.</p>
 <p>This workflow can be applied to any MS-based SCP data. The minimal requirement to follow this workflow is that the data should contain the following information:</p>
 <ul>
 <li>
@@ -780,7 +780,7 @@ other attached packages:
  [5] BiocParallel_1.28.0         genefilter_1.76.0          
  [7] mgcv_1.8-38                 nlme_3.1-153               
  [9] dplyr_1.0.7                 magrittr_2.0.1             
-[11] ggplot2_3.3.5               scp_1.5.0                  
+[11] ggplot2_3.3.5               scp_1.5.1                  
 [13] QFeatures_1.5.1             MultiAssayExperiment_1.20.0
 [15] SummarizedExperiment_1.24.0 Biobase_2.54.0             
 [17] GenomicRanges_1.46.0        GenomeInfoDb_1.30.0        
@@ -844,6 +844,26 @@ loaded via a namespace (and not attached):
 [105] beeswarm_0.4.0            vipor_0.4.5              
 [107] bslib_0.3.1              </code></pre>
 </div>
+<div class="section level1">
+<h1 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
+</h1>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">"scp"</span>)</span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>To cite the scp package <span class="cf">in</span> publications use<span class="sc">:</span></span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>  Vanderaa Christophe and Laurent Gatto. Replication of Single<span class="sc">-</span>Cell</span>
+<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a>  Proteomics Data Reveals Important Computational Challenges. Expert</span>
+<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a>  Review of Proteomics, 1–<span class="dv">9</span> (<span class="dv">2021</span>).</span>
+<span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-9"><a href="#cb57-9" aria-hidden="true" tabindex="-1"></a>  Vanderaa Christophe and Laurent Gatto. Replication of Single<span class="sc">-</span>Cell</span>
+<span id="cb57-10"><a href="#cb57-10" aria-hidden="true" tabindex="-1"></a>  Proteomics Data Reveals Important Computational Challenges. bioRxiv</span>
+<span id="cb57-11"><a href="#cb57-11" aria-hidden="true" tabindex="-1"></a>  <span class="dv">2021</span>.<span class="dv">04</span>.<span class="fl">12.439408</span>; doi<span class="sc">:</span> https<span class="sc">:</span><span class="er">//</span>doi.org<span class="sc">/</span><span class="fl">10.1101</span><span class="sc">/</span><span class="dv">2021</span>.<span class="dv">04</span>.<span class="fl">12.439408</span></span>
+<span id="cb57-12"><a href="#cb57-12" aria-hidden="true" tabindex="-1"></a>  (<span class="dv">2021</span>).</span>
+<span id="cb57-13"><a href="#cb57-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-14"><a href="#cb57-14" aria-hidden="true" tabindex="-1"></a>To see these entries <span class="cf">in</span> BibTeX format, use <span class="st">'print(&lt;citation&gt;,</span></span>
+<span id="cb57-15"><a href="#cb57-15" aria-hidden="true" tabindex="-1"></a><span class="st">bibtex=TRUE)'</span>, <span class="st">'toBibtex(.)'</span>, or set</span>
+<span id="cb57-16"><a href="#cb57-16" aria-hidden="true" tabindex="-1"></a><span class="st">'options(citation.bibtex.max=999)'</span>.</span></code></pre></div>
+</div>
 <div class="section level1 unnumbered">
 <h1 class="unnumbered" id="reference">Reference<a class="anchor" aria-label="anchor" href="#reference"></a>
 </h1>
@@ -865,6 +885,9 @@ Specht, Harrison, Edward Emmott, Aleksandra A Petelski, R Gray Huffman, David H 
 </div>
 <div id="ref-Tyanova2016-yj" class="csl-entry">
 Tyanova, Stefka, Tikira Temu, and Juergen Cox. 2016. <span>“The <span>MaxQuant</span> Computational Platform for Mass Spectrometry-Based Shotgun Proteomics.”</span> <em>Nat. Protoc.</em> 11 (12): 2301–19.
+</div>
+<div id="ref-Vanderaa2021-ue" class="csl-entry">
+Vanderaa, Christophe, and Laurent Gatto. 2021. <span>“Replication of Single-Cell Proteomics Data Reveals Important Computational Challenges.”</span> <em>Expert Rev. Proteomics</em>, October, 1–9.
 </div>
 </div>
 </div>
