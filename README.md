@@ -36,6 +36,21 @@ Then, you can install `scp` from Github.
 BiocManager::install("UCLouvain-CBIO/scp")
 ```
 
+## Citation 
+
+To cite the `scp` package in publications use:
+
+>Vanderaa Christophe and Laurent Gatto. Replication
+> of Single-Cell Proteomics Data Reveals Important
+> Computational Challenges. Expert Review of
+> Proteomics, 1–9 (2021).
+
+> Vanderaa Christophe and Laurent Gatto. Replication
+> of Single-Cell Proteomics Data Reveals Important
+> Computational Challenges. bioRxiv 2021.04.12.439408;
+> doi: https://doi.org/10.1101/2021.04.12.439408
+> (2021).
+
 ## Asking for help
 
 Feel free to use [Github

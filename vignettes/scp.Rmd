@@ -82,7 +82,11 @@ an emerging field and further research is required to develop a
 principled analysis workflow. Therefore, we **do not guarantee** that the 
 steps presented here are the best steps for this type of data analysis.
 This vignette performs the steps that were described in the SCoPE2 
-landmark paper (@Specht2021-jm). We hope to convince the reader that,
+landmark paper (@Specht2021-jm) and that were reproduced in another 
+work using the `scp` package (@Vanderaa2021-ue). The replication on
+the full SCoPE2 dataset using `scp` is available in 
+[this vignette](https://uclouvain-cbio.github.io/SCP.replication/articles/SCoPE2.html).
+We hope to convince the reader that,
 although the workflow is probably not optimal, `scp` has the full 
 potential to perform standardized and principled data analysis. All 
 functions presented here are comprehensively documented, highly modular,
@@ -90,8 +94,6 @@ can easily be extended with new algorithms. Suggestions, feature
 requests or bug reports are warmly welcome. Feel free to open an issue
 in the 
 [GitHub repository](https://github.com/UCLouvain-CBIO/scp/issues).
-
-
 
 This workflow can be applied to any MS-based SCP data. The minimal 
 requirement to follow this workflow is that the data should contain 
@@ -1021,5 +1023,12 @@ knitr::opts_chunk$set(
 ```{r sessioninfo, echo=FALSE}
 sessionInfo()
 ```
+
+# Citation
+
+```{r citation}
+citation("scp")
+```
+
 
 # Reference

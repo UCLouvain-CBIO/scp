@@ -1,3 +1,17 @@
+# scp 1.5
+
+# scp 1.5.1
+
+- Added CITATION <2021-10-29>
+
+# scp 1.5.0
+
+- New devel (Bioc 3.15)
+
+# scp 1.4
+
+- New stable release (Bioc 3.14)
+
 # scp 1.3
 
 # scp 1.3.3
