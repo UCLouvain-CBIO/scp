@@ -1,0 +1,26 @@
+citHeader("To cite the scp package in publications use:")
+
+citEntry(entry = "article",  
+         title  = "Replication of Single-Cell Proteomics Data Reveals Important Computational Challenges",
+         author = personList(
+           person(given = "Christophe", family = "Vanderaa"),
+           person(given = "Laurent", family = "Gatto")),
+         journal = "Expert Review of Proteomics",
+         year = "2021",
+         pages = "1-9",
+         textVersion = paste("Vanderaa Christophe and Laurent Gatto.",
+                             "Replication of Single-Cell Proteomics Data Reveals Important Computational Challenges.",
+                             "Expert Review of Proteomics, 1–9 (2021).")
+         )
+
+citEntry(entry = "article",  
+         title  = "Replication of Single-Cell Proteomics Data Reveals Important Computational Challenges",
+         author = personList(
+           person(given = "Christophe", family = "Vanderaa"),
+           person(given = "Laurent", family = "Gatto")),
+         journal = "bioRxiv",
+         year = "2021",
+         textVersion = paste("Vanderaa Christophe and Laurent Gatto.",
+                             "Replication of Single-Cell Proteomics Data Reveals Important Computational Challenges.",
+                             "bioRxiv 2021.04.12.439408; doi: https://doi.org/10.1101/2021.04.12.439408 (2021).")
+         )
