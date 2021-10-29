@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.0</span>
       </span>
     </div>
 
@@ -92,18 +92,18 @@
                         <h4 data-toc-skip class="author">Laurent Gatto</h4>
                                     <h4 data-toc-skip class="author">Christophe Vanderaa</h4>
                         
-            <h4 data-toc-skip class="date">13 October 2021</h4>
+            <h4 data-toc-skip class="date">29 October 2021</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/master/vignettes/advanced.Rmd" class="external-link"><code>vignettes/advanced.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/HEAD/vignettes/advanced.Rmd" class="external-link"><code>vignettes/advanced.Rmd</code></a></small>
       <div class="hidden name"><code>advanced.Rmd</code></div>
 
     </div>
 
     
     
-<div id="about-this-vignette" class="section level1">
-<h1 class="hasAnchor">
-<a href="#about-this-vignette" class="anchor" aria-hidden="true"></a>About this vignette</h1>
+<div class="section level1">
+<h1 id="about-this-vignette">About this vignette<a class="anchor" aria-label="anchor" href="#about-this-vignette"></a>
+</h1>
 <p>This vignette is dedicated to advanced users and to method developers. It assumes that you are already familiar with <code>QFeatures</code> and <code>scp</code> and that you are looking for more flexibility in the analysis of your single-cell proteomics (SCP) data. In fact, <code>scp</code> provides wrapper functions around generic functions and metrics. However, advanced users may want to apply or develop their own features. The <code>QFeatures</code> class offers a flexible data container while guaranteeing data consistency.</p>
 <p>In this vignette, you will learn how to:</p>
 <ul>
@@ -132,9 +132,9 @@
 <span class="co">#&gt;  [4] peptides: SingleCellExperiment with 539 rows and 38 columns </span>
 <span class="co">#&gt;  [5] proteins: SingleCellExperiment with 292 rows and 38 columns</span></code></pre></div>
 </div>
-<div id="modify-the-quantitative-data" class="section level1">
-<h1 class="hasAnchor">
-<a href="#modify-the-quantitative-data" class="anchor" aria-hidden="true"></a>Modify the quantitative data</h1>
+<div class="section level1">
+<h1 id="modify-the-quantitative-data">Modify the quantitative data<a class="anchor" aria-label="anchor" href="#modify-the-quantitative-data"></a>
+</h1>
 <p>To illustrate how to modify quantitative data, we will implement a <code>normByType</code> function that will normalize the feature (row) for each cell type separately. This function is probably not relevant for a real case analysis, but it provides a good example of a custom data processing. The process presented in this section is applicable to any custom function that takes at least a <strong>matrix-like object</strong> as input and returns a matrix-like object as output.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">normByType</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">type</span><span class="op">)</span> <span class="op">{</span>
@@ -173,9 +173,9 @@
 <code class="sourceCode R"><span class="va">mnorm</span> <span class="op">&lt;-</span> <span class="fu">normByType</span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">sce</span><span class="op">)</span>, type <span class="op">=</span> <span class="va">sce</span><span class="op">$</span><span class="va">SampleType</span><span class="op">)</span>
 <span class="fu">assay</span><span class="op">(</span><span class="va">sce</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">mnorm</span></code></pre></div>
 <p>We are now faced with 2 possibilities: either we want to create a new assay or we want to overwrite an existing assay. In both cases we need to make sure your data is still valid after data transformation.</p>
-<div id="create-a-new-assay" class="section level2">
-<h2 class="hasAnchor">
-<a href="#create-a-new-assay" class="anchor" aria-hidden="true"></a>Create a new assay</h2>
+<div class="section level2">
+<h2 id="create-a-new-assay">Create a new assay<a class="anchor" aria-label="anchor" href="#create-a-new-assay"></a>
+</h2>
 <p>Creating a new assay has the advantage that you don’t modify an existing assay and hence limit the risk of introducing inconsistency in the data and avoid losing intermediate steps of the data processing.</p>
 <p>We add the transformed assay using the <code>addAssay</code> function, then link the parent assay to the transformed assay using <code>addAssayLinkOneToOne</code>. Note that if each row name in the parent assay does not match exactly one row in the child assay, you can also use <code>addAssayLink</code> that will require a linking variable in the <code>rowData</code>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
@@ -190,16 +190,16 @@
 <span class="co">#&gt;  [5] proteins: SingleCellExperiment with 292 rows and 38 columns </span>
 <span class="co">#&gt;  [6] proteinsNorm: SingleCellExperiment with 292 rows and 38 columns</span></code></pre></div>
 </div>
-<div id="overwrite-an-existing-assay" class="section level2">
-<h2 class="hasAnchor">
-<a href="#overwrite-an-existing-assay" class="anchor" aria-hidden="true"></a>Overwrite an existing assay</h2>
+<div class="section level2">
+<h2 id="overwrite-an-existing-assay">Overwrite an existing assay<a class="anchor" aria-label="anchor" href="#overwrite-an-existing-assay"></a>
+</h2>
 <p>Overwriting an existing assay has the advantage to limit the memory consumption as compared to adding a new assay. You can overwrite an assay simply by replacing the target assay in its corresponding slot.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">scp1</span><span class="op">[[</span><span class="st">"proteins"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">sce</span></code></pre></div>
 </div>
-<div id="check-for-validity" class="section level2">
-<h2 class="hasAnchor">
-<a href="#check-for-validity" class="anchor" aria-hidden="true"></a>Check for validity</h2>
+<div class="section level2">
+<h2 id="check-for-validity">Check for validity<a class="anchor" aria-label="anchor" href="#check-for-validity"></a>
+</h2>
 <p>Applying custom changes to the data increases the risk for data inconsistencies. You can however verify that a <code>QFeatures</code> object is still valid after some processing thanks to the <code>validObject</code> function.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">validObject</span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span>
@@ -207,9 +207,9 @@
 <p>If the function detects no issues in the data, it will return <code>TRUE</code>. Otherwise the function will throw an informative error that should guide the user to identifying the issue.</p>
 </div>
 </div>
-<div id="modify-the-sample-metadata" class="section level1">
-<h1 class="hasAnchor">
-<a href="#modify-the-sample-metadata" class="anchor" aria-hidden="true"></a>Modify the sample metadata</h1>
+<div class="section level1">
+<h1 id="modify-the-sample-metadata">Modify the sample metadata<a class="anchor" aria-label="anchor" href="#modify-the-sample-metadata"></a>
+</h1>
 <p>To illustrate how to modify the sample metadata, we will compute the average expression in each sample and include to the <code>colData</code> of the <code>QFeatures</code> object. This is typically performed when computing QC metrics for sample filtering. So, we first extract the required data, in this case the quantitative values, and compute the sample-wise average protein expression.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu">assay</span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"proteins"</span><span class="op">)</span>
@@ -265,9 +265,9 @@
 <code class="sourceCode R"><span class="fu">validObject</span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span>
 <span class="co">#&gt; [1] TRUE</span></code></pre></div>
 </div>
-<div id="modify-the-feature-metadata" class="section level1">
-<h1 class="hasAnchor">
-<a href="#modify-the-feature-metadata" class="anchor" aria-hidden="true"></a>Modify the feature metadata</h1>
+<div class="section level1">
+<h1 id="modify-the-feature-metadata">Modify the feature metadata<a class="anchor" aria-label="anchor" href="#modify-the-feature-metadata"></a>
+</h1>
 <p>We will again illustrate how to modify the feature metadata with an example. We here demonstrate how to add the number of samples in which each feature is detected for the three first assays (PSM assays). The challenge here is that the metric needs to be computed for each assay separately and inserted in the corresponding assay.</p>
 <p>We will take advantage of the replacement function for <code>rowData</code> as implemented in <code>QFeatures</code>. It expects a list-like object where names indicate in which assays we want to modify the <code>rowData</code> and each element contains a table with the replacement values.</p>
 <p>We therefore compute the metrics for each assay separately and store the results in a named <code>List</code>.</p>
@@ -319,9 +319,8 @@
 <code class="sourceCode R"><span class="fu">validObject</span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span>
 <span class="co">#&gt; [1] TRUE</span></code></pre></div>
 </div>
-<div id="create-a-new-function-for-scp" class="section level1">
-<h1 class="hasAnchor">
-<a href="#create-a-new-function-for-scp" class="anchor" aria-hidden="true"></a>Create a new function for <code>scp</code>
+<div class="section level1">
+<h1 id="create-a-new-function-for-scp">Create a new function for <code>scp</code><a class="anchor" aria-label="anchor" href="#create-a-new-function-for-scp"></a>
 </h1>
 <p>The modifying data in a <code>QFeatures</code> involves a multiple-step process. Creating a wrapper function that would take care of those different steps in a single line of code is a good habit to reduce the length of analysis scripts and hence making it easier to understand and less error-prone.</p>
 <p>We will wrap the last example in a new function that we call <code>computeNbDetectedSamples</code>.</p>
@@ -350,14 +349,14 @@
 </li>
 </ul>
 </div>
-<div id="whats-next" class="section level1">
-<h1 class="hasAnchor">
-<a href="#whats-next" class="anchor" aria-hidden="true"></a>What’s next?</h1>
+<div class="section level1">
+<h1 id="whats-next">What’s next?<a class="anchor" aria-label="anchor" href="#whats-next"></a>
+</h1>
 <p>So you developed a new metric or method and believe it might benefit the community? We would love to hear about your improvements and eventually include your new functionality into <code>scp</code> or associate your new package to our documentation. Please, raise an <a href="https://github.com/UCLouvain-CBIO/scp/issues/new/choose" class="external-link">issue</a> in our Github repository to suggest your improvements or, better, submit your code as a <a href="https://github.com/UCLouvain-CBIO/scp/compare" class="external-link">pull request</a>.</p>
 </div>
-<div id="session-information" class="section level1 unnumbered">
-<h1 class="hasAnchor">
-<a href="#session-information" class="anchor" aria-hidden="true"></a>Session information</h1>
+<div class="section level1 unnumbered">
+<h1 class="unnumbered" id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
+</h1>
 <pre><code>R version 4.1.1 (2021-08-10)
 Platform: x86_64-pc-linux-gnu (64-bit)
 Running under: Ubuntu 20.04.3 LTS
@@ -378,55 +377,55 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] ggplot2_3.3.5                scp_1.3.3                   
- [3] QFeatures_1.3.7              MultiAssayExperiment_1.19.16
- [5] SummarizedExperiment_1.23.5  Biobase_2.53.0              
- [7] GenomicRanges_1.45.0         GenomeInfoDb_1.29.8         
- [9] IRanges_2.27.2               S4Vectors_0.31.5            
-[11] BiocGenerics_0.39.2          MatrixGenerics_1.5.4        
-[13] matrixStats_0.61.0           BiocStyle_2.21.3            
+ [1] ggplot2_3.3.5               scp_1.5.0                  
+ [3] QFeatures_1.5.1             MultiAssayExperiment_1.20.0
+ [5] SummarizedExperiment_1.24.0 Biobase_2.54.0             
+ [7] GenomicRanges_1.46.0        GenomeInfoDb_1.30.0        
+ [9] IRanges_2.28.0              S4Vectors_0.32.0           
+[11] BiocGenerics_0.40.0         MatrixGenerics_1.6.0       
+[13] matrixStats_0.61.0          BiocStyle_2.22.0           
 
 loaded via a namespace (and not attached):
  [1] sass_0.4.0                  jsonlite_1.7.2             
  [3] bslib_0.3.1                 BiocManager_1.30.16        
  [5] highr_0.9                   GenomeInfoDbData_1.2.7     
- [7] yaml_2.2.1                  pillar_1.6.3               
+ [7] yaml_2.2.1                  pillar_1.6.4               
  [9] lattice_0.20-45             glue_1.4.2                 
-[11] digest_0.6.28               XVector_0.33.0             
+[11] digest_0.6.28               XVector_0.34.0             
 [13] colorspace_2.0-2            htmltools_0.5.2            
 [15] Matrix_1.3-4                pkgconfig_2.0.3            
-[17] bookdown_0.24               zlibbioc_1.39.0            
+[17] bookdown_0.24               zlibbioc_1.40.0            
 [19] purrr_0.3.4                 scales_1.1.1               
 [21] tibble_3.1.5                farver_2.1.0               
-[23] generics_0.1.0              AnnotationFilter_1.17.1    
+[23] generics_0.1.1              AnnotationFilter_1.18.0    
 [25] ellipsis_0.3.2              withr_2.4.2                
 [27] cachem_1.0.6                lazyeval_0.2.2             
-[29] cli_3.0.1                   magrittr_2.0.1             
+[29] cli_3.1.0                   magrittr_2.0.1             
 [31] crayon_1.4.1                memoise_2.0.0              
 [33] evaluate_0.14               fs_1.5.0                   
 [35] fansi_0.5.0                 MASS_7.3-54                
-[37] textshaping_0.3.5           tools_4.1.1                
+[37] textshaping_0.3.6           tools_4.1.1                
 [39] lifecycle_1.0.1             stringr_1.4.0              
 [41] munsell_0.5.0               cluster_2.1.2              
-[43] DelayedArray_0.19.4         compiler_4.1.1             
+[43] DelayedArray_0.20.0         compiler_4.1.1             
 [45] pkgdown_1.9000.9000.9000    jquerylib_0.1.4            
-[47] systemfonts_1.0.2           rlang_0.99.0.9000          
+[47] systemfonts_1.0.3           rlang_0.99.0.9000          
 [49] grid_4.1.1                  RCurl_1.98-1.5             
-[51] MsCoreUtils_1.5.0           SingleCellExperiment_1.15.2
-[53] igraph_1.2.6                labeling_0.4.2             
+[51] MsCoreUtils_1.6.0           SingleCellExperiment_1.16.0
+[53] igraph_1.2.7                labeling_0.4.2             
 [55] bitops_1.0-7                rmarkdown_2.11             
 [57] gtable_0.3.0                R6_2.5.1                   
 [59] knitr_1.36                  dplyr_1.0.7                
 [61] fastmap_1.1.0               utf8_1.2.2                 
 [63] clue_0.3-60                 rprojroot_2.0.2            
-[65] ragg_1.1.3                  ProtGenerics_1.25.1        
+[65] ragg_1.1.3                  ProtGenerics_1.26.0        
 [67] desc_1.4.0                  stringi_1.7.5              
 [69] vctrs_0.3.8                 tidyselect_1.1.1           
-[71] xfun_0.26                  </code></pre>
+[71] xfun_0.27                  </code></pre>
 </div>
-<div id="reference" class="section level1">
-<h1 class="hasAnchor">
-<a href="#reference" class="anchor" aria-hidden="true"></a>Reference</h1>
+<div class="section level1">
+<h1 id="reference">Reference<a class="anchor" aria-label="anchor" href="#reference"></a>
+</h1>
 </div>
   </div>
 
@@ -447,7 +446,7 @@ loaded via a namespace (and not attached):
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link external-link">pkgdown</a> 1.9000.9000.9000.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
 </div>
 
       </footer>

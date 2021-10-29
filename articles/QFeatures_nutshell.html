@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.0</span>
       </span>
     </div>
 
@@ -91,9 +91,9 @@
                         <h4 data-toc-skip class="author">Laurent Gatto</h4>
                                     <h4 data-toc-skip class="author">Christophe Vanderaa</h4>
                         
-            <h4 data-toc-skip class="date">13 October 2021</h4>
+            <h4 data-toc-skip class="date">29 October 2021</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/master/vignettes/QFeatures_nutshell.Rmd" class="external-link"><code>vignettes/QFeatures_nutshell.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/HEAD/vignettes/QFeatures_nutshell.Rmd" class="external-link"><code>vignettes/QFeatures_nutshell.Rmd</code></a></small>
       <div class="hidden name"><code>QFeatures_nutshell.Rmd</code></div>
 
     </div>
@@ -101,9 +101,9 @@
     
     
 <p>This vignette briefly recaps the main concepts of <code>QFeatures</code> on which <code>scp</code> relies. More in depth information is to be found in the <code>QFeatures</code> <a href="https://rformassspectrometry.github.io/QFeatures/articles/QFeatures.html" class="external-link">vignettes</a>.</p>
-<div id="the-qfeatures-class" class="section level1">
-<h1 class="hasAnchor">
-<a href="#the-qfeatures-class" class="anchor" aria-hidden="true"></a>The <code>QFeatures</code> class</h1>
+<div class="section level1">
+<h1 id="the-qfeatures-class">The <code>QFeatures</code> class<a class="anchor" aria-label="anchor" href="#the-qfeatures-class"></a>
+</h1>
 <p>The <code>QFeatures</code> class is based on the <code>MultiAssayExperiment</code> class that holds a collection of <code>SummarizedExperiment</code> (or other classes that inherits from it) objects termed <strong>assays</strong>. The assays in a <code>QFeatures</code> object have a hierarchical relation: proteins are composed of peptides, themselves produced by spectra, as depicted in figure below.</p>
 <p><img src="https://rformassspectrometry.github.io/QFeatures/articles/QFeatures_files/figure-html/featuresplot-1.png"></p>
 <p>Those links are stored as part as the <code>QFeatures</code> object and connect the assays together. We load an example dataset from the <code>scp</code> package that is formatted as an <code>QFeatures</code> object and plot those connection.</p>
@@ -113,13 +113,13 @@
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span></code></pre></div>
 <p><img src="QFeatures_nutshell_files/figure-html/hierarchy-1.png" width="600px"></p>
 </div>
-<div id="accessing-the-data" class="section level1">
-<h1 class="hasAnchor">
-<a href="#accessing-the-data" class="anchor" aria-hidden="true"></a>Accessing the data</h1>
+<div class="section level1">
+<h1 id="accessing-the-data">Accessing the data<a class="anchor" aria-label="anchor" href="#accessing-the-data"></a>
+</h1>
 <p>The <code>QFeatures</code> class contains all the available and metadata. We here show how to retrieve those different pieces of information.</p>
-<div id="quantitative-data" class="section level2">
-<h2 class="hasAnchor">
-<a href="#quantitative-data" class="anchor" aria-hidden="true"></a>Quantitative data</h2>
+<div class="section level2">
+<h2 id="quantitative-data">Quantitative data<a class="anchor" aria-label="anchor" href="#quantitative-data"></a>
+</h2>
 <p>The quantitative data, stored as matrix-like objects, can be accessed using the <code>assay</code> function. For example, we here extract the quantitative data for the first MS batch (and show a subset of it):</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">assay</span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"190321S_LCA10_X_FP97AG"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="op">]</span>
@@ -166,9 +166,9 @@
 <span class="co">#&gt; [3] "190914S_LCB3_X_16plex_Set_21" "peptides"                    </span>
 <span class="co">#&gt; [5] "proteins"</span></code></pre></div>
 </div>
-<div id="feature-metadata" class="section level2">
-<h2 class="hasAnchor">
-<a href="#feature-metadata" class="anchor" aria-hidden="true"></a>Feature metadata</h2>
+<div class="section level2">
+<h2 id="feature-metadata">Feature metadata<a class="anchor" aria-label="anchor" href="#feature-metadata"></a>
+</h2>
 <p>For each individual assay, there is feature metadata available. We extract the list of metadata tables by using <code>rowData()</code> on the <code>QFeatures</code> object.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">rowData</span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span>
@@ -281,9 +281,9 @@
 <span class="co">#&gt; 1387                NA                     +</span>
 <span class="co">#&gt; 1388                NA                     +</span></code></pre></div>
 </div>
-<div id="sample-metadata" class="section level2">
-<h2 class="hasAnchor">
-<a href="#sample-metadata" class="anchor" aria-hidden="true"></a>Sample metadata</h2>
+<div class="section level2">
+<h2 id="sample-metadata">Sample metadata<a class="anchor" aria-label="anchor" href="#sample-metadata"></a>
+</h2>
 <p>The sample metadata is retrieved using <code>colData</code> on the <code>QFeatures</code> object.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">colData</span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span>
@@ -340,9 +340,9 @@
 <span class="co">#&gt; [36] "Macrophage" "Macrophage" "Macrophage"</span></code></pre></div>
 </div>
 </div>
-<div id="subsetting-the-data" class="section level1">
-<h1 class="hasAnchor">
-<a href="#subsetting-the-data" class="anchor" aria-hidden="true"></a>Subsetting the data</h1>
+<div class="section level1">
+<h1 id="subsetting-the-data">Subsetting the data<a class="anchor" aria-label="anchor" href="#subsetting-the-data"></a>
+</h1>
 <p>There are three dimensions we want to subset for:</p>
 <ul>
 <li>Assays</li>
@@ -350,9 +350,9 @@
 <li>Features</li>
 </ul>
 <p>Therefore, <code>QFeatures</code> support a three-index subsetting. This is performed through the simple bracket method <code>[feature, sample, assay]</code>.</p>
-<div id="subset-assays" class="section level2">
-<h2 class="hasAnchor">
-<a href="#subset-assays" class="anchor" aria-hidden="true"></a>Subset assays</h2>
+<div class="section level2">
+<h2 id="subset-assays">Subset assays<a class="anchor" aria-label="anchor" href="#subset-assays"></a>
+</h2>
 <p>Suppose that we want to focus only on the first MS batch (<code>190321S_LCA10_X_FP97AG</code>) for separate processing of the data. Subsetting the <code>QFeatures</code> object for that assay is simply:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">scp1</span><span class="op">[</span>, , <span class="st">"190321S_LCA10_X_FP97AG"</span><span class="op">]</span>
@@ -372,9 +372,9 @@
 <span class="co">#&gt; An instance of class QFeatures containing 1 assays:</span>
 <span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 11 columns</span></code></pre></div>
 </div>
-<div id="subset-samples" class="section level2">
-<h2 class="hasAnchor">
-<a href="#subset-samples" class="anchor" aria-hidden="true"></a>Subset samples</h2>
+<div class="section level2">
+<h2 id="subset-samples">Subset samples<a class="anchor" aria-label="anchor" href="#subset-samples"></a>
+</h2>
 <p>Subsetting samples is often performed after sample QC where we want to keep only quality samples and sample of interest. In our example, the different samples are either technical controls or single-cells (macrophages and monocytes). Suppose we are only interested in macrophages, we can subset the data as follows:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">scp1</span><span class="op">[</span>, <span class="va">scp1</span><span class="op">$</span><span class="va">SampleType</span> <span class="op">==</span> <span class="st">"Macrophage"</span>, <span class="op">]</span>
@@ -394,9 +394,9 @@
 <span class="co">#&gt;  [4] peptides: SingleCellExperiment with 539 rows and 20 columns </span>
 <span class="co">#&gt;  [5] proteins: SingleCellExperiment with 292 rows and 20 columns</span></code></pre></div>
 </div>
-<div id="subset-features" class="section level2">
-<h2 class="hasAnchor">
-<a href="#subset-features" class="anchor" aria-hidden="true"></a>Subset features</h2>
+<div class="section level2">
+<h2 id="subset-features">Subset features<a class="anchor" aria-label="anchor" href="#subset-features"></a>
+</h2>
 <p>Subsetting for features does more than simply subsetting for the features of interest, it will also take the features that are linked to that feature. Here is an example, suppose we are interested in the <code>Q02878</code> protein.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">scp1</span><span class="op">[</span><span class="st">"Q02878"</span>, , <span class="op">]</span>
@@ -437,14 +437,14 @@
 <span class="co">#&gt;  [5] proteins: SingleCellExperiment with 105 rows and 38 columns</span></code></pre></div>
 </div>
 </div>
-<div id="common-processing-steps" class="section level1">
-<h1 class="hasAnchor">
-<a href="#common-processing-steps" class="anchor" aria-hidden="true"></a>Common processing steps</h1>
+<div class="section level1">
+<h1 id="common-processing-steps">Common processing steps<a class="anchor" aria-label="anchor" href="#common-processing-steps"></a>
+</h1>
 <p>We here provide a list of common processing steps that are encountered in single-cell proteomics data processing and that are already available in the <code>QFeatures</code> package.</p>
 <p>All functions below require the user to select one or more assays from the <code>QFeatures</code> object. This is passed through the <code>i</code> argument. Note that some datasets may contain hundreds of assays and providing the assay selection manually can become cumbersome. We therefore suggest the user to use regular expression (aka regex) to chose from the <code><a href="https://rdrr.io/r/base/names.html" class="external-link">names()</a></code> of the <code>QFeautres</code> object. A detailed cheatsheet about regex in R can be found <a href="https://rstudio-pubs-static.s3.amazonaws.com/74603_76cd14d5983f47408fdf0b323550b846.html" class="external-link">here</a>.</p>
-<div id="missing-data-assignment" class="section level2">
-<h2 class="hasAnchor">
-<a href="#missing-data-assignment" class="anchor" aria-hidden="true"></a>Missing data assignment</h2>
+<div class="section level2">
+<h2 id="missing-data-assignment">Missing data assignment<a class="anchor" aria-label="anchor" href="#missing-data-assignment"></a>
+</h2>
 <p>It often occurs that in MS experiements, 0 values are not true zeros but rather signal that is too weak to be detected. Therefore, it is advised to consider 0 values as missing data (<code>NA</code>). You can use <code>zeroIsNa</code> to automatically convert 0 values to <code>NA</code> in assays of interest. For instance, we here replace missing data in the <code>peptides</code> assay.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"peptides"</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span>
@@ -457,9 +457,9 @@
 <span class="co">#&gt; FALSE </span>
 <span class="co">#&gt;  5611</span></code></pre></div>
 </div>
-<div id="feature-aggregation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#feature-aggregation" class="anchor" aria-hidden="true"></a>Feature aggregation</h2>
+<div class="section level2">
+<h2 id="feature-aggregation">Feature aggregation<a class="anchor" aria-label="anchor" href="#feature-aggregation"></a>
+</h2>
 <p>Shotgun proteomics analyses, bulk as well as single-cell, acquire and quantify peptides. However, biological inference is often performed at protein level. Protein quantitations can be estimated through feature aggregation. This is performed by <code>aggregateFeatures</code>, a function that takes an assay from the <code>Qfeatures</code> object and that aggregates its features with respect to a grouping variable in the <code>rowData</code> (<code>fcol</code>) and an aggregation function.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-aggregate.html" class="external-link">aggregateFeatures</a></span><span class="op">(</span><span class="va">scp1</span>, i <span class="op">=</span> <span class="st">"190321S_LCA10_X_FP97AG"</span>, fcol <span class="op">=</span> <span class="st">"protein"</span>,
@@ -484,9 +484,9 @@
 <span class="co">#&gt;  [6] 190321S_LCA10_X_FP97AG_aggr: SingleCellExperiment with 100 rows and 11 columns</span></code></pre></div>
 <p>You can see that the aggregated function is added as a new assay to the <code>QFeatures</code> object. Note also that, under the hood, <code>aggregateFeatures</code> keeps track of the relationship between the features of the newly aggregated assay and its parent.</p>
 </div>
-<div id="normalization" class="section level2">
-<h2 class="hasAnchor">
-<a href="#normalization" class="anchor" aria-hidden="true"></a>Normalization</h2>
+<div class="section level2">
+<h2 id="normalization">Normalization<a class="anchor" aria-label="anchor" href="#normalization"></a>
+</h2>
 <p>An ubiquituous step that is performed in biological data analysis is normalization that is meant to remove undesired variability and to make different samples comparable. The <code>normalize</code> function offers an interface to a wide variety of normalization methods. See <code><a href="https://rdrr.io/pkg/MsCoreUtils/man/normalize.html" class="external-link">?MsCoreUtils::normalize_matrix</a></code> for more details about the available normalization methods. Below, we normalize the samples so that they are mean centered.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-processing.html" class="external-link">normalize</a></span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"proteins"</span>, method <span class="op">=</span> <span class="st">"center.mean"</span>, 
@@ -513,9 +513,9 @@
 <span class="co">#&gt;  [5] proteins: SingleCellExperiment with 292 rows and 38 columns </span>
 <span class="co">#&gt;  [6] proteins_sf: SingleCellExperiment with 292 rows and 38 columns</span></code></pre></div>
 </div>
-<div id="log-transformation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#log-transformation" class="anchor" aria-hidden="true"></a>Log transformation</h2>
+<div class="section level2">
+<h2 id="log-transformation">Log transformation<a class="anchor" aria-label="anchor" href="#log-transformation"></a>
+</h2>
 <p>The <code>QFeatures</code> package also provide the <code>logTransform</code> function to facilitate the transformation of the quantitative data. We here show its usage by transforming the protein data using a base 2 logarithm with a pseudo-count of one.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-processing.html" class="external-link">logTransform</a></span><span class="op">(</span><span class="va">scp1</span>, i <span class="op">=</span> <span class="st">"proteins"</span>, base <span class="op">=</span> <span class="fl">2</span>, pc <span class="op">=</span> <span class="fl">1</span>, 
@@ -528,9 +528,9 @@
 <span class="co">#&gt;  [5] proteins: SingleCellExperiment with 292 rows and 38 columns </span>
 <span class="co">#&gt;  [6] proteins_log: SingleCellExperiment with 292 rows and 38 columns</span></code></pre></div>
 </div>
-<div id="imputation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#imputation" class="anchor" aria-hidden="true"></a>Imputation</h2>
+<div class="section level2">
+<h2 id="imputation">Imputation<a class="anchor" aria-label="anchor" href="#imputation"></a>
+</h2>
 <p>Finally, <code>QFeatures</code> offers an interface to a wide variety of imputation methods to replace missing data by estimated values. The list of available methods is given by <code><a href="https://rdrr.io/pkg/MsCoreUtils/man/imputation.html" class="external-link">?MsCoreUtils::impute_matrix</a></code>. We demonstrate the use of this function by replacing missing data using KNN imputation.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">anyNA</a></span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"proteins"</span><span class="op">)</span><span class="op">)</span>
@@ -543,9 +543,9 @@
 <span class="co">#&gt; [1] FALSE</span></code></pre></div>
 </div>
 </div>
-<div id="data-visualization" class="section level1">
-<h1 class="hasAnchor">
-<a href="#data-visualization" class="anchor" aria-hidden="true"></a>Data visualization</h1>
+<div class="section level1">
+<h1 id="data-visualization">Data visualization<a class="anchor" aria-label="anchor" href="#data-visualization"></a>
+</h1>
 <p>Visualization of the feature and sample metadata is rather straightforward since those are stored as tables (see section <em>Accessing the data</em>). From those tables, any visualization tool can be applied. Note however that using <code>ggplot2</code> require <code>data.frame</code>s or <code>tibble</code>s but <code>rowData</code> and <code>colData</code> are stored as <code>DFrames</code> objects. You can easily convert one data format to another. For example, we plot the parental ion fraction (measure of spectral purity) for each of the three MS batches.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">rd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-class.html" class="external-link">rbindRowData</a></span><span class="op">(</span><span class="va">scp1</span>, i <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span> 
@@ -572,9 +572,9 @@
 <p><img src="QFeatures_nutshell_files/figure-html/longFormat-1.png" width="700"></p>
 <p>A more in-depth tutorial about data visualization from a <code>QFeatures</code> object is provided in the <code>QFeautres</code> visualization <a href="https://rformassspectrometry.github.io/QFeatures/articles/Visualization.html" class="external-link">vignette</a>.</p>
 </div>
-<div id="session-information" class="section level1 unnumbered">
-<h1 class="hasAnchor">
-<a href="#session-information" class="anchor" aria-hidden="true"></a>Session information</h1>
+<div class="section level1 unnumbered">
+<h1 class="unnumbered" id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
+</h1>
 <pre><code>R version 4.1.1 (2021-08-10)
 Platform: x86_64-pc-linux-gnu (64-bit)
 Running under: Ubuntu 20.04.3 LTS
@@ -595,55 +595,55 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] ggplot2_3.3.5                scp_1.3.3                   
- [3] QFeatures_1.3.7              MultiAssayExperiment_1.19.16
- [5] SummarizedExperiment_1.23.5  Biobase_2.53.0              
- [7] GenomicRanges_1.45.0         GenomeInfoDb_1.29.8         
- [9] IRanges_2.27.2               S4Vectors_0.31.5            
-[11] BiocGenerics_0.39.2          MatrixGenerics_1.5.4        
-[13] matrixStats_0.61.0           BiocStyle_2.21.3            
+ [1] ggplot2_3.3.5               scp_1.5.0                  
+ [3] QFeatures_1.5.1             MultiAssayExperiment_1.20.0
+ [5] SummarizedExperiment_1.24.0 Biobase_2.54.0             
+ [7] GenomicRanges_1.46.0        GenomeInfoDb_1.30.0        
+ [9] IRanges_2.28.0              S4Vectors_0.32.0           
+[11] BiocGenerics_0.40.0         MatrixGenerics_1.6.0       
+[13] matrixStats_0.61.0          BiocStyle_2.22.0           
 
 loaded via a namespace (and not attached):
  [1] sass_0.4.0                  jsonlite_1.7.2             
  [3] bslib_0.3.1                 BiocManager_1.30.16        
  [5] highr_0.9                   GenomeInfoDbData_1.2.7     
- [7] yaml_2.2.1                  impute_1.67.0              
- [9] pillar_1.6.3                lattice_0.20-45            
+ [7] yaml_2.2.1                  impute_1.68.0              
+ [9] pillar_1.6.4                lattice_0.20-45            
 [11] glue_1.4.2                  digest_0.6.28              
-[13] XVector_0.33.0              colorspace_2.0-2           
+[13] XVector_0.34.0              colorspace_2.0-2           
 [15] htmltools_0.5.2             Matrix_1.3-4               
 [17] pkgconfig_2.0.3             bookdown_0.24              
-[19] zlibbioc_1.39.0             purrr_0.3.4                
+[19] zlibbioc_1.40.0             purrr_0.3.4                
 [21] scales_1.1.1                tibble_3.1.5               
-[23] farver_2.1.0                generics_0.1.0             
-[25] AnnotationFilter_1.17.1     ellipsis_0.3.2             
+[23] farver_2.1.0                generics_0.1.1             
+[25] AnnotationFilter_1.18.0     ellipsis_0.3.2             
 [27] withr_2.4.2                 cachem_1.0.6               
-[29] lazyeval_0.2.2              cli_3.0.1                  
+[29] lazyeval_0.2.2              cli_3.1.0                  
 [31] magrittr_2.0.1              crayon_1.4.1               
 [33] memoise_2.0.0               evaluate_0.14              
 [35] fs_1.5.0                    fansi_0.5.0                
-[37] MASS_7.3-54                 textshaping_0.3.5          
+[37] MASS_7.3-54                 textshaping_0.3.6          
 [39] tools_4.1.1                 lifecycle_1.0.1            
 [41] stringr_1.4.0               munsell_0.5.0              
-[43] cluster_2.1.2               DelayedArray_0.19.4        
+[43] cluster_2.1.2               DelayedArray_0.20.0        
 [45] compiler_4.1.1              pkgdown_1.9000.9000.9000   
-[47] jquerylib_0.1.4             systemfonts_1.0.2          
+[47] jquerylib_0.1.4             systemfonts_1.0.3          
 [49] rlang_0.99.0.9000           grid_4.1.1                 
-[51] RCurl_1.98-1.5              MsCoreUtils_1.5.0          
-[53] SingleCellExperiment_1.15.2 igraph_1.2.6               
+[51] RCurl_1.98-1.5              MsCoreUtils_1.6.0          
+[53] SingleCellExperiment_1.16.0 igraph_1.2.7               
 [55] labeling_0.4.2              bitops_1.0-7               
 [57] rmarkdown_2.11              gtable_0.3.0               
 [59] R6_2.5.1                    knitr_1.36                 
 [61] dplyr_1.0.7                 fastmap_1.1.0              
 [63] utf8_1.2.2                  clue_0.3-60                
 [65] rprojroot_2.0.2             ragg_1.1.3                 
-[67] ProtGenerics_1.25.1         desc_1.4.0                 
+[67] ProtGenerics_1.26.0         desc_1.4.0                 
 [69] stringi_1.7.5               vctrs_0.3.8                
-[71] tidyselect_1.1.1            xfun_0.26                  </code></pre>
+[71] tidyselect_1.1.1            xfun_0.27                  </code></pre>
 </div>
-<div id="reference" class="section level1">
-<h1 class="hasAnchor">
-<a href="#reference" class="anchor" aria-hidden="true"></a>Reference</h1>
+<div class="section level1">
+<h1 id="reference">Reference<a class="anchor" aria-label="anchor" href="#reference"></a>
+</h1>
 </div>
   </div>
 
@@ -664,7 +664,7 @@ loaded via a namespace (and not attached):
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link external-link">pkgdown</a> 1.9000.9000.9000.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
 </div>
 
       </footer>

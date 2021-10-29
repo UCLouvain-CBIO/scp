@@ -160,7 +160,7 @@ peptide: a character vector
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.0</span>
       </span>
     </div>
 
@@ -191,7 +191,7 @@ peptide: a character vector
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/UCLouvain-CBIO/scp/">
+  <a href="https://github.com/UCLouvain-CBIO/scp/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -206,14 +206,14 @@ peptide: a character vector
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Example MaxQuant/SCoPE2 output</h1>
-    <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/master/R/data.R"><code>R/data.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/HEAD/R/data.R" class="external-link"><code>R/data.R</code></a></small>
     <div class="hidden name"><code>mqScpData.Rd</code></div>
     </div>
 
     <div class="ref-description">
     <p>A <code>data.frame</code> with 1088 observations and 139 variables, as
 produced by reading a MaxQuant output file with
-<code><a href="https://rdrr.io/r/utils/read.table.html">read.delim()</a></code>.</p><ul><li><p>Sequence: a character vector</p></li>
+<code><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.delim()</a></code>.</p><ul><li><p>Sequence: a character vector</p></li>
 <li><p>Length: a numeric vector</p></li>
 <li><p>Modifications: a character vector</p></li>
 <li><p>Modified.sequence: a character vector</p></li>
@@ -354,27 +354,31 @@ produced by reading a MaxQuant output file with
 <li><p>peptide: a character vector</p></li>
 </ul></div>
 
-    <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"mqScpData"</span><span class="op">)</span></code></pre></div>
+    <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"mqScpData"</span><span class="op">)</span></code></pre></div>
 
-
-    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
-
+    <div id="ref-sections">
+    <div id="format">
+    <h2>Format</h2>
     <p>An object of class <code>data.frame</code> with 1361 rows and 149 columns.</p>
-    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
-
+    </div>
+    <div id="details">
+    <h2>Details</h2>
     <p>The dataset is a subset of the SCoPE2 dataset (version 2, Specht
 et al. 2019,
-<a href="https://www.biorxiv.org/content/10.1101/665307v3">BioRXiv</a>). The
+<a href="https://www.biorxiv.org/content/10.1101/665307v3" class="external-link">BioRXiv</a>). The
 input file <code>evidence_unfiltered.csv</code> was downloaded from a
-<a href="https://drive.google.com/drive/folders/1VzBfmNxziRYqayx3SP-cOe2gu129Obgx">Google Drive repository</a>.
+<a href="https://drive.google.com/drive/folders/1VzBfmNxziRYqayx3SP-cOe2gu129Obgx" class="external-link">Google Drive repository</a>.
 The MaxQuant evidence file was loaded and the data was cleaned
 (renaming columns, removing duplicate fields,...).  MS runs that
 were selected in the <code>scp1</code> dataset (see <code><a href="scp1.html">?scp1</a></code>) were kept along
 with a blank run. The data is stored as a <code>data.frame</code>.</p>
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
     <div class="dont-index"><p><code><a href="readSCP.html">readSCP()</a></code> for an example on how <code>mqScpData</code> is
 parsed into a QFeatures object.</p></div>
+    </div>
+    </div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

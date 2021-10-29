@@ -19,7 +19,7 @@ feature. The ratios are averaged within the assay."><!-- mathjax --><script src=
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.0</span>
       </span>
     </div>
 
@@ -50,7 +50,7 @@ feature. The ratios are averaged within the assay."><!-- mathjax --><script src=
   <a href="../news/index.html">Changelog</a>
 </li>
       </ul><ul class="nav navbar-nav navbar-right"><li>
-  <a href="https://github.com/UCLouvain-CBIO/scp/">
+  <a href="https://github.com/UCLouvain-CBIO/scp/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -65,7 +65,7 @@ feature. The ratios are averaged within the assay."><!-- mathjax --><script src=
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Compute the sample over carrier ratio (SCR)</h1>
-    <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/master/R/compute_metrics.R"><code>R/compute_metrics.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/HEAD/R/compute_metrics.R" class="external-link"><code>R/compute_metrics.R</code></a></small>
     <div class="hidden name"><code>computeSCR.Rd</code></div>
     </div>
 
@@ -86,49 +86,55 @@ feature. The ratios are averaged within the assay.</p>
   rowDataName <span class="op">=</span> <span class="st">"SCR"</span>
 <span class="op">)</span></code></pre></div>
 
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments"><colgroup><col class="name"><col class="desc"></colgroup><tr><th>object</th>
-      <td><p>A <code>QFeatures</code> object.</p></td>
-    </tr><tr><th>i</th>
-      <td><p>A <code><a href="https://rdrr.io/r/base/character.html">character()</a></code> or <code><a href="https://rdrr.io/r/base/integer.html">integer()</a></code> indicating for which
-assay(s) the SCR needs to be computed.</p></td>
-    </tr><tr><th>colvar</th>
-      <td><p>A <code>character(1)</code> indicating the variable to take
-from <code>colData(object)</code> that gives the sample annotation.</p></td>
-    </tr><tr><th>samplePattern</th>
-      <td><p>A <code>character(1)</code> pattern that matches the
-sample encoding in <code>colvar</code>.</p></td>
-    </tr><tr><th>sampleFUN</th>
-      <td><p>A <code>character(1)</code> or <code>function</code> that provides the
+    <div id="ref-sections">
+    <div id="arguments">
+    <h2>Arguments</h2>
+    <dl><dt>object</dt>
+<dd><p>A <code>QFeatures</code> object.</p></dd>
+<dt>i</dt>
+<dd><p>A <code><a href="https://rdrr.io/r/base/character.html" class="external-link">character()</a></code> or <code><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer()</a></code> indicating for which
+assay(s) the SCR needs to be computed.</p></dd>
+<dt>colvar</dt>
+<dd><p>A <code>character(1)</code> indicating the variable to take
+from <code>colData(object)</code> that gives the sample annotation.</p></dd>
+<dt>samplePattern</dt>
+<dd><p>A <code>character(1)</code> pattern that matches the
+sample encoding in <code>colvar</code>.</p></dd>
+<dt>sampleFUN</dt>
+<dd><p>A <code>character(1)</code> or <code>function</code> that provides the
 summarization function to use (eg mean, sum, media, max, ...).
 Only used when the pattern matches multiple samples. Default
 is <code>mean</code>. Note for custom function, <code>na.rm = TRUE</code> is passed
 to <code>sampleFUN</code> to ignore missing values, make sure to provide
-a function that accepts this argument.</p></td>
-    </tr><tr><th>carrierPattern</th>
-      <td><p>A <code>character(1)</code> pattern that matches the
+a function that accepts this argument.</p></dd>
+<dt>carrierPattern</dt>
+<dd><p>A <code>character(1)</code> pattern that matches the
 carrier encoding in <code>colvar</code>. Only one match per assay is
-allowed, otherwise only the first match is taken</p></td>
-    </tr><tr><th>carrierFUN</th>
-      <td><p>A <code>character(1)</code> or <code>function</code> that provides the
+allowed, otherwise only the first match is taken</p></dd>
+<dt>carrierFUN</dt>
+<dd><p>A <code>character(1)</code> or <code>function</code> that provides the
 summarization function to use (eg mean, sum, media, max, ...).
 Only used when the pattern matches multiple carriers. Default
 is the same function as <code>sampleFUN</code>. Note for custom function,
 <code>na.rm = TRUE</code> is passed to <code>carrierFUN</code> to ignore missing
 values, make sure to provide a function that accepts this
-argument.</p></td>
-    </tr><tr><th>rowDataName</th>
-      <td><p>A <code>character(1)</code> giving the name of the new
+argument.</p></dd>
+<dt>rowDataName</dt>
+<dd><p>A <code>character(1)</code> giving the name of the new
 variable in the <code>rowData</code> where the computed SCR will be
 stored. The name cannot already exist in any of the assay
-<code>rowData</code>.</p></td>
-    </tr></table><h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
+<code>rowData</code>.</p></dd>
+</dl></div>
+    <div id="value">
+    <h2>Value</h2>
     <p>A <code>QFeatures</code> object for which the <code>rowData</code> of the given
 assay(s) is augmented with the mean SCR.</p>
+    </div>
+    </div>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="st">"scp1"</span><span class="op">)</span></span>
+    <div id="examples">
+    <h2>Examples</h2>
+    <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"scp1"</span><span class="op">)</span></span>
 <span class="r-in"><span class="va">scp1</span> <span class="op">&lt;-</span> <span class="fu">computeSCR</span><span class="op">(</span><span class="va">scp1</span>, </span>
 <span class="r-in">                   i <span class="op">=</span> <span class="fl">1</span>,</span>
 <span class="r-in">                   colvar <span class="op">=</span> <span class="st">"SampleType"</span>,</span>
@@ -168,6 +174,7 @@ assay(s) is augmented with the mean SCR.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [163] 0.030614294 0.006889869 0.120408305 0.037997229</span>
 <span class="r-in"></span>
 </code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>
