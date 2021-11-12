@@ -41,8 +41,8 @@ consistency.
 In this vignette, you will learn how to: 
 
 - Modify the quantitative data
-- Modify the sample metadata
-- Modify the feature metadata
+- Modify the sample annotations
+- Modify the feature annotations
 - Create a new function for `scp` 
 
 As a general guideline, you can add/remove/update data in a 
@@ -91,7 +91,7 @@ normByType <- function(x, type) {
 
 Suppose we want to apply the function to the `proteins` assay, we need
 to first extract that assay. We here need to transfer the sample 
-metadata from the `QFeatures` object to the extracted 
+annotations from the `QFeatures` object to the extracted 
 `SingleCellExperiment` in order to get the sample types required by
 the `normByType` function. We therefore use `getWithColData`. 
 
@@ -157,9 +157,9 @@ If the function detects no issues in the data, it will return `TRUE`.
 Otherwise the function will throw an informative error that should 
 guide the user to identifying the issue.
 
-# Modify the sample metadata
+# Modify the sample annotations
 
-To illustrate how to modify the sample metadata, we will compute the 
+To illustrate how to modify the sample annotations, we will compute the 
 average expression in each sample and include to the `colData` of the 
 `QFeatures` object. This is typically performed when computing QC 
 metrics for sample filtering. So, we first extract the required data, 
@@ -196,9 +196,9 @@ to verify the data is still valid.
 validObject(scp1)
 ```
 
-# Modify the feature metadata
+# Modify the feature annotations
 
-We will again illustrate how to modify the feature metadata with an 
+We will again illustrate how to modify the feature annotations with an 
 example. We here demonstrate how to add the number of samples in which
 each feature is detected for the three first assays (PSM assays). The
 challenge here is that the metric needs to be computed for each assay
