@@ -17,10 +17,10 @@ readSCP(
 )
 }
 \arguments{
-\item{featureData}{File or object holding the quantitative
-data. Can be either a \code{character(1)} with the path to a
-text-based spreadsheet (comma-separated values by default, but
-see \code{...}) or an object that can be coerced to a
+\item{featureData}{File or object holding the identification and
+quantitative data. Can be either a \code{character(1)} with the
+path to a text-based spreadsheet (comma-separated values by
+default, but see \code{...}) or an object that can be coerced to a
 \code{data.frame}. It is advised not to encode characters as
 factors.}
 
