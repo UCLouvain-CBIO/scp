@@ -100,13 +100,13 @@ requirement to follow this workflow is that the data should contain
 the following information: 
 
 - `Raw.file`: field in both the feature data and the sample data that gives
-the names of the batches or MS runs or MS files.
+the names of MS acquisition runs or files.
 - `Channel`: field in the sample data that links to columns in the 
 quantification data and that allows to link samples to MS channels 
 (more details in another 
 [vignette](https://uclouvain-cbio.github.io/scp/articles/read_scp.html)).
 - `SampleType`: field in the sample data that provides the type of sample
-that is acquired (carrier, blank, reference, single-cell). Only needed 
+that is acquired (carrier, reference, single-cell,...). Only needed 
 for multiplexing experiments.
 - `Potential.contaminant`:  field in the feature data that marks 
 contaminant peptides.
@@ -140,7 +140,7 @@ reading in a CSV file using `read.csv` or `read.table`. See
 data("mqScpData")
 ```
 
-We also provide an example of a sample metadata table that provides 
+We also provide an example of a sample annotation table that provides 
 useful information about the samples that are present in the example 
 data. See `?sampleAnnotation` for more information about the table
 content.
@@ -162,8 +162,8 @@ are meant to boost the peptide identification rate.
 and are used to partially correct for between-run variation.
 * The unused channels (`Unused`) are channels that are left empty due
 to isotopic cross-contamination by the carrier channel.
-* The blank channels (`Blank`) contain samples that do not contain any
-cell but are processed as single-cell samples.
+* The negative control channels (`Blank`) contain samples that do not 
+contain any cell but are processed as single-cell samples.
 * The single-cell sample channels contain the single-cell samples of
 interest, that are macrophage (`Macrophage`) or monocyte
 (`Monocyte`).
@@ -223,7 +223,7 @@ variables in the `rowData` are listed below for each assay.
 rowDataNames(scp)
 ```
 
-## Filter features based on feature metadata
+## Filter features based on feature annotations
 
 Below are some examples of criteria that are used to identify
 low-confidence. The information is readily available since this was
@@ -236,7 +236,7 @@ indicative of the purity of a spectrum
 
 We can perform this filtering using the `filterFeatures` function from
 `QFeatures`. `filterFeatures` automatically accesses the feature 
-metadata and selects the rows that meet the provided condition(s). For
+annotations and selects the rows that meet the provided condition(s). For
 instance, `Reverse != "+"` keeps the rows for which the `Reverse` 
 variable in the `rowData` is not `"+"` (*i.e.* the PSM is not matched 
 to the decoy database).
@@ -290,7 +290,7 @@ intensities are much higher than the single-cell intensities.
 The SCR can be computed using the `computeSCR` function from
 `scp`. The function must be told which channels are the samples that
 must be divided and which channel contains the carrier. This
-information is provided in the sample metadata and is accessed using
+information is provided in the sample annotations and is accessed using
 the `colData`, under the `SampleType` field.
 
 ```{r show_annotation}
@@ -306,8 +306,8 @@ are meant to boost the peptide identification rate.
 and are used to partially correct for between-run variation.
 * The unused channels (`Unused`) are channels that are left empty due
 to isotopic cross-contamination by the carrier channel.
-* The blank channels (`Blank`) contain samples that do not contain any
-cell but are processed as single-cell samples.
+* The negative control channels (`Blank`) contain samples that do not 
+contain any cell but are processed as single-cell samples.
 * The single-cell sample channels contain the single-cell samples of
 interest, that are macrophage (`Macrophage`) or monocyte
 (`Monocyte`).
@@ -317,7 +317,7 @@ The `computeSCR` function expects the following input:
 * The `QFeatures` dataset
 * The assay name(s) or index/indices for which the SCR should be
 computed
-* `colvar`: the variable in the sample metadata (`colData`) that hold
+* `colvar`: the variable in the sample annotations (`colData`) that hold
 the information used to discriminate sample channels from carrier 
 channels. 
 * `carrierPattern`: a string pattern (following regular expression 
@@ -539,8 +539,8 @@ the median coefficient of variation (CV) per cell.
 
 ## Filter samples of interest
 
-We can subset the cells of interest, that is the blank samples
-(`sc_0`), the macrophages (`sc_m0`) and the monocytes (`sc_u`). This 
+We can subset the cells of interest, that is the negative control 
+samples, the macrophages and the monocytes. This 
 can easily be done by taking advantage of the `colData` and the 
 subsetting operators. Recall that `QFeatures` objects support 
 three-order subsetting, `x[rows, columns, assays]`, where columns are 
@@ -588,7 +588,7 @@ colData(scp) %>%
     scale_x_log10()
 ```
 
-The blanks samples should not contain any peptide information and are 
+The negative control samples should not contain any peptide information and are 
 therefore used to assess the amount of background signal. The graph 
 above confirms that the signal measured in single-cells (macrophages 
 and monocytes) is above the background signal, hence no filtering is
@@ -624,7 +624,7 @@ scp <- medianCVperCell(scp,
 The computed CVs are stored in the `colData` of the `peptides`
 assay and holds the median CV per cell computed using at least 5
 observations (peptides). The main interest of computing the median CV
-per cell is to filter cells with reliable quantification. The blank
+per cell is to filter cells with reliable quantification. The negative control
 samples are not expected to have reliable quantifications and hence
 can be used to estimate an empirical null distribution of the CV. This
 distribution helps defining a threshold that filters out single-cells
@@ -641,20 +641,21 @@ getWithColData(scp, "peptides") %>%
 ```
 
 We can see that the protein quantification for single-cells are much
-more consistent than for blank samples. Based on the distribution of 
-the blanks, we decide to keep the cells that have
+more consistent than for negative control samples. Based on the 
+distribution of the negative controls, we decide to keep the cells 
+that have
 a median CV lower than 0.65. Note this example is inaccurate because
-the null distribution is based on only 3 blank samples, but more sets
+the null distribution is based on only 3 negative controls, but more sets
 could lead to a better estimation of the CV null distribution. 
 
 ```{r create_filter}
 scp <- scp[, !is.na(scp$MedianCV) & scp$MedianCV < 0.65, ]
 ```
 
-We can now remove the blank samples since all QC metrics are now 
+We can now remove the negative controls since all QC metrics are now 
 computed.
 
-```{r remove_blanks}
+```{r remove_NC}
 scp <- scp[, scp$SampleType != "Blank", ]
 ```
 

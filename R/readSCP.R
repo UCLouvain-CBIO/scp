@@ -12,10 +12,10 @@
 ##' spreadsheet or a `data.frame` into a [QFeatures] object containing
 ##' [SingleCellExperiment] objects.
 ##'
-##' @param featureData File or object holding the quantitative
-##'     data. Can be either a `character(1)` with the path to a
-##'     text-based spreadsheet (comma-separated values by default, but
-##'     see `...`) or an object that can be coerced to a
+##' @param featureData File or object holding the identification and 
+##'     quantitative data. Can be either a `character(1)` with the 
+##'     path to a text-based spreadsheet (comma-separated values by 
+##'     default, but see `...`) or an object that can be coerced to a
 ##'     `data.frame`. It is advised not to encode characters as
 ##'     factors.
 ##' 
