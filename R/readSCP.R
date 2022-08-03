@@ -41,10 +41,15 @@
 ##'     quantitative data in `featureData` (see Example).
 ##' 
 ##' @param suffix A `character()` giving the suffix of the column 
-##'     names in each assay. The length of the vector should equal the
-##'     number of quantification channels and should contain unique 
-##'     character elements. If NULL, the names of the quantification 
-##'     columns in `featureData` are taken as suffix. 
+##'     names in each assay. Sample/single-cell (column) names are
+##'     automatically generated using: batch name + sep + suffix. Make
+##'     sure suffix contains unique character elements. The length of
+##'     the vector should equal the number of quantification channels. 
+##'     If NULL (default), the suffix is derived from the the names of
+##'     the quantification columns in `featureData`.
+##' 
+##' @param sep A `character(1)` that is inserted between the assay 
+##'     name and the `suffix` (see `suffix` argument for more details).
 ##' 
 ##' @param removeEmptyCols A `logical(1)`. If true, the function will
 ##'     remove in each batch the columns that contain only missing 
@@ -97,6 +102,7 @@ readSCP <- function(featureData,
                     batchCol, 
                     channelCol,
                     suffix = NULL,
+                    sep = "",
                     removeEmptyCols = FALSE,
                     verbose = TRUE,
                     ...) {
@@ -138,7 +144,7 @@ readSCP <- function(featureData,
     ## Clean each element in the data list
     for (i in seq_along(scp)) {
         ## Add unique sample identifiers
-        colnames(scp[[i]]) <- paste0(names(scp)[[i]], suffix)
+        colnames(scp[[i]]) <- paste0(names(scp)[[i]], sep, suffix)
         ## Remove the columns that are all NA
         if (removeEmptyCols) {
             sel <- colSums(is.na(assay(scp[[i]]))) != nrow(scp[[i]])

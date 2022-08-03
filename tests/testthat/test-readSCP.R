@@ -68,6 +68,16 @@ test_that("readSCP: correct use", {
     expectedCols <- paste0(rep(unique(mqScpData$Raw.file), 16), 
                            rep(paste0("_TMT", 1:16), each = 4))
     expect_true(all(unlist(colnames(scp)) %in% expectedCols))
+    ## Test sep
+    scp <- readSCP(mqScpData, 
+                   sampleAnnotation, 
+                   batchCol = "Raw.file", 
+                   channelCol = "Channel",
+                   suffix = paste0("TMT", 1:16),
+                   sep = "_")
+    expectedCols <- paste0(rep(unique(mqScpData$Raw.file), 16), 
+                           rep(paste0("_TMT", 1:16), each = 4))
+    expect_true(all(unlist(colnames(scp)) %in% expectedCols))
 })
 
 test_that("readSCP: warnings", {
