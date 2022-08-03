@@ -1,7 +1,13 @@
 
+# scp 1.7
+
+# scp 1.7.0
+
+- New devel (Bioc 3.16)
+
 # scp 1.6
 
-- New stable release (Bioc 3.14)
+- New stable release (Bioc 3.15)
 
 # scp 1.5
 
