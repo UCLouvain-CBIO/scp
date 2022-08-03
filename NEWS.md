@@ -1,3 +1,8 @@
+
+# scp 1.6
+
+- New stable release (Bioc 3.14)
+
 # scp 1.5
 
 # scp 1.5.1
