@@ -1,10 +1,5 @@
 data("scp1")
 
-test_that("rowDataToDF", {
-    expect_warning(rowDataToDF(scp1, i = 1),
-                   regexp = "deprecated")
-})
-
 test_that("aggregateFeaturesOverAssays", {
     ## Correct use
     test <- aggregateFeaturesOverAssays(scp1, i = 1:3, fcol = "peptide",
