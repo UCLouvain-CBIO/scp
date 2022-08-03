@@ -11,6 +11,7 @@ readSCP(
   batchCol,
   channelCol,
   suffix = NULL,
+  sep = "",
   removeEmptyCols = FALSE,
   verbose = TRUE,
   ...
@@ -46,10 +47,15 @@ column of \code{colData} that contains the column names of the
 quantitative data in \code{featureData} (see Example).}
 
 \item{suffix}{A \code{character()} giving the suffix of the column
-names in each assay. The length of the vector should equal the
-number of quantification channels and should contain unique
-character elements. If NULL, the names of the quantification
-columns in \code{featureData} are taken as suffix.}
+names in each assay. Sample/single-cell (column) names are
+automatically generated using: batch name + sep + suffix. Make
+sure suffix contains unique character elements. The length of
+the vector should equal the number of quantification channels.
+If NULL (default), the suffix is derived from the the names of
+the quantification columns in \code{featureData}.}
+
+\item{sep}{A \code{character(1)} that is inserted between the assay
+name and the \code{suffix} (see \code{suffix} argument for more details).}
 
 \item{removeEmptyCols}{A \code{logical(1)}. If true, the function will
 remove in each batch the columns that contain only missing
