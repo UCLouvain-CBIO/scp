@@ -1,4 +1,5 @@
 data("scp1")
+scp1 <- updateObject(scp1)
 
 test_that(".replaceAssay", {
     ## Correct use
