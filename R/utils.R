@@ -1,29 +1,3 @@
-##' Extract the `rowData` of a `QFeatures` object to a 
-##' `DataFrame`
-##'
-##' This function is deprecated. You should rather use
-##'  [QFeatures::rbindRowData`]`
-##' 
-##' @param object A `QFeatures` object
-##'
-##' @param i A `numeric()` or `character()` vector indicating from
-##'     which assays the `rowData` should be taken.
-##' 
-##' @param vars A `character()` vector indicating which variables from
-##'     the `rowData` should be extracted.
-##'
-##' @return A `DataFrame` object with the `rowData` row-binded over
-##'     the required assays.
-##'     
-##' @export
-##'
-rowDataToDF <- function(object, 
-                        i, 
-                        vars) {
-    warning("This function is deprecated. It has been replaced by ",
-            "'QFeatures::rbindRowData'")
-    object
-}
 
 ##' Aggregate features over multiple assays
 ##' 
