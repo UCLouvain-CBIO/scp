@@ -155,7 +155,7 @@ readSCP <- function(featureData,
     if (verbose) message(paste0("Formatting sample metadata (colData)"))
     ## Create the colData 
     cd <- DataFrame(row.names = unlist(lapply(scp, colnames)))
-    rownames(colData) <- paste0(colData[, batchCol], suffix)
+    rownames(colData) <- paste0(colData[, batchCol], sep, suffix)
     cd <- cbind(cd, colData[rownames(cd), ])
     
     ## Store the data as a QFeatures object and add the experimental
