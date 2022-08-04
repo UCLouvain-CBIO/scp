@@ -67,7 +67,12 @@ test_that("readSCP: correct use", {
                    suffix = paste0("_TMT", 1:16))
     expectedCols <- paste0(rep(unique(mqScpData$Raw.file), 16), 
                            rep(paste0("_TMT", 1:16), each = 4))
+    expectedCd <- DataFrame(sampleAnnotation)
+    rownames(expectedCd) <- paste0(sampleAnnotation$Raw.file,
+                                   sub("Repo.*ty.", "_TMT", sampleAnnotation$Channel))
     expect_true(all(unlist(colnames(scp)) %in% expectedCols))
+    expect_identical(colData(scp)[sort(rownames(colData(scp))), ], 
+                     expectedCd[sort(rownames(expectedCd)), ])
     ## Test sep
     scp <- readSCP(mqScpData, 
                    sampleAnnotation, 
@@ -77,7 +82,13 @@ test_that("readSCP: correct use", {
                    sep = "_")
     expectedCols <- paste0(rep(unique(mqScpData$Raw.file), 16), 
                            rep(paste0("_TMT", 1:16), each = 4))
+    expectedCd <- DataFrame(sampleAnnotation)
+    rownames(expectedCd) <- paste0(sampleAnnotation$Raw.file,
+                                   sub("Repo.*ty.", "_TMT", sampleAnnotation$Channel))
     expect_true(all(unlist(colnames(scp)) %in% expectedCols))
+    expect_identical(colData(scp)[sort(rownames(colData(scp))), ], 
+                     expectedCd[sort(rownames(expectedCd)), ])
+    
 })
 
 test_that("readSCP: warnings", {
