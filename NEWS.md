@@ -1,6 +1,13 @@
 
 # scp 1.7
 
+# scp 1.7.1
+
+- refactor: removed deprecated function `rowDataToDF()`
+- tests: fixed some tests failing because of SCE version differences.
+- feat: users can now specify `sep` when sample names are automatically
+  generated. 
+
 # scp 1.7.0
 
 - New devel (Bioc 3.16)
