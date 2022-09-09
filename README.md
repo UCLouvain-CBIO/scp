@@ -57,3 +57,11 @@ Feel free to use [Github
 issues](https://github.com/UCLouvain-CBIO/scp/issues) or the
 [Bioconductor support site](https://support.bioconductor.org/) to ask
 question or report problems with `scp`.
+
+## License
+
+The `scp` code is provided under a permissive 
+[Artistic 2.0 license](https://opensource.org/licenses/Artistic-2.0). 
+The documentation, including the manual pages and the vignettes, are
+distributed under a 
+[CC BY-SA license](https://creativecommons.org/licenses/by-sa/2.0/).
