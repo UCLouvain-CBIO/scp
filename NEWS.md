@@ -1,14 +1,18 @@
 
 # scp 1.7
 
-# scp 1.7.1
+## scp 1.7.2
+
+- Add CC-BY-SA license for vignettes.
+
+## scp 1.7.1
 
 - refactor: removed deprecated function `rowDataToDF()`
 - tests: fixed some tests failing because of SCE version differences.
 - feat: users can now specify `sep` when sample names are automatically
   generated. 
 
-# scp 1.7.0
+## scp 1.7.0
 
 - New devel (Bioc 3.16)
 
@@ -18,11 +22,11 @@
 
 # scp 1.5
 
-# scp 1.5.1
+## scp 1.5.1
 
 - Added CITATION <2021-10-29>
 
-# scp 1.5.0
+## scp 1.5.0
 
 - New devel (Bioc 3.15)
 
@@ -32,24 +36,24 @@
 
 # scp 1.3
 
-# scp 1.3.3
+## scp 1.3.3
 
 - docs: included `QFeatures` plot in the vignette
 - docs: created a vignette about advanced usage of `scp`
 
-# scp 1.3.2
+## scp 1.3.2
 
 - feat: `computeSCR` now allows for user supplied function that will
   summarize the values from multiple samples and multiple carrier. 
 - docs: used more standard variable names in scp vignette.
 - docs: created a `QFeatures` recap vignette
 
-# scp 1.3.1
+## scp 1.3.1
 
 - refactor: deprecated `rowDataToDF`. This function is now replaced by
   `QFeatures::rbindRowData`. 
 
-# scp 1.3.0
+## scp 1.3.0
 
 - New devel (Bioc 3.14)
 
