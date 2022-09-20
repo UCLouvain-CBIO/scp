@@ -23,7 +23,8 @@ vignette: >
 knitr::opts_chunk$set(
     collapse = TRUE,
     comment = "#>",
-    crop = NULL ## Related to https://stat.ethz.ch/pipermail/bioc-devel/2020-April/016656.html
+    crop = NULL
+    ## cf to https://stat.ethz.ch/pipermail/bioc-devel/2020-April/016656.html
 )
 ```
 
@@ -272,7 +273,7 @@ this example, the column names holding the quantitative data in
 `sampleAnnotation`.
 
 ```{r echo=FALSE, out.width='60%', fig.cap="Step1: Convert the input table to a `SingleCellExperiment` object", fig.align = 'center'}
-knitr::include_graphics('figures/readSCP_step1.svg')
+knitr::include_graphics('figures/readSCP_step1.png')
 ```
 
 2. The `SingleCellExperiment` object is then split according to the 
@@ -283,7 +284,7 @@ acquisition runs that was used by MaxQuant to retrieve the raw data
 files.
 
 ```{r echo=FALSE, out.width='65%', fig.cap="Step2: Split by acquisition run", fig.align = 'center'}
-knitr::include_graphics('figures/readSCP_step2.svg')
+knitr::include_graphics('figures/readSCP_step2.png')
 ```
 
 3. The sample annotations is generated from the supplied sample table
@@ -292,14 +293,14 @@ match the feature data with the annotations, `colData` must contain
 the same `batchCol` field with batch names.
 
 ```{r echo=FALSE, out.width='100%', fig.cap="Step3: Adding and matching the sample annotations", fig.align = 'center'}
-knitr::include_graphics('figures/readSCP_step3.svg')
+knitr::include_graphics('figures/readSCP_step3.png')
 ```
 
 4. Finally, the split feature data and the sample annotations are stored
 in a single `QFeatures` object.
 
 ```{r echo=FALSE, out.width='80%', fig.cap="Step4: Convert to a `QFeatures`", fig.align = 'center'}
-knitr::include_graphics('figures/readSCP_step4.svg')
+knitr::include_graphics('figures/readSCP_step4.png')
 ```
 
 # What about label-free SCP?

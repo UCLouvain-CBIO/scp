@@ -1,12 +1,11 @@
 
 # scp 1.7
 
-## scp 1.7.2
-
-- Add CC-BY-SA license for vignettes.
-
 ## scp 1.7.1
 
+- refactor: package complies to BiocCheck
+- Add CC-BY-SA license for vignettes.
+- docs: fixed bug in vignette
 - refactor: removed deprecated function `rowDataToDF()`
 - tests: fixed some tests failing because of SCE version differences.
 - feat: users can now specify `sep` when sample names are automatically

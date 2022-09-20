@@ -1,25 +1,6 @@
 data("scp1")
 scp1 <- updateObject(scp1)
 
-test_that(".replaceAssay", {
-    ## Correct use
-    mat <- mat2 <- matrix(1, nrow = nrow(scp1[[1]]), ncol = ncol(scp1[[1]]))
-    dimnames(mat2) <- dimnames(scp1[[1]])
-    se <- SummarizedExperiment(mat2)
-    test <- .replaceAssay(scp1, i = 1, y = se)
-    expect_identical(assay(test[[1]]), mat2)
-    ## Error: cannot replace multiple assays
-    expect_error(.replaceAssay(scp1, i = 1:2, y = list(se, se)),
-                 regexp = "Only 1 assay can be replaced at a time.")
-    ## Error: assay not a Summarized experiment
-    expect_error(.replaceAssay(scp1, i = 1, y = mat),
-                 regexp = "must inherits from a 'SummarizedExperiment' object")
-    ## Error: dimnames do not match
-    expect_error(.replaceAssay(scp1, i = 1, y = SummarizedExperiment(mat)),
-                 regexp = "Colnames of old and new assays must match")
-})
-
-
 test_that("divideByReference", {
     ## Correct use
     ## Single assay

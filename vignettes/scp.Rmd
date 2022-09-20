@@ -23,7 +23,8 @@ vignette: >
 knitr::opts_chunk$set(
     collapse = TRUE,
     comment = "#>",
-    crop = NULL ## Related to https://stat.ethz.ch/pipermail/bioc-devel/2020-April/016656.html
+    crop = NULL
+    ## cf https://stat.ethz.ch/pipermail/bioc-devel/2020-April/016656.html
 )
 ```
 
@@ -814,6 +815,7 @@ nearest neighbors algorithm, with k = 3. This is available from the
 ```{r impute}
 scp <- impute(scp,
               i = "proteins_norm",
+              name = "proteins_imptd",
               method = "knn",
               k = 3, rowmax = 1, colmax= 1,
               maxp = Inf, rng.seed = 1234)
@@ -822,7 +824,7 @@ scp <- impute(scp,
 Note that after imputation, no value are missing.
 
 ```{r missingness_imputed}
-scp[["proteins_norm"]] %>%
+scp[["proteins_imptd"]] %>%
     assay %>%
     is.na %>%
     mean
@@ -845,7 +847,7 @@ procedure.
 We first extract the assay to process.
 
 ```{r get_proteins}
-sce <- getWithColData(scp, "proteins_norm")
+sce <- getWithColData(scp, "proteins_imptd")
 ```
 
 Next, we need to provide a design matrix and the batch annotation to
@@ -875,7 +877,7 @@ scp <- addAssay(scp,
                 y = sce,
                 name = "proteins_batchC")
 scp <- addAssayLinkOneToOne(scp, 
-                            from = "proteins_norm",
+                            from = "proteins_imptd",
                             to = "proteins_batchC")
 ```
 
@@ -1007,8 +1009,10 @@ the different PSMs are progressively aggregated to peptides and then
 to proteins as well as how the normalization, imputation or batch 
 correction impact the distribution of the quantifications.
 
-We have dedicated a separate [vignette](https://rformassspectrometry.github.io/QFeatures/articles/Visualization.html) that describes more in details
-how to visualize and explore data in a `QFeatures` object. 
+We have dedicated a separate
+[vignette](https://rformassspectrometry.github.io/QFeatures/articles/Visualization.html) 
+that describes more in details how to visualize and explore data in a
+`QFeatures` object. 
 
 # Session information {-}
 
