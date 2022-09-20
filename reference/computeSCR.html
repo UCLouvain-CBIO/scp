@@ -19,7 +19,7 @@ feature. The ratios are averaged within the assay."><!-- mathjax --><script src=
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.1</span>
       </span>
     </div>
 
@@ -31,7 +31,7 @@ feature. The ratios are averaged within the assay."><!-- mathjax --><script src=
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -75,31 +75,40 @@ channels over the intentisty of the carrier channel for each
 feature. The ratios are averaged within the assay.</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">computeSCR</span><span class="op">(</span>
-  <span class="va">object</span>,
-  <span class="va">i</span>,
-  <span class="va">colvar</span>,
-  <span class="va">samplePattern</span>,
-  sampleFUN <span class="op">=</span> <span class="st">"mean"</span>,
-  <span class="va">carrierPattern</span>,
-  carrierFUN <span class="op">=</span> <span class="va">sampleFUN</span>,
-  rowDataName <span class="op">=</span> <span class="st">"SCR"</span>
-<span class="op">)</span></code></pre></div>
+    <div id="ref-usage">
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">computeSCR</span><span class="op">(</span></span>
+<span>  <span class="va">object</span>,</span>
+<span>  <span class="va">i</span>,</span>
+<span>  <span class="va">colvar</span>,</span>
+<span>  <span class="va">samplePattern</span>,</span>
+<span>  sampleFUN <span class="op">=</span> <span class="st">"mean"</span>,</span>
+<span>  <span class="va">carrierPattern</span>,</span>
+<span>  carrierFUN <span class="op">=</span> <span class="va">sampleFUN</span>,</span>
+<span>  rowDataName <span class="op">=</span> <span class="st">"SCR"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+    </div>
 
-    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>object</dt>
 <dd><p>A <code>QFeatures</code> object.</p></dd>
+
+
 <dt>i</dt>
 <dd><p>A <code><a href="https://rdrr.io/r/base/character.html" class="external-link">character()</a></code> or <code><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer()</a></code> indicating for which
 assay(s) the SCR needs to be computed.</p></dd>
+
+
 <dt>colvar</dt>
 <dd><p>A <code>character(1)</code> indicating the variable to take
 from <code>colData(object)</code> that gives the sample annotation.</p></dd>
+
+
 <dt>samplePattern</dt>
 <dd><p>A <code>character(1)</code> pattern that matches the
 sample encoding in <code>colvar</code>.</p></dd>
+
+
 <dt>sampleFUN</dt>
 <dd><p>A <code>character(1)</code> or <code>function</code> that provides the
 summarization function to use (eg mean, sum, media, max, ...).
@@ -107,10 +116,14 @@ Only used when the pattern matches multiple samples. Default
 is <code>mean</code>. Note for custom function, <code>na.rm = TRUE</code> is passed
 to <code>sampleFUN</code> to ignore missing values, make sure to provide
 a function that accepts this argument.</p></dd>
+
+
 <dt>carrierPattern</dt>
 <dd><p>A <code>character(1)</code> pattern that matches the
 carrier encoding in <code>colvar</code>. Only one match per assay is
 allowed, otherwise only the first match is taken</p></dd>
+
+
 <dt>carrierFUN</dt>
 <dd><p>A <code>character(1)</code> or <code>function</code> that provides the
 summarization function to use (eg mean, sum, media, max, ...).
@@ -119,31 +132,35 @@ is the same function as <code>sampleFUN</code>. Note for custom function,
 <code>na.rm = TRUE</code> is passed to <code>carrierFUN</code> to ignore missing
 values, make sure to provide a function that accepts this
 argument.</p></dd>
+
+
 <dt>rowDataName</dt>
 <dd><p>A <code>character(1)</code> giving the name of the new
 variable in the <code>rowData</code> where the computed SCR will be
 stored. The name cannot already exist in any of the assay
 <code>rowData</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A <code>QFeatures</code> object for which the <code>rowData</code> of the given
+    
+
+<p>A <code>QFeatures</code> object for which the <code>rowData</code> of the given
 assay(s) is augmented with the mean SCR.</p>
     </div>
-    </div>
 
-    <div id="examples">
+    <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"scp1"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">scp1</span> <span class="op">&lt;-</span> <span class="fu">computeSCR</span><span class="op">(</span><span class="va">scp1</span>, </span>
-<span class="r-in">                   i <span class="op">=</span> <span class="fl">1</span>,</span>
-<span class="r-in">                   colvar <span class="op">=</span> <span class="st">"SampleType"</span>,</span>
-<span class="r-in">                   carrierPattern <span class="op">=</span> <span class="st">"Carrier"</span>,</span>
-<span class="r-in">                   samplePattern <span class="op">=</span> <span class="st">"Blank|Macrophage|Monocyte"</span>,</span>
-<span class="r-in">                   sampleFUN <span class="op">=</span> <span class="st">"mean"</span>,</span>
-<span class="r-in">                   rowDataName <span class="op">=</span> <span class="st">"MeanSCR"</span><span class="op">)</span></span>
-<span class="r-in"><span class="co">## Check results</span></span>
-<span class="r-in"><span class="fu">rowData</span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span>, <span class="st">"MeanSCR"</span><span class="op">]</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"scp1"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">scp1</span> <span class="op">&lt;-</span> <span class="fu">computeSCR</span><span class="op">(</span><span class="va">scp1</span>, </span></span>
+<span class="r-in"><span>                   i <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                   colvar <span class="op">=</span> <span class="st">"SampleType"</span>,</span></span>
+<span class="r-in"><span>                   carrierPattern <span class="op">=</span> <span class="st">"Carrier"</span>,</span></span>
+<span class="r-in"><span>                   samplePattern <span class="op">=</span> <span class="st">"Blank|Macrophage|Monocyte"</span>,</span></span>
+<span class="r-in"><span>                   sampleFUN <span class="op">=</span> <span class="st">"mean"</span>,</span></span>
+<span class="r-in"><span>                   rowDataName <span class="op">=</span> <span class="st">"MeanSCR"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## Check results</span></span></span>
+<span class="r-in"><span><span class="fu">rowData</span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span><span class="op">[</span>, <span class="st">"MeanSCR"</span><span class="op">]</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [1] 0.015510472 0.017444270 0.013998780 0.032842883         NaN 0.019183768</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   [7] 0.035322014 0.011685058 0.018249260 0.027776749 0.017919113 0.011189229</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [13] 0.006934865 0.042799880 0.019657274 0.000000000 0.022816835 0.045264655</span>
@@ -172,7 +189,7 @@ assay(s) is augmented with the mean SCR.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [151] 0.025677348 0.021617243 0.597881028         NaN 0.930486819 0.030299867</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [157] 0.002346206 0.024708650 0.012180817 0.019880893 0.011504703 0.022299321</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [163] 0.030614294 0.006889869 0.120408305 0.037997229</span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -187,7 +204,7 @@ assay(s) is augmented with the mean SCR.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
 </div>
 
       </footer></div>

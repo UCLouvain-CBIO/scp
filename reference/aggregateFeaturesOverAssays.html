@@ -20,7 +20,7 @@ aggregateFeatures will be applied sequentially."><!-- mathjax --><script src="ht
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.1</span>
       </span>
     </div>
 
@@ -32,7 +32,7 @@ aggregateFeatures will be applied sequentially."><!-- mathjax --><script src="ht
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -77,52 +77,65 @@ It allows the user to provide multiple assays for which
 <code>aggregateFeatures</code> will be applied sequentially.</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">aggregateFeaturesOverAssays</span><span class="op">(</span><span class="va">object</span>, <span class="va">i</span>, <span class="va">fcol</span>, <span class="va">name</span>, <span class="va">fun</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div id="ref-usage">
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">aggregateFeaturesOverAssays</span><span class="op">(</span><span class="va">object</span>, <span class="va">i</span>, <span class="va">fcol</span>, <span class="va">name</span>, <span class="va">fun</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    </div>
 
-    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>object</dt>
 <dd><p>A <code>QFeatures</code> object</p></dd>
+
+
 <dt>i</dt>
 <dd><p>A <code>numeric(1)</code> or <code>character(1)</code> indicating which assay
 to transfer the <code>colData</code> to.</p></dd>
+
+
 <dt>fcol</dt>
 <dd><p>The feature variables for each assays <code>i</code> defining how
 to summarise the QFeatures. If <code>fcol</code> has length 1, the
 variable name is assumed to be the same for all assays</p></dd>
+
+
 <dt>name</dt>
 <dd><p>A <code><a href="https://rdrr.io/r/base/character.html" class="external-link">character()</a></code> naming the new assay. <code>name</code> must have
 the same length as <code>i</code>. Note that the function will fail if of
 the names in <code>name</code> is already present.</p></dd>
+
+
 <dt>fun</dt>
 <dd><p>A function used for quantitative feature aggregation.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional parameters passed the <code>fun</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A <code>QFeatures</code> object</p>
+    
+
+<p>A <code>QFeatures</code> object</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p>QFeatures::aggregateFeatures</p></div>
     </div>
-    </div>
 
-    <div id="examples">
+    <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"scp1"</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">scp1</span> <span class="op">&lt;-</span> <span class="fu">aggregateFeaturesOverAssays</span><span class="op">(</span><span class="va">scp1</span>, </span>
-<span class="r-in">                                    i <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,</span>
-<span class="r-in">                                    fcol <span class="op">=</span> <span class="st">"peptide"</span>,</span>
-<span class="r-in">                                    name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"peptides"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span>,</span>
-<span class="r-in">                                    fun <span class="op">=</span> <span class="va">colMeans</span>,</span>
-<span class="r-in">                                    na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"scp1"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">scp1</span> <span class="op">&lt;-</span> <span class="fu">aggregateFeaturesOverAssays</span><span class="op">(</span><span class="va">scp1</span>, </span></span>
+<span class="r-in"><span>                                    i <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,</span></span>
+<span class="r-in"><span>                                    fcol <span class="op">=</span> <span class="st">"peptide"</span>,</span></span>
+<span class="r-in"><span>                                    name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"peptides"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                    fun <span class="op">=</span> <span class="va">colMeans</span>,</span></span>
+<span class="r-in"><span>                                    na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Aggregated: 1/3</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Aggregated: 2/3</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Aggregated: 3/3</span>
-<span class="r-in"><span class="va">scp1</span></span>
+<span class="r-in"><span><span class="va">scp1</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> An instance of class QFeatures containing 8 assays:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 11 columns </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 176 rows and 11 columns </span>
@@ -131,7 +144,7 @@ the names in <code>name</code> is already present.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [6] peptides1: SingleCellExperiment with 164 rows and 11 columns </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [7] peptides2: SingleCellExperiment with 172 rows and 11 columns </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [8] peptides3: SingleCellExperiment with 214 rows and 16 columns </span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -146,7 +159,7 @@ the names in <code>name</code> is already present.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
 </div>
 
       </footer></div>

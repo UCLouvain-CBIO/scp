@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.1</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -89,10 +89,12 @@
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Advanced usage of <code>scp</code>
 </h1>
-                        <h4 data-toc-skip class="author">Laurent Gatto</h4>
-                                    <h4 data-toc-skip class="author">Christophe Vanderaa</h4>
+                        <h4 data-toc-skip class="author">Laurent
+Gatto</h4>
+                                    <h4 data-toc-skip class="author">Christophe
+Vanderaa</h4>
                         
-            <h4 data-toc-skip class="date">15 November 2021</h4>
+            <h4 data-toc-skip class="date">20 September 2022</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/HEAD/vignettes/advanced.Rmd" class="external-link"><code>vignettes/advanced.Rmd</code></a></small>
       <div class="hidden name"><code>advanced.Rmd</code></div>
@@ -101,10 +103,17 @@
 
     
     
-<div class="section level1">
-<h1 id="about-this-vignette">About this vignette<a class="anchor" aria-label="anchor" href="#about-this-vignette"></a>
-</h1>
-<p>This vignette is dedicated to advanced users and to method developers. It assumes that you are already familiar with <code>QFeatures</code> and <code>scp</code> and that you are looking for more flexibility in the analysis of your single-cell proteomics (SCP) data. In fact, <code>scp</code> provides wrapper functions around generic functions and metrics. However, advanced users may want to apply or develop their own features. The <code>QFeatures</code> class offers a flexible data container while guaranteeing data consistency.</p>
+<div class="section level2">
+<h2 id="about-this-vignette">About this vignette<a class="anchor" aria-label="anchor" href="#about-this-vignette"></a>
+</h2>
+<p>This vignette is dedicated to advanced users and to method
+developers. It assumes that you are already familiar with
+<code>QFeatures</code> and <code>scp</code> and that you are looking for
+more flexibility in the analysis of your single-cell proteomics (SCP)
+data. In fact, <code>scp</code> provides wrapper functions around
+generic functions and metrics. However, advanced users may want to apply
+or develop their own features. The <code>QFeatures</code> class offers a
+flexible data container while guaranteeing data consistency.</p>
 <p>In this vignette, you will learn how to:</p>
 <ul>
 <li>Modify the quantitative data</li>
@@ -113,261 +122,345 @@
 <li>Create a new function for <code>scp</code>
 </li>
 </ul>
-<p>As a general guideline, you can add/remove/update data in a <code>QFeatures</code> in 4 main steps:</p>
+<p>As a general guideline, you can add/remove/update data in a
+<code>QFeatures</code> in 4 main steps:</p>
 <ol style="list-style-type: decimal">
-<li>Gather the data to change and other required data involved in the processing.</li>
+<li>Gather the data to change and other required data involved in the
+processing.</li>
 <li>Apply the transformation/computation.</li>
 <li>Insert the changes in the <code>QFeatures</code> object.</li>
-<li>Make sure the updated <code>QFeatures</code> object is still valid.</li>
+<li>Make sure the updated <code>QFeatures</code> object is still
+valid.</li>
 </ol>
-<p>To illustrate the different topics, we will load the <code>scp1</code> example data.</p>
+<p>To illustrate the different topics, we will load the
+<code>scp1</code> example data.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://UCLouvain-CBIO.github.io/scp" class="external-link">scp</a></span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"scp1"</span><span class="op">)</span>
-<span class="va">scp1</span>
-<span class="co">#&gt; An instance of class QFeatures containing 5 assays:</span>
-<span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 11 columns </span>
-<span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 176 rows and 11 columns </span>
-<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 215 rows and 16 columns </span>
-<span class="co">#&gt;  [4] peptides: SingleCellExperiment with 539 rows and 38 columns </span>
-<span class="co">#&gt;  [5] proteins: SingleCellExperiment with 292 rows and 38 columns</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://UCLouvain-CBIO.github.io/scp" class="external-link">scp</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"scp1"</span><span class="op">)</span></span>
+<span><span class="va">scp1</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures containing 5 assays:</span></span>
+<span><span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 176 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 215 rows and 16 columns </span></span>
+<span><span class="co">#&gt;  [4] peptides: SingleCellExperiment with 539 rows and 38 columns </span></span>
+<span><span class="co">#&gt;  [5] proteins: SingleCellExperiment with 292 rows and 38 columns</span></span></code></pre></div>
 </div>
-<div class="section level1">
-<h1 id="modify-the-quantitative-data">Modify the quantitative data<a class="anchor" aria-label="anchor" href="#modify-the-quantitative-data"></a>
-</h1>
-<p>To illustrate how to modify quantitative data, we will implement a <code>normByType</code> function that will normalize the feature (row) for each cell type separately. This function is probably not relevant for a real case analysis, but it provides a good example of a custom data processing. The process presented in this section is applicable to any custom function that takes at least a <strong>matrix-like object</strong> as input and returns a matrix-like object as output.</p>
+<div class="section level2">
+<h2 id="modify-the-quantitative-data">Modify the quantitative data<a class="anchor" aria-label="anchor" href="#modify-the-quantitative-data"></a>
+</h2>
+<p>To illustrate how to modify quantitative data, we will implement a
+<code>normByType</code> function that will normalize the feature (row)
+for each cell type separately. This function is probably not relevant
+for a real case analysis, but it provides a good example of a custom
+data processing. The process presented in this section is applicable to
+any custom function that takes at least a <strong>matrix-like
+object</strong> as input and returns a matrix-like object as output.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">normByType</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">type</span><span class="op">)</span> <span class="op">{</span>
-    <span class="co">## Check argument</span>
-    <span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">type</span><span class="op">)</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span>
-    <span class="co">## Normalize for each type separately</span>
-    <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="va">type</span><span class="op">)</span> <span class="op">{</span>
-        <span class="co">## Get normalization factor</span>
-        <span class="va">nf</span> <span class="op">&lt;-</span> <span class="fu">rowMedians</span><span class="op">(</span><span class="va">x</span><span class="op">[</span>, <span class="va">type</span> <span class="op">==</span> <span class="va">i</span><span class="op">]</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-        <span class="co">## Perform normalization</span>
-        <span class="va">x</span><span class="op">[</span>, <span class="va">type</span> <span class="op">==</span> <span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">[</span>, <span class="va">type</span> <span class="op">==</span> <span class="va">i</span><span class="op">]</span> <span class="op">/</span> <span class="va">nf</span>
-    <span class="op">}</span>
-    <span class="co">## Return normalized data</span>
-    <span class="va">x</span>
-<span class="op">}</span></code></pre></div>
-<p>Suppose we want to apply the function to the <code>proteins</code> assay, we need to first extract that assay. We here need to transfer the sample annotations from the <code>QFeatures</code> object to the extracted <code>SingleCellExperiment</code> in order to get the sample types required by the <code>normByType</code> function. We therefore use <code>getWithColData</code>.</p>
+<code class="sourceCode R"><span><span class="va">normByType</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">type</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="co">## Check argument</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">type</span><span class="op">)</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">ncol</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="co">## Normalize for each type separately</span></span>
+<span>    <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="va">type</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="co">## Get normalization factor</span></span>
+<span>        <span class="va">nf</span> <span class="op">&lt;-</span> <span class="fu">rowMedians</span><span class="op">(</span><span class="va">x</span><span class="op">[</span>, <span class="va">type</span> <span class="op">==</span> <span class="va">i</span><span class="op">]</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>        <span class="co">## Perform normalization</span></span>
+<span>        <span class="va">x</span><span class="op">[</span>, <span class="va">type</span> <span class="op">==</span> <span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">[</span>, <span class="va">type</span> <span class="op">==</span> <span class="va">i</span><span class="op">]</span> <span class="op">/</span> <span class="va">nf</span></span>
+<span>    <span class="op">}</span></span>
+<span>    <span class="co">## Return normalized data</span></span>
+<span>    <span class="va">x</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>Suppose we want to apply the function to the <code>proteins</code>
+assay, we need to first extract that assay. We here need to transfer the
+sample annotations from the <code>QFeatures</code> object to the
+extracted <code>SingleCellExperiment</code> in order to get the sample
+types required by the <code>normByType</code> function. We therefore use
+<code>getWithColData</code>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">sce</span> <span class="op">&lt;-</span> <span class="fu">getWithColData</span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"proteins"</span><span class="op">)</span>
-<span class="co">#&gt; Warning: 'experiments' dropped; see 'metadata'</span>
-<span class="va">sce</span>
-<span class="co">#&gt; class: SingleCellExperiment </span>
-<span class="co">#&gt; dim: 292 38 </span>
-<span class="co">#&gt; metadata(0):</span>
-<span class="co">#&gt; assays(2): assay aggcounts</span>
-<span class="co">#&gt; rownames(292): A1A519 A5D8V6 ... REV__CON__Q32PI4 REV__CON__Q3MHN5</span>
-<span class="co">#&gt; rowData names(9): protein Match.time.difference ...</span>
-<span class="co">#&gt;   Potential.contaminant .n</span>
-<span class="co">#&gt; colnames(38): 190321S_LCA10_X_FP97AG_RI1 190321S_LCA10_X_FP97AG_RI2 ...</span>
-<span class="co">#&gt;   190914S_LCB3_X_16plex_Set_21_RI15 190914S_LCB3_X_16plex_Set_21_RI16</span>
-<span class="co">#&gt; colData names(7): Set Channel ... sortday digest</span>
-<span class="co">#&gt; reducedDimNames(0):</span>
-<span class="co">#&gt; mainExpName: NULL</span>
-<span class="co">#&gt; altExpNames(0):</span></code></pre></div>
-<p>Next, we can apply the data transformation to the quantitative data. As mentioned above, our function expects a matrix-like object as an input, so we use the <code>assay</code> function. We then update the <code>SingleCellExperiment</code> object.</p>
+<code class="sourceCode R"><span><span class="va">sce</span> <span class="op">&lt;-</span> <span class="fu">getWithColData</span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"proteins"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: 'experiments' dropped; see 'metadata'</span></span>
+<span><span class="va">sce</span></span>
+<span><span class="co">#&gt; class: SingleCellExperiment </span></span>
+<span><span class="co">#&gt; dim: 292 38 </span></span>
+<span><span class="co">#&gt; metadata(0):</span></span>
+<span><span class="co">#&gt; assays(2): assay aggcounts</span></span>
+<span><span class="co">#&gt; rownames(292): A1A519 A5D8V6 ... REV__CON__Q32PI4 REV__CON__Q3MHN5</span></span>
+<span><span class="co">#&gt; rowData names(9): protein Match.time.difference ...</span></span>
+<span><span class="co">#&gt;   Potential.contaminant .n</span></span>
+<span><span class="co">#&gt; colnames(38): 190321S_LCA10_X_FP97AG_RI1 190321S_LCA10_X_FP97AG_RI2 ...</span></span>
+<span><span class="co">#&gt;   190914S_LCB3_X_16plex_Set_21_RI15 190914S_LCB3_X_16plex_Set_21_RI16</span></span>
+<span><span class="co">#&gt; colData names(7): Set Channel ... sortday digest</span></span>
+<span><span class="co">#&gt; reducedDimNames(0):</span></span>
+<span><span class="co">#&gt; mainExpName: NULL</span></span>
+<span><span class="co">#&gt; altExpNames(0):</span></span></code></pre></div>
+<p>Next, we can apply the data transformation to the quantitative data.
+As mentioned above, our function expects a matrix-like object as an
+input, so we use the <code>assay</code> function. We then update the
+<code>SingleCellExperiment</code> object.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">mnorm</span> <span class="op">&lt;-</span> <span class="fu">normByType</span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">sce</span><span class="op">)</span>, type <span class="op">=</span> <span class="va">sce</span><span class="op">$</span><span class="va">SampleType</span><span class="op">)</span>
-<span class="fu">assay</span><span class="op">(</span><span class="va">sce</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">mnorm</span></code></pre></div>
-<p>We are now faced with 2 possibilities: either we want to create a new assay or we want to overwrite an existing assay. In both cases we need to make sure your data is still valid after data transformation.</p>
-<div class="section level2">
-<h2 id="create-a-new-assay">Create a new assay<a class="anchor" aria-label="anchor" href="#create-a-new-assay"></a>
-</h2>
-<p>Creating a new assay has the advantage that you don’t modify an existing assay and hence limit the risk of introducing inconsistency in the data and avoid losing intermediate steps of the data processing.</p>
-<p>We add the transformed assay using the <code>addAssay</code> function, then link the parent assay to the transformed assay using <code>addAssayLinkOneToOne</code>. Note that if each row name in the parent assay does not match exactly one row in the child assay, you can also use <code>addAssayLink</code> that will require a linking variable in the <code>rowData</code>.</p>
+<code class="sourceCode R"><span><span class="va">mnorm</span> <span class="op">&lt;-</span> <span class="fu">normByType</span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">sce</span><span class="op">)</span>, type <span class="op">=</span> <span class="va">sce</span><span class="op">$</span><span class="va">SampleType</span><span class="op">)</span></span>
+<span><span class="fu">assay</span><span class="op">(</span><span class="va">sce</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">mnorm</span></span></code></pre></div>
+<p>We are now faced with 2 possibilities: either we want to create a new
+assay or we want to overwrite an existing assay. In both cases we need
+to make sure your data is still valid after data transformation.</p>
+<div class="section level3">
+<h3 id="create-a-new-assay">Create a new assay<a class="anchor" aria-label="anchor" href="#create-a-new-assay"></a>
+</h3>
+<p>Creating a new assay has the advantage that you don’t modify an
+existing assay and hence limit the risk of introducing inconsistency in
+the data and avoid losing intermediate steps of the data processing.</p>
+<p>We add the transformed assay using the <code>addAssay</code>
+function, then link the parent assay to the transformed assay using
+<code>addAssayLinkOneToOne</code>. Note that if each row name in the
+parent assay does not match exactly one row in the child assay, you can
+also use <code>addAssayLink</code> that will require a linking variable
+in the <code>rowData</code>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">scp1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-class.html" class="external-link">addAssay</a></span><span class="op">(</span><span class="va">scp1</span>, <span class="va">sce</span>, name <span class="op">=</span> <span class="st">"proteinsNorm"</span><span class="op">)</span>
-<span class="va">scp1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/AssayLinks.html" class="external-link">addAssayLinkOneToOne</a></span><span class="op">(</span><span class="va">scp1</span>, from <span class="op">=</span> <span class="st">"proteins"</span>, to <span class="op">=</span> <span class="st">"proteinsNorm"</span><span class="op">)</span>
-<span class="va">scp1</span>
-<span class="co">#&gt; An instance of class QFeatures containing 6 assays:</span>
-<span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 11 columns </span>
-<span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 176 rows and 11 columns </span>
-<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 215 rows and 16 columns </span>
-<span class="co">#&gt;  [4] peptides: SingleCellExperiment with 539 rows and 38 columns </span>
-<span class="co">#&gt;  [5] proteins: SingleCellExperiment with 292 rows and 38 columns </span>
-<span class="co">#&gt;  [6] proteinsNorm: SingleCellExperiment with 292 rows and 38 columns</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">scp1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-class.html" class="external-link">addAssay</a></span><span class="op">(</span><span class="va">scp1</span>, <span class="va">sce</span>, name <span class="op">=</span> <span class="st">"proteinsNorm"</span><span class="op">)</span></span>
+<span><span class="va">scp1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/AssayLinks.html" class="external-link">addAssayLinkOneToOne</a></span><span class="op">(</span><span class="va">scp1</span>, from <span class="op">=</span> <span class="st">"proteins"</span>, to <span class="op">=</span> <span class="st">"proteinsNorm"</span><span class="op">)</span></span>
+<span><span class="va">scp1</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures containing 6 assays:</span></span>
+<span><span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 176 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 215 rows and 16 columns </span></span>
+<span><span class="co">#&gt;  [4] peptides: SingleCellExperiment with 539 rows and 38 columns </span></span>
+<span><span class="co">#&gt;  [5] proteins: SingleCellExperiment with 292 rows and 38 columns </span></span>
+<span><span class="co">#&gt;  [6] proteinsNorm: SingleCellExperiment with 292 rows and 38 columns</span></span></code></pre></div>
 </div>
-<div class="section level2">
-<h2 id="overwrite-an-existing-assay">Overwrite an existing assay<a class="anchor" aria-label="anchor" href="#overwrite-an-existing-assay"></a>
-</h2>
-<p>Overwriting an existing assay has the advantage to limit the memory consumption as compared to adding a new assay. You can overwrite an assay simply by replacing the target assay in its corresponding slot.</p>
+<div class="section level3">
+<h3 id="overwrite-an-existing-assay">Overwrite an existing assay<a class="anchor" aria-label="anchor" href="#overwrite-an-existing-assay"></a>
+</h3>
+<p>Overwriting an existing assay has the advantage to limit the memory
+consumption as compared to adding a new assay. You can overwrite an
+assay simply by replacing the target assay in its corresponding
+slot.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">scp1</span><span class="op">[[</span><span class="st">"proteins"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">sce</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">scp1</span><span class="op">[[</span><span class="st">"proteins"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">sce</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="check-for-validity">Check for validity<a class="anchor" aria-label="anchor" href="#check-for-validity"></a>
+</h3>
+<p>Applying custom changes to the data increases the risk for data
+inconsistencies. You can however verify that a <code>QFeatures</code>
+object is still valid after some processing thanks to the
+<code>validObject</code> function.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">validObject</span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+<p>If the function detects no issues in the data, it will return
+<code>TRUE</code>. Otherwise the function will throw an informative
+error that should guide the user to identifying the issue.</p>
+</div>
 </div>
 <div class="section level2">
-<h2 id="check-for-validity">Check for validity<a class="anchor" aria-label="anchor" href="#check-for-validity"></a>
+<h2 id="modify-the-sample-annotations">Modify the sample annotations<a class="anchor" aria-label="anchor" href="#modify-the-sample-annotations"></a>
 </h2>
-<p>Applying custom changes to the data increases the risk for data inconsistencies. You can however verify that a <code>QFeatures</code> object is still valid after some processing thanks to the <code>validObject</code> function.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">validObject</span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span>
-<span class="co">#&gt; [1] TRUE</span></code></pre></div>
-<p>If the function detects no issues in the data, it will return <code>TRUE</code>. Otherwise the function will throw an informative error that should guide the user to identifying the issue.</p>
-</div>
-</div>
-<div class="section level1">
-<h1 id="modify-the-sample-annotations">Modify the sample annotations<a class="anchor" aria-label="anchor" href="#modify-the-sample-annotations"></a>
-</h1>
-<p>To illustrate how to modify the sample annotations, we will compute the average expression in each sample and include to the <code>colData</code> of the <code>QFeatures</code> object. This is typically performed when computing QC metrics for sample filtering. So, we first extract the required data, in this case the quantitative values, and compute the sample-wise average protein expression.</p>
+<p>To illustrate how to modify the sample annotations, we will compute
+the average expression in each sample and include to the
+<code>colData</code> of the <code>QFeatures</code> object. This is
+typically performed when computing QC metrics for sample filtering. So,
+we first extract the required data, in this case the quantitative
+values, and compute the sample-wise average protein expression.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu">assay</span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"proteins"</span><span class="op">)</span>
-<span class="va">meanExprs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colMeans</a></span><span class="op">(</span><span class="va">m</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="va">meanExprs</span>
-<span class="co">#&gt;        190321S_LCA10_X_FP97AG_RI1        190321S_LCA10_X_FP97AG_RI2 </span>
-<span class="co">#&gt;                        45368.3628                         7566.8782 </span>
-<span class="co">#&gt;        190321S_LCA10_X_FP97AG_RI3        190321S_LCA10_X_FP97AG_RI4 </span>
-<span class="co">#&gt;                         3271.0402                         2158.4230 </span>
-<span class="co">#&gt;        190321S_LCA10_X_FP97AG_RI5        190321S_LCA10_X_FP97AG_RI6 </span>
-<span class="co">#&gt;                         1162.3936                         1835.7939 </span>
-<span class="co">#&gt;        190321S_LCA10_X_FP97AG_RI7        190321S_LCA10_X_FP97AG_RI8 </span>
-<span class="co">#&gt;                         1293.4738                         1415.4205 </span>
-<span class="co">#&gt;        190321S_LCA10_X_FP97AG_RI9       190321S_LCA10_X_FP97AG_RI10 </span>
-<span class="co">#&gt;                         1965.6531                         1264.4064 </span>
-<span class="co">#&gt;       190321S_LCA10_X_FP97AG_RI11         190222S_LCA9_X_FP94BM_RI1 </span>
-<span class="co">#&gt;                         1238.5979                        48901.4654 </span>
-<span class="co">#&gt;         190222S_LCA9_X_FP94BM_RI2         190222S_LCA9_X_FP94BM_RI3 </span>
-<span class="co">#&gt;                         5189.5912                         2802.1850 </span>
-<span class="co">#&gt;         190222S_LCA9_X_FP94BM_RI4         190222S_LCA9_X_FP94BM_RI5 </span>
-<span class="co">#&gt;                         1204.2350                          715.7667 </span>
-<span class="co">#&gt;         190222S_LCA9_X_FP94BM_RI6         190222S_LCA9_X_FP94BM_RI7 </span>
-<span class="co">#&gt;                         1032.7122                          403.8267 </span>
-<span class="co">#&gt;         190222S_LCA9_X_FP94BM_RI8         190222S_LCA9_X_FP94BM_RI9 </span>
-<span class="co">#&gt;                         1089.0548                         1076.2613 </span>
-<span class="co">#&gt;        190222S_LCA9_X_FP94BM_RI10        190222S_LCA9_X_FP94BM_RI11 </span>
-<span class="co">#&gt;                         1572.3337                         1186.4431 </span>
-<span class="co">#&gt;  190914S_LCB3_X_16plex_Set_21_RI1  190914S_LCB3_X_16plex_Set_21_RI2 </span>
-<span class="co">#&gt;                        96881.8350                         2731.9430 </span>
-<span class="co">#&gt;  190914S_LCB3_X_16plex_Set_21_RI3  190914S_LCB3_X_16plex_Set_21_RI4 </span>
-<span class="co">#&gt;                         8208.1958                          208.2857 </span>
-<span class="co">#&gt;  190914S_LCB3_X_16plex_Set_21_RI5  190914S_LCB3_X_16plex_Set_21_RI6 </span>
-<span class="co">#&gt;                         3209.7730                         2014.4889 </span>
-<span class="co">#&gt;  190914S_LCB3_X_16plex_Set_21_RI7  190914S_LCB3_X_16plex_Set_21_RI8 </span>
-<span class="co">#&gt;                         2897.1103                         3006.6741 </span>
-<span class="co">#&gt;  190914S_LCB3_X_16plex_Set_21_RI9 190914S_LCB3_X_16plex_Set_21_RI10 </span>
-<span class="co">#&gt;                         2760.8564                         2549.9348 </span>
-<span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI11 190914S_LCB3_X_16plex_Set_21_RI12 </span>
-<span class="co">#&gt;                         2388.5289                         2533.8006 </span>
-<span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI13 190914S_LCB3_X_16plex_Set_21_RI14 </span>
-<span class="co">#&gt;                         2134.5615                         3125.1980 </span>
-<span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI15 190914S_LCB3_X_16plex_Set_21_RI16 </span>
-<span class="co">#&gt;                         3276.5618                         3195.8827</span></code></pre></div>
-<p>Next, we insert the computed averages into the <code>colData</code>. You need to make sure to match sample names because an extracted assay may not contain all samples and may be in a different order compared to the <code>colData</code>.</p>
+<code class="sourceCode R"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu">assay</span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"proteins"</span><span class="op">)</span></span>
+<span><span class="va">meanExprs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colMeans</a></span><span class="op">(</span><span class="va">m</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">meanExprs</span></span>
+<span><span class="co">#&gt;        190321S_LCA10_X_FP97AG_RI1        190321S_LCA10_X_FP97AG_RI2 </span></span>
+<span><span class="co">#&gt;                        45368.3628                         7566.8782 </span></span>
+<span><span class="co">#&gt;        190321S_LCA10_X_FP97AG_RI3        190321S_LCA10_X_FP97AG_RI4 </span></span>
+<span><span class="co">#&gt;                         3271.0402                         2158.4230 </span></span>
+<span><span class="co">#&gt;        190321S_LCA10_X_FP97AG_RI5        190321S_LCA10_X_FP97AG_RI6 </span></span>
+<span><span class="co">#&gt;                         1162.3936                         1835.7939 </span></span>
+<span><span class="co">#&gt;        190321S_LCA10_X_FP97AG_RI7        190321S_LCA10_X_FP97AG_RI8 </span></span>
+<span><span class="co">#&gt;                         1293.4738                         1415.4205 </span></span>
+<span><span class="co">#&gt;        190321S_LCA10_X_FP97AG_RI9       190321S_LCA10_X_FP97AG_RI10 </span></span>
+<span><span class="co">#&gt;                         1965.6531                         1264.4064 </span></span>
+<span><span class="co">#&gt;       190321S_LCA10_X_FP97AG_RI11         190222S_LCA9_X_FP94BM_RI1 </span></span>
+<span><span class="co">#&gt;                         1238.5979                        48901.4654 </span></span>
+<span><span class="co">#&gt;         190222S_LCA9_X_FP94BM_RI2         190222S_LCA9_X_FP94BM_RI3 </span></span>
+<span><span class="co">#&gt;                         5189.5912                         2802.1850 </span></span>
+<span><span class="co">#&gt;         190222S_LCA9_X_FP94BM_RI4         190222S_LCA9_X_FP94BM_RI5 </span></span>
+<span><span class="co">#&gt;                         1204.2350                          715.7667 </span></span>
+<span><span class="co">#&gt;         190222S_LCA9_X_FP94BM_RI6         190222S_LCA9_X_FP94BM_RI7 </span></span>
+<span><span class="co">#&gt;                         1032.7122                          403.8267 </span></span>
+<span><span class="co">#&gt;         190222S_LCA9_X_FP94BM_RI8         190222S_LCA9_X_FP94BM_RI9 </span></span>
+<span><span class="co">#&gt;                         1089.0548                         1076.2613 </span></span>
+<span><span class="co">#&gt;        190222S_LCA9_X_FP94BM_RI10        190222S_LCA9_X_FP94BM_RI11 </span></span>
+<span><span class="co">#&gt;                         1572.3337                         1186.4431 </span></span>
+<span><span class="co">#&gt;  190914S_LCB3_X_16plex_Set_21_RI1  190914S_LCB3_X_16plex_Set_21_RI2 </span></span>
+<span><span class="co">#&gt;                        96881.8350                         2731.9430 </span></span>
+<span><span class="co">#&gt;  190914S_LCB3_X_16plex_Set_21_RI3  190914S_LCB3_X_16plex_Set_21_RI4 </span></span>
+<span><span class="co">#&gt;                         8208.1958                          208.2857 </span></span>
+<span><span class="co">#&gt;  190914S_LCB3_X_16plex_Set_21_RI5  190914S_LCB3_X_16plex_Set_21_RI6 </span></span>
+<span><span class="co">#&gt;                         3209.7730                         2014.4889 </span></span>
+<span><span class="co">#&gt;  190914S_LCB3_X_16plex_Set_21_RI7  190914S_LCB3_X_16plex_Set_21_RI8 </span></span>
+<span><span class="co">#&gt;                         2897.1103                         3006.6741 </span></span>
+<span><span class="co">#&gt;  190914S_LCB3_X_16plex_Set_21_RI9 190914S_LCB3_X_16plex_Set_21_RI10 </span></span>
+<span><span class="co">#&gt;                         2760.8564                         2549.9348 </span></span>
+<span><span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI11 190914S_LCB3_X_16plex_Set_21_RI12 </span></span>
+<span><span class="co">#&gt;                         2388.5289                         2533.8006 </span></span>
+<span><span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI13 190914S_LCB3_X_16plex_Set_21_RI14 </span></span>
+<span><span class="co">#&gt;                         2134.5615                         3125.1980 </span></span>
+<span><span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI15 190914S_LCB3_X_16plex_Set_21_RI16 </span></span>
+<span><span class="co">#&gt;                         3276.5618                         3195.8827</span></span></code></pre></div>
+<p>Next, we insert the computed averages into the <code>colData</code>.
+You need to make sure to match sample names because an extracted assay
+may not contain all samples and may be in a different order compared to
+the <code>colData</code>.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">colData</span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">meanExprs</span><span class="op">)</span>, <span class="st">"meanProtExprs"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">meanExprs</span></code></pre></div>
-<p>The new sample variable <code>meanProtExprs</code> is now accessible for filtering or plotting. The <code>$</code> operator makes it straightforward to access the new data.</p>
+<code class="sourceCode R"><span><span class="fu">colData</span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">meanExprs</span><span class="op">)</span>, <span class="st">"meanProtExprs"</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">meanExprs</span></span></code></pre></div>
+<p>The new sample variable <code>meanProtExprs</code> is now accessible
+for filtering or plotting. The <code>$</code> operator makes it
+straightforward to access the new data.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log2</a></span><span class="op">(</span><span class="va">scp1</span><span class="op">$</span><span class="va">meanProtExprs</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log2</a></span><span class="op">(</span><span class="va">scp1</span><span class="op">$</span><span class="va">meanProtExprs</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="advanced_files/figure-html/unnamed-chunk-10-1.png" width="700"></p>
-<p>To make sure that the process did not corrupt the <code>colData</code>, we advise to verify the data is still valid.</p>
+<p>To make sure that the process did not corrupt the
+<code>colData</code>, we advise to verify the data is still valid.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">validObject</span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span>
-<span class="co">#&gt; [1] TRUE</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">validObject</span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 </div>
-<div class="section level1">
-<h1 id="modify-the-feature-annotations">Modify the feature annotations<a class="anchor" aria-label="anchor" href="#modify-the-feature-annotations"></a>
-</h1>
-<p>We will again illustrate how to modify the feature annotations with an example. We here demonstrate how to add the number of samples in which each feature is detected for the three first assays (PSM assays). The challenge here is that the metric needs to be computed for each assay separately and inserted in the corresponding assay.</p>
-<p>We will take advantage of the replacement function for <code>rowData</code> as implemented in <code>QFeatures</code>. It expects a list-like object where names indicate in which assays we want to modify the <code>rowData</code> and each element contains a table with the replacement values.</p>
-<p>We therefore compute the metrics for each assay separately and store the results in a named <code>List</code>.</p>
+<div class="section level2">
+<h2 id="modify-the-feature-annotations">Modify the feature annotations<a class="anchor" aria-label="anchor" href="#modify-the-feature-annotations"></a>
+</h2>
+<p>We will again illustrate how to modify the feature annotations with
+an example. We here demonstrate how to add the number of samples in
+which each feature is detected for the three first assays (PSM assays).
+The challenge here is that the metric needs to be computed for each
+assay separately and inserted in the corresponding assay.</p>
+<p>We will take advantage of the replacement function for
+<code>rowData</code> as implemented in <code>QFeatures</code>. It
+expects a list-like object where names indicate in which assays we want
+to modify the <code>rowData</code> and each element contains a table
+with the replacement values.</p>
+<p>We therefore compute the metrics for each assay separately and store
+the results in a named <code>List</code>.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">## Initialize the List object that will store the computed values</span>
-<span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">List</span><span class="op">(</span><span class="op">)</span>
-<span class="co">## We compute the metric for the first 3 assays</span>
-<span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span> <span class="op">{</span>
-    <span class="co">## We get the quantitative values for the current assay</span>
-    <span class="va">m</span> <span class="op">&lt;-</span> <span class="fu">assay</span><span class="op">(</span><span class="va">scp1</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
-    <span class="co">## We compute the number of samples in which each features is detected</span>
-    <span class="va">n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">m</span> <span class="op">!=</span> <span class="fl">0</span><span class="op">)</span>
-    <span class="co">## We store the result as a DataFrame in the List</span>
-    <span class="va">res</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">DataFrame</span><span class="op">(</span>nbSamples <span class="op">=</span> <span class="va">n</span><span class="op">)</span>
-<span class="op">}</span>
-<span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span>
-<span class="va">res</span>
-<span class="co">#&gt; List of length 3</span>
-<span class="co">#&gt; names(3): 190321S_LCA10_X_FP97AG 190222S_LCA9_X_FP94BM 190914S_LCB3_X_16plex_Set_21</span>
-<span class="va">res</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span>
-<span class="co">#&gt; DataFrame with 166 rows and 1 column</span>
-<span class="co">#&gt;           nbSamples</span>
-<span class="co">#&gt;           &lt;numeric&gt;</span>
-<span class="co">#&gt; PSM3773          11</span>
-<span class="co">#&gt; PSM9078          11</span>
-<span class="co">#&gt; PSM9858          11</span>
-<span class="co">#&gt; PSM11744         11</span>
-<span class="co">#&gt; PSM21752          0</span>
-<span class="co">#&gt; ...             ...</span>
-<span class="co">#&gt; PSM732069        11</span>
-<span class="co">#&gt; PSM735396        11</span>
-<span class="co">#&gt; PSM744756        10</span>
-<span class="co">#&gt; PSM745037        11</span>
-<span class="co">#&gt; PSM745130        11</span></code></pre></div>
-<p>Now that we have a <code>List</code> of <code>DataFrame</code>s, we can update the object.</p>
+<code class="sourceCode R"><span><span class="co">## Initialize the List object that will store the computed values</span></span>
+<span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">List</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">## We compute the metric for the first 3 assays</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="co">## We get the quantitative values for the current assay</span></span>
+<span>    <span class="va">m</span> <span class="op">&lt;-</span> <span class="fu">assay</span><span class="op">(</span><span class="va">scp1</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span>    <span class="co">## We compute the number of samples in which each features is detected</span></span>
+<span>    <span class="va">n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">m</span> <span class="op">!=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span>    <span class="co">## We store the result as a DataFrame in the List</span></span>
+<span>    <span class="va">res</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">DataFrame</span><span class="op">(</span>nbSamples <span class="op">=</span> <span class="va">n</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">]</span></span>
+<span><span class="va">res</span></span>
+<span><span class="co">#&gt; List of length 3</span></span>
+<span><span class="co">#&gt; names(3): 190321S_LCA10_X_FP97AG 190222S_LCA9_X_FP94BM 190914S_LCB3_X_16plex_Set_21</span></span>
+<span><span class="va">res</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="co">#&gt; DataFrame with 166 rows and 1 column</span></span>
+<span><span class="co">#&gt;           nbSamples</span></span>
+<span><span class="co">#&gt;           &lt;numeric&gt;</span></span>
+<span><span class="co">#&gt; PSM3773          11</span></span>
+<span><span class="co">#&gt; PSM9078          11</span></span>
+<span><span class="co">#&gt; PSM9858          11</span></span>
+<span><span class="co">#&gt; PSM11744         11</span></span>
+<span><span class="co">#&gt; PSM21752          0</span></span>
+<span><span class="co">#&gt; ...             ...</span></span>
+<span><span class="co">#&gt; PSM732069        11</span></span>
+<span><span class="co">#&gt; PSM735396        11</span></span>
+<span><span class="co">#&gt; PSM744756        10</span></span>
+<span><span class="co">#&gt; PSM745037        11</span></span>
+<span><span class="co">#&gt; PSM745130        11</span></span></code></pre></div>
+<p>Now that we have a <code>List</code> of <code>DataFrame</code>s, we
+can update the object.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">rowData</span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">res</span></code></pre></div>
-<p>The new feature variable <code>nbSamples</code> is now accessible for filtering or plotting. The <code>rbindRowData</code> function facilitates the access the new data.</p>
+<code class="sourceCode R"><span><span class="fu">rowData</span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">res</span></span></code></pre></div>
+<p>The new feature variable <code>nbSamples</code> is now accessible for
+filtering or plotting. The <code>rbindRowData</code> function
+facilitates the access the new data.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span>
-<span class="va">rd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-class.html" class="external-link">rbindRowData</a></span><span class="op">(</span><span class="va">scp1</span>, i <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">rd</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">nbSamples</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html" class="external-link">geom_histogram</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">16</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">assay</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span></span>
+<span><span class="va">rd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-class.html" class="external-link">rbindRowData</a></span><span class="op">(</span><span class="va">scp1</span>, i <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">rd</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">nbSamples</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html" class="external-link">geom_histogram</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">16</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></span><span class="op">(</span><span class="op">~</span> <span class="va">assay</span><span class="op">)</span></span></code></pre></div>
 <p><img src="advanced_files/figure-html/unnamed-chunk-14-1.png" width="700"></p>
-<p>To make sure that the process did not corrupt the <code>rowData</code> in any assay, we advise to verify the data is still valid.</p>
+<p>To make sure that the process did not corrupt the
+<code>rowData</code> in any assay, we advise to verify the data is still
+valid.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">validObject</span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span>
-<span class="co">#&gt; [1] TRUE</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">validObject</span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 </div>
-<div class="section level1">
-<h1 id="create-a-new-function-for-scp">Create a new function for <code>scp</code><a class="anchor" aria-label="anchor" href="#create-a-new-function-for-scp"></a>
-</h1>
-<p>The modifying data in a <code>QFeatures</code> involves a multiple-step process. Creating a wrapper function that would take care of those different steps in a single line of code is a good habit to reduce the length of analysis scripts and hence making it easier to understand and less error-prone.</p>
-<p>We will wrap the last example in a new function that we call <code>computeNbDetectedSamples</code>.</p>
+<div class="section level2">
+<h2 id="create-a-new-function-for-scp">Create a new function for <code>scp</code><a class="anchor" aria-label="anchor" href="#create-a-new-function-for-scp"></a>
+</h2>
+<p>The modifying data in a <code>QFeatures</code> involves a
+multiple-step process. Creating a wrapper function that would take care
+of those different steps in a single line of code is a good habit to
+reduce the length of analysis scripts and hence making it easier to
+understand and less error-prone.</p>
+<p>We will wrap the last example in a new function that we call
+<code>computeNbDetectedSamples</code>.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">computeNbDetectedSamples</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">object</span>, <span class="va">i</span><span class="op">)</span> <span class="op">{</span>
-    <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">List</span><span class="op">(</span><span class="op">)</span>
-    <span class="kw">for</span> <span class="op">(</span><span class="va">ii</span> <span class="kw">in</span> <span class="va">i</span><span class="op">)</span> <span class="op">{</span>
-        <span class="va">m</span> <span class="op">&lt;-</span> <span class="fu">assay</span><span class="op">(</span><span class="va">object</span><span class="op">[[</span><span class="va">ii</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
-        <span class="va">n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">m</span> <span class="op">!=</span> <span class="fl">0</span><span class="op">)</span>
-        <span class="va">res</span><span class="op">[[</span><span class="va">ii</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">DataFrame</span><span class="op">(</span>nbSamples <span class="op">=</span> <span class="va">n</span><span class="op">)</span>
-    <span class="op">}</span>
-    <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>
-    <span class="fu">rowData</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">res</span>
-    <span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="fu">validObject</span><span class="op">(</span><span class="va">object</span><span class="op">)</span><span class="op">)</span>
-    <span class="va">object</span>
-<span class="op">}</span></code></pre></div>
-<p>Thanks to this new function, the previous section now simply boils down to running:</p>
+<code class="sourceCode R"><span><span class="va">computeNbDetectedSamples</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">object</span>, <span class="va">i</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">List</span><span class="op">(</span><span class="op">)</span></span>
+<span>    <span class="kw">for</span> <span class="op">(</span><span class="va">ii</span> <span class="kw">in</span> <span class="va">i</span><span class="op">)</span> <span class="op">{</span></span>
+<span>        <span class="va">m</span> <span class="op">&lt;-</span> <span class="fu">assay</span><span class="op">(</span><span class="va">object</span><span class="op">[[</span><span class="va">ii</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
+<span>        <span class="va">n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">m</span> <span class="op">!=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span>        <span class="va">res</span><span class="op">[[</span><span class="va">ii</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">DataFrame</span><span class="op">(</span>nbSamples <span class="op">=</span> <span class="va">n</span><span class="op">)</span></span>
+<span>    <span class="op">}</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span><span class="op">[</span><span class="va">i</span><span class="op">]</span></span>
+<span>    <span class="fu">rowData</span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">res</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="fu">validObject</span><span class="op">(</span><span class="va">object</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="va">object</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<p>Thanks to this new function, the previous section now simply boils
+down to running:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">scp1</span> <span class="op">&lt;-</span> <span class="fu">computeNbDetectedSamples</span><span class="op">(</span><span class="va">scp1</span>, i <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></code></pre></div>
-<p>Keep in mind a few recommendations when creating a new function for <code>scp</code>:</p>
+<code class="sourceCode R"><span><span class="va">scp1</span> <span class="op">&lt;-</span> <span class="fu">computeNbDetectedSamples</span><span class="op">(</span><span class="va">scp1</span>, i <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span></code></pre></div>
+<p>Keep in mind a few recommendations when creating a new function for
+<code>scp</code>:</p>
 <ul>
-<li>The function should take a <code>QFeatures</code> object as input (and more arguments if needed) and return a <code>QFeatures</code> object as output. This will make workflows much easier to understand.</li>
-<li>Allow user to select assays (if required) either as numeric, character, or logical.</li>
-<li>Use conventional argument names: when naming an argument, try to match the names that already exist. For instance, selecting assays is passed through the <code>i</code> argument, selecting <code>rowData</code> variables is passed through <code>rowvars</code> and selecting <code>colData</code> variables is passed through <code>colvars</code>.</li>
-<li>Follow the <code>rformassspectrometry</code> <a href="https://rformassspectrometry.github.io/RforMassSpectrometry/articles/RforMassSpectrometry.html#coding-style" class="external-link">coding style</a>
+<li>The function should take a <code>QFeatures</code> object as input
+(and more arguments if needed) and return a <code>QFeatures</code>
+object as output. This will make workflows much easier to
+understand.</li>
+<li>Allow user to select assays (if required) either as numeric,
+character, or logical.</li>
+<li>Use conventional argument names: when naming an argument, try to
+match the names that already exist. For instance, selecting assays is
+passed through the <code>i</code> argument, selecting
+<code>rowData</code> variables is passed through <code>rowvars</code>
+and selecting <code>colData</code> variables is passed through
+<code>colvars</code>.</li>
+<li>Follow the <code>rformassspectrometry</code> <a href="https://rformassspectrometry.github.io/RforMassSpectrometry/articles/RforMassSpectrometry.html#coding-style" class="external-link">coding
+style</a>
 </li>
 </ul>
 </div>
-<div class="section level1">
-<h1 id="whats-next">What’s next?<a class="anchor" aria-label="anchor" href="#whats-next"></a>
-</h1>
-<p>So you developed a new metric or method and believe it might benefit the community? We would love to hear about your improvements and eventually include your new functionality into <code>scp</code> or associate your new package to our documentation. Please, raise an <a href="https://github.com/UCLouvain-CBIO/scp/issues/new/choose" class="external-link">issue</a> in our Github repository to suggest your improvements or, better, submit your code as a <a href="https://github.com/UCLouvain-CBIO/scp/compare" class="external-link">pull request</a>.</p>
+<div class="section level2">
+<h2 id="whats-next">What’s next?<a class="anchor" aria-label="anchor" href="#whats-next"></a>
+</h2>
+<p>So you developed a new metric or method and believe it might benefit
+the community? We would love to hear about your improvements and
+eventually include your new functionality into <code>scp</code> or
+associate your new package to our documentation. Please, raise an <a href="https://github.com/UCLouvain-CBIO/scp/issues/new/choose" class="external-link">issue</a>
+in our Github repository to suggest your improvements or, better, submit
+your code as a <a href="https://github.com/UCLouvain-CBIO/scp/compare" class="external-link">pull
+request</a>.</p>
 </div>
-<div class="section level1 unnumbered">
-<h1 class="unnumbered" id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
-</h1>
-<pre><code>R Under development (unstable) (2021-11-11 r81177)
+<div class="section level2">
+<h2 class="unnumbered" id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
+</h2>
+<pre><code>R version 4.2.1 (2022-06-23)
 Platform: x86_64-pc-linux-gnu (64-bit)
-Running under: Ubuntu 20.04.3 LTS
+Running under: Ubuntu 20.04.5 LTS
 
 Matrix products: default
-BLAS/LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.8.so
+BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3
+LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/liblapack.so.3
 
 locale:
  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
- [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=C             
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
 [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
@@ -377,54 +470,60 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] ggplot2_3.3.5               scp_1.5.1                  
- [3] QFeatures_1.5.1             MultiAssayExperiment_1.21.2
- [5] SummarizedExperiment_1.25.2 Biobase_2.55.0             
- [7] GenomicRanges_1.47.4        GenomeInfoDb_1.31.1        
- [9] IRanges_2.29.0              S4Vectors_0.33.2           
-[11] BiocGenerics_0.41.1         MatrixGenerics_1.7.0       
-[13] matrixStats_0.61.0          BiocStyle_2.23.0           
+ [1] ggplot2_3.3.6               scp_1.7.1                  
+ [3] QFeatures_1.7.2             MultiAssayExperiment_1.23.8
+ [5] SummarizedExperiment_1.27.3 Biobase_2.57.1             
+ [7] GenomicRanges_1.49.1        GenomeInfoDb_1.33.7        
+ [9] IRanges_2.31.2              S4Vectors_0.35.4           
+[11] BiocGenerics_0.43.4         MatrixGenerics_1.9.1       
+[13] matrixStats_0.62.0          BiocStyle_2.25.0           
 
 loaded via a namespace (and not attached):
- [1] sass_0.4.0                  jsonlite_1.7.2             
- [3] bslib_0.3.1                 BiocManager_1.30.16        
- [5] highr_0.9                   GenomeInfoDbData_1.2.7     
- [7] yaml_2.2.1                  pillar_1.6.4               
- [9] lattice_0.20-45             glue_1.5.0                 
-[11] digest_0.6.28               XVector_0.35.0             
-[13] colorspace_2.0-2            htmltools_0.5.2            
-[15] Matrix_1.3-4                pkgconfig_2.0.3            
-[17] bookdown_0.24               zlibbioc_1.41.0            
-[19] purrr_0.3.4                 scales_1.1.1               
-[21] tibble_3.1.6                farver_2.1.0               
-[23] generics_0.1.1              AnnotationFilter_1.19.0    
-[25] ellipsis_0.3.2              withr_2.4.2                
+ [1] sass_0.4.2                  jsonlite_1.8.0             
+ [3] bslib_0.4.0                 BiocManager_1.30.18        
+ [5] highr_0.9                   GenomeInfoDbData_1.2.8     
+ [7] yaml_2.3.5                  pillar_1.8.1               
+ [9] lattice_0.20-45             glue_1.6.2                 
+[11] digest_0.6.29               XVector_0.37.1             
+[13] colorspace_2.0-3            htmltools_0.5.3            
+[15] Matrix_1.5-1                BiocBaseUtils_0.99.12      
+[17] pkgconfig_2.0.3             bookdown_0.29              
+[19] zlibbioc_1.43.0             purrr_0.3.4                
+[21] scales_1.2.1                tibble_3.1.8               
+[23] farver_2.1.1                generics_0.1.3             
+[25] AnnotationFilter_1.21.0     withr_2.5.0                
 [27] cachem_1.0.6                lazyeval_0.2.2             
-[29] magrittr_2.0.1              crayon_1.4.2               
-[31] memoise_2.0.0               evaluate_0.14              
-[33] fs_1.5.0                    fansi_0.5.0                
-[35] MASS_7.3-54                 textshaping_0.3.6          
-[37] tools_4.2.0                 lifecycle_1.0.1            
-[39] stringr_1.4.0               munsell_0.5.0              
-[41] cluster_2.1.2               DelayedArray_0.21.1        
-[43] compiler_4.2.0              pkgdown_1.9000.9000.9000   
-[45] jquerylib_0.1.4             systemfonts_1.0.3          
-[47] rlang_0.4.12                grid_4.2.0                 
-[49] RCurl_1.98-1.5              MsCoreUtils_1.7.0          
-[51] SingleCellExperiment_1.17.1 igraph_1.2.8               
+[29] cli_3.4.0                   magrittr_2.0.3             
+[31] memoise_2.0.1               evaluate_0.16              
+[33] fs_1.5.2                    fansi_1.0.3                
+[35] MASS_7.3-58.1               textshaping_0.3.6          
+[37] tools_4.2.1                 lifecycle_1.0.2            
+[39] stringr_1.4.1               munsell_0.5.0              
+[41] cluster_2.1.4               DelayedArray_0.23.2        
+[43] compiler_4.2.1              pkgdown_2.0.6.9000         
+[45] jquerylib_0.1.4             systemfonts_1.0.4          
+[47] rlang_1.0.5                 grid_4.2.1                 
+[49] RCurl_1.98-1.8              MsCoreUtils_1.9.1          
+[51] SingleCellExperiment_1.19.0 igraph_1.3.4               
 [53] labeling_0.4.2              bitops_1.0-7               
-[55] rmarkdown_2.11              gtable_0.3.0               
-[57] R6_2.5.1                    knitr_1.36                 
-[59] dplyr_1.0.7                 fastmap_1.1.0              
-[61] utf8_1.2.2                  clue_0.3-60                
-[63] rprojroot_2.0.2             ragg_1.2.0                 
-[65] ProtGenerics_1.27.0         desc_1.4.0                 
-[67] stringi_1.7.5               vctrs_0.3.8                
-[69] tidyselect_1.1.1            xfun_0.28                  </code></pre>
+[55] rmarkdown_2.16              gtable_0.3.1               
+[57] R6_2.5.1                    knitr_1.40                 
+[59] dplyr_1.0.10                fastmap_1.1.0              
+[61] utf8_1.2.2                  clue_0.3-61                
+[63] rprojroot_2.0.3             ragg_1.2.2                 
+[65] ProtGenerics_1.29.0         desc_1.4.2                 
+[67] stringi_1.7.8               vctrs_0.4.1                
+[69] tidyselect_1.1.2            xfun_0.33                  </code></pre>
 </div>
-<div class="section level1">
-<h1 id="reference">Reference<a class="anchor" aria-label="anchor" href="#reference"></a>
-</h1>
+<div class="section level2">
+<h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
+</h2>
+<p>This vignette is distributed under a <a href="https://creativecommons.org/licenses/by-sa/2.0/" class="external-link">CC BY-SA
+license</a> license.</p>
+</div>
+<div class="section level2">
+<h2 id="reference">Reference<a class="anchor" aria-label="anchor" href="#reference"></a>
+</h2>
 </div>
   </div>
 
@@ -445,7 +544,7 @@ loaded via a namespace (and not attached):
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
 </div>
 
       </footer>

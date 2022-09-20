@@ -19,7 +19,7 @@ a new assay"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.1</span>
       </span>
     </div>
 
@@ -31,7 +31,7 @@ a new assay"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -75,28 +75,41 @@ the supplied method (see Details). The normalized data is added as
 a new assay</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">normalizeSCP</span><span class="op">(</span><span class="va">object</span>, <span class="va">i</span>, name <span class="op">=</span> <span class="st">"normAssay"</span>, <span class="va">method</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div id="ref-usage">
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">normalizeSCP</span><span class="op">(</span><span class="va">object</span>, <span class="va">i</span>, name <span class="op">=</span> <span class="st">"normAssay"</span>, <span class="va">method</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
+    </div>
 
-    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>object</dt>
 <dd><p>An object of class <code>QFeatures</code>.</p></dd>
+
+
 <dt>i</dt>
 <dd><p>A numeric vector or a character vector giving the index
 or the name, respectively, of the assay(s) to be processed.</p></dd>
+
+
 <dt>name</dt>
 <dd><p>A <code>character(1)</code> naming the new assay name. Defaults is
 are <code>normAssay</code>.</p></dd>
+
+
 <dt>method</dt>
 <dd><p><code>character(1)</code> defining the normalisation method to
 apply. See Details.`</p></dd>
+
+
 <dt>...</dt>
-<dd><p>Additional parameters passed to <code><a href="https://rdrr.io/pkg/MsCoreUtils/man/normalize.html" class="external-link">MsCoreUtils::normalizeMethods()</a></code>.</p></dd>
+<dd><p>Additional parameters passed to
+<code><a href="https://rdrr.io/pkg/MsCoreUtils/man/normalize.html" class="external-link">MsCoreUtils::normalizeMethods()</a></code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A <code>QFeatures</code> object with an additional assay containing the
+    
+
+<p>A <code>QFeatures</code> object with an additional assay containing the
 normalized data.</p>
     </div>
     <div id="details">
@@ -117,12 +130,13 @@ column means (medians) along <code>MARGIN = 2</code> with <code>FUN = "-"</code>
 <li><p><code>"diff.median"</code> centers all samples (columns) so that they all
 match the grand median by subtracting the respective columns
 medians differences to the grand median.</p></li>
-<li><p>Using <code>"quantiles"</code> or <code>"quantiles.robust"</code> applies (robust) quantile
-normalisation, as implemented in <code><a href="https://rdrr.io/pkg/preprocessCore/man/normalize.quantiles.html" class="external-link">preprocessCore::normalize.quantiles()</a></code>
-and <code><a href="https://rdrr.io/pkg/preprocessCore/man/normalize.quantiles.robust.html" class="external-link">preprocessCore::normalize.quantiles.robust()</a></code>. <code>"vsn"</code> uses the
-<code><a href="https://rdrr.io/pkg/vsn/man/vsn2.html" class="external-link">vsn::vsn2()</a></code> function. Note that the latter also glog-transforms the
-intensities.  See respective manuals for more details and function
-arguments.</p></li>
+<li><p>Using <code>"quantiles"</code> or <code>"quantiles.robust"</code> applies (robust)
+quantile normalisation, as implemented in
+<code><a href="https://rdrr.io/pkg/preprocessCore/man/normalize.quantiles.html" class="external-link">preprocessCore::normalize.quantiles()</a></code> and
+<code><a href="https://rdrr.io/pkg/preprocessCore/man/normalize.quantiles.robust.html" class="external-link">preprocessCore::normalize.quantiles.robust()</a></code>. <code>"vsn"</code> uses the
+<code><a href="https://rdrr.io/pkg/vsn/man/vsn2.html" class="external-link">vsn::vsn2()</a></code> function. Note that the latter also glog-transforms
+the intensities. See respective manuals for more details and
+function arguments.</p></li>
 </ul><p>For further details and examples about normalisation, see
 <code><a href="https://rdrr.io/pkg/MsCoreUtils/man/normalize.html" class="external-link">MsCoreUtils::normalize_matrix()</a></code>.</p>
     </div>
@@ -130,8 +144,30 @@ arguments.</p></li>
     <h2>See also</h2>
     <div class="dont-index"><p><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-processing.html" class="external-link">QFeatures::normalize</a> for more details about <code>normalize</code></p></div>
     </div>
-    </div>
 
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"scp1"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">scp1</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> An instance of class QFeatures containing 5 assays:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 11 columns </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 176 rows and 11 columns </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 215 rows and 16 columns </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] peptides: SingleCellExperiment with 539 rows and 38 columns </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] proteins: SingleCellExperiment with 292 rows and 38 columns </span>
+<span class="r-in"><span><span class="fu">normalizeSCP</span><span class="op">(</span><span class="va">scp1</span>, i <span class="op">=</span> <span class="st">"proteins"</span>, name <span class="op">=</span> <span class="st">"normproteins"</span>, </span></span>
+<span class="r-in"><span>             method <span class="op">=</span> <span class="st">"center.mean"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> An instance of class QFeatures containing 6 assays:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 11 columns </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 176 rows and 11 columns </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 215 rows and 16 columns </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] peptides: SingleCellExperiment with 539 rows and 38 columns </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] proteins: SingleCellExperiment with 292 rows and 38 columns </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [6] normproteins: SingleCellExperiment with 292 rows and 38 columns </span>
+<span class="r-in"><span></span></span>
+</code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>
@@ -144,7 +180,7 @@ arguments.</p></li>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
 </div>
 
       </footer></div>

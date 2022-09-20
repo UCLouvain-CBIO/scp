@@ -31,9 +31,6 @@
     <loc>/reference/aggregateFeaturesOverAssays.html</loc>
   </url>
   <url>
-    <loc>/reference/computeMedianCV_SCoPE2.html</loc>
-  </url>
-  <url>
     <loc>/reference/computeSCR.html</loc>
   </url>
   <url>
@@ -59,9 +56,6 @@
   </url>
   <url>
     <loc>/reference/readSingleCellExperiment.html</loc>
-  </url>
-  <url>
-    <loc>/reference/rowDataToDF.html</loc>
   </url>
   <url>
     <loc>/reference/sampleAnnotation.html</loc>

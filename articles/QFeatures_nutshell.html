@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.1</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -88,10 +88,12 @@
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>QFeatures in a nutshell</h1>
-                        <h4 data-toc-skip class="author">Laurent Gatto</h4>
-                                    <h4 data-toc-skip class="author">Christophe Vanderaa</h4>
+                        <h4 data-toc-skip class="author">Laurent
+Gatto</h4>
+                                    <h4 data-toc-skip class="author">Christophe
+Vanderaa</h4>
                         
-            <h4 data-toc-skip class="date">15 November 2021</h4>
+            <h4 data-toc-skip class="date">20 September 2022</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/HEAD/vignettes/QFeatures_nutshell.Rmd" class="external-link"><code>vignettes/QFeatures_nutshell.Rmd</code></a></small>
       <div class="hidden name"><code>QFeatures_nutshell.Rmd</code></div>
@@ -100,486 +102,597 @@
 
     
     
-<p>This vignette briefly recaps the main concepts of <code>QFeatures</code> on which <code>scp</code> relies. More in depth information is to be found in the <code>QFeatures</code> <a href="https://rformassspectrometry.github.io/QFeatures/articles/QFeatures.html" class="external-link">vignettes</a>.</p>
-<div class="section level1">
-<h1 id="the-qfeatures-class">The <code>QFeatures</code> class<a class="anchor" aria-label="anchor" href="#the-qfeatures-class"></a>
-</h1>
-<p>The <code>QFeatures</code> class is based on the <code>MultiAssayExperiment</code> class that holds a collection of <code>SummarizedExperiment</code> (or other classes that inherits from it) objects termed <strong>assays</strong>. The assays in a <code>QFeatures</code> object have a hierarchical relation: proteins are composed of peptides, themselves produced by spectra, as depicted in figure below.</p>
+<p>This vignette briefly recaps the main concepts of
+<code>QFeatures</code> on which <code>scp</code> relies. More in depth
+information is to be found in the <code>QFeatures</code> <a href="https://rformassspectrometry.github.io/QFeatures/articles/QFeatures.html" class="external-link">vignettes</a>.</p>
+<div class="section level2">
+<h2 id="the-qfeatures-class">The <code>QFeatures</code> class<a class="anchor" aria-label="anchor" href="#the-qfeatures-class"></a>
+</h2>
+<p>The <code>QFeatures</code> class is based on the
+<code>MultiAssayExperiment</code> class that holds a collection of
+<code>SummarizedExperiment</code> (or other classes that inherits from
+it) objects termed <strong>assays</strong>. The assays in a
+<code>QFeatures</code> object have a hierarchical relation: proteins are
+composed of peptides, themselves produced by spectra, as depicted in
+figure below.</p>
 <p><img src="https://rformassspectrometry.github.io/QFeatures/articles/QFeatures_files/figure-html/featuresplot-1.png"></p>
-<p>Those links are stored as part as the <code>QFeatures</code> object and connect the assays together. We load an example dataset from the <code>scp</code> package that is formatted as an <code>QFeatures</code> object and plot those connection.</p>
+<p>Those links are stored as part as the <code>QFeatures</code> object
+and connect the assays together. We load an example dataset from the
+<code>scp</code> package that is formatted as an <code>QFeatures</code>
+object and plot those connection.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://UCLouvain-CBIO.github.io/scp" class="external-link">scp</a></span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"scp1"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://UCLouvain-CBIO.github.io/scp" class="external-link">scp</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"scp1"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span></span></code></pre></div>
 <p><img src="QFeatures_nutshell_files/figure-html/hierarchy-1.png" width="600px"></p>
 </div>
-<div class="section level1">
-<h1 id="accessing-the-data">Accessing the data<a class="anchor" aria-label="anchor" href="#accessing-the-data"></a>
-</h1>
-<p>The <code>QFeatures</code> class contains all the available and metadata. We here show how to retrieve those different pieces of information.</p>
 <div class="section level2">
-<h2 id="quantitative-data">Quantitative data<a class="anchor" aria-label="anchor" href="#quantitative-data"></a>
+<h2 id="accessing-the-data">Accessing the data<a class="anchor" aria-label="anchor" href="#accessing-the-data"></a>
 </h2>
-<p>The quantitative data, stored as matrix-like objects, can be accessed using the <code>assay</code> function. For example, we here extract the quantitative data for the first MS batch (and show a subset of it):</p>
+<p>The <code>QFeatures</code> class contains all the available and
+metadata. We here show how to retrieve those different pieces of
+information.</p>
+<div class="section level3">
+<h3 id="quantitative-data">Quantitative data<a class="anchor" aria-label="anchor" href="#quantitative-data"></a>
+</h3>
+<p>The quantitative data, stored as matrix-like objects, can be accessed
+using the <code>assay</code> function. For example, we here extract the
+quantitative data for the first MS batch (and show a subset of it):</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">assay</span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"190321S_LCA10_X_FP97AG"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="op">]</span>
-<span class="co">#&gt;          190321S_LCA10_X_FP97AG_RI1 190321S_LCA10_X_FP97AG_RI2</span>
-<span class="co">#&gt; PSM3773                       57895                     603.73</span>
-<span class="co">#&gt; PSM9078                       64889                    1481.30</span>
-<span class="co">#&gt; PSM9858                       58993                     489.85</span>
-<span class="co">#&gt; PSM11744                      75711                     539.02</span>
-<span class="co">#&gt; PSM21752                          0                       0.00</span>
-<span class="co">#&gt;          190321S_LCA10_X_FP97AG_RI3 190321S_LCA10_X_FP97AG_RI4</span>
-<span class="co">#&gt; PSM3773                      2787.9                     757.17</span>
-<span class="co">#&gt; PSM9078                      4891.6                     597.53</span>
-<span class="co">#&gt; PSM9858                      2899.4                     882.37</span>
-<span class="co">#&gt; PSM11744                     7292.7                     357.90</span>
-<span class="co">#&gt; PSM21752                        0.0                       0.00</span>
-<span class="co">#&gt;          190321S_LCA10_X_FP97AG_RI5 190321S_LCA10_X_FP97AG_RI6</span>
-<span class="co">#&gt; PSM3773                      862.08                    1118.80</span>
-<span class="co">#&gt; PSM9078                     1140.30                    1300.10</span>
-<span class="co">#&gt; PSM9858                      296.60                     977.15</span>
-<span class="co">#&gt; PSM11744                    1091.30                     736.87</span>
-<span class="co">#&gt; PSM21752                       0.00                       0.00</span>
-<span class="co">#&gt;          190321S_LCA10_X_FP97AG_RI7 190321S_LCA10_X_FP97AG_RI8</span>
-<span class="co">#&gt; PSM3773                      640.10                    1446.10</span>
-<span class="co">#&gt; PSM9078                     1092.50                    1309.40</span>
-<span class="co">#&gt; PSM9858                      498.60                    1437.90</span>
-<span class="co">#&gt; PSM11744                     712.74                     590.75</span>
-<span class="co">#&gt; PSM21752                       0.00                       0.00</span>
-<span class="co">#&gt;          190321S_LCA10_X_FP97AG_RI9 190321S_LCA10_X_FP97AG_RI10</span>
-<span class="co">#&gt; PSM3773                      968.49                      648.56</span>
-<span class="co">#&gt; PSM9078                     1538.40                     1014.50</span>
-<span class="co">#&gt; PSM9858                      857.40                      888.01</span>
-<span class="co">#&gt; PSM11744                   15623.00                      298.60</span>
-<span class="co">#&gt; PSM21752                       0.00                        0.00</span>
-<span class="co">#&gt;          190321S_LCA10_X_FP97AG_RI11</span>
-<span class="co">#&gt; PSM3773                       742.53</span>
-<span class="co">#&gt; PSM9078                      1062.80</span>
-<span class="co">#&gt; PSM9858                       768.61</span>
-<span class="co">#&gt; PSM11744                      481.38</span>
-<span class="co">#&gt; PSM21752                        0.00</span></code></pre></div>
-<p>Note that you can retrieve the list of available assays in a <code>QFeatures</code> object using the <code><a href="https://rdrr.io/r/base/names.html" class="external-link">names()</a></code> function.</p>
+<code class="sourceCode R"><span><span class="fu">assay</span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"190321S_LCA10_X_FP97AG"</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="op">]</span></span>
+<span><span class="co">#&gt;          190321S_LCA10_X_FP97AG_RI1 190321S_LCA10_X_FP97AG_RI2</span></span>
+<span><span class="co">#&gt; PSM3773                       57895                     603.73</span></span>
+<span><span class="co">#&gt; PSM9078                       64889                    1481.30</span></span>
+<span><span class="co">#&gt; PSM9858                       58993                     489.85</span></span>
+<span><span class="co">#&gt; PSM11744                      75711                     539.02</span></span>
+<span><span class="co">#&gt; PSM21752                          0                       0.00</span></span>
+<span><span class="co">#&gt;          190321S_LCA10_X_FP97AG_RI3 190321S_LCA10_X_FP97AG_RI4</span></span>
+<span><span class="co">#&gt; PSM3773                      2787.9                     757.17</span></span>
+<span><span class="co">#&gt; PSM9078                      4891.6                     597.53</span></span>
+<span><span class="co">#&gt; PSM9858                      2899.4                     882.37</span></span>
+<span><span class="co">#&gt; PSM11744                     7292.7                     357.90</span></span>
+<span><span class="co">#&gt; PSM21752                        0.0                       0.00</span></span>
+<span><span class="co">#&gt;          190321S_LCA10_X_FP97AG_RI5 190321S_LCA10_X_FP97AG_RI6</span></span>
+<span><span class="co">#&gt; PSM3773                      862.08                    1118.80</span></span>
+<span><span class="co">#&gt; PSM9078                     1140.30                    1300.10</span></span>
+<span><span class="co">#&gt; PSM9858                      296.60                     977.15</span></span>
+<span><span class="co">#&gt; PSM11744                    1091.30                     736.87</span></span>
+<span><span class="co">#&gt; PSM21752                       0.00                       0.00</span></span>
+<span><span class="co">#&gt;          190321S_LCA10_X_FP97AG_RI7 190321S_LCA10_X_FP97AG_RI8</span></span>
+<span><span class="co">#&gt; PSM3773                      640.10                    1446.10</span></span>
+<span><span class="co">#&gt; PSM9078                     1092.50                    1309.40</span></span>
+<span><span class="co">#&gt; PSM9858                      498.60                    1437.90</span></span>
+<span><span class="co">#&gt; PSM11744                     712.74                     590.75</span></span>
+<span><span class="co">#&gt; PSM21752                       0.00                       0.00</span></span>
+<span><span class="co">#&gt;          190321S_LCA10_X_FP97AG_RI9 190321S_LCA10_X_FP97AG_RI10</span></span>
+<span><span class="co">#&gt; PSM3773                      968.49                      648.56</span></span>
+<span><span class="co">#&gt; PSM9078                     1538.40                     1014.50</span></span>
+<span><span class="co">#&gt; PSM9858                      857.40                      888.01</span></span>
+<span><span class="co">#&gt; PSM11744                   15623.00                      298.60</span></span>
+<span><span class="co">#&gt; PSM21752                       0.00                        0.00</span></span>
+<span><span class="co">#&gt;          190321S_LCA10_X_FP97AG_RI11</span></span>
+<span><span class="co">#&gt; PSM3773                       742.53</span></span>
+<span><span class="co">#&gt; PSM9078                      1062.80</span></span>
+<span><span class="co">#&gt; PSM9858                       768.61</span></span>
+<span><span class="co">#&gt; PSM11744                      481.38</span></span>
+<span><span class="co">#&gt; PSM21752                        0.00</span></span></code></pre></div>
+<p>Note that you can retrieve the list of available assays in a
+<code>QFeatures</code> object using the <code><a href="https://rdrr.io/r/base/names.html" class="external-link">names()</a></code>
+function.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span>
-<span class="co">#&gt; [1] "190321S_LCA10_X_FP97AG"       "190222S_LCA9_X_FP94BM"       </span>
-<span class="co">#&gt; [3] "190914S_LCB3_X_16plex_Set_21" "peptides"                    </span>
-<span class="co">#&gt; [5] "proteins"</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "190321S_LCA10_X_FP97AG"       "190222S_LCA9_X_FP94BM"       </span></span>
+<span><span class="co">#&gt; [3] "190914S_LCB3_X_16plex_Set_21" "peptides"                    </span></span>
+<span><span class="co">#&gt; [5] "proteins"</span></span></code></pre></div>
 </div>
-<div class="section level2">
-<h2 id="feature-metadata">Feature metadata<a class="anchor" aria-label="anchor" href="#feature-metadata"></a>
-</h2>
-<p>For each individual assay, there is feature metadata available. We extract the list of metadata tables by using <code>rowData()</code> on the <code>QFeatures</code> object.</p>
+<div class="section level3">
+<h3 id="feature-metadata">Feature metadata<a class="anchor" aria-label="anchor" href="#feature-metadata"></a>
+</h3>
+<p>For each individual assay, there is feature metadata available. We
+extract the list of metadata tables by using <code>rowData()</code> on
+the <code>QFeatures</code> object.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">rowData</span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span>
-<span class="co">#&gt; DataFrameList of length 5</span>
-<span class="co">#&gt; names(5): 190321S_LCA10_X_FP97AG 190222S_LCA9_X_FP94BM 190914S_LCB3_X_16plex_Set_21 peptides proteins</span>
-<span class="fu">rowData</span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span><span class="op">[[</span><span class="st">"proteins"</span><span class="op">]</span><span class="op">]</span>
-<span class="co">#&gt; DataFrame with 292 rows and 9 columns</span>
-<span class="co">#&gt;                                            protein Match.time.difference</span>
-<span class="co">#&gt;                                        &lt;character&gt;             &lt;logical&gt;</span>
-<span class="co">#&gt; A1A519                                      A1A519                    NA</span>
-<span class="co">#&gt; A5D8V6                                      A5D8V6                    NA</span>
-<span class="co">#&gt; A5PLK6                                      A5PLK6                    NA</span>
-<span class="co">#&gt; A5PLL1                                      A5PLL1                    NA</span>
-<span class="co">#&gt; A6NC97                                      A6NC97                    NA</span>
-<span class="co">#&gt; ...                                            ...                   ...</span>
-<span class="co">#&gt; REV__CON__ENSEMBL:ENSBTAP00000038253 REV__CON__...                    NA</span>
-<span class="co">#&gt; REV__CON__P06868                     REV__CON__...                    NA</span>
-<span class="co">#&gt; REV__CON__Q05443                     REV__CON__...                    NA</span>
-<span class="co">#&gt; REV__CON__Q32PI4                     REV__CON__...                    NA</span>
-<span class="co">#&gt; REV__CON__Q3MHN5                     REV__CON__...                    NA</span>
-<span class="co">#&gt;                                      Match.m.z.difference Match.q.value</span>
-<span class="co">#&gt;                                                 &lt;logical&gt;     &lt;logical&gt;</span>
-<span class="co">#&gt; A1A519                                                 NA            NA</span>
-<span class="co">#&gt; A5D8V6                                                 NA            NA</span>
-<span class="co">#&gt; A5PLK6                                                 NA            NA</span>
-<span class="co">#&gt; A5PLL1                                                 NA            NA</span>
-<span class="co">#&gt; A6NC97                                                 NA            NA</span>
-<span class="co">#&gt; ...                                                   ...           ...</span>
-<span class="co">#&gt; REV__CON__ENSEMBL:ENSBTAP00000038253                   NA            NA</span>
-<span class="co">#&gt; REV__CON__P06868                                       NA            NA</span>
-<span class="co">#&gt; REV__CON__Q05443                                       NA            NA</span>
-<span class="co">#&gt; REV__CON__Q32PI4                                       NA            NA</span>
-<span class="co">#&gt; REV__CON__Q3MHN5                                       NA            NA</span>
-<span class="co">#&gt;                                      Match.score Reporter.PIF Reporter.fraction</span>
-<span class="co">#&gt;                                        &lt;logical&gt;    &lt;logical&gt;         &lt;logical&gt;</span>
-<span class="co">#&gt; A1A519                                        NA           NA                NA</span>
-<span class="co">#&gt; A5D8V6                                        NA           NA                NA</span>
-<span class="co">#&gt; A5PLK6                                        NA           NA                NA</span>
-<span class="co">#&gt; A5PLL1                                        NA           NA                NA</span>
-<span class="co">#&gt; A6NC97                                        NA           NA                NA</span>
-<span class="co">#&gt; ...                                          ...          ...               ...</span>
-<span class="co">#&gt; REV__CON__ENSEMBL:ENSBTAP00000038253          NA           NA                NA</span>
-<span class="co">#&gt; REV__CON__P06868                              NA           NA                NA</span>
-<span class="co">#&gt; REV__CON__Q05443                              NA           NA                NA</span>
-<span class="co">#&gt; REV__CON__Q32PI4                              NA           NA                NA</span>
-<span class="co">#&gt; REV__CON__Q3MHN5                              NA           NA                NA</span>
-<span class="co">#&gt;                                      Potential.contaminant        .n</span>
-<span class="co">#&gt;                                                &lt;character&gt; &lt;integer&gt;</span>
-<span class="co">#&gt; A1A519                                                             1</span>
-<span class="co">#&gt; A5D8V6                                                             1</span>
-<span class="co">#&gt; A5PLK6                                                             1</span>
-<span class="co">#&gt; A5PLL1                                                             1</span>
-<span class="co">#&gt; A6NC97                                                             1</span>
-<span class="co">#&gt; ...                                                    ...       ...</span>
-<span class="co">#&gt; REV__CON__ENSEMBL:ENSBTAP00000038253                     +         1</span>
-<span class="co">#&gt; REV__CON__P06868                                         +         1</span>
-<span class="co">#&gt; REV__CON__Q05443                                         +         1</span>
-<span class="co">#&gt; REV__CON__Q32PI4                                         +         1</span>
-<span class="co">#&gt; REV__CON__Q3MHN5                                         +         1</span></code></pre></div>
-<p>You can also retrieve the names of each <code>rowData</code> column for all assays with <code>rowDataNames</code>.</p>
+<code class="sourceCode R"><span><span class="fu">rowData</span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; DataFrameList of length 5</span></span>
+<span><span class="co">#&gt; names(5): 190321S_LCA10_X_FP97AG 190222S_LCA9_X_FP94BM 190914S_LCB3_X_16plex_Set_21 peptides proteins</span></span>
+<span><span class="fu">rowData</span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span><span class="op">[[</span><span class="st">"proteins"</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="co">#&gt; DataFrame with 292 rows and 9 columns</span></span>
+<span><span class="co">#&gt;                                            protein Match.time.difference</span></span>
+<span><span class="co">#&gt;                                        &lt;character&gt;             &lt;logical&gt;</span></span>
+<span><span class="co">#&gt; A1A519                                      A1A519                    NA</span></span>
+<span><span class="co">#&gt; A5D8V6                                      A5D8V6                    NA</span></span>
+<span><span class="co">#&gt; A5PLK6                                      A5PLK6                    NA</span></span>
+<span><span class="co">#&gt; A5PLL1                                      A5PLL1                    NA</span></span>
+<span><span class="co">#&gt; A6NC97                                      A6NC97                    NA</span></span>
+<span><span class="co">#&gt; ...                                            ...                   ...</span></span>
+<span><span class="co">#&gt; REV__CON__ENSEMBL:ENSBTAP00000038253 REV__CON__...                    NA</span></span>
+<span><span class="co">#&gt; REV__CON__P06868                     REV__CON__...                    NA</span></span>
+<span><span class="co">#&gt; REV__CON__Q05443                     REV__CON__...                    NA</span></span>
+<span><span class="co">#&gt; REV__CON__Q32PI4                     REV__CON__...                    NA</span></span>
+<span><span class="co">#&gt; REV__CON__Q3MHN5                     REV__CON__...                    NA</span></span>
+<span><span class="co">#&gt;                                      Match.m.z.difference Match.q.value</span></span>
+<span><span class="co">#&gt;                                                 &lt;logical&gt;     &lt;logical&gt;</span></span>
+<span><span class="co">#&gt; A1A519                                                 NA            NA</span></span>
+<span><span class="co">#&gt; A5D8V6                                                 NA            NA</span></span>
+<span><span class="co">#&gt; A5PLK6                                                 NA            NA</span></span>
+<span><span class="co">#&gt; A5PLL1                                                 NA            NA</span></span>
+<span><span class="co">#&gt; A6NC97                                                 NA            NA</span></span>
+<span><span class="co">#&gt; ...                                                   ...           ...</span></span>
+<span><span class="co">#&gt; REV__CON__ENSEMBL:ENSBTAP00000038253                   NA            NA</span></span>
+<span><span class="co">#&gt; REV__CON__P06868                                       NA            NA</span></span>
+<span><span class="co">#&gt; REV__CON__Q05443                                       NA            NA</span></span>
+<span><span class="co">#&gt; REV__CON__Q32PI4                                       NA            NA</span></span>
+<span><span class="co">#&gt; REV__CON__Q3MHN5                                       NA            NA</span></span>
+<span><span class="co">#&gt;                                      Match.score Reporter.PIF Reporter.fraction</span></span>
+<span><span class="co">#&gt;                                        &lt;logical&gt;    &lt;logical&gt;         &lt;logical&gt;</span></span>
+<span><span class="co">#&gt; A1A519                                        NA           NA                NA</span></span>
+<span><span class="co">#&gt; A5D8V6                                        NA           NA                NA</span></span>
+<span><span class="co">#&gt; A5PLK6                                        NA           NA                NA</span></span>
+<span><span class="co">#&gt; A5PLL1                                        NA           NA                NA</span></span>
+<span><span class="co">#&gt; A6NC97                                        NA           NA                NA</span></span>
+<span><span class="co">#&gt; ...                                          ...          ...               ...</span></span>
+<span><span class="co">#&gt; REV__CON__ENSEMBL:ENSBTAP00000038253          NA           NA                NA</span></span>
+<span><span class="co">#&gt; REV__CON__P06868                              NA           NA                NA</span></span>
+<span><span class="co">#&gt; REV__CON__Q05443                              NA           NA                NA</span></span>
+<span><span class="co">#&gt; REV__CON__Q32PI4                              NA           NA                NA</span></span>
+<span><span class="co">#&gt; REV__CON__Q3MHN5                              NA           NA                NA</span></span>
+<span><span class="co">#&gt;                                      Potential.contaminant        .n</span></span>
+<span><span class="co">#&gt;                                                &lt;character&gt; &lt;integer&gt;</span></span>
+<span><span class="co">#&gt; A1A519                                                             1</span></span>
+<span><span class="co">#&gt; A5D8V6                                                             1</span></span>
+<span><span class="co">#&gt; A5PLK6                                                             1</span></span>
+<span><span class="co">#&gt; A5PLL1                                                             1</span></span>
+<span><span class="co">#&gt; A6NC97                                                             1</span></span>
+<span><span class="co">#&gt; ...                                                    ...       ...</span></span>
+<span><span class="co">#&gt; REV__CON__ENSEMBL:ENSBTAP00000038253                     +         1</span></span>
+<span><span class="co">#&gt; REV__CON__P06868                                         +         1</span></span>
+<span><span class="co">#&gt; REV__CON__Q05443                                         +         1</span></span>
+<span><span class="co">#&gt; REV__CON__Q32PI4                                         +         1</span></span>
+<span><span class="co">#&gt; REV__CON__Q3MHN5                                         +         1</span></span></code></pre></div>
+<p>You can also retrieve the names of each <code>rowData</code> column
+for all assays with <code>rowDataNames</code>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-class.html" class="external-link">rowDataNames</a></span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span>
-<span class="co">#&gt; CharacterList of length 5</span>
-<span class="co">#&gt; [["190321S_LCA10_X_FP97AG"]] uid Sequence ... peptide Leading.razor.protein</span>
-<span class="co">#&gt; [["190222S_LCA9_X_FP94BM"]] uid Sequence ... peptide Leading.razor.protein</span>
-<span class="co">#&gt; [["190914S_LCB3_X_16plex_Set_21"]] uid Sequence ... Leading.razor.protein</span>
-<span class="co">#&gt; [["peptides"]] Sequence Length Modifications ... .n Leading.razor.protein</span>
-<span class="co">#&gt; [["proteins"]] protein Match.time.difference ... Potential.contaminant .n</span></code></pre></div>
-<p>You can also get the <code>rowData</code> from different assays in a single table using the <code>rbindRowData</code> function. It will keep the common <code>rowData</code> variables to all selected assays (provided through <code>i</code>).</p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-class.html" class="external-link">rowDataNames</a></span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; CharacterList of length 5</span></span>
+<span><span class="co">#&gt; [["190321S_LCA10_X_FP97AG"]] uid Sequence ... peptide Leading.razor.protein</span></span>
+<span><span class="co">#&gt; [["190222S_LCA9_X_FP94BM"]] uid Sequence ... peptide Leading.razor.protein</span></span>
+<span><span class="co">#&gt; [["190914S_LCB3_X_16plex_Set_21"]] uid Sequence ... Leading.razor.protein</span></span>
+<span><span class="co">#&gt; [["peptides"]] Sequence Length Modifications ... .n Leading.razor.protein</span></span>
+<span><span class="co">#&gt; [["proteins"]] protein Match.time.difference ... Potential.contaminant .n</span></span></code></pre></div>
+<p>You can also get the <code>rowData</code> from different assays in a
+single table using the <code>rbindRowData</code> function. It will keep
+the common <code>rowData</code> variables to all selected assays
+(provided through <code>i</code>).</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-class.html" class="external-link">rbindRowData</a></span><span class="op">(</span><span class="va">scp1</span>, i <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span>
-<span class="co">#&gt; DataFrame with 1388 rows and 10 columns</span>
-<span class="co">#&gt;              assay       rowname       protein Match.time.difference</span>
-<span class="co">#&gt;        &lt;character&gt;   &lt;character&gt;   &lt;character&gt;             &lt;logical&gt;</span>
-<span class="co">#&gt; 1    190321S_LC...       PSM3773        P61981                    NA</span>
-<span class="co">#&gt; 2    190321S_LC...       PSM9078        Q8WVN8                    NA</span>
-<span class="co">#&gt; 3    190321S_LC...       PSM9858        P55084                    NA</span>
-<span class="co">#&gt; 4    190321S_LC...      PSM11744        P19099                    NA</span>
-<span class="co">#&gt; 5    190321S_LC...      PSM21752        P52952                    NA</span>
-<span class="co">#&gt; ...            ...           ...           ...                   ...</span>
-<span class="co">#&gt; 1384      proteins REV__CON__... REV__CON__...                    NA</span>
-<span class="co">#&gt; 1385      proteins REV__CON__... REV__CON__...                    NA</span>
-<span class="co">#&gt; 1386      proteins REV__CON__... REV__CON__...                    NA</span>
-<span class="co">#&gt; 1387      proteins REV__CON__... REV__CON__...                    NA</span>
-<span class="co">#&gt; 1388      proteins REV__CON__... REV__CON__...                    NA</span>
-<span class="co">#&gt;      Match.m.z.difference Match.q.value Match.score Reporter.PIF</span>
-<span class="co">#&gt;                 &lt;logical&gt;     &lt;logical&gt;   &lt;logical&gt;    &lt;logical&gt;</span>
-<span class="co">#&gt; 1                      NA            NA          NA           NA</span>
-<span class="co">#&gt; 2                      NA            NA          NA           NA</span>
-<span class="co">#&gt; 3                      NA            NA          NA           NA</span>
-<span class="co">#&gt; 4                      NA            NA          NA           NA</span>
-<span class="co">#&gt; 5                      NA            NA          NA           NA</span>
-<span class="co">#&gt; ...                   ...           ...         ...          ...</span>
-<span class="co">#&gt; 1384                   NA            NA          NA           NA</span>
-<span class="co">#&gt; 1385                   NA            NA          NA           NA</span>
-<span class="co">#&gt; 1386                   NA            NA          NA           NA</span>
-<span class="co">#&gt; 1387                   NA            NA          NA           NA</span>
-<span class="co">#&gt; 1388                   NA            NA          NA           NA</span>
-<span class="co">#&gt;      Reporter.fraction Potential.contaminant</span>
-<span class="co">#&gt;              &lt;logical&gt;           &lt;character&gt;</span>
-<span class="co">#&gt; 1                   NA                      </span>
-<span class="co">#&gt; 2                   NA                      </span>
-<span class="co">#&gt; 3                   NA                      </span>
-<span class="co">#&gt; 4                   NA                      </span>
-<span class="co">#&gt; 5                   NA                      </span>
-<span class="co">#&gt; ...                ...                   ...</span>
-<span class="co">#&gt; 1384                NA                     +</span>
-<span class="co">#&gt; 1385                NA                     +</span>
-<span class="co">#&gt; 1386                NA                     +</span>
-<span class="co">#&gt; 1387                NA                     +</span>
-<span class="co">#&gt; 1388                NA                     +</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-class.html" class="external-link">rbindRowData</a></span><span class="op">(</span><span class="va">scp1</span>, i <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span></span>
+<span><span class="co">#&gt; DataFrame with 1388 rows and 10 columns</span></span>
+<span><span class="co">#&gt;              assay       rowname       protein Match.time.difference</span></span>
+<span><span class="co">#&gt;        &lt;character&gt;   &lt;character&gt;   &lt;character&gt;             &lt;logical&gt;</span></span>
+<span><span class="co">#&gt; 1    190321S_LC...       PSM3773        P61981                    NA</span></span>
+<span><span class="co">#&gt; 2    190321S_LC...       PSM9078        Q8WVN8                    NA</span></span>
+<span><span class="co">#&gt; 3    190321S_LC...       PSM9858        P55084                    NA</span></span>
+<span><span class="co">#&gt; 4    190321S_LC...      PSM11744        P19099                    NA</span></span>
+<span><span class="co">#&gt; 5    190321S_LC...      PSM21752        P52952                    NA</span></span>
+<span><span class="co">#&gt; ...            ...           ...           ...                   ...</span></span>
+<span><span class="co">#&gt; 1384      proteins REV__CON__... REV__CON__...                    NA</span></span>
+<span><span class="co">#&gt; 1385      proteins REV__CON__... REV__CON__...                    NA</span></span>
+<span><span class="co">#&gt; 1386      proteins REV__CON__... REV__CON__...                    NA</span></span>
+<span><span class="co">#&gt; 1387      proteins REV__CON__... REV__CON__...                    NA</span></span>
+<span><span class="co">#&gt; 1388      proteins REV__CON__... REV__CON__...                    NA</span></span>
+<span><span class="co">#&gt;      Match.m.z.difference Match.q.value Match.score Reporter.PIF</span></span>
+<span><span class="co">#&gt;                 &lt;logical&gt;     &lt;logical&gt;   &lt;logical&gt;    &lt;logical&gt;</span></span>
+<span><span class="co">#&gt; 1                      NA            NA          NA           NA</span></span>
+<span><span class="co">#&gt; 2                      NA            NA          NA           NA</span></span>
+<span><span class="co">#&gt; 3                      NA            NA          NA           NA</span></span>
+<span><span class="co">#&gt; 4                      NA            NA          NA           NA</span></span>
+<span><span class="co">#&gt; 5                      NA            NA          NA           NA</span></span>
+<span><span class="co">#&gt; ...                   ...           ...         ...          ...</span></span>
+<span><span class="co">#&gt; 1384                   NA            NA          NA           NA</span></span>
+<span><span class="co">#&gt; 1385                   NA            NA          NA           NA</span></span>
+<span><span class="co">#&gt; 1386                   NA            NA          NA           NA</span></span>
+<span><span class="co">#&gt; 1387                   NA            NA          NA           NA</span></span>
+<span><span class="co">#&gt; 1388                   NA            NA          NA           NA</span></span>
+<span><span class="co">#&gt;      Reporter.fraction Potential.contaminant</span></span>
+<span><span class="co">#&gt;              &lt;logical&gt;           &lt;character&gt;</span></span>
+<span><span class="co">#&gt; 1                   NA                      </span></span>
+<span><span class="co">#&gt; 2                   NA                      </span></span>
+<span><span class="co">#&gt; 3                   NA                      </span></span>
+<span><span class="co">#&gt; 4                   NA                      </span></span>
+<span><span class="co">#&gt; 5                   NA                      </span></span>
+<span><span class="co">#&gt; ...                ...                   ...</span></span>
+<span><span class="co">#&gt; 1384                NA                     +</span></span>
+<span><span class="co">#&gt; 1385                NA                     +</span></span>
+<span><span class="co">#&gt; 1386                NA                     +</span></span>
+<span><span class="co">#&gt; 1387                NA                     +</span></span>
+<span><span class="co">#&gt; 1388                NA                     +</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="sample-metadata">Sample metadata<a class="anchor" aria-label="anchor" href="#sample-metadata"></a>
+</h3>
+<p>The sample metadata is retrieved using <code>colData</code> on the
+<code>QFeatures</code> object.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">colData</span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; DataFrame with 38 rows and 7 columns</span></span>
+<span><span class="co">#&gt;                                             Set     Channel SampleAnnotation</span></span>
+<span><span class="co">#&gt;                                     &lt;character&gt; &lt;character&gt;      &lt;character&gt;</span></span>
+<span><span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI1         190222S_LC...         RI1    carrier_mi...</span></span>
+<span><span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI2         190222S_LC...         RI2             norm</span></span>
+<span><span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI3         190222S_LC...         RI3           unused</span></span>
+<span><span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI4         190222S_LC...         RI4             sc_u</span></span>
+<span><span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI5         190222S_LC...         RI5             sc_0</span></span>
+<span><span class="co">#&gt; ...                                         ...         ...              ...</span></span>
+<span><span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI12 190914S_LC...        RI12            sc_m0</span></span>
+<span><span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI13 190914S_LC...        RI13            sc_m0</span></span>
+<span><span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI14 190914S_LC...        RI14            sc_m0</span></span>
+<span><span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI15 190914S_LC...        RI15            sc_m0</span></span>
+<span><span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI16 190914S_LC...        RI16            sc_m0</span></span>
+<span><span class="co">#&gt;                                    SampleType     lcbatch     sortday</span></span>
+<span><span class="co">#&gt;                                   &lt;character&gt; &lt;character&gt; &lt;character&gt;</span></span>
+<span><span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI1             Carrier        LCA9          s8</span></span>
+<span><span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI2           Reference        LCA9          s8</span></span>
+<span><span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI3              Unused        LCA9          s8</span></span>
+<span><span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI4            Monocyte        LCA9          s8</span></span>
+<span><span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI5               Blank        LCA9          s8</span></span>
+<span><span class="co">#&gt; ...                                       ...         ...         ...</span></span>
+<span><span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI12  Macrophage        LCB3          s9</span></span>
+<span><span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI13  Macrophage        LCB3          s9</span></span>
+<span><span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI14  Macrophage        LCB3          s9</span></span>
+<span><span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI15  Macrophage        LCB3          s9</span></span>
+<span><span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI16  Macrophage        LCB3          s9</span></span>
+<span><span class="co">#&gt;                                        digest</span></span>
+<span><span class="co">#&gt;                                   &lt;character&gt;</span></span>
+<span><span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI1                   N</span></span>
+<span><span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI2                   N</span></span>
+<span><span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI3                   N</span></span>
+<span><span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI4                   N</span></span>
+<span><span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI5                   N</span></span>
+<span><span class="co">#&gt; ...                                       ...</span></span>
+<span><span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI12           R</span></span>
+<span><span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI13           R</span></span>
+<span><span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI14           R</span></span>
+<span><span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI15           R</span></span>
+<span><span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI16           R</span></span></code></pre></div>
+<p>Note that you can easily access a <code>colData</code> column using
+the <code>$</code> operator. See here how we extract the sample types
+from the <code>colData</code>.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">scp1</span><span class="op">$</span><span class="va">SampleType</span></span>
+<span><span class="co">#&gt;  [1] "Carrier"    "Reference"  "Unused"     "Monocyte"   "Blank"     </span></span>
+<span><span class="co">#&gt;  [6] "Monocyte"   "Macrophage" "Macrophage" "Macrophage" "Macrophage"</span></span>
+<span><span class="co">#&gt; [11] "Macrophage" "Carrier"    "Reference"  "Unused"     "Macrophage"</span></span>
+<span><span class="co">#&gt; [16] "Monocyte"   "Macrophage" "Macrophage" "Macrophage" "Macrophage"</span></span>
+<span><span class="co">#&gt; [21] "Macrophage" "Macrophage" "Carrier"    "Reference"  "Unused"    </span></span>
+<span><span class="co">#&gt; [26] "Unused"     "Macrophage" "Macrophage" "Blank"      "Monocyte"  </span></span>
+<span><span class="co">#&gt; [31] "Macrophage" "Monocyte"   "Blank"      "Macrophage" "Macrophage"</span></span>
+<span><span class="co">#&gt; [36] "Macrophage" "Macrophage" "Macrophage"</span></span></code></pre></div>
+</div>
 </div>
 <div class="section level2">
-<h2 id="sample-metadata">Sample metadata<a class="anchor" aria-label="anchor" href="#sample-metadata"></a>
+<h2 id="subsetting-the-data">Subsetting the data<a class="anchor" aria-label="anchor" href="#subsetting-the-data"></a>
 </h2>
-<p>The sample metadata is retrieved using <code>colData</code> on the <code>QFeatures</code> object.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">colData</span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span>
-<span class="co">#&gt; DataFrame with 38 rows and 7 columns</span>
-<span class="co">#&gt;                                             Set     Channel SampleAnnotation</span>
-<span class="co">#&gt;                                     &lt;character&gt; &lt;character&gt;      &lt;character&gt;</span>
-<span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI1         190222S_LC...         RI1    carrier_mi...</span>
-<span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI2         190222S_LC...         RI2             norm</span>
-<span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI3         190222S_LC...         RI3           unused</span>
-<span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI4         190222S_LC...         RI4             sc_u</span>
-<span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI5         190222S_LC...         RI5             sc_0</span>
-<span class="co">#&gt; ...                                         ...         ...              ...</span>
-<span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI12 190914S_LC...        RI12            sc_m0</span>
-<span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI13 190914S_LC...        RI13            sc_m0</span>
-<span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI14 190914S_LC...        RI14            sc_m0</span>
-<span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI15 190914S_LC...        RI15            sc_m0</span>
-<span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI16 190914S_LC...        RI16            sc_m0</span>
-<span class="co">#&gt;                                    SampleType     lcbatch     sortday</span>
-<span class="co">#&gt;                                   &lt;character&gt; &lt;character&gt; &lt;character&gt;</span>
-<span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI1             Carrier        LCA9          s8</span>
-<span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI2           Reference        LCA9          s8</span>
-<span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI3              Unused        LCA9          s8</span>
-<span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI4            Monocyte        LCA9          s8</span>
-<span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI5               Blank        LCA9          s8</span>
-<span class="co">#&gt; ...                                       ...         ...         ...</span>
-<span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI12  Macrophage        LCB3          s9</span>
-<span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI13  Macrophage        LCB3          s9</span>
-<span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI14  Macrophage        LCB3          s9</span>
-<span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI15  Macrophage        LCB3          s9</span>
-<span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI16  Macrophage        LCB3          s9</span>
-<span class="co">#&gt;                                        digest</span>
-<span class="co">#&gt;                                   &lt;character&gt;</span>
-<span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI1                   N</span>
-<span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI2                   N</span>
-<span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI3                   N</span>
-<span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI4                   N</span>
-<span class="co">#&gt; 190222S_LCA9_X_FP94BM_RI5                   N</span>
-<span class="co">#&gt; ...                                       ...</span>
-<span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI12           R</span>
-<span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI13           R</span>
-<span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI14           R</span>
-<span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI15           R</span>
-<span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI16           R</span></code></pre></div>
-<p>Note that you can easily access a <code>colData</code> column using the <code>$</code> operator. See here how we extract the sample types from the <code>colData</code>.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">scp1</span><span class="op">$</span><span class="va">SampleType</span>
-<span class="co">#&gt;  [1] "Carrier"    "Reference"  "Unused"     "Monocyte"   "Blank"     </span>
-<span class="co">#&gt;  [6] "Monocyte"   "Macrophage" "Macrophage" "Macrophage" "Macrophage"</span>
-<span class="co">#&gt; [11] "Macrophage" "Carrier"    "Reference"  "Unused"     "Macrophage"</span>
-<span class="co">#&gt; [16] "Monocyte"   "Macrophage" "Macrophage" "Macrophage" "Macrophage"</span>
-<span class="co">#&gt; [21] "Macrophage" "Macrophage" "Carrier"    "Reference"  "Unused"    </span>
-<span class="co">#&gt; [26] "Unused"     "Macrophage" "Macrophage" "Blank"      "Monocyte"  </span>
-<span class="co">#&gt; [31] "Macrophage" "Monocyte"   "Blank"      "Macrophage" "Macrophage"</span>
-<span class="co">#&gt; [36] "Macrophage" "Macrophage" "Macrophage"</span></code></pre></div>
-</div>
-</div>
-<div class="section level1">
-<h1 id="subsetting-the-data">Subsetting the data<a class="anchor" aria-label="anchor" href="#subsetting-the-data"></a>
-</h1>
 <p>There are three dimensions we want to subset for:</p>
 <ul>
 <li>Assays</li>
 <li>Samples</li>
 <li>Features</li>
 </ul>
-<p>Therefore, <code>QFeatures</code> support a three-index subsetting. This is performed through the simple bracket method <code>[feature, sample, assay]</code>.</p>
-<div class="section level2">
-<h2 id="subset-assays">Subset assays<a class="anchor" aria-label="anchor" href="#subset-assays"></a>
-</h2>
-<p>Suppose that we want to focus only on the first MS batch (<code>190321S_LCA10_X_FP97AG</code>) for separate processing of the data. Subsetting the <code>QFeatures</code> object for that assay is simply:</p>
+<p>Therefore, <code>QFeatures</code> support a three-index subsetting.
+This is performed through the simple bracket method
+<code>[feature, sample, assay]</code>.</p>
+<div class="section level3">
+<h3 id="subset-assays">Subset assays<a class="anchor" aria-label="anchor" href="#subset-assays"></a>
+</h3>
+<p>Suppose that we want to focus only on the first MS batch
+(<code>190321S_LCA10_X_FP97AG</code>) for separate processing of the
+data. Subsetting the <code>QFeatures</code> object for that assay is
+simply:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">scp1</span><span class="op">[</span>, , <span class="st">"190321S_LCA10_X_FP97AG"</span><span class="op">]</span>
-<span class="co">#&gt; Warning: 'experiments' dropped; see 'metadata'</span>
-<span class="co">#&gt; harmonizing input:</span>
-<span class="co">#&gt;   removing 103 sampleMap rows not in names(experiments)</span>
-<span class="co">#&gt;   removing 27 colData rownames not in sampleMap 'primary'</span>
-<span class="co">#&gt; An instance of class QFeatures containing 1 assays:</span>
-<span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 11 columns</span></code></pre></div>
-<p>An alternative that results in exactly the same output is using the <code>subsetByAssay</code> method.</p>
+<code class="sourceCode R"><span><span class="va">scp1</span><span class="op">[</span>, , <span class="st">"190321S_LCA10_X_FP97AG"</span><span class="op">]</span></span>
+<span><span class="co">#&gt; Warning: 'experiments' dropped; see 'metadata'</span></span>
+<span><span class="co">#&gt; harmonizing input:</span></span>
+<span><span class="co">#&gt;   removing 103 sampleMap rows not in names(experiments)</span></span>
+<span><span class="co">#&gt;   removing 27 colData rownames not in sampleMap 'primary'</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures containing 1 assays:</span></span>
+<span><span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 11 columns</span></span></code></pre></div>
+<p>An alternative that results in exactly the same output is using the
+<code>subsetByAssay</code> method.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">subsetByAssay</span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"190321S_LCA10_X_FP97AG"</span><span class="op">)</span>
-<span class="co">#&gt; Warning: 'experiments' dropped; see 'metadata'</span>
-<span class="co">#&gt; harmonizing input:</span>
-<span class="co">#&gt;   removing 103 sampleMap rows not in names(experiments)</span>
-<span class="co">#&gt;   removing 27 colData rownames not in sampleMap 'primary'</span>
-<span class="co">#&gt; An instance of class QFeatures containing 1 assays:</span>
-<span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 11 columns</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">subsetByAssay</span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"190321S_LCA10_X_FP97AG"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: 'experiments' dropped; see 'metadata'</span></span>
+<span><span class="co">#&gt; harmonizing input:</span></span>
+<span><span class="co">#&gt;   removing 103 sampleMap rows not in names(experiments)</span></span>
+<span><span class="co">#&gt;   removing 27 colData rownames not in sampleMap 'primary'</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures containing 1 assays:</span></span>
+<span><span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 11 columns</span></span></code></pre></div>
 </div>
-<div class="section level2">
-<h2 id="subset-samples">Subset samples<a class="anchor" aria-label="anchor" href="#subset-samples"></a>
-</h2>
-<p>Subsetting samples is often performed after sample QC where we want to keep only quality samples and sample of interest. In our example, the different samples are either technical controls or single-cells (macrophages and monocytes). Suppose we are only interested in macrophages, we can subset the data as follows:</p>
+<div class="section level3">
+<h3 id="subset-samples">Subset samples<a class="anchor" aria-label="anchor" href="#subset-samples"></a>
+</h3>
+<p>Subsetting samples is often performed after sample QC where we want
+to keep only quality samples and sample of interest. In our example, the
+different samples are either technical controls or single-cells
+(macrophages and monocytes). Suppose we are only interested in
+macrophages, we can subset the data as follows:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">scp1</span><span class="op">[</span>, <span class="va">scp1</span><span class="op">$</span><span class="va">SampleType</span> <span class="op">==</span> <span class="st">"Macrophage"</span>, <span class="op">]</span>
-<span class="co">#&gt; An instance of class QFeatures containing 5 assays:</span>
-<span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 7 columns </span>
-<span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 176 rows and 5 columns </span>
-<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 215 rows and 8 columns </span>
-<span class="co">#&gt;  [4] peptides: SingleCellExperiment with 539 rows and 20 columns </span>
-<span class="co">#&gt;  [5] proteins: SingleCellExperiment with 292 rows and 20 columns</span></code></pre></div>
-<p>An alternative that results in exactly the same output is using the <code>subsetByColData</code> method.</p>
+<code class="sourceCode R"><span><span class="va">scp1</span><span class="op">[</span>, <span class="va">scp1</span><span class="op">$</span><span class="va">SampleType</span> <span class="op">==</span> <span class="st">"Macrophage"</span>, <span class="op">]</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures containing 5 assays:</span></span>
+<span><span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 7 columns </span></span>
+<span><span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 176 rows and 5 columns </span></span>
+<span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 215 rows and 8 columns </span></span>
+<span><span class="co">#&gt;  [4] peptides: SingleCellExperiment with 539 rows and 20 columns </span></span>
+<span><span class="co">#&gt;  [5] proteins: SingleCellExperiment with 292 rows and 20 columns</span></span></code></pre></div>
+<p>An alternative that results in exactly the same output is using the
+<code>subsetByColData</code> method.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">subsetByColData</span><span class="op">(</span><span class="va">scp1</span>, <span class="va">scp1</span><span class="op">$</span><span class="va">SampleType</span> <span class="op">==</span> <span class="st">"Macrophage"</span><span class="op">)</span>
-<span class="co">#&gt; An instance of class QFeatures containing 5 assays:</span>
-<span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 7 columns </span>
-<span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 176 rows and 5 columns </span>
-<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 215 rows and 8 columns </span>
-<span class="co">#&gt;  [4] peptides: SingleCellExperiment with 539 rows and 20 columns </span>
-<span class="co">#&gt;  [5] proteins: SingleCellExperiment with 292 rows and 20 columns</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">subsetByColData</span><span class="op">(</span><span class="va">scp1</span>, <span class="va">scp1</span><span class="op">$</span><span class="va">SampleType</span> <span class="op">==</span> <span class="st">"Macrophage"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures containing 5 assays:</span></span>
+<span><span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 7 columns </span></span>
+<span><span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 176 rows and 5 columns </span></span>
+<span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 215 rows and 8 columns </span></span>
+<span><span class="co">#&gt;  [4] peptides: SingleCellExperiment with 539 rows and 20 columns </span></span>
+<span><span class="co">#&gt;  [5] proteins: SingleCellExperiment with 292 rows and 20 columns</span></span></code></pre></div>
 </div>
-<div class="section level2">
-<h2 id="subset-features">Subset features<a class="anchor" aria-label="anchor" href="#subset-features"></a>
-</h2>
-<p>Subsetting for features does more than simply subsetting for the features of interest, it will also take the features that are linked to that feature. Here is an example, suppose we are interested in the <code>Q02878</code> protein.</p>
+<div class="section level3">
+<h3 id="subset-features">Subset features<a class="anchor" aria-label="anchor" href="#subset-features"></a>
+</h3>
+<p>Subsetting for features does more than simply subsetting for the
+features of interest, it will also take the features that are linked to
+that feature. Here is an example, suppose we are interested in the
+<code>Q02878</code> protein.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">scp1</span><span class="op">[</span><span class="st">"Q02878"</span>, , <span class="op">]</span>
-<span class="co">#&gt; An instance of class QFeatures containing 5 assays:</span>
-<span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 9 rows and 11 columns </span>
-<span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 10 rows and 11 columns </span>
-<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 0 rows and 16 columns </span>
-<span class="co">#&gt;  [4] peptides: SingleCellExperiment with 11 rows and 38 columns </span>
-<span class="co">#&gt;  [5] proteins: SingleCellExperiment with 1 rows and 38 columns</span></code></pre></div>
-<p>You can see it indeed retrieved that protein from the <code>proteins</code> assay, but it also retrieved 11 associated peptides in the <code>peptides</code> assay and 19 associated PSMs in 2 different MS runs.</p>
-<p>An alternative that results in exactly the same output is using the <code>subsetByColData</code> method.</p>
+<code class="sourceCode R"><span><span class="va">scp1</span><span class="op">[</span><span class="st">"Q02878"</span>, , <span class="op">]</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures containing 5 assays:</span></span>
+<span><span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 9 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 10 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 0 rows and 16 columns </span></span>
+<span><span class="co">#&gt;  [4] peptides: SingleCellExperiment with 11 rows and 38 columns </span></span>
+<span><span class="co">#&gt;  [5] proteins: SingleCellExperiment with 1 rows and 38 columns</span></span></code></pre></div>
+<p>You can see it indeed retrieved that protein from the
+<code>proteins</code> assay, but it also retrieved 11 associated
+peptides in the <code>peptides</code> assay and 19 associated PSMs in 2
+different MS runs.</p>
+<p>An alternative that results in exactly the same output is using the
+<code>subsetByColData</code> method.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-subsetBy.html" class="external-link">subsetByFeature</a></span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"Q02878"</span><span class="op">)</span>
-<span class="co">#&gt; An instance of class QFeatures containing 5 assays:</span>
-<span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 9 rows and 11 columns </span>
-<span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 10 rows and 11 columns </span>
-<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 0 rows and 16 columns </span>
-<span class="co">#&gt;  [4] peptides: SingleCellExperiment with 11 rows and 38 columns </span>
-<span class="co">#&gt;  [5] proteins: SingleCellExperiment with 1 rows and 38 columns</span></code></pre></div>
-<p>You can also subset features based on the <code>rowData</code>. This is performed by <code>filterFeatures</code>. For example, we want to remove features that are associated to reverse sequence hits.</p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-subsetBy.html" class="external-link">subsetByFeature</a></span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"Q02878"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures containing 5 assays:</span></span>
+<span><span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 9 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 10 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 0 rows and 16 columns </span></span>
+<span><span class="co">#&gt;  [4] peptides: SingleCellExperiment with 11 rows and 38 columns </span></span>
+<span><span class="co">#&gt;  [5] proteins: SingleCellExperiment with 1 rows and 38 columns</span></span></code></pre></div>
+<p>You can also subset features based on the <code>rowData</code>. This
+is performed by <code>filterFeatures</code>. For example, we want to
+remove features that are associated to reverse sequence hits.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-filtering.html" class="external-link">filterFeatures</a></span><span class="op">(</span><span class="va">scp1</span>, <span class="op">~</span> <span class="va">Reverse</span> <span class="op">!=</span> <span class="st">"+"</span><span class="op">)</span>
-<span class="co">#&gt; An instance of class QFeatures containing 5 assays:</span>
-<span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 126 rows and 11 columns </span>
-<span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 132 rows and 11 columns </span>
-<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 176 rows and 16 columns </span>
-<span class="co">#&gt;  [4] peptides: SingleCellExperiment with 422 rows and 38 columns </span>
-<span class="co">#&gt;  [5] proteins: SingleCellExperiment with 0 rows and 38 columns</span></code></pre></div>
-<p>Note however that if an assay is missing the variable that is used to filter the data (in this case the <code>proteins</code> assay), then all features for that assay are removed.</p>
-<p>You can also subset the data based on the feature missingness using <code>filterNA</code>. In this example, we filter out proteins with more than 70 % missing data.</p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-filtering.html" class="external-link">filterFeatures</a></span><span class="op">(</span><span class="va">scp1</span>, <span class="op">~</span> <span class="va">Reverse</span> <span class="op">!=</span> <span class="st">"+"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; 'Reverse' found in 4 out of 5 assay(s)</span></span>
+<span><span class="co">#&gt; No filter applied to the following assay(s) because one or more missing filtering variables are missing in the rowData: proteins.</span></span>
+<span><span class="co">#&gt; You can control whether to remove or keep the features using the 'keep' argument (see '?filterFeature').</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures containing 5 assays:</span></span>
+<span><span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 126 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 132 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 176 rows and 16 columns </span></span>
+<span><span class="co">#&gt;  [4] peptides: SingleCellExperiment with 422 rows and 38 columns </span></span>
+<span><span class="co">#&gt;  [5] proteins: SingleCellExperiment with 0 rows and 38 columns</span></span></code></pre></div>
+<p>Note however that if an assay is missing the variable that is used to
+filter the data (in this case the <code>proteins</code> assay), then all
+features for that assay are removed.</p>
+<p>You can also subset the data based on the feature missingness using
+<code>filterNA</code>. In this example, we filter out proteins with more
+than 70 % missing data.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-missing-data.html" class="external-link">filterNA</a></span><span class="op">(</span><span class="va">scp1</span>, i <span class="op">=</span> <span class="st">"proteins"</span>, pNA <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span>
-<span class="co">#&gt; An instance of class QFeatures containing 5 assays:</span>
-<span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 11 columns </span>
-<span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 176 rows and 11 columns </span>
-<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 215 rows and 16 columns </span>
-<span class="co">#&gt;  [4] peptides: SingleCellExperiment with 539 rows and 38 columns </span>
-<span class="co">#&gt;  [5] proteins: SingleCellExperiment with 105 rows and 38 columns</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">filterNA</a></span><span class="op">(</span><span class="va">scp1</span>, i <span class="op">=</span> <span class="st">"proteins"</span>, pNA <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures containing 5 assays:</span></span>
+<span><span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 176 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 215 rows and 16 columns </span></span>
+<span><span class="co">#&gt;  [4] peptides: SingleCellExperiment with 539 rows and 38 columns </span></span>
+<span><span class="co">#&gt;  [5] proteins: SingleCellExperiment with 105 rows and 38 columns</span></span></code></pre></div>
 </div>
 </div>
-<div class="section level1">
-<h1 id="common-processing-steps">Common processing steps<a class="anchor" aria-label="anchor" href="#common-processing-steps"></a>
-</h1>
-<p>We here provide a list of common processing steps that are encountered in single-cell proteomics data processing and that are already available in the <code>QFeatures</code> package.</p>
-<p>All functions below require the user to select one or more assays from the <code>QFeatures</code> object. This is passed through the <code>i</code> argument. Note that some datasets may contain hundreds of assays and providing the assay selection manually can become cumbersome. We therefore suggest the user to use regular expression (aka regex) to chose from the <code><a href="https://rdrr.io/r/base/names.html" class="external-link">names()</a></code> of the <code>QFeautres</code> object. A detailed cheatsheet about regex in R can be found <a href="https://rstudio-pubs-static.s3.amazonaws.com/74603_76cd14d5983f47408fdf0b323550b846.html" class="external-link">here</a>.</p>
 <div class="section level2">
-<h2 id="missing-data-assignment">Missing data assignment<a class="anchor" aria-label="anchor" href="#missing-data-assignment"></a>
+<h2 id="common-processing-steps">Common processing steps<a class="anchor" aria-label="anchor" href="#common-processing-steps"></a>
 </h2>
-<p>It often occurs that in MS experiements, 0 values are not true zeros but rather signal that is too weak to be detected. Therefore, it is advised to consider 0 values as missing data (<code>NA</code>). You can use <code>zeroIsNa</code> to automatically convert 0 values to <code>NA</code> in assays of interest. For instance, we here replace missing data in the <code>peptides</code> assay.</p>
+<p>We here provide a list of common processing steps that are
+encountered in single-cell proteomics data processing and that are
+already available in the <code>QFeatures</code> package.</p>
+<p>All functions below require the user to select one or more assays
+from the <code>QFeatures</code> object. This is passed through the
+<code>i</code> argument. Note that some datasets may contain hundreds of
+assays and providing the assay selection manually can become cumbersome.
+We therefore suggest the user to use regular expression (aka regex) to
+chose from the <code><a href="https://rdrr.io/r/base/names.html" class="external-link">names()</a></code> of the <code>QFeautres</code>
+object. A detailed cheatsheet about regex in R can be found <a href="https://rstudio-pubs-static.s3.amazonaws.com/74603_76cd14d5983f47408fdf0b323550b846.html" class="external-link">here</a>.</p>
+<div class="section level3">
+<h3 id="missing-data-assignment">Missing data assignment<a class="anchor" aria-label="anchor" href="#missing-data-assignment"></a>
+</h3>
+<p>It often occurs that in MS experiements, 0 values are not true zeros
+but rather signal that is too weak to be detected. Therefore, it is
+advised to consider 0 values as missing data (<code>NA</code>). You can
+use <code>zeroIsNa</code> to automatically convert 0 values to
+<code>NA</code> in assays of interest. For instance, we here replace
+missing data in the <code>peptides</code> assay.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"peptides"</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; FALSE  TRUE </span>
-<span class="co">#&gt;  5611  1509</span>
-<span class="va">scp1</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-missing-data.html" class="external-link">zeroIsNA</a></span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"peptides"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"peptides"</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; FALSE </span>
-<span class="co">#&gt;  5611</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"peptides"</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; FALSE  TRUE </span></span>
+<span><span class="co">#&gt;  5611  1509</span></span>
+<span><span class="va">scp1</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-missing-data.html" class="external-link">zeroIsNA</a></span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"peptides"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"peptides"</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; FALSE </span></span>
+<span><span class="co">#&gt;  5611</span></span></code></pre></div>
 </div>
-<div class="section level2">
-<h2 id="feature-aggregation">Feature aggregation<a class="anchor" aria-label="anchor" href="#feature-aggregation"></a>
-</h2>
-<p>Shotgun proteomics analyses, bulk as well as single-cell, acquire and quantify peptides. However, biological inference is often performed at protein level. Protein quantitations can be estimated through feature aggregation. This is performed by <code>aggregateFeatures</code>, a function that takes an assay from the <code>Qfeatures</code> object and that aggregates its features with respect to a grouping variable in the <code>rowData</code> (<code>fcol</code>) and an aggregation function.</p>
+<div class="section level3">
+<h3 id="feature-aggregation">Feature aggregation<a class="anchor" aria-label="anchor" href="#feature-aggregation"></a>
+</h3>
+<p>Shotgun proteomics analyses, bulk as well as single-cell, acquire and
+quantify peptides. However, biological inference is often performed at
+protein level. Protein quantitations can be estimated through feature
+aggregation. This is performed by <code>aggregateFeatures</code>, a
+function that takes an assay from the <code>Qfeatures</code> object and
+that aggregates its features with respect to a grouping variable in the
+<code>rowData</code> (<code>fcol</code>) and an aggregation
+function.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-aggregate.html" class="external-link">aggregateFeatures</a></span><span class="op">(</span><span class="va">scp1</span>, i <span class="op">=</span> <span class="st">"190321S_LCA10_X_FP97AG"</span>, fcol <span class="op">=</span> <span class="st">"protein"</span>,
-                  name <span class="op">=</span> <span class="st">"190321S_LCA10_X_FP97AG_aggr"</span>, 
-                  fun <span class="op">=</span> <span class="fu">MsCoreUtils</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MsCoreUtils/man/robustSummary.html" class="external-link">robustSummary</a></span><span class="op">)</span>
-<span class="co">#&gt; Your row data contain missing values. Please read the relevant</span>
-<span class="co">#&gt; section(s) in the aggregateFeatures manual page regarding the effects</span>
-<span class="co">#&gt; of missing values on data aggregation.</span>
-<span class="co">#&gt; Warning in rlm.default(X, expression, ...): 'rlm' failed to converge in 20 steps</span>
-<span class="co">#&gt; An instance of class QFeatures containing 6 assays:</span>
-<span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 11 columns </span>
-<span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 176 rows and 11 columns </span>
-<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 215 rows and 16 columns </span>
-<span class="co">#&gt;  [4] peptides: SingleCellExperiment with 539 rows and 38 columns </span>
-<span class="co">#&gt;  [5] proteins: SingleCellExperiment with 292 rows and 38 columns </span>
-<span class="co">#&gt;  [6] 190321S_LCA10_X_FP97AG_aggr: SingleCellExperiment with 100 rows and 11 columns</span></code></pre></div>
-<p>You can see that the aggregated function is added as a new assay to the <code>QFeatures</code> object. Note also that, under the hood, <code>aggregateFeatures</code> keeps track of the relationship between the features of the newly aggregated assay and its parent.</p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">aggregateFeatures</a></span><span class="op">(</span><span class="va">scp1</span>, i <span class="op">=</span> <span class="st">"190321S_LCA10_X_FP97AG"</span>, fcol <span class="op">=</span> <span class="st">"protein"</span>,</span>
+<span>                  name <span class="op">=</span> <span class="st">"190321S_LCA10_X_FP97AG_aggr"</span>, </span>
+<span>                  fun <span class="op">=</span> <span class="fu">MsCoreUtils</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MsCoreUtils/man/robustSummary.html" class="external-link">robustSummary</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Your row data contain missing values. Please read the relevant</span></span>
+<span><span class="co">#&gt; section(s) in the aggregateFeatures manual page regarding the effects</span></span>
+<span><span class="co">#&gt; of missing values on data aggregation.</span></span>
+<span><span class="co">#&gt; Warning in rlm.default(X, expression, ...): 'rlm' failed to converge in 20 steps</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures containing 6 assays:</span></span>
+<span><span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 176 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 215 rows and 16 columns </span></span>
+<span><span class="co">#&gt;  [4] peptides: SingleCellExperiment with 539 rows and 38 columns </span></span>
+<span><span class="co">#&gt;  [5] proteins: SingleCellExperiment with 292 rows and 38 columns </span></span>
+<span><span class="co">#&gt;  [6] 190321S_LCA10_X_FP97AG_aggr: SingleCellExperiment with 100 rows and 11 columns</span></span></code></pre></div>
+<p>You can see that the aggregated function is added as a new assay to
+the <code>QFeatures</code> object. Note also that, under the hood,
+<code>aggregateFeatures</code> keeps track of the relationship between
+the features of the newly aggregated assay and its parent.</p>
 </div>
-<div class="section level2">
-<h2 id="normalization">Normalization<a class="anchor" aria-label="anchor" href="#normalization"></a>
-</h2>
-<p>An ubiquituous step that is performed in biological data analysis is normalization that is meant to remove undesired variability and to make different samples comparable. The <code>normalize</code> function offers an interface to a wide variety of normalization methods. See <code><a href="https://rdrr.io/pkg/MsCoreUtils/man/normalize.html" class="external-link">?MsCoreUtils::normalize_matrix</a></code> for more details about the available normalization methods. Below, we normalize the samples so that they are mean centered.</p>
+<div class="section level3">
+<h3 id="normalization">Normalization<a class="anchor" aria-label="anchor" href="#normalization"></a>
+</h3>
+<p>An ubiquituous step that is performed in biological data analysis is
+normalization that is meant to remove undesired variability and to make
+different samples comparable. The <code>normalize</code> function offers
+an interface to a wide variety of normalization methods. See
+<code><a href="https://rdrr.io/pkg/MsCoreUtils/man/normalize.html" class="external-link">?MsCoreUtils::normalize_matrix</a></code> for more details about the
+available normalization methods. Below, we normalize the samples so that
+they are mean centered.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-processing.html" class="external-link">normalize</a></span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"proteins"</span>, method <span class="op">=</span> <span class="st">"center.mean"</span>, 
-          name <span class="op">=</span> <span class="st">"proteins_mcenter"</span><span class="op">)</span>
-<span class="co">#&gt; An instance of class QFeatures containing 6 assays:</span>
-<span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 11 columns </span>
-<span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 176 rows and 11 columns </span>
-<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 215 rows and 16 columns </span>
-<span class="co">#&gt;  [4] peptides: SingleCellExperiment with 539 rows and 38 columns </span>
-<span class="co">#&gt;  [5] proteins: SingleCellExperiment with 292 rows and 38 columns </span>
-<span class="co">#&gt;  [6] proteins_mcenter: SingleCellExperiment with 292 rows and 38 columns</span></code></pre></div>
-<p>Other custom normalization can be applied using the <code>sweep</code> method, where normalization factors have to be supplied manually. As an example, we here normalize the samples using a scaled size factor.</p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/normalize.html" class="external-link">normalize</a></span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"proteins"</span>, method <span class="op">=</span> <span class="st">"center.mean"</span>, </span>
+<span>          name <span class="op">=</span> <span class="st">"proteins_mcenter"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures containing 6 assays:</span></span>
+<span><span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 176 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 215 rows and 16 columns </span></span>
+<span><span class="co">#&gt;  [4] peptides: SingleCellExperiment with 539 rows and 38 columns </span></span>
+<span><span class="co">#&gt;  [5] proteins: SingleCellExperiment with 292 rows and 38 columns </span></span>
+<span><span class="co">#&gt;  [6] proteins_mcenter: SingleCellExperiment with 292 rows and 38 columns</span></span></code></pre></div>
+<p>Other custom normalization can be applied using the
+<code>sweep</code> method, where normalization factors have to be
+supplied manually. As an example, we here normalize the samples using a
+scaled size factor.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">sf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"proteins"</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">/</span> <span class="fl">1E4</span>
-<span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-processing.html" class="external-link">sweep</a></span><span class="op">(</span><span class="va">scp1</span>, i <span class="op">=</span> <span class="st">"proteins"</span>, 
-      MARGIN <span class="op">=</span> <span class="fl">2</span>, <span class="co">## 1 = by feature; 2 = by sample</span>
-      STATS <span class="op">=</span> <span class="va">sf</span>, FUN <span class="op">=</span> <span class="st">"/"</span>,
-      name <span class="op">=</span> <span class="st">"proteins_sf"</span><span class="op">)</span>
-<span class="co">#&gt; An instance of class QFeatures containing 6 assays:</span>
-<span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 11 columns </span>
-<span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 176 rows and 11 columns </span>
-<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 215 rows and 16 columns </span>
-<span class="co">#&gt;  [4] peptides: SingleCellExperiment with 539 rows and 38 columns </span>
-<span class="co">#&gt;  [5] proteins: SingleCellExperiment with 292 rows and 38 columns </span>
-<span class="co">#&gt;  [6] proteins_sf: SingleCellExperiment with 292 rows and 38 columns</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">sf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"proteins"</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">/</span> <span class="fl">1E4</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-processing.html" class="external-link">sweep</a></span><span class="op">(</span><span class="va">scp1</span>, i <span class="op">=</span> <span class="st">"proteins"</span>, </span>
+<span>      MARGIN <span class="op">=</span> <span class="fl">2</span>, <span class="co">## 1 = by feature; 2 = by sample</span></span>
+<span>      STATS <span class="op">=</span> <span class="va">sf</span>, FUN <span class="op">=</span> <span class="st">"/"</span>,</span>
+<span>      name <span class="op">=</span> <span class="st">"proteins_sf"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures containing 6 assays:</span></span>
+<span><span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 176 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 215 rows and 16 columns </span></span>
+<span><span class="co">#&gt;  [4] peptides: SingleCellExperiment with 539 rows and 38 columns </span></span>
+<span><span class="co">#&gt;  [5] proteins: SingleCellExperiment with 292 rows and 38 columns </span></span>
+<span><span class="co">#&gt;  [6] proteins_sf: SingleCellExperiment with 292 rows and 38 columns</span></span></code></pre></div>
 </div>
-<div class="section level2">
-<h2 id="log-transformation">Log transformation<a class="anchor" aria-label="anchor" href="#log-transformation"></a>
-</h2>
-<p>The <code>QFeatures</code> package also provide the <code>logTransform</code> function to facilitate the transformation of the quantitative data. We here show its usage by transforming the protein data using a base 2 logarithm with a pseudo-count of one.</p>
+<div class="section level3">
+<h3 id="log-transformation">Log transformation<a class="anchor" aria-label="anchor" href="#log-transformation"></a>
+</h3>
+<p>The <code>QFeatures</code> package also provide the
+<code>logTransform</code> function to facilitate the transformation of
+the quantitative data. We here show its usage by transforming the
+protein data using a base 2 logarithm with a pseudo-count of one.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-processing.html" class="external-link">logTransform</a></span><span class="op">(</span><span class="va">scp1</span>, i <span class="op">=</span> <span class="st">"proteins"</span>, base <span class="op">=</span> <span class="fl">2</span>, pc <span class="op">=</span> <span class="fl">1</span>, 
-             name <span class="op">=</span> <span class="st">"proteins_log"</span><span class="op">)</span>
-<span class="co">#&gt; An instance of class QFeatures containing 6 assays:</span>
-<span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 11 columns </span>
-<span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 176 rows and 11 columns </span>
-<span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 215 rows and 16 columns </span>
-<span class="co">#&gt;  [4] peptides: SingleCellExperiment with 539 rows and 38 columns </span>
-<span class="co">#&gt;  [5] proteins: SingleCellExperiment with 292 rows and 38 columns </span>
-<span class="co">#&gt;  [6] proteins_log: SingleCellExperiment with 292 rows and 38 columns</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-processing.html" class="external-link">logTransform</a></span><span class="op">(</span><span class="va">scp1</span>, i <span class="op">=</span> <span class="st">"proteins"</span>, base <span class="op">=</span> <span class="fl">2</span>, pc <span class="op">=</span> <span class="fl">1</span>, </span>
+<span>             name <span class="op">=</span> <span class="st">"proteins_log"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures containing 6 assays:</span></span>
+<span><span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 176 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 215 rows and 16 columns </span></span>
+<span><span class="co">#&gt;  [4] peptides: SingleCellExperiment with 539 rows and 38 columns </span></span>
+<span><span class="co">#&gt;  [5] proteins: SingleCellExperiment with 292 rows and 38 columns </span></span>
+<span><span class="co">#&gt;  [6] proteins_log: SingleCellExperiment with 292 rows and 38 columns</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="imputation">Imputation<a class="anchor" aria-label="anchor" href="#imputation"></a>
+</h3>
+<p>Finally, <code>QFeatures</code> offers an interface to a wide variety
+of imputation methods to replace missing data by estimated values. The
+list of available methods is given by
+<code><a href="https://rdrr.io/pkg/MsCoreUtils/man/imputation.html" class="external-link">?MsCoreUtils::impute_matrix</a></code>. We demonstrate the use of this
+function by replacing missing data using KNN imputation.</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">anyNA</a></span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"proteins"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span><span class="va">scp1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">impute</a></span><span class="op">(</span><span class="va">scp1</span>, i <span class="op">=</span> <span class="st">"proteins"</span>, method <span class="op">=</span><span class="st">"knn"</span>, k <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Loading required namespace: impute</span></span>
+<span><span class="co">#&gt; Warning in knnimp(x, k, maxmiss = rowmax, maxp = maxp): 284 rows with more than 50 % entries missing;</span></span>
+<span><span class="co">#&gt;  mean imputation used for these rows</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">anyNA</a></span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"proteins"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+</div>
 </div>
 <div class="section level2">
-<h2 id="imputation">Imputation<a class="anchor" aria-label="anchor" href="#imputation"></a>
+<h2 id="data-visualization">Data visualization<a class="anchor" aria-label="anchor" href="#data-visualization"></a>
 </h2>
-<p>Finally, <code>QFeatures</code> offers an interface to a wide variety of imputation methods to replace missing data by estimated values. The list of available methods is given by <code><a href="https://rdrr.io/pkg/MsCoreUtils/man/imputation.html" class="external-link">?MsCoreUtils::impute_matrix</a></code>. We demonstrate the use of this function by replacing missing data using KNN imputation.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">anyNA</a></span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"proteins"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; [1] TRUE</span>
-<span class="va">scp1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/impute.html" class="external-link">impute</a></span><span class="op">(</span><span class="va">scp1</span>, i <span class="op">=</span> <span class="st">"proteins"</span>, method <span class="op">=</span><span class="st">"knn"</span>, k <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>
-<span class="co">#&gt; Loading required namespace: impute</span>
-<span class="co">#&gt; Warning in knnimp(x, k, maxmiss = rowmax, maxp = maxp): 284 rows with more than 50 % entries missing;</span>
-<span class="co">#&gt;  mean imputation used for these rows</span>
-<span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">anyNA</a></span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"proteins"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; [1] FALSE</span></code></pre></div>
-</div>
-</div>
-<div class="section level1">
-<h1 id="data-visualization">Data visualization<a class="anchor" aria-label="anchor" href="#data-visualization"></a>
-</h1>
-<p>Visualization of the feature and sample metadata is rather straightforward since those are stored as tables (see section <em>Accessing the data</em>). From those tables, any visualization tool can be applied. Note however that using <code>ggplot2</code> require <code>data.frame</code>s or <code>tibble</code>s but <code>rowData</code> and <code>colData</code> are stored as <code>DFrames</code> objects. You can easily convert one data format to another. For example, we plot the parental ion fraction (measure of spectral purity) for each of the three MS batches.</p>
+<p>Visualization of the feature and sample metadata is rather
+straightforward since those are stored as tables (see section
+<em>Accessing the data</em>). From those tables, any visualization tool
+can be applied. Note however that using <code>ggplot2</code> require
+<code>data.frame</code>s or <code>tibble</code>s but
+<code>rowData</code> and <code>colData</code> are stored as
+<code>DFrames</code> objects. You can easily convert one data format to
+another. For example, we plot the parental ion fraction (measure of
+spectral purity) for each of the three MS batches.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">rd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-class.html" class="external-link">rbindRowData</a></span><span class="op">(</span><span class="va">scp1</span>, i <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span> 
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">rd</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">PIF</span>, 
-        x <span class="op">=</span> <span class="va">assay</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html" class="external-link">geom_boxplot</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; Warning: Removed 64 rows containing non-finite values (stat_boxplot).</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">rd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-class.html" class="external-link">rbindRowData</a></span><span class="op">(</span><span class="va">scp1</span>, i <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span> </span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">rd</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">PIF</span>, </span>
+<span>        x <span class="op">=</span> <span class="va">assay</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html" class="external-link">geom_boxplot</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: Removed 64 rows containing non-finite values (stat_boxplot).</span></span></code></pre></div>
 <p><img src="QFeatures_nutshell_files/figure-html/vis1-1.png" width="624"></p>
-<p>Combining the metadata and the quantitative data is more challenging since the risk of data mismatch is increased. The <code>QFeatures</code> package therefore provides th <code>longFormat</code> function to transform a <code>QFeatures</code> object in a long <code>DFrame</code> table. For instance, we plot the quantitative data distribution for the first assay according to the acquisition channel index and colour with respect to the sample type. Both pieces of information are taken from the <code>colData</code>, so we provide them as <code>colvars</code>.</p>
+<p>Combining the metadata and the quantitative data is more challenging
+since the risk of data mismatch is increased. The <code>QFeatures</code>
+package therefore provides th <code>longFormat</code> function to
+transform a <code>QFeatures</code> object in a long <code>DFrame</code>
+table. For instance, we plot the quantitative data distribution for the
+first assay according to the acquisition channel index and colour with
+respect to the sample type. Both pieces of information are taken from
+the <code>colData</code>, so we provide them as
+<code>colvars</code>.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">lf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-class.html" class="external-link">longFormat</a></span><span class="op">(</span><span class="va">scp1</span><span class="op">[</span>, , <span class="fl">1</span><span class="op">]</span>, 
-                 colvars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SampleType"</span>, <span class="st">"Channel"</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; Warning: 'experiments' dropped; see 'metadata'</span>
-<span class="co">#&gt; harmonizing input:</span>
-<span class="co">#&gt;   removing 103 sampleMap rows not in names(experiments)</span>
-<span class="co">#&gt;   removing 27 colData rownames not in sampleMap 'primary'</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">lf</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Channel</span>, 
-        y <span class="op">=</span> <span class="va">value</span>,
-        colour <span class="op">=</span> <span class="va">SampleType</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html" class="external-link">geom_boxplot</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">lf</span> <span class="op">&lt;-</span> <span class="fu">longFormat</span><span class="op">(</span><span class="va">scp1</span><span class="op">[</span>, , <span class="fl">1</span><span class="op">]</span>, </span>
+<span>                 colvars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SampleType"</span>, <span class="st">"Channel"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: 'experiments' dropped; see 'metadata'</span></span>
+<span><span class="co">#&gt; harmonizing input:</span></span>
+<span><span class="co">#&gt;   removing 141 sampleMap rows not in names(experiments)</span></span>
+<span><span class="co">#&gt;   removing 27 colData rownames not in sampleMap 'primary'</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">lf</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Channel</span>, </span>
+<span>        y <span class="op">=</span> <span class="va">value</span>,</span>
+<span>        colour <span class="op">=</span> <span class="va">SampleType</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html" class="external-link">geom_boxplot</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><img src="QFeatures_nutshell_files/figure-html/longFormat-1.png" width="700"></p>
-<p>A more in-depth tutorial about data visualization from a <code>QFeatures</code> object is provided in the <code>QFeautres</code> visualization <a href="https://rformassspectrometry.github.io/QFeatures/articles/Visualization.html" class="external-link">vignette</a>.</p>
+<p>A more in-depth tutorial about data visualization from a
+<code>QFeatures</code> object is provided in the <code>QFeautres</code>
+visualization <a href="https://rformassspectrometry.github.io/QFeatures/articles/Visualization.html" class="external-link">vignette</a>.</p>
 </div>
-<div class="section level1 unnumbered">
-<h1 class="unnumbered" id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
-</h1>
-<pre><code>R Under development (unstable) (2021-11-11 r81177)
+<div class="section level2">
+<h2 class="unnumbered" id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
+</h2>
+<pre><code>R version 4.2.1 (2022-06-23)
 Platform: x86_64-pc-linux-gnu (64-bit)
-Running under: Ubuntu 20.04.3 LTS
+Running under: Ubuntu 20.04.5 LTS
 
 Matrix products: default
-BLAS/LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.8.so
+BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3
+LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/liblapack.so.3
 
 locale:
  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
- [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=C             
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
 [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
@@ -589,55 +702,61 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] ggplot2_3.3.5               scp_1.5.1                  
- [3] QFeatures_1.5.1             MultiAssayExperiment_1.21.2
- [5] SummarizedExperiment_1.25.2 Biobase_2.55.0             
- [7] GenomicRanges_1.47.4        GenomeInfoDb_1.31.1        
- [9] IRanges_2.29.0              S4Vectors_0.33.2           
-[11] BiocGenerics_0.41.1         MatrixGenerics_1.7.0       
-[13] matrixStats_0.61.0          BiocStyle_2.23.0           
+ [1] ggplot2_3.3.6               scp_1.7.1                  
+ [3] QFeatures_1.7.2             MultiAssayExperiment_1.23.8
+ [5] SummarizedExperiment_1.27.3 Biobase_2.57.1             
+ [7] GenomicRanges_1.49.1        GenomeInfoDb_1.33.7        
+ [9] IRanges_2.31.2              S4Vectors_0.35.4           
+[11] BiocGenerics_0.43.4         MatrixGenerics_1.9.1       
+[13] matrixStats_0.62.0          BiocStyle_2.25.0           
 
 loaded via a namespace (and not attached):
- [1] sass_0.4.0                  jsonlite_1.7.2             
- [3] bslib_0.3.1                 BiocManager_1.30.16        
- [5] highr_0.9                   GenomeInfoDbData_1.2.7     
- [7] yaml_2.2.1                  impute_1.69.0              
- [9] pillar_1.6.4                lattice_0.20-45            
-[11] glue_1.5.0                  digest_0.6.28              
-[13] XVector_0.35.0              colorspace_2.0-2           
-[15] htmltools_0.5.2             Matrix_1.3-4               
-[17] pkgconfig_2.0.3             bookdown_0.24              
-[19] zlibbioc_1.41.0             purrr_0.3.4                
-[21] scales_1.1.1                tibble_3.1.6               
-[23] farver_2.1.0                generics_0.1.1             
-[25] AnnotationFilter_1.19.0     ellipsis_0.3.2             
-[27] withr_2.4.2                 cachem_1.0.6               
-[29] lazyeval_0.2.2              magrittr_2.0.1             
-[31] crayon_1.4.2                memoise_2.0.0              
-[33] evaluate_0.14               fs_1.5.0                   
-[35] fansi_0.5.0                 MASS_7.3-54                
-[37] textshaping_0.3.6           tools_4.2.0                
-[39] lifecycle_1.0.1             stringr_1.4.0              
-[41] munsell_0.5.0               cluster_2.1.2              
-[43] DelayedArray_0.21.1         compiler_4.2.0             
-[45] pkgdown_1.9000.9000.9000    jquerylib_0.1.4            
-[47] systemfonts_1.0.3           rlang_0.4.12               
-[49] grid_4.2.0                  RCurl_1.98-1.5             
-[51] MsCoreUtils_1.7.0           SingleCellExperiment_1.17.1
-[53] igraph_1.2.8                labeling_0.4.2             
-[55] bitops_1.0-7                rmarkdown_2.11             
-[57] gtable_0.3.0                R6_2.5.1                   
-[59] knitr_1.36                  dplyr_1.0.7                
+ [1] sass_0.4.2                  jsonlite_1.8.0             
+ [3] bslib_0.4.0                 BiocManager_1.30.18        
+ [5] highr_0.9                   GenomeInfoDbData_1.2.8     
+ [7] yaml_2.3.5                  impute_1.71.0              
+ [9] pillar_1.8.1                lattice_0.20-45            
+[11] glue_1.6.2                  digest_0.6.29              
+[13] XVector_0.37.1              colorspace_2.0-3           
+[15] htmltools_0.5.3             Matrix_1.5-1               
+[17] BiocBaseUtils_0.99.12       pkgconfig_2.0.3            
+[19] bookdown_0.29               zlibbioc_1.43.0            
+[21] purrr_0.3.4                 scales_1.2.1               
+[23] tibble_3.1.8                farver_2.1.1               
+[25] generics_0.1.3              AnnotationFilter_1.21.0    
+[27] withr_2.5.0                 cachem_1.0.6               
+[29] lazyeval_0.2.2              cli_3.4.0                  
+[31] magrittr_2.0.3              memoise_2.0.1              
+[33] evaluate_0.16               fs_1.5.2                   
+[35] fansi_1.0.3                 MASS_7.3-58.1              
+[37] textshaping_0.3.6           tools_4.2.1                
+[39] lifecycle_1.0.2             stringr_1.4.1              
+[41] munsell_0.5.0               cluster_2.1.4              
+[43] DelayedArray_0.23.2         compiler_4.2.1             
+[45] pkgdown_2.0.6.9000          jquerylib_0.1.4            
+[47] systemfonts_1.0.4           rlang_1.0.5                
+[49] grid_4.2.1                  RCurl_1.98-1.8             
+[51] MsCoreUtils_1.9.1           SingleCellExperiment_1.19.0
+[53] igraph_1.3.4                labeling_0.4.2             
+[55] bitops_1.0-7                rmarkdown_2.16             
+[57] gtable_0.3.1                R6_2.5.1                   
+[59] knitr_1.40                  dplyr_1.0.10               
 [61] fastmap_1.1.0               utf8_1.2.2                 
-[63] clue_0.3-60                 rprojroot_2.0.2            
-[65] ragg_1.2.0                  ProtGenerics_1.27.0        
-[67] desc_1.4.0                  stringi_1.7.5              
-[69] vctrs_0.3.8                 tidyselect_1.1.1           
-[71] xfun_0.28                  </code></pre>
+[63] clue_0.3-61                 rprojroot_2.0.3            
+[65] ragg_1.2.2                  ProtGenerics_1.29.0        
+[67] desc_1.4.2                  stringi_1.7.8              
+[69] vctrs_0.4.1                 tidyselect_1.1.2           
+[71] xfun_0.33                  </code></pre>
 </div>
-<div class="section level1">
-<h1 id="reference">Reference<a class="anchor" aria-label="anchor" href="#reference"></a>
-</h1>
+<div class="section level2">
+<h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
+</h2>
+<p>This vignette is distributed under a <a href="https://creativecommons.org/licenses/by-sa/2.0/" class="external-link">CC BY-SA
+license</a> license.</p>
+</div>
+<div class="section level2">
+<h2 id="reference">Reference<a class="anchor" aria-label="anchor" href="#reference"></a>
+</h2>
 </div>
   </div>
 
@@ -658,7 +777,7 @@ loaded via a namespace (and not attached):
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
 </div>
 
       </footer>

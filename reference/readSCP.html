@@ -21,7 +21,7 @@ SingleCellExperiment objects."><!-- mathjax --><script src="https://cdnjs.cloudf
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.1</span>
       </span>
     </div>
 
@@ -33,7 +33,7 @@ SingleCellExperiment objects."><!-- mathjax --><script src="https://cdnjs.cloudf
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -78,18 +78,20 @@ spreadsheet or a <code>data.frame</code> into a QFeatures object containing
 SingleCellExperiment objects.</p>
     </div>
 
-    <div class="ref-usage sourceCode"><pre class="sourceCode r"><code><span class="fu">readSCP</span><span class="op">(</span>
-  <span class="va">featureData</span>,
-  <span class="va">colData</span>,
-  <span class="va">batchCol</span>,
-  <span class="va">channelCol</span>,
-  suffix <span class="op">=</span> <span class="cn">NULL</span>,
-  removeEmptyCols <span class="op">=</span> <span class="cn">FALSE</span>,
-  verbose <span class="op">=</span> <span class="cn">TRUE</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div id="ref-usage">
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">readSCP</span><span class="op">(</span></span>
+<span>  <span class="va">featureData</span>,</span>
+<span>  <span class="va">colData</span>,</span>
+<span>  <span class="va">batchCol</span>,</span>
+<span>  <span class="va">channelCol</span>,</span>
+<span>  suffix <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  sep <span class="op">=</span> <span class="st">""</span>,</span>
+<span>  removeEmptyCols <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+    </div>
 
-    <div id="ref-sections">
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>featureData</dt>
@@ -99,6 +101,8 @@ path to a text-based spreadsheet (comma-separated values by
 default, but see <code>...</code>) or an object that can be coerced to a
 <code>data.frame</code>. It is advised not to encode characters as
 factors.</p></dd>
+
+
 <dt>colData</dt>
 <dd><p>A <code>data.frame</code> or any object that can be coerced
 to a <code>data.frame</code>. <code>colData</code> is expected to contains all the
@@ -108,6 +112,8 @@ the batch (e.g. TMT channel, given by
 <code>channelCol</code>). Additional fields (e.g. sample type,
 acquisition date,...) are allowed and will be stored as sample
 meta data.</p></dd>
+
+
 <dt>batchCol</dt>
 <dd><p>A <code>numeric(1)</code> or <code>character(1)</code> pointing to the
 column of <code>featureData</code> and <code>colData</code> that contain the batch
@@ -116,31 +122,51 @@ identical and syntactically valid (if you supply a <code>character</code>)
 or have the same index (if you supply a <code>numeric</code>). Note that
 characters can be converted to syntactically valid names using
 <code>make.names</code></p></dd>
+
+
 <dt>channelCol</dt>
 <dd><p>A <code>numeric(1)</code> or <code>character(1)</code> pointing to the
 column of <code>colData</code> that contains the column names of the
 quantitative data in <code>featureData</code> (see Example).</p></dd>
+
+
 <dt>suffix</dt>
 <dd><p>A <code><a href="https://rdrr.io/r/base/character.html" class="external-link">character()</a></code> giving the suffix of the column
-names in each assay. The length of the vector should equal the
-number of quantification channels and should contain unique
-character elements. If NULL, the names of the quantification
-columns in <code>featureData</code> are taken as suffix.</p></dd>
+names in each assay. Sample/single-cell (column) names are
+automatically generated using: batch name + sep + suffix. Make
+sure suffix contains unique character elements. The length of
+the vector should equal the number of quantification channels.
+If NULL (default), the suffix is derived from the the names of
+the quantification columns in <code>featureData</code>.</p></dd>
+
+
+<dt>sep</dt>
+<dd><p>A <code>character(1)</code> that is inserted between the assay
+name and the <code>suffix</code> (see <code>suffix</code> argument for more details).</p></dd>
+
+
 <dt>removeEmptyCols</dt>
 <dd><p>A <code>logical(1)</code>. If true, the function will
 remove in each batch the columns that contain only missing
 values.</p></dd>
+
+
 <dt>verbose</dt>
 <dd><p>A <code>logical(1)</code> indicating whether the progress of
 the data reading and formatting should be printed to the
 console. Default is <code>TRUE</code>.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Further arguments that can be passed on to <a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a>
 except <code>stringsAsFactors</code>, which is always <code>FALSE</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>An instance of class QFeatures. The expression data of
+    
+
+<p>An instance of class QFeatures. The expression data of
 each batch is stored in a separate assay as a
 SingleCellExperiment object.</p>
     </div>
@@ -156,22 +182,21 @@ are forbidden in the <code>rowData</code>. Avoid using the following names:
     <h2>Author</h2>
     <p>Laurent Gatto, Christophe Vanderaa</p>
     </div>
-    </div>
 
-    <div id="examples">
+    <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="ref-examples sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="co">## Load an example table containing MaxQuant output</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"mqScpData"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Load the (user-generated) annotation table</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sampleAnnotation"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Format the tables into a QFeatures object</span></span>
-<span class="r-in"><span class="fu">readSCP</span><span class="op">(</span>featureData <span class="op">=</span> <span class="va">mqScpData</span>,</span>
-<span class="r-in">        colData <span class="op">=</span> <span class="va">sampleAnnotation</span>,</span>
-<span class="r-in">        batchCol <span class="op">=</span> <span class="st">"Raw.file"</span>,</span>
-<span class="r-in">        channelCol <span class="op">=</span> <span class="st">"Channel"</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Load an example table containing MaxQuant output</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"mqScpData"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Load the (user-generated) annotation table</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"sampleAnnotation"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Format the tables into a QFeatures object</span></span></span>
+<span class="r-in"><span><span class="fu">readSCP</span><span class="op">(</span>featureData <span class="op">=</span> <span class="va">mqScpData</span>,</span></span>
+<span class="r-in"><span>        colData <span class="op">=</span> <span class="va">sampleAnnotation</span>,</span></span>
+<span class="r-in"><span>        batchCol <span class="op">=</span> <span class="st">"Raw.file"</span>,</span></span>
+<span class="r-in"><span>        channelCol <span class="op">=</span> <span class="st">"Channel"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading data as a 'SingleCellExperiment' object</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Splitting data based on 'Raw.file'</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Formatting sample metadata (colData)</span>
@@ -181,7 +206,7 @@ are forbidden in the <code>rowData</code>. Avoid using the following names:
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [2] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 487 rows and 16 columns </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [3] 190321S_LCA10_X_FP97_blank_01: SingleCellExperiment with 109 rows and 16 columns </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [4] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 370 rows and 16 columns </span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -196,7 +221,7 @@ are forbidden in the <code>rowData</code>. Avoid using the following names:
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 1.9000.9000.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
 </div>
 
       </footer></div>
