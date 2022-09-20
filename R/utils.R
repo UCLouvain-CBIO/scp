@@ -30,6 +30,7 @@
 ##' @importFrom utils flush.console
 ##' @importFrom methods new
 ##' @importFrom S4Vectors metadata
+##' @importFrom MultiAssayExperiment experiments
 ##' 
 ##' @seealso [QFeatures::aggregateFeatures]
 ##' 
@@ -43,12 +44,7 @@
 ##'                                     na.rm = TRUE)
 ##' scp1
 ##' 
-aggregateFeaturesOverAssays <- function(object, 
-                                        i, 
-                                        fcol, 
-                                        name, 
-                                        fun, 
-                                        ...) {
+aggregateFeaturesOverAssays <- function(object, i, fcol, name, fun, ...) {
     if (length(i) != length(name)) stop("'i' and 'name' must have same length")
     if (length(fcol) == 1) fcol <- rep(fcol, length(i))
     if (length(i) != length(fcol)) stop("'i' and 'fcol' must have same length")
@@ -58,10 +54,8 @@ aggregateFeaturesOverAssays <- function(object,
     el <- experiments(object)[i]
     for (j in seq_along(el)) {
         suppressMessages(
-            el[[j]] <- aggregateFeatures(el[[j]], 
-                                         fcol = fcol[j], 
-                                         fun = fun, 
-                                         ...)
+            el[[j]] <- aggregateFeatures(el[[j]], fcol = fcol[j], 
+                                         fun = fun, ...)
         )
         ## Print progress
         message("\rAggregated: ", j, "/", length(el), "\n")
@@ -80,7 +74,6 @@ aggregateFeaturesOverAssays <- function(object,
     alnks <- append(object@assayLinks, AssayLinks(alnks))
     ## Update the sampleMapfrom the data 
     smap <- MultiAssayExperiment:::.sampleMapFromData(colData(object), el)
-    
     ## Create the new QFeatures object
     new("QFeatures",
         ExperimentList = el,

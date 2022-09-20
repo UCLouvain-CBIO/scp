@@ -24,7 +24,8 @@ vignette: >
 knitr::opts_chunk$set(
     collapse = TRUE,
     comment = "#>",
-    crop = NULL ## Related to https://stat.ethz.ch/pipermail/bioc-devel/2020-April/016656.html
+    crop = NULL
+    ## cf https://stat.ethz.ch/pipermail/bioc-devel/2020-April/016656.html
 )
 ```
 
@@ -196,7 +197,8 @@ associated to reverse sequence hits.
 filterFeatures(scp1, ~ Reverse != "+")
 ```
 
-Note however that if an assay is missing the variable that is used to filter the data (in this case the `proteins` assay), then all features
+Note however that if an assay is missing the variable that is used to
+filter the data (in this case the `proteins` assay), then all features
 for that assay are removed.
 
 You can also subset the data based on the feature missingness using 
