@@ -18,7 +18,8 @@ are \code{normAssay}.}
 \item{method}{\code{character(1)} defining the normalisation method to
 apply. See Details.`}
 
-\item{...}{Additional parameters passed to \code{\link[MsCoreUtils:normalize]{MsCoreUtils::normalizeMethods()}}.}
+\item{...}{Additional parameters passed to
+\code{\link[MsCoreUtils:normalize]{MsCoreUtils::normalizeMethods()}}.}
 }
 \value{
 A \code{QFeatures} object with an additional assay containing the
@@ -48,16 +49,25 @@ column means (medians) along \code{MARGIN = 2} with \code{FUN = "-"} (for
 \item \code{"diff.median"} centers all samples (columns) so that they all
 match the grand median by subtracting the respective columns
 medians differences to the grand median.
-\item Using \code{"quantiles"} or \code{"quantiles.robust"} applies (robust) quantile
-normalisation, as implemented in \code{\link[preprocessCore:normalize.quantiles]{preprocessCore::normalize.quantiles()}}
-and \code{\link[preprocessCore:normalize.quantiles.robust]{preprocessCore::normalize.quantiles.robust()}}. \code{"vsn"} uses the
-\code{\link[vsn:vsn2]{vsn::vsn2()}} function. Note that the latter also glog-transforms the
-intensities.  See respective manuals for more details and function
-arguments.
+\item Using \code{"quantiles"} or \code{"quantiles.robust"} applies (robust)
+quantile normalisation, as implemented in
+\code{\link[preprocessCore:normalize.quantiles]{preprocessCore::normalize.quantiles()}} and
+\code{\link[preprocessCore:normalize.quantiles.robust]{preprocessCore::normalize.quantiles.robust()}}. \code{"vsn"} uses the
+\code{\link[vsn:vsn2]{vsn::vsn2()}} function. Note that the latter also glog-transforms
+the intensities. See respective manuals for more details and
+function arguments.
 }
 
 For further details and examples about normalisation, see
 \code{\link[MsCoreUtils:normalize]{MsCoreUtils::normalize_matrix()}}.
+}
+\examples{
+
+data("scp1")
+scp1
+normalizeSCP(scp1, i = "proteins", name = "normproteins", 
+             method = "center.mean")
+
 }
 \seealso{
 \link[QFeatures:QFeatures-processing]{QFeatures::normalize} for more details about \code{normalize}

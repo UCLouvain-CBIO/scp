@@ -262,14 +262,14 @@ pep2qvalue <- function(object,
     ## Check PEP is a probability
     pepRange <- range(df[, PEP], na.rm = TRUE)
     if (max(pepRange) > 1 | min(pepRange < 0))
-        stop(paste0("'", PEP, "' is not a probability in (0, 1)"))
+        stop("'", PEP, "' is not a probability in (0, 1)")
     
     ## Compute the q-values 
     if (missing(groupBy)) {
         df$qval <- .pep2qvalue(df[, PEP])
     } else { ## Apply grouping if supplied
         p <- split(df[[PEP]], df[[groupBy]])
-        p <- sapply(p, min, na.rm = TRUE)
+        p <- vapply(p, min, FUN.VALUE = numeric(1), na.rm = TRUE)
         qval <- .pep2qvalue(p)
         df$qval <- unname(qval[df[[groupBy]]])
     }
@@ -359,14 +359,8 @@ pep2qvalue <- function(object,
 ##' hist(scp1$MedianCV)
 ##' 
 ##' @rdname medianCVperCell
-medianCVperCell <- function(object,
-                            i,
-                            groupBy,
-                            nobs = 5,
-                            na.rm = TRUE,
-                            colDataName = "MedianCV",
-                            norm = "none",
-                            ...) {
+medianCVperCell <- function(object, i, groupBy, nobs = 5, na.rm = TRUE,
+                            colDataName = "MedianCV", norm = "none", ...) {
     ## Check arguments: object
     if (!inherits(object, "QFeatures"))
         stop("'object' must be a QFeatures object")
@@ -382,18 +376,14 @@ medianCVperCell <- function(object,
     if (any(duplicated(coln))) 
         stop("Duplicated samples were found in assay(s) 'i'. This would ", 
              "lead to inconsistencies in the 'colData'.")
-    
     ## Initiate the vectors with cell median CVs
     medCVs <- rep(NA, length(coln))
     names(medCVs) <- coln
     ## For each assay
     for (ii in i) {
         ## Compute the CV matrix
-        cvs <- featureCV(object[[ii]],
+        cvs <- featureCV(object[[ii]], na.rm = na.rm, norm = norm, nobs = nobs,
                          group = as.factor(rowData(object[[ii]])[, groupBy]),
-                         na.rm = na.rm,
-                         norm = norm,
-                         nobs = nobs,
                          ...)
         ## Compute the median CV per sample
         medCVs[colnames(cvs)] <- colMedians(cvs, na.rm = TRUE)
@@ -414,19 +404,15 @@ medianCVperCell <- function(object,
 ##    be grouped. The CVs are computed for each group separately. 
 ##      
 ## @rdname medianCVperCell
-featureCV <- function(x, 
-                      group, 
-                      na.rm = TRUE,
-                      norm = "none",
-                      nobs = 2,
-                      ...) {
+featureCV <- function(x, group, na.rm = TRUE, norm = "none", nobs = 2, ...) {
     ## Check object
     if (!inherits(x, "SingleCellExperiment"))
         stop("'x' must inherit from a 'SingleCellExperiment'")
     ## Optional normalization(s)   
     if (identical(norm, "SCoPE2")) {
         xnorm <- .normalizeSCP(x, method = "div.median")
-        assay(x) <- sweep(assay(x), 1, rowMeans(assay(xnorm), na.rm = TRUE), "/")
+        assay(x) <- sweep(assay(x), 1, 
+                          rowMeans(assay(xnorm), na.rm = TRUE), "/")
     } else if (!identical(norm, "none")) {
         for(normi in norm)
             x <- .normalizeSCP(x, method = normi, ...)
@@ -437,38 +423,4 @@ featureCV <- function(x,
            nobs = nobs,
            reorder = TRUE, 
            na.rm = na.rm)
-}
-
-##' (Deprecated) Compute the median coefficient of variation (CV) per 
-##' cell
-##' 
-##' This function is deprecated and should no longer be used. To 
-##' reproduce the SCoPE2 script, you can now use `medianCVperCell`
-##' with the following arguments:
-##' 
-##' - `norm = "SCoPE2"`
-##' - `nobs = 6`
-##' 
-##' Make sure to provide the peptide data from separate assays so that 
-##' the normalization factors are computed per batch.
-##' 
-##' @param object NULL
-##' @param i NULL
-##' @param peptideCol NULL
-##' @param proteinCol NULL
-##' @param batchCol NULL
-##'
-##' @export
-computeMedianCV_SCoPE2 <- function(object, 
-                                   i, 
-                                   peptideCol, 
-                                   proteinCol, 
-                                   batchCol) {
-    stop("'computeMedianCV_SCoPE2' is deprecated and should no longer be used.\n",
-            "To reproduce the SCoPE2 script, you can now use ",
-            "'medianCVperCell' with the following arguments:\n",
-            " - 'norm' = \"SCoPE2\"\n",
-            " - 'nobs' = 6\n",
-            "Make sure to provide the peptide data from separate assays ", 
-            "so that the normalization factors are computed per batch.\n")
 }

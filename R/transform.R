@@ -1,37 +1,6 @@
 
 ####---- Internal functions ----####
 
-##' Internal function to efficiently replace a `SummarizedExperiment`
-##' (and subclasses of it) assay in a `QFeatures` object. Watch out
-##' this function should only be used when the old assay and the assay
-##' to replace have same size. Otherwise, this can lead to
-##' inconsistencies in the colData and functionality from
-##' `MultiAssayExperiment` should be used.
-##' 
-##' @param object A QFeatures object
-##' 
-##' @param y A SummarizedExperiment object, or an object that inherits from it
-##' 
-##' @param i a characther(1) or logical(1) that indicates which assay must be 
-##'     replaced
-##'
-##' @importFrom MultiAssayExperiment experiments
-##' 
-##' @noRd
-.replaceAssay <- function(object, 
-                          y, 
-                          i) {
-    if (length(i) > 1) stop("Only 1 assay can be replaced at a time.")
-    if (!inherits(object, "QFeatures")) stop("'object' must be a 'QFeatures' object")
-    if (!inherits(y, "SummarizedExperiment")) 
-        stop("'y' must inherits from a 'SummarizedExperiment' object")
-    if (!identical(colnames(experiments(object)[[i]]), colnames(y)))
-        stop("Colnames of old and new assays must match. Otherwise, consider ",
-             "using 'experiments(object)[[i]] <- y' to avoid bad surprises.")
-    object@ExperimentList@listData[[i]] <- y
-    return(object)
-}
-
 ## Internal function that normalizes SingleCellExperiment object using 
 ## proteomics normalization methods available in MsCoreUtils::normalize_matrix
 ##' @importFrom MsCoreUtils normalize_matrix
@@ -92,7 +61,8 @@ divideByReference <- function(object,
                               samplePattern = ".", 
                               refPattern) {
     ## Check arguments
-    if (!inherits(object, "QFeatures")) stop("'object' must be a QFeatures object")
+    if (!inherits(object, "QFeatures")) 
+        stop("'object' must be a QFeatures object")
     for (ii in i){
         ## Get the reference channel 
         annot <- colData(object)[colnames(object[[ii]]), ][, colvar]
@@ -112,7 +82,7 @@ divideByReference <- function(object,
         ref <- assay(y)[, refIdx]
         assay(y)[, sampIdx] <- assay(y)[, sampIdx, drop = FALSE] / ref
         ## Store the normalized assay
-        object <- .replaceAssay(object, y, ii)
+        object <- replaceAssay(object, y, ii)
     }
     return(object)
 }
@@ -134,7 +104,8 @@ divideByReference <- function(object,
 ##' @param method `character(1)` defining the normalisation method to
 ##'     apply. See Details.`
 ##' 
-##' @param ... Additional parameters passed to [MsCoreUtils::normalizeMethods()].
+##' @param ... Additional parameters passed to 
+##'     [MsCoreUtils::normalizeMethods()].
 ##' 
 ##' @return A `QFeatures` object with an additional assay containing the 
 ##'     normalized data.
@@ -162,12 +133,13 @@ divideByReference <- function(object,
 ##'   match the grand median by subtracting the respective columns
 ##'   medians differences to the grand median.
 ##'
-##' - Using `"quantiles"` or `"quantiles.robust"` applies (robust) quantile
-##'   normalisation, as implemented in [preprocessCore::normalize.quantiles()]
-##'   and [preprocessCore::normalize.quantiles.robust()]. `"vsn"` uses the
-##'   [vsn::vsn2()] function. Note that the latter also glog-transforms the
-##'   intensities.  See respective manuals for more details and function
-##'   arguments.
+##' - Using `"quantiles"` or `"quantiles.robust"` applies (robust) 
+##'   quantile normalisation, as implemented in 
+##'   [preprocessCore::normalize.quantiles()] and 
+##'   [preprocessCore::normalize.quantiles.robust()]. `"vsn"` uses the
+##'   [vsn::vsn2()] function. Note that the latter also glog-transforms
+##'   the intensities. See respective manuals for more details and 
+##'   function arguments.
 ##'
 ##' For further details and examples about normalisation, see
 ##' [MsCoreUtils::normalize_matrix()].
@@ -175,6 +147,13 @@ divideByReference <- function(object,
 ##' @seealso [QFeatures::normalize] for more details about `normalize`
 ##'
 ##' @export
+##' 
+##' @examples 
+##' 
+##' data("scp1")
+##' scp1
+##' normalizeSCP(scp1, i = "proteins", name = "normproteins", 
+##'              method = "center.mean")
 ##' 
 normalizeSCP <- normaliseSCP <- function(object, i, name = "normAssay", 
                                          method, ...) {

@@ -97,38 +97,27 @@
 ##'         batchCol = "Raw.file",
 ##'         channelCol = "Channel")
 ##' 
-readSCP <- function(featureData, 
-                    colData, 
-                    batchCol, 
-                    channelCol,
-                    suffix = NULL,
-                    sep = "",
-                    removeEmptyCols = FALSE,
-                    verbose = TRUE,
-                    ...) {
+readSCP <- function(featureData, colData, batchCol, channelCol, 
+                    suffix = NULL, sep = "", removeEmptyCols = FALSE,
+                    verbose = TRUE, ...) {
     ## Check the batch column name
     if (!identical(make.names(batchCol), batchCol)) 
         stop("'batchCol' is not a syntactically valid column name. ",
              "See '?make.names' for converting the column names to ",
              "valid names, e.g. '", batchCol, "' -> '", 
              make.names(batchCol), "'")
-    
     colData <- as.data.frame(colData)
-    
     ## Get the column contain the expression data
     ecol <- unique(colData[, channelCol])
     ## Get the sample suffix
     if (is.null(suffix))
         suffix <- ecol
-    
     ## Create the SingleCellExperiment object
     if (verbose) message("Loading data as a 'SingleCellExperiment' object")
     scp <- readSingleCellExperiment(table = featureData, 
-                                    ecol = ecol, 
-                                    ...)
+                                    ecol = ecol, ...)
     if (is.null(list(...)$row.names))
         rownames(scp) <- paste0("PSM", seq_len(nrow(scp)))
-    
     ## Check the link between colData and scp
     mis <- !rowData(scp)[, batchCol] %in% colData[, batchCol]
     if (any(mis)) {
@@ -136,11 +125,9 @@ readSCP <- function(featureData,
                 paste0(unique(rowData(scp)[mis, batchCol]), collapse = ", "))
         scp <- scp[!mis, ]
     }
-    
     ## Split the SingleCellExperiment object by batch column
-    if (verbose) message(paste0("Splitting data based on '", batchCol, "'"))
+    if (verbose) message("Splitting data based on '", batchCol, "'")
     scp <- .splitSCE(scp, f = batchCol)
-    
     ## Clean each element in the data list
     for (i in seq_along(scp)) {
         ## Add unique sample identifiers
@@ -149,20 +136,16 @@ readSCP <- function(featureData,
         if (removeEmptyCols) {
             sel <- colSums(is.na(assay(scp[[i]]))) != nrow(scp[[i]])
             scp[[i]] <- scp[[i]][, sel]
-        } 
+        }
     }
-    
-    if (verbose) message(paste0("Formatting sample metadata (colData)"))
+    if (verbose) message("Formatting sample metadata (colData)")
     ## Create the colData 
     cd <- DataFrame(row.names = unlist(lapply(scp, colnames)))
     rownames(colData) <- paste0(colData[, batchCol], sep, suffix)
     cd <- cbind(cd, colData[rownames(cd), ])
-    
-    ## Store the data as a QFeatures object and add the experimental
-    ## information
+    ## Store the data as a QFeatures object 
     if (verbose) message("Formatting data as a 'QFeatures' object")
-    QFeatures(experiments = scp, 
-              colData = cd)
+    QFeatures(experiments = scp, colData = cd)
 }
 
 ##' @title Read SingleCellExperiment from tabular data
