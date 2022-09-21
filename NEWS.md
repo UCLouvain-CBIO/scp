@@ -1,5 +1,9 @@
-
 # scp 1.7
+
+## scp 1.7.3
+
+- refactor: package complies with BiocCheck
+- docs: fixed bug in vignette
 
 ## scp 1.7.2
 
@@ -10,7 +14,7 @@
 - refactor: removed deprecated function `rowDataToDF()`
 - tests: fixed some tests failing because of SCE version differences.
 - feat: users can now specify `sep` when sample names are automatically
-  generated. 
+  generated.
 
 ## scp 1.7.0
 
@@ -44,14 +48,14 @@
 ## scp 1.3.2
 
 - feat: `computeSCR` now allows for user supplied function that will
-  summarize the values from multiple samples and multiple carrier. 
+  summarize the values from multiple samples and multiple carrier.
 - docs: used more standard variable names in scp vignette.
 - docs: created a `QFeatures` recap vignette
 
 ## scp 1.3.1
 
 - refactor: deprecated `rowDataToDF`. This function is now replaced by
-  `QFeatures::rbindRowData`. 
+  `QFeatures::rbindRowData`.
 
 ## scp 1.3.0
 

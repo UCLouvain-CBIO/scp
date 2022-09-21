@@ -179,13 +179,3 @@ test_that("medianCVperCell", {
                  regexp = "Duplicated samples")
     
 })
-
-test_that("computeMedianCV_SCoPE2", {
-    expect_error(
-        scp2 <- computeMedianCV_SCoPE2(scp1, i = "peptides", 
-                                       peptideCol = "peptide", 
-                                       proteinCol = "protein", 
-                                       batchCol = "Set"),
-        regexp = "deprecated")
-})
-
