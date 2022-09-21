@@ -1,5 +1,9 @@
 # scp 1.7
 
+## scp 1.7.4
+
+- Nothing yet.
+
 ## scp 1.7.3
 
 - refactor: package complies with BiocCheck
