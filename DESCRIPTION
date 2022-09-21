@@ -1,15 +1,15 @@
 Package: scp
 Title: Mass Spectrometry-Based Single-Cell Proteomics Data Analysis
-Version: 1.7.1
+Version: 1.7.3
 Authors@R:
     c(person("Christophe", "Vanderaa",
-	      email = "christophe.vanderaa@uclouvain.be",
-	      comment = c(ORCID = "0000-0001-7443-5427"),
-	      role = c("aut", "cre")),
+              email = "christophe.vanderaa@uclouvain.be",
+              comment = c(ORCID = "0000-0001-7443-5427"),
+              role = c("aut", "cre")),
       person("Laurent", "Gatto",
-	      email = "laurent.gatto@uclouvain.be",
-	      comment = c(ORCID = "0000-0002-1520-2268"),
-	      role = "aut"))
+              email = "laurent.gatto@uclouvain.be",
+              comment = c(ORCID = "0000-0002-1520-2268"),
+              role = "aut"))
 Description: Utility functions for manipulating, processing, and
     analyzing mass spectrometry-based single-cell proteomics
     data. The package is an extension to the 'QFeatures' package and
@@ -49,7 +49,7 @@ Suggests:
 License: Artistic-2.0
 Encoding: UTF-8
 VignetteBuilder: knitr
-biocViews: 
+biocViews:
     GeneExpression,
     Proteomics,
     SingleCell,
