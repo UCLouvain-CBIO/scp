@@ -1,4 +1,4 @@
-pandoc: '2.18'
+pandoc: 2.19.2
 pkgdown: 2.0.6.9000
 pkgdown_sha: 956f076f661eb2de9413f64ea24a580cf444466d
 articles:
@@ -6,5 +6,5 @@ articles:
   advanced: advanced.html
   read_scp: read_scp.html
   scp: scp.html
-last_built: 2022-09-21T11:52Z
+last_built: 2022-09-30T11:21Z
 
