@@ -2,7 +2,7 @@
 
 ## scp 1.7.4
 
-- Nothing yet.
+- Updated CITATION
 
 ## scp 1.7.3
 
