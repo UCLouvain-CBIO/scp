@@ -1,6 +1,9 @@
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![codecov.io](https://codecov.io/github/UCLouvain-CBIO/scp/coverage.svg?branch=master)](https://codecov.io/github/UCLouvain-CBIO/scp?branch=master)
 [![R-CMD-check-bioc](https://github.com/UCLouvain-CBIO/scp/workflows/R-CMD-check-bioc/badge.svg)](https://github.com/UCLouvain-CBIO/scp/actions?query=workflow%3AR-CMD-check-bioc)
+[![Bioconductor-devel Build Status](https://bioconductor.org/shields/build/devel/bioc/scp.svg)](http://bioconductor.org/checkResults/devel/bioc-LATEST/scp/)
+[![license](https://img.shields.io/badge/license-Artistic--2.0-brightgreen.svg)](https://opensource.org/licenses/Artistic-2.0)
+
 
 # Single cell proteomics data processing
 
@@ -10,6 +13,10 @@ spectrometry-based single cell proteomics data.  It relies on the
 package to manage and process
 [`SingleCellExperiment`](http://bioconductor.org/packages/release/bioc/html/SingleCellExperiment.html)
 objects.
+
+<img
+src="https://raw.githubusercontent.com/UCLouvain-CBIO/scp/master/sticker/sticker.png"
+height="150">
 
 ## Installation
 
