@@ -1,6 +1,18 @@
 citHeader("To cite the scp package in publications use:")
 
-citEntry(entry = "article",  
+citEntry(entry = "article",
+         title  = "The current state of single-cell proteomics data analysis",
+         author = personList(
+           person(given = "Christophe", family = "Vanderaa"),
+           person(given = "Laurent", family = "Gatto")),
+         journal = "arXiv",
+         year = "2022",
+         textVersion = paste("Vanderaa Christophe and Laurent Gatto.",
+                             "The current state of single-cell proteomics data analysis.",
+                             "arXiv:2210.01020; doi: https://doi.org/10.48550/arXiv.2210.01020 (2022).")
+         )
+
+citEntry(entry = "article",
          title  = "Replication of Single-Cell Proteomics Data Reveals Important Computational Challenges",
          author = personList(
            person(given = "Christophe", family = "Vanderaa"),
@@ -13,7 +25,7 @@ citEntry(entry = "article",
                              "Expert Review of Proteomics, 1–9 (2021).")
          )
 
-citEntry(entry = "article",  
+citEntry(entry = "article",
          title  = "Replication of Single-Cell Proteomics Data Reveals Important Computational Challenges",
          author = personList(
            person(given = "Christophe", family = "Vanderaa"),
