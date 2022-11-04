@@ -1,6 +1,9 @@
 [![Project Status: Active – The project has reached a stable, usable state and is being actively developed.](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![codecov.io](https://codecov.io/github/UCLouvain-CBIO/scp/coverage.svg?branch=master)](https://codecov.io/github/UCLouvain-CBIO/scp?branch=master)
 [![R-CMD-check-bioc](https://github.com/UCLouvain-CBIO/scp/workflows/R-CMD-check-bioc/badge.svg)](https://github.com/UCLouvain-CBIO/scp/actions?query=workflow%3AR-CMD-check-bioc)
+[![Bioconductor-devel Build Status](https://bioconductor.org/shields/build/devel/bioc/scp.svg)](http://bioconductor.org/checkResults/devel/bioc-LATEST/scp/)
+[![license](https://img.shields.io/badge/license-Artistic--2.0-brightgreen.svg)](https://opensource.org/licenses/Artistic-2.0)
+
 
 # Single cell proteomics data processing
 
@@ -11,19 +14,23 @@ package to manage and process
 [`SingleCellExperiment`](http://bioconductor.org/packages/release/bioc/html/SingleCellExperiment.html)
 objects.
 
+<img
+src="https://raw.githubusercontent.com/UCLouvain-CBIO/scp/master/sticker/sticker.png"
+height="150">
+
 ## Installation
 
 To install the **stable version** from Bioconductor:
 
 ```r
 if (!requireNamespace("BiocManager"))
-	install.packages("BiocManager")
+    install.packages("BiocManager")
 BiocManager::install("scp")
 ```
 
-To install the **devel version** from GitHub, you first need to 
+To install the **devel version** from GitHub, you first need to
 ensure that you are using the `devel` release of Bioconductor and make
-sure your installed libraries are valid. 
+sure your installed libraries are valid.
 
 ```r
 BiocManager::install(version = "devel")
@@ -36,7 +43,7 @@ Then, you can install `scp` from Github.
 BiocManager::install("UCLouvain-CBIO/scp")
 ```
 
-## Citation 
+## Citation
 
 To cite the `scp` package in publications use:
 
@@ -60,8 +67,8 @@ question or report problems with `scp`.
 
 ## License
 
-The `scp` code is provided under a permissive 
-[Artistic 2.0 license](https://opensource.org/licenses/Artistic-2.0). 
+The `scp` code is provided under a permissive
+[Artistic 2.0 license](https://opensource.org/licenses/Artistic-2.0).
 The documentation, including the manual pages and the vignettes, are
-distributed under a 
+distributed under a
 [CC BY-SA license](https://creativecommons.org/licenses/by-sa/2.0/).
