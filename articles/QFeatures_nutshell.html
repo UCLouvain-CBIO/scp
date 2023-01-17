@@ -93,7 +93,7 @@ Gatto</h4>
                                     <h4 data-toc-skip class="author">Christophe
 Vanderaa</h4>
                         
-            <h4 data-toc-skip class="date">4 November 2022</h4>
+            <h4 data-toc-skip class="date">17 January 2023</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/HEAD/vignettes/QFeatures_nutshell.Rmd" class="external-link"><code>vignettes/QFeatures_nutshell.Rmd</code></a></small>
       <div class="hidden name"><code>QFeatures_nutshell.Rmd</code></div>
@@ -468,7 +468,7 @@ remove features that are associated to reverse sequence hits.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-filtering.html" class="external-link">filterFeatures</a></span><span class="op">(</span><span class="va">scp1</span>, <span class="op">~</span> <span class="va">Reverse</span> <span class="op">!=</span> <span class="st">"+"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 'Reverse' found in 4 out of 5 assay(s)</span></span>
-<span><span class="co">#&gt; No filter applied to the following assay(s) because one or more missing filtering variables are missing in the rowData: proteins.</span></span>
+<span><span class="co">#&gt; No filter applied to the following assay(s) because one or more filtering variables are missing in the rowData: proteins.</span></span>
 <span><span class="co">#&gt; You can control whether to remove or keep the features using the 'keep' argument (see '?filterFeature').</span></span>
 <span><span class="co">#&gt; An instance of class QFeatures containing 5 assays:</span></span>
 <span><span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 126 rows and 11 columns </span></span>
@@ -625,6 +625,7 @@ function by replacing missing data using KNN imputation.</p>
 <span><span class="co">#&gt; [1] TRUE</span></span>
 <span><span class="va">scp1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">impute</a></span><span class="op">(</span><span class="va">scp1</span>, i <span class="op">=</span> <span class="st">"proteins"</span>, method <span class="op">=</span><span class="st">"knn"</span>, k <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Loading required namespace: impute</span></span>
+<span><span class="co">#&gt; Imputing along margin 1 (features/rows).</span></span>
 <span><span class="co">#&gt; Warning in knnimp(x, k, maxmiss = rowmax, maxp = maxp): 284 rows with more than 50 % entries missing;</span></span>
 <span><span class="co">#&gt;  mean imputation used for these rows</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">anyNA</a></span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"proteins"</span><span class="op">)</span><span class="op">)</span></span>
@@ -650,7 +651,7 @@ spectral purity) for each of the three MS batches.</p>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">PIF</span>, </span>
 <span>        x <span class="op">=</span> <span class="va">assay</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html" class="external-link">geom_boxplot</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: Removed 64 rows containing non-finite values (stat_boxplot).</span></span></code></pre></div>
+<span><span class="co">#&gt; Warning: Removed 64 rows containing non-finite values (`stat_boxplot()`).</span></span></code></pre></div>
 <p><img src="QFeatures_nutshell_files/figure-html/vis1-1.png" width="624"></p>
 <p>Combining the metadata and the quantitative data is more challenging
 since the risk of data mismatch is increased. The <code>QFeatures</code>
@@ -681,13 +682,13 @@ visualization <a href="https://rformassspectrometry.github.io/QFeatures/articles
 <div class="section level2">
 <h2 class="unnumbered" id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
 </h2>
-<pre><code>R version 4.2.1 (2022-06-23)
+<pre><code>R Under development (unstable) (2023-01-11 r83598)
 Platform: x86_64-pc-linux-gnu (64-bit)
-Running under: Ubuntu 20.04.5 LTS
+Running under: Ubuntu 22.04.1 LTS
 
 Matrix products: default
-BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3
-LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/liblapack.so.3
+BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
+LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.20.so;  LAPACK version 3.10.0
 
 locale:
  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -697,56 +698,60 @@ locale:
  [9] LC_ADDRESS=C               LC_TELEPHONE=C            
 [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
 
+time zone: UTC
+tzcode source: system (glibc)
+
 attached base packages:
 [1] stats4    stats     graphics  grDevices utils     datasets  methods  
 [8] base     
 
 other attached packages:
- [1] ggplot2_3.3.6               scp_1.9.0                  
- [3] QFeatures_1.9.0             MultiAssayExperiment_1.24.0
- [5] SummarizedExperiment_1.28.0 Biobase_2.58.0             
- [7] GenomicRanges_1.50.0        GenomeInfoDb_1.34.0        
- [9] IRanges_2.32.0              S4Vectors_0.36.0           
-[11] BiocGenerics_0.44.0         MatrixGenerics_1.10.0      
-[13] matrixStats_0.62.0          BiocStyle_2.26.0           
+ [1] ggplot2_3.4.0               scp_1.9.0                  
+ [3] QFeatures_1.9.3             MultiAssayExperiment_1.25.6
+ [5] SummarizedExperiment_1.29.1 Biobase_2.59.0             
+ [7] GenomicRanges_1.51.4        GenomeInfoDb_1.35.10       
+ [9] IRanges_2.33.0              S4Vectors_0.37.3           
+[11] BiocGenerics_0.45.0         MatrixGenerics_1.11.0      
+[13] matrixStats_0.63.0          BiocStyle_2.27.0           
 
 loaded via a namespace (and not attached):
- [1] sass_0.4.2                  jsonlite_1.8.3             
- [3] bslib_0.4.1                 BiocManager_1.30.19        
- [5] highr_0.9                   GenomeInfoDbData_1.2.9     
- [7] yaml_2.3.6                  impute_1.72.0              
- [9] pillar_1.8.1                lattice_0.20-45            
-[11] glue_1.6.2                  digest_0.6.30              
-[13] XVector_0.38.0              colorspace_2.0-3           
-[15] htmltools_0.5.3             Matrix_1.5-1               
-[17] BiocBaseUtils_1.0.0         pkgconfig_2.0.3            
-[19] bookdown_0.29               zlibbioc_1.44.0            
-[21] purrr_0.3.5                 scales_1.2.1               
-[23] tibble_3.1.8                farver_2.1.1               
-[25] generics_0.1.3              AnnotationFilter_1.22.0    
-[27] withr_2.5.0                 cachem_1.0.6               
-[29] lazyeval_0.2.2              cli_3.4.1                  
-[31] magrittr_2.0.3              memoise_2.0.1              
-[33] evaluate_0.17               fs_1.5.2                   
-[35] fansi_1.0.3                 MASS_7.3-58.1              
-[37] textshaping_0.3.6           tools_4.2.1                
-[39] lifecycle_1.0.3             stringr_1.4.1              
-[41] munsell_0.5.0               cluster_2.1.4              
-[43] DelayedArray_0.24.0         compiler_4.2.1             
-[45] pkgdown_2.0.6.9000          jquerylib_0.1.4            
-[47] systemfonts_1.0.4           rlang_1.0.6                
-[49] grid_4.2.1                  RCurl_1.98-1.9             
-[51] MsCoreUtils_1.10.0          SingleCellExperiment_1.20.0
-[53] igraph_1.3.5                labeling_0.4.2             
-[55] bitops_1.0-7                rmarkdown_2.17             
-[57] gtable_0.3.1                R6_2.5.1                   
-[59] knitr_1.40                  dplyr_1.0.10               
-[61] fastmap_1.1.0               utf8_1.2.2                 
-[63] clue_0.3-62                 rprojroot_2.0.3            
-[65] ragg_1.2.4                  ProtGenerics_1.30.0        
-[67] desc_1.4.2                  stringi_1.7.8              
-[69] vctrs_0.5.0                 tidyselect_1.2.0           
-[71] xfun_0.34                  </code></pre>
+ [1] gtable_0.3.1                impute_1.73.0              
+ [3] xfun_0.36                   bslib_0.4.2                
+ [5] lattice_0.20-45             vctrs_0.5.1                
+ [7] tools_4.3.0                 bitops_1.0-7               
+ [9] generics_0.1.3              tibble_3.1.8               
+[11] fansi_1.0.3                 highr_0.10                 
+[13] cluster_2.1.4               BiocBaseUtils_1.1.0        
+[15] pkgconfig_2.0.3             Matrix_1.5-3               
+[17] desc_1.4.2                  assertthat_0.2.1           
+[19] lifecycle_1.0.3             GenomeInfoDbData_1.2.9     
+[21] farver_2.1.1                compiler_4.3.0             
+[23] stringr_1.5.0               textshaping_0.3.6          
+[25] munsell_0.5.0               clue_0.3-63                
+[27] htmltools_0.5.4             sass_0.4.4                 
+[29] RCurl_1.98-1.9              yaml_2.3.6                 
+[31] lazyeval_0.2.2              pkgdown_2.0.7.9000         
+[33] pillar_1.8.1                jquerylib_0.1.4            
+[35] MASS_7.3-58.1               SingleCellExperiment_1.21.0
+[37] DelayedArray_0.25.0         cachem_1.0.6               
+[39] tidyselect_1.2.0            digest_0.6.31              
+[41] stringi_1.7.12              dplyr_1.0.10               
+[43] purrr_1.0.1                 bookdown_0.31              
+[45] labeling_0.4.2              rprojroot_2.0.3            
+[47] fastmap_1.1.0               grid_4.3.0                 
+[49] colorspace_2.0-3            cli_3.6.0                  
+[51] magrittr_2.0.3              utf8_1.2.2                 
+[53] withr_2.5.0                 scales_1.2.1               
+[55] rmarkdown_2.19              XVector_0.39.0             
+[57] igraph_1.3.5                ragg_1.2.5                 
+[59] memoise_2.0.1               evaluate_0.19              
+[61] knitr_1.41                  rlang_1.0.6                
+[63] DBI_1.1.3                   glue_1.6.2                 
+[65] BiocManager_1.30.19         jsonlite_1.8.4             
+[67] AnnotationFilter_1.23.0     R6_2.5.1                   
+[69] systemfonts_1.0.4           fs_1.5.2                   
+[71] zlibbioc_1.45.0             ProtGenerics_1.31.0        
+[73] MsCoreUtils_1.11.3         </code></pre>
 </div>
 <div class="section level2">
 <h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
@@ -777,7 +782,7 @@ license</a> license.</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.9000.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
 </div>
 
       </footer>
