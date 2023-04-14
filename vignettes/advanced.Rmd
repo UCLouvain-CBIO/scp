@@ -79,7 +79,7 @@ normByType <- function(x, type) {
     ## Check argument
     stopifnot(length(type) == ncol(x))
     ## Normalize for each type separately
-    for (i in type) {
+    for (i in unique(type)) {
         ## Get normalization factor
         nf <- rowMedians(x[, type == i], na.rm = TRUE)
         ## Perform normalization

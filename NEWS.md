@@ -2,11 +2,11 @@
 
 ## scp 1.9.2
 
-- Nothing yet
+- Updated citation
 
 ## scp 1.9.1
 
-- Updated citation
+- Fix minor typo in `readSCP()` man page
 
 ## scp 1.9.0
 

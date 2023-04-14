@@ -12,15 +12,15 @@
 ##' spreadsheet or a `data.frame` into a [QFeatures] object containing
 ##' [SingleCellExperiment] objects.
 ##'
-##' @param featureData File or object holding the identification and 
-##'     quantitative data. Can be either a `character(1)` with the 
-##'     path to a text-based spreadsheet (comma-separated values by 
+##' @param featureData File or object holding the identification and
+##'     quantitative data. Can be either a `character(1)` with the
+##'     path to a text-based spreadsheet (comma-separated values by
 ##'     default, but see `...`) or an object that can be coerced to a
 ##'     `data.frame`. It is advised not to encode characters as
 ##'     factors.
-##' 
+##'
 ##' @param colData A `data.frame` or any object that can be coerced
-##'     to a `data.frame`. `colData` is expected to contains all the
+##'     to a `data.frame`. `colData` is expected to contain all the
 ##'     sample meta information. Required fields are the acquisition
 ##'     batch (given by `batchCol`) and the acquisition channel within
 ##'     the batch (e.g. TMT channel, given by
@@ -35,30 +35,30 @@
 ##'     or have the same index (if you supply a `numeric`). Note that
 ##'     characters can be converted to syntactically valid names using
 ##'     `make.names`
-##' 
+##'
 ##' @param channelCol A `numeric(1)` or `character(1)` pointing to the
 ##'     column of `colData` that contains the column names of the
 ##'     quantitative data in `featureData` (see Example).
-##' 
-##' @param suffix A `character()` giving the suffix of the column 
+##'
+##' @param suffix A `character()` giving the suffix of the column
 ##'     names in each assay. Sample/single-cell (column) names are
 ##'     automatically generated using: batch name + sep + suffix. Make
 ##'     sure suffix contains unique character elements. The length of
-##'     the vector should equal the number of quantification channels. 
+##'     the vector should equal the number of quantification channels.
 ##'     If NULL (default), the suffix is derived from the the names of
 ##'     the quantification columns in `featureData`.
-##' 
-##' @param sep A `character(1)` that is inserted between the assay 
+##'
+##' @param sep A `character(1)` that is inserted between the assay
 ##'     name and the `suffix` (see `suffix` argument for more details).
-##' 
+##'
 ##' @param removeEmptyCols A `logical(1)`. If true, the function will
-##'     remove in each batch the columns that contain only missing 
+##'     remove in each batch the columns that contain only missing
 ##'     values.
-##' 
+##'
 ##' @param verbose A `logical(1)` indicating whether the progress of
 ##'     the data reading and formatting should be printed to the
 ##'     console. Default is `TRUE`.
-##' 
+##'
 ##' @param ... Further arguments that can be passed on to [read.csv]
 ##'     except `stringsAsFactors`, which is always `FALSE`.
 ##'
@@ -66,14 +66,14 @@
 ##'     each batch is stored in a separate assay as a
 ##'     [SingleCellExperiment] object.
 ##'
-##' @note The `SingleCellExperiment` class is built on top of the 
-##'     `RangedSummarizedExperiment` class. This means that some column names 
+##' @note The `SingleCellExperiment` class is built on top of the
+##'     `RangedSummarizedExperiment` class. This means that some column names
 ##'     are forbidden in the `rowData`. Avoid using the following names:
-##'     `seqnames`, `ranges`, `strand`, `start`, `end`, 
+##'     `seqnames`, `ranges`, `strand`, `start`, `end`,
 ##'     `width`,  `element`
-##'     
+##'
 ##' @author Laurent Gatto, Christophe Vanderaa
-##' 
+##'
 ##' @importFrom utils read.csv
 ##' @importFrom S4Vectors DataFrame
 ##' @importFrom MultiAssayExperiment ExperimentList
@@ -82,29 +82,29 @@
 ##'
 ##' @md
 ##' @export
-##' 
-##' @examples 
-##' 
+##'
+##' @examples
+##'
 ##' ## Load an example table containing MaxQuant output
 ##' data("mqScpData")
-##' 
+##'
 ##' ## Load the (user-generated) annotation table
 ##' data("sampleAnnotation")
-##' 
+##'
 ##' ## Format the tables into a QFeatures object
 ##' readSCP(featureData = mqScpData,
 ##'         colData = sampleAnnotation,
 ##'         batchCol = "Raw.file",
 ##'         channelCol = "Channel")
-##' 
-readSCP <- function(featureData, colData, batchCol, channelCol, 
+##'
+readSCP <- function(featureData, colData, batchCol, channelCol,
                     suffix = NULL, sep = "", removeEmptyCols = FALSE,
                     verbose = TRUE, ...) {
     ## Check the batch column name
-    if (!identical(make.names(batchCol), batchCol)) 
+    if (!identical(make.names(batchCol), batchCol))
         stop("'batchCol' is not a syntactically valid column name. ",
              "See '?make.names' for converting the column names to ",
-             "valid names, e.g. '", batchCol, "' -> '", 
+             "valid names, e.g. '", batchCol, "' -> '",
              make.names(batchCol), "'")
     colData <- as.data.frame(colData)
     ## Get the column contain the expression data
@@ -114,14 +114,14 @@ readSCP <- function(featureData, colData, batchCol, channelCol,
         suffix <- ecol
     ## Create the SingleCellExperiment object
     if (verbose) message("Loading data as a 'SingleCellExperiment' object")
-    scp <- readSingleCellExperiment(table = featureData, 
+    scp <- readSingleCellExperiment(table = featureData,
                                     ecol = ecol, ...)
     if (is.null(list(...)$row.names))
         rownames(scp) <- paste0("PSM", seq_len(nrow(scp)))
     ## Check the link between colData and scp
     mis <- !rowData(scp)[, batchCol] %in% colData[, batchCol]
     if (any(mis)) {
-        warning("Missing metadata. The features are removed for ", 
+        warning("Missing metadata. The features are removed for ",
                 paste0(unique(rowData(scp)[mis, batchCol]), collapse = ", "))
         scp <- scp[!mis, ]
     }
@@ -139,11 +139,11 @@ readSCP <- function(featureData, colData, batchCol, channelCol,
         }
     }
     if (verbose) message("Formatting sample metadata (colData)")
-    ## Create the colData 
+    ## Create the colData
     cd <- DataFrame(row.names = unlist(lapply(scp, colnames)))
     rownames(colData) <- paste0(colData[, batchCol], sep, suffix)
     cd <- cbind(cd, colData[rownames(cd), ])
-    ## Store the data as a QFeatures object 
+    ## Store the data as a QFeatures object
     if (verbose) message("Formatting data as a 'QFeatures' object")
     QFeatures(experiments = scp, colData = cd)
 }
@@ -178,33 +178,33 @@ readSCP <- function(featureData, colData, batchCol, channelCol,
 ##' @return An instance of class [SingleCellExperiment].
 ##'
 ##' @author Laurent Gatto, Christophe Vanderaa
-##' 
-##' @note The `SingleCellExperiment` class is built on top of the 
-##'     `RangedSummarizedExperiment` class. This means that some column names 
+##'
+##' @note The `SingleCellExperiment` class is built on top of the
+##'     `RangedSummarizedExperiment` class. This means that some column names
 ##'     are forbidden in the `rowData`. Avoid using the following names:
-##'     `seqnames`, `ranges`, `strand`, `start`, `end`, 
+##'     `seqnames`, `ranges`, `strand`, `start`, `end`,
 ##'     `width`,  `element`
-##'     
-##' 
-##' @seealso The code relies on 
+##'
+##'
+##' @seealso The code relies on
 ##'     [QFeatures::readSummarizedExperiment].
 ##'
 ##'
 ##' @md
-##' 
+##'
 ##' @export
 ##'
 ##' @importFrom methods as
 ##'
-##' @examples 
+##' @examples
 ##' ## Load a data.frame with PSM-level data
 ##' data("mqScpData")
-##' 
+##'
 ##' ## Create the QFeatures object
-##' sce <- readSingleCellExperiment(mqScpData, 
+##' sce <- readSingleCellExperiment(mqScpData,
 ##'                                 grep("RI", colnames(mqScpData)))
-readSingleCellExperiment <- function(table, 
-                                     ecol, 
+readSingleCellExperiment <- function(table,
+                                     ecol,
                                      fnames,
                                      ...) {
     ## Read data as SummarizedExperiment
@@ -224,22 +224,22 @@ readSingleCellExperiment <- function(table,
 ##' nrow(x) or ncol(x) (in that order) to determine if x will be split
 ##' along the features (rows) or sample (columns). Hence, the length of
 ##' f must match exactly to either dimension.
-##' 
+##'
 ##' This function is not exported. If this is needed, create a pull
 ##' request to `rformassspectrometry/QFeatures`.
-##' 
+##'
 ##' @param x a single [SingleCellExperiment] object
-##' 
+##'
 ##' @param f a factor or a character of length 1. In the latter case,
 ##'     `f` will be matched to the row and column data variable names
 ##'     (in that order). If a match is found, the respective variable
 ##'     is extracted, converted to a factor if needed
 ##' @noRd
-.splitSCE <- function(x, 
+.splitSCE <- function(x,
                       f) {
     ## Check that f is a factor
     if (is.character(f)) {
-        if (length(f) != 1) 
+        if (length(f) != 1)
             stop("'f' must be of lenght one")
         if (f %in% colnames(rowData(x))) {
             f <- rowData(x)[, f]
@@ -250,11 +250,11 @@ readSingleCellExperiment <- function(table,
         else {
             stop("'", f, "' not found in rowData or colData")
         }
-        if (!is.factor(f)) 
+        if (!is.factor(f))
             f <- factor(f)
     }
     ## Check that the factor matches one of the dimensions
-    if (!length(f) %in% dim(x)) 
+    if (!length(f) %in% dim(x))
         stop("length(f) not compatible with dim(x).")
     if (length(f) == nrow(x)) { ## Split along rows
         xl <- lapply(split(rownames(x), f = f), function(i) x[i, ])
