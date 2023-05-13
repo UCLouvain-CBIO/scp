@@ -2,7 +2,7 @@
 
 ## scp 1.11.1
 
-- Updated citation
+- Updated CITATION
 
 ## scp 1.11.0
 
