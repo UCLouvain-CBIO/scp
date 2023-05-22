@@ -1,0 +1,347 @@
+---
+title: "Reporting missing values for Single Cell Proteomics"
+author:
+    - name: Christophe Vanderaa
+    - name: Laurent Gatto
+output:
+    BiocStyle::html_document:
+        self_contained: yes
+        toc: true
+        toc_float: true
+        toc_depth: 2
+        code_folding: show
+bibliography: scp.bib
+date: "`r BiocStyle::doc_date()`"
+package: "`r BiocStyle::pkg_ver('scp')`"
+vignette: >
+    %\VignetteIndexEntry{Reporting missing values}
+    %\VignetteEngine{knitr::rmarkdown}
+    %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+    collapse = TRUE,
+    comment = "#>",
+    crop = NULL
+)
+```
+
+# Introduction
+
+This vignette demonstrates how to use `scp` to report missing values,
+following our recommendations in @Vanderaa2023-gu. Briefly, we 
+recommend reporting at least 4 metrics: 
+
+- Total sensitivity, i.e. the total number of features found in the 
+dataset
+- Local sensitivity, i.e. the number of features per cell
+- Data completeness, i.e. the proportion of values that are not 
+missing
+- Number of samples
+
+We will also demonstrate how to estimate total sensitivity when the 
+number of samples is too low and how to report data consistency using
+the distribution of Jaccard indices.
+
+In this vignette, we will assume you are familiar with the `scp` 
+framework. If this is not the case, we suggest you first read the 
+[`introduction vignette`](https://uclouvain-cbio.github.io/scp/articles/scp.html).
+
+# Minimal data processing
+
+First, we load the `scp` package and retrieve a real-life dataset from
+the `scpdata` package.
+
+```{r}
+library("scp")
+library("scpdata")
+leduc <- leduc2022()
+```
+
+Next, we reduce the size of the dataset to the 30 first acquisitions.
+This allows for a fast execution of the code while still being a
+representative demonstration on a real dataset. We also keep only the
+feature annotations that will be used later in the vignette.
+
+```{r}
+leduc <- leduc[, , 1:30]
+leduc <- selectRowData(leduc, c(
+    "Sequence", "Leading.razor.protein", "Reverse", 
+    "Potential.contaminant", "PEP"
+))
+```
+
+This is the actual minimal processing: filtering contaminant and 
+low-quality features, replacing zeros by missing values, we keep only
+samples that correspond to single cells and we remove the feature 
+absent in all samples.
+
+```{r}
+leduc <- filterFeatures(leduc, ~ Reverse != "+" &
+                           Potential.contaminant != "+" &
+                           PEP < 0.01)
+leduc <- zeroIsNA(leduc, i = names(leduc))
+leduc <- filterNA(leduc, i = names(leduc), pNA = 0.9999)
+leduc <- filterNA(leduc, i = names(leduc), pNA = 0.9999)
+leduc <- subsetByColData(
+    leduc, leduc$SampleType %in% c("Monocyte", "Melanoma cell")
+)
+leduc <- dropEmptyAssays(leduc)
+```
+
+# Peptide identification data
+
+Next, we build the peptide identification matrix, that is a matrix
+with single cells as columns and peptides as rows. We first need data 
+at peptide level, hence we aggregate the peptide to spectrum match 
+data to peptide data. We use a counting functions for aggregation, 
+meaning that we generate spectral count data for peptides. Then, we
+join all runs in a single assay. 
+
+```{r}
+leduc <- aggregateFeatures(
+    leduc, i = names(leduc), 
+    name = paste0("spectral_counts_", names(leduc)),
+    fcol = "Sequence", 
+    fun = MsCoreUtils::colCounts
+)
+leduc <- joinAssays(
+    leduc, i = grep("^spec", names(leduc)), 
+    name = "spectral_counts"
+)
+```
+
+Once all assay are joined, we extract that assay and replace any 
+observed count by 1 and any missing value by 0. This is the peptide
+identification matrix.
+
+```{r}
+ids <- getWithColData(leduc, "spectral_counts")
+assay(ids) <- ifelse(is.na(assay(ids)), 0, 1)
+```
+
+# Report missing values
+
+We can now measure the for metrics. We recommend computing these for
+each cell type separately, since biological properties specific to the
+cell type could influence the outcome.
+
+```{r}
+(metrics <- sapply(unique(ids$SampleType), function(st) {
+    x <- assay(ids)[, ids$SampleType == st]
+    c(
+        LocalSensitivityMean = mean(colSums(x != 0)),
+        LocalSensitivitySd = sd(colSums(x != 0)),
+        TotalSensitivity = sum(rowSums(x) != 0),
+        Completeness = mean(x != 0),
+        NumberCells = ncol(x)
+    )
+}))
+```
+
+**What about proteins?** To generate the same table for proteins, we 
+need to rebuild an identification matrix for peptides. In this case, 
+you simply need to change the aggregation call
+
+```{r, eval=FALSE}
+leduc <- aggregateFeatures(
+    leduc, i = names(leduc), 
+    name = paste0("spectral_counts_", names(leduc)),
+    fcol = "Sequence", 
+    fun = MsCoreUtils::colCounts
+)
+```
+
+to
+
+```{r, eval=FALSE}
+leduc <- aggregateFeatures(
+    leduc, i = names(leduc), 
+    name = paste0("spectral_counts_", names(leduc)),
+    fcol = "Leading.razor.protein", 
+    fun = MsCoreUtils::colCounts
+)
+```
+
+All code that follows aggregation is exactly the same.
+
+# Advanced criteria
+
+On top of the four metrics computed in the previous section, we
+also recommended exploring the jaccard indices and assessing whether
+enough single cells are acquired to accurately estimate the total 
+sensitivity. 
+
+## Jaccard index distribution
+
+We first need a custom function that computes the Jaccard index for 
+all pairs of columns given an identification matrix. The Jaccard index
+in this context is the number of features shared by two columns 
+divided by the number of distinct features identified in any of the 
+two columns. This provides a good measure of how consistent the 
+identifications are across single-cells.
+
+```{r}
+jaccardIndexFromIdMatrix <- function(idMatrix) {
+    vectorSizes <- colSums(idMatrix)
+    pwVectorSizes <- sapply(vectorSizes, function(x) vectorSizes + x)
+    unionSize <- crossprod(idMatrix)
+    jacc <- unionSize / (pwVectorSizes - unionSize)
+    jacc[upper.tri(jacc)] ## jacc is a symmetric matrix
+}
+```
+
+Next we plot the distribution of the jaccard indices. Again, 
+biological differences between cell types may decrease the consistency
+between single cells. Therefore, we compute and plot the Jaccard index
+for each cell type separately.
+
+```{r}
+par(mfrow = c(2, 1))
+for (st in unique(ids$SampleType)) {
+    x <- assay(ids)[, ids$SampleType == st]
+    hist(jaccardIndexFromIdMatrix(x), main = st, 
+         xlab = "Jaccard index", breaks = 50)
+}
+```
+
+The Jaccard index is mainly distributed across 50 and 60 \%, meaning
+that about half of the features are consistently found across 
+single-cells within the same cell type. Note also that some pairs of
+cells have perfect consistency. These are pairs of cells from the same
+acquisition runs that were multiplexed together with TMT labelling.
+
+## Assessing the total sensitivity
+
+To assessing whether we can accurately estimate the total sensitivity,
+we generate a cumulative sensitivity curve (CSC). The functions below
+allows to generate that curve provided an identification matrix. The
+algorithm samples columns from the matrix in gradually increasing 
+numbers (determined by `nsteps`). Each sampling is repeated `niters` 
+times to account for the stochasticity of the approach. 
+
+```{r}
+getSteps <- function(assays, nsteps) {
+    maxn <- length(assays)
+    steps <- seq(1, maxn, length.out = min(maxn, nsteps))
+    round(steps)
+}
+groupSamples <- function(x, by) {
+    sapply(unique(by), function(i) {
+        ifelse(rowSums(x[, by == i]) == 0, 0, 1)
+    })
+}
+cumulativeSensitivity <- function(idMatrix, niters, nsteps, 
+                                  groupSamplesBy = NULL) {
+    out <- list()
+    if (!is.null(groupSamplesBy)) {
+        idMatrix <- groupSamples(idMatrix, by = groupSamplesBy)
+    }
+    for (n in getSteps(colnames(idMatrix), nsteps)) {
+        for (i in 1:niters) {
+            sel <- sample(colnames(idMatrix), n)
+            s <- sum(rowSums(idMatrix[, sel, drop = FALSE]) != 0)
+            out <- c(
+                out,
+                list(data.frame(
+                    i = i,
+                    NumberSamples = n,
+                    Sensitivity = s
+                ))
+            )
+        }
+    }
+    do.call(rbind, out)
+}
+```
+
+Again, we explore the csc for each cell type separately. Note that we
+group the cells by acquisition run (`Set`).
+
+```{r}
+csc <- lapply(unique(ids$SampleType), function(st) {
+    x <- ids[, ids$SampleType == st]
+    out <- cumulativeSensitivity(
+        assay(x), niters = 10, nsteps = 30, groupSamplesBy = x$Set
+    )
+    out$SampleType <- st
+    out
+})
+csc <- do.call(rbind, csc)
+```
+
+Next, we plot the cumlulative sensitivity for each cell type 
+separately.
+
+```{r}
+library("ggplot2")
+(plCumS <- ggplot(csc) +
+    aes(x = NumberSamples, y = Sensitivity, colour = SampleType) +
+    geom_point(size = 1) +
+    labs(y = "Sensitivity", x = "Number of MS acquisitions"
+    ) +
+    theme_minimal() +
+    theme(
+        legend.position = "top",
+        axis.title.x = element_text(vjust = 0)
+    ))
+```
+
+The cumulative sensitivity does not plateau, although it almost 
+reaches it. This means that we slightly underestimate the total 
+sensitivity. This is because we have subset the data at the beginning
+of the script, and including more datasets allows to reach the 
+plateau.
+
+We will now predict the total sensitivity. Since both cell types 
+exhibit the same trends, we will perform the prediction for the two 
+cell types combined. We first fit an asymptotic regression model to
+assess the relationship between the sensitivity and the number of 
+MS runs. Then, we predict the response and plot these preduction on
+the previous graph.
+
+```{r}
+AsymptoticRegressionModel <- nls(
+    formula = Sensitivity ~ SSasymp(NumberSamples, Asym, R0, lrc),
+    data = csc,
+    weights = csc$NumberSamples^2 ## data is heterorscedastic
+)
+predictedSensitivity <- data.frame(
+    NumberSamples = 1:max(csc$NumberSamples) 
+)
+predictedSensitivity$Sensitivity <- predict(
+    AsymptoticRegressionModel,
+    newdata = predictedSensitivity
+)
+plCumS +
+    geom_line(data = predictedSensitivity, colour = "red")
+```
+
+We finally compute the predicted total sensitivity, that is 
+sensitivity if we had an infinite number of samples.
+
+```{r}
+predict(
+    AsymptoticRegressionModel,
+    newdata = data.frame(NumberSamples = Inf) 
+)
+```
+
+The total sensitivity is predicted to be 7282 peptides. Compared to 
+the total sensitivity of 7111 reported in the previous section, we 
+underestimate the total sensitivity by about 150 peptides.
+
+# Citation
+
+```{r citation}
+citation("scp")
+```
+
+# License
+
+This vignette is distributed under a 
+[CC BY-SA license](https://creativecommons.org/licenses/by-sa/2.0/) 
+license.
+
+# Reference

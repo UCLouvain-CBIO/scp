@@ -1,5 +1,9 @@
 # scp 1.11
 
+## scp 1.11.2
+
+- docs: created vignette about reporting missing values in SCP
+
 ## scp 1.11.1
 
 - Updated citation
