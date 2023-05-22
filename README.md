@@ -47,16 +47,18 @@ BiocManager::install("UCLouvain-CBIO/scp")
 
 To cite the `scp` package in publications use:
 
->Vanderaa Christophe and Laurent Gatto. Replication
-> of Single-Cell Proteomics Data Reveals Important
-> Computational Challenges. Expert Review of
-> Proteomics, 1–9 (2021).
+> Vanderaa Christophe and Laurent Gatto. Revisiting the thorny issue 
+  of missing values in single-cell proteomics. arXiv:2304.06654; 
+  doi: https://doi.org/2304.06654 (2023).
+
+> Vanderaa Christophe and Laurent Gatto. The current state of 
+  single-cell proteomics data analysis. Current Protocols 3 (1): 
+  e658.; doi: https://doi.org/10.1002/cpz1.658 (2023).
 
 > Vanderaa Christophe and Laurent Gatto. Replication
-> of Single-Cell Proteomics Data Reveals Important
-> Computational Challenges. bioRxiv 2021.04.12.439408;
-> doi: https://doi.org/10.1101/2021.04.12.439408
-> (2021).
+  of Single-Cell Proteomics Data Reveals Important
+  Computational Challenges. Expert Review of
+  Proteomics, 1–9 (2021).
 
 ## Asking for help
 
