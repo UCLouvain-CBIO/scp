@@ -182,6 +182,10 @@ jobs:
           key: ${{ env.cache-version }}-${{ runner.os }}-biocdocker-biocbranch-${{ needs.define-docker-info.outputs.biocversion }}-r-${{ steps.findrversion.outputs.rversion }}-bioc-${{ steps.findrversion.outputs.biocversionnum }}-${{ hashFiles('.github/depends.Rds') }}
           restore-keys: ${{ env.cache-version }}-${{ runner.os }}-biocdocker-biocbranch-${{ needs.define-docker-info.outputs.biocversion }}-r-${{ steps.findrversion.outputs.rversion }}-bioc-${{ steps.findrversion.outputs.biocversionnum }}-
 
+      - name: Manually install affy (currently unavailable for devel)
+        run: |
+          BiocManager::install("Bioconductor/affy")
+        shell: Rscript {0}
       - name: Install dependencies
         run: |
           ## Try installing the package dependencies in steps. First the local
@@ -214,7 +218,6 @@ jobs:
           git clone https://github.com/bmbolstad/preprocessCore.git
           cd preprocessCore
           R CMD INSTALL --configure-args="--disable-threading"  .
-
       - name: Manually install latest QFeatures
         run: |
           BiocManager::install("RforMassSpectrometry/QFeatures")
