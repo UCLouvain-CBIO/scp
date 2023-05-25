@@ -53,7 +53,7 @@ framework. If this is not the case, we suggest you first read the
 First, we load the `scp` package and retrieve a real-life dataset from
 the `scpdata` package.
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 library("scp")
 library("scpdata")
 leduc <- leduc2022()
@@ -99,7 +99,7 @@ data to peptide data. We use a counting functions for aggregation,
 meaning that we generate spectral count data for peptides. Then, we
 join all runs in a single assay. 
 
-```{r}
+```{r, message=FALSE}
 leduc <- aggregateFeatures(
     leduc, i = names(leduc), 
     name = paste0("spectral_counts_", names(leduc)),
