@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.1</span>
       </span>
     </div>
 
@@ -53,13 +53,16 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/QFeatures_nutshell.html">QFeatures in a nutshell</a>
-    </li>
-    <li>
       <a href="../articles/advanced.html">Advanced usage of `scp`</a>
     </li>
     <li>
+      <a href="../articles/QFeatures_nutshell.html">QFeatures in a nutshell</a>
+    </li>
+    <li>
       <a href="../articles/read_scp.html">Load Single-Cell Proteomics data using `readSCP`</a>
+    </li>
+    <li>
+      <a href="../articles/reporting_missing_values.html">Reporting missing values for Single Cell Proteomics</a>
     </li>
   </ul>
 </li>
@@ -93,7 +96,7 @@ Gatto</h4>
                                     <h4 data-toc-skip class="author">Christophe
 Vanderaa</h4>
                         
-            <h4 data-toc-skip class="date">14 April 2023</h4>
+            <h4 data-toc-skip class="date">26 May 2023</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/HEAD/vignettes/QFeatures_nutshell.Rmd" class="external-link"><code>vignettes/QFeatures_nutshell.Rmd</code></a></small>
       <div class="hidden name"><code>QFeatures_nutshell.Rmd</code></div>
@@ -684,7 +687,7 @@ visualization <a href="https://rformassspectrometry.github.io/QFeatures/articles
 <div class="section level2">
 <h2 class="unnumbered" id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
 </h2>
-<pre><code>R version 4.3.0 beta (2023-04-06 r84184)
+<pre><code>R version 4.3.0 (2023-04-21)
 Platform: x86_64-pc-linux-gnu (64-bit)
 Running under: Ubuntu 22.04.2 LTS
 
@@ -708,51 +711,52 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] ggplot2_3.4.2               scp_1.9.1                  
- [3] QFeatures_1.9.3             MultiAssayExperiment_1.25.9
- [5] SummarizedExperiment_1.29.1 Biobase_2.59.0             
- [7] GenomicRanges_1.51.4        GenomeInfoDb_1.35.16       
- [9] IRanges_2.33.1              S4Vectors_0.37.5           
-[11] BiocGenerics_0.45.3         MatrixGenerics_1.11.1      
-[13] matrixStats_0.63.0          BiocStyle_2.27.1           
+ [1] ggplot2_3.4.2               scp_1.11.1                 
+ [3] QFeatures_1.9.4             MultiAssayExperiment_1.27.0
+ [5] SummarizedExperiment_1.31.1 Biobase_2.61.0             
+ [7] GenomicRanges_1.53.1        GenomeInfoDb_1.37.1        
+ [9] IRanges_2.35.1              S4Vectors_0.39.1           
+[11] BiocGenerics_0.47.0         MatrixGenerics_1.13.0      
+[13] matrixStats_0.63.0          BiocStyle_2.29.0           
 
 loaded via a namespace (and not attached):
- [1] gtable_0.3.3                impute_1.73.0              
- [3] xfun_0.38                   bslib_0.4.2                
- [5] lattice_0.21-8              vctrs_0.6.1                
- [7] tools_4.3.0                 bitops_1.0-7               
- [9] generics_0.1.3              tibble_3.2.1               
+ [1] gtable_0.3.3                impute_1.75.1              
+ [3] xfun_0.39                   bslib_0.4.2                
+ [5] lattice_0.21-8              generics_0.1.3             
+ [7] vctrs_0.6.2                 tools_4.3.0                
+ [9] bitops_1.0-7                tibble_3.2.1               
 [11] fansi_1.0.4                 highr_0.10                 
-[13] cluster_2.1.4               BiocBaseUtils_1.1.0        
-[15] pkgconfig_2.0.3             Matrix_1.5-4               
+[13] cluster_2.1.4               BiocBaseUtils_1.3.0        
+[15] pkgconfig_2.0.3             Matrix_1.5-4.1             
 [17] desc_1.4.2                  lifecycle_1.0.3            
 [19] GenomeInfoDbData_1.2.10     farver_2.1.1               
 [21] compiler_4.3.0              stringr_1.5.0              
 [23] textshaping_0.3.6           munsell_0.5.0              
 [25] clue_0.3-64                 htmltools_0.5.5            
-[27] sass_0.4.5                  RCurl_1.98-1.12            
+[27] sass_0.4.6                  RCurl_1.98-1.12            
 [29] yaml_2.3.7                  lazyeval_0.2.2             
-[31] pkgdown_2.0.7.9000          pillar_1.9.0               
-[33] jquerylib_0.1.4             MASS_7.3-58.4              
-[35] SingleCellExperiment_1.21.1 DelayedArray_0.25.0        
-[37] cachem_1.0.7                tidyselect_1.2.0           
-[39] digest_0.6.31               stringi_1.7.12             
-[41] dplyr_1.1.1                 purrr_1.0.1                
-[43] bookdown_0.33               labeling_0.4.2             
-[45] rprojroot_2.0.3             fastmap_1.1.1              
-[47] grid_4.3.0                  colorspace_2.1-0           
-[49] cli_3.6.1                   magrittr_2.0.3             
-[51] utf8_1.2.3                  withr_2.5.0                
-[53] scales_1.2.1                rmarkdown_2.21             
-[55] XVector_0.39.0              igraph_1.4.2               
-[57] ragg_1.2.5                  memoise_2.0.1              
-[59] evaluate_0.20               knitr_1.42                 
-[61] rlang_1.1.0                 glue_1.6.2                 
-[63] BiocManager_1.30.20         jsonlite_1.8.4             
-[65] AnnotationFilter_1.23.0     R6_2.5.1                   
-[67] systemfonts_1.0.4           fs_1.6.1                   
-[69] zlibbioc_1.45.0             ProtGenerics_1.31.0        
-[71] MsCoreUtils_1.11.6         </code></pre>
+[31] pillar_1.9.0                pkgdown_2.0.7.9000         
+[33] crayon_1.5.2                jquerylib_0.1.4            
+[35] MASS_7.3-60                 SingleCellExperiment_1.23.0
+[37] DelayedArray_0.27.4         cachem_1.0.8               
+[39] tidyselect_1.2.0            digest_0.6.31              
+[41] stringi_1.7.12              dplyr_1.1.2                
+[43] purrr_1.0.1                 bookdown_0.34              
+[45] labeling_0.4.2              rprojroot_2.0.3            
+[47] fastmap_1.1.1               grid_4.3.0                 
+[49] colorspace_2.1-0            cli_3.6.1                  
+[51] SparseArray_1.1.6           magrittr_2.0.3             
+[53] S4Arrays_1.1.4              utf8_1.2.3                 
+[55] withr_2.5.0                 scales_1.2.1               
+[57] rmarkdown_2.21              XVector_0.41.1             
+[59] igraph_1.4.3                ragg_1.2.5                 
+[61] memoise_2.0.1               evaluate_0.21              
+[63] knitr_1.43                  rlang_1.1.1                
+[65] glue_1.6.2                  BiocManager_1.30.20        
+[67] jsonlite_1.8.4              AnnotationFilter_1.25.0    
+[69] R6_2.5.1                    systemfonts_1.0.4          
+[71] fs_1.6.2                    zlibbioc_1.47.0            
+[73] ProtGenerics_1.33.0         MsCoreUtils_1.13.1         </code></pre>
 </div>
 <div class="section level2">
 <h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>

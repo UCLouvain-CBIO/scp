@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.9.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.1</span>
       </span>
     </div>
 
@@ -53,13 +53,16 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/QFeatures_nutshell.html">QFeatures in a nutshell</a>
-    </li>
-    <li>
       <a href="../articles/advanced.html">Advanced usage of `scp`</a>
     </li>
     <li>
+      <a href="../articles/QFeatures_nutshell.html">QFeatures in a nutshell</a>
+    </li>
+    <li>
       <a href="../articles/read_scp.html">Load Single-Cell Proteomics data using `readSCP`</a>
+    </li>
+    <li>
+      <a href="../articles/reporting_missing_values.html">Reporting missing values for Single Cell Proteomics</a>
     </li>
   </ul>
 </li>
@@ -94,7 +97,7 @@ Gatto</h4>
                                     <h4 data-toc-skip class="author">Christophe
 Vanderaa</h4>
                         
-            <h4 data-toc-skip class="date">14 April 2023</h4>
+            <h4 data-toc-skip class="date">26 May 2023</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/HEAD/vignettes/scp.Rmd" class="external-link"><code>vignettes/scp.Rmd</code></a></small>
       <div class="hidden name"><code>scp.Rmd</code></div>
@@ -110,8 +113,8 @@ Vanderaa</h4>
 spectrometry (MS)-based single cell proteomics (SCP) data. The functions
 rely on a specific data structure that wraps <a href="https://rformassspectrometry.github.io/QFeatures/" class="external-link"><code>QFeatures</code></a>
 objects (<span class="citation">Gatto (2020)</span>) around <a href="http://bioconductor.org/packages/release/bioc/html/SingleCellExperiment.html" class="external-link"><code>SingleCellExperiment</code></a>
-objects (<span class="citation">Amezquita et al. (2019)</span>). This
-data structure could be seen as Matryoshka dolls were the
+objects (<span class="citation">(<strong>Amezquita2019-bf?</strong>)</span>). This data
+structure could be seen as Matryoshka dolls were the
 <code>SingleCellExperiment</code> objects are small dolls contained in
 the bigger <code>QFeatures</code> doll.</p>
 <p>The <code>SingleCellExperiment</code> class provides a dedicated
@@ -157,9 +160,9 @@ the steps presented here are the best steps for this type of data
 analysis. This vignette performs the steps that were described in the
 SCoPE2 landmark paper (<span class="citation">Specht et al.
 (2021)</span>) and that were reproduced in another work using the
-<code>scp</code> package (<span class="citation">Vanderaa and Gatto
-(2021)</span>). The replication on the full SCoPE2 dataset using
-<code>scp</code> is available in <a href="https://uclouvain-cbio.github.io/SCP.replication/articles/SCoPE2.html" class="external-link">this
+<code>scp</code> package (<span class="citation">(<strong>Vanderaa2021-ue?</strong>)</span>). The
+replication on the full SCoPE2 dataset using <code>scp</code> is
+available in <a href="https://uclouvain-cbio.github.io/SCP.replication/articles/SCoPE2.html" class="external-link">this
 vignette</a>. We hope to convince the reader that, although the workflow
 is probably not optimal, <code>scp</code> has the full potential to
 perform standardized and principled data analysis. All functions
@@ -968,8 +971,6 @@ matrix. Recall the data matrix can be accessed using the
 <code>assay</code> function.</p>
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">sva</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: replacing previous import 'utils::findMatches' by</span></span>
-<span><span class="co">#&gt; 'S4Vectors::findMatches' when loading 'AnnotationDbi'</span></span>
 <span><span class="fu">assay</span><span class="op">(</span><span class="va">sce</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sva/man/ComBat.html" class="external-link">ComBat</a></span><span class="op">(</span>dat <span class="op">=</span> <span class="fu">assay</span><span class="op">(</span><span class="va">sce</span><span class="op">)</span>,</span>
 <span>                     batch <span class="op">=</span> <span class="va">batch</span>,</span>
 <span>                     mod <span class="op">=</span> <span class="va">model</span><span class="op">)</span></span></code></pre></div>
@@ -1112,7 +1113,7 @@ that describes more in details how to visualize and explore data in a
 <div class="section level2">
 <h2 class="unnumbered" id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
 </h2>
-<pre><code>R version 4.3.0 beta (2023-04-06 r84184)
+<pre><code>R version 4.3.0 (2023-04-21)
 Platform: x86_64-pc-linux-gnu (64-bit)
 Running under: Ubuntu 22.04.2 LTS
 
@@ -1136,74 +1137,75 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] scater_1.27.8               scuttle_1.9.4              
- [3] SingleCellExperiment_1.21.1 sva_3.47.0                 
- [5] BiocParallel_1.33.12        genefilter_1.81.3          
+ [1] scater_1.29.0               scuttle_1.11.0             
+ [3] SingleCellExperiment_1.23.0 sva_3.49.0                 
+ [5] BiocParallel_1.35.2         genefilter_1.83.1          
  [7] mgcv_1.8-42                 nlme_3.1-162               
- [9] dplyr_1.1.1                 magrittr_2.0.3             
-[11] ggplot2_3.4.2               scp_1.9.1                  
-[13] QFeatures_1.9.3             MultiAssayExperiment_1.25.9
-[15] SummarizedExperiment_1.29.1 Biobase_2.59.0             
-[17] GenomicRanges_1.51.4        GenomeInfoDb_1.35.16       
-[19] IRanges_2.33.1              S4Vectors_0.37.5           
-[21] BiocGenerics_0.45.3         MatrixGenerics_1.11.1      
-[23] matrixStats_0.63.0          BiocStyle_2.27.1           
+ [9] dplyr_1.1.2                 magrittr_2.0.3             
+[11] ggplot2_3.4.2               scp_1.11.1                 
+[13] QFeatures_1.9.4             MultiAssayExperiment_1.27.0
+[15] SummarizedExperiment_1.31.1 Biobase_2.61.0             
+[17] GenomicRanges_1.53.1        GenomeInfoDb_1.37.1        
+[19] IRanges_2.35.1              S4Vectors_0.39.1           
+[21] BiocGenerics_0.47.0         MatrixGenerics_1.13.0      
+[23] matrixStats_0.63.0          BiocStyle_2.29.0           
 
 loaded via a namespace (and not attached):
-  [1] jsonlite_1.8.4            ggbeeswarm_0.7.1         
+  [1] jsonlite_1.8.4            ggbeeswarm_0.7.2         
   [3] farver_2.1.1              rmarkdown_2.21           
-  [5] fs_1.6.1                  zlibbioc_1.45.0          
-  [7] ragg_1.2.5                vctrs_0.6.1              
-  [9] memoise_2.0.1             DelayedMatrixStats_1.21.0
+  [5] fs_1.6.2                  zlibbioc_1.47.0          
+  [7] ragg_1.2.5                vctrs_0.6.2              
+  [9] memoise_2.0.1             DelayedMatrixStats_1.23.0
  [11] RCurl_1.98-1.12           htmltools_0.5.5          
- [13] BiocBaseUtils_1.1.0       BiocNeighbors_1.17.1     
- [15] sass_0.4.5                bslib_0.4.2              
- [17] desc_1.4.2                impute_1.73.0            
- [19] cachem_1.0.7              igraph_1.4.2             
- [21] lifecycle_1.0.3           pkgconfig_2.0.3          
- [23] rsvd_1.0.5                Matrix_1.5-4             
- [25] R6_2.5.1                  fastmap_1.1.1            
- [27] GenomeInfoDbData_1.2.10   clue_0.3-64              
- [29] digest_0.6.31             colorspace_2.1-0         
- [31] AnnotationDbi_1.61.2      rprojroot_2.0.3          
- [33] irlba_2.3.5.1             textshaping_0.3.6        
- [35] RSQLite_2.3.1             beachmat_2.15.2          
- [37] labeling_0.4.2            fansi_1.0.4              
- [39] httr_1.4.5                compiler_4.3.0           
- [41] bit64_4.0.5               withr_2.5.0              
- [43] viridis_0.6.2             DBI_1.1.3                
- [45] highr_0.10                MASS_7.3-58.4            
- [47] DelayedArray_0.25.0       tools_4.3.0              
- [49] vipor_0.4.5               beeswarm_0.4.0           
- [51] glue_1.6.2                grid_4.3.0               
- [53] cluster_2.1.4             generics_0.1.3           
- [55] gtable_0.3.3              BiocSingular_1.15.0      
- [57] ScaledMatrix_1.7.0        utf8_1.2.3               
- [59] XVector_0.39.0            ggrepel_0.9.3            
- [61] pillar_1.9.0              stringr_1.5.0            
- [63] limma_3.55.7              splines_4.3.0            
- [65] lattice_0.21-8            survival_3.5-5           
- [67] FNN_1.1.3.2               bit_4.0.5                
- [69] annotate_1.77.0           tidyselect_1.2.0         
- [71] locfit_1.5-9.7            Biostrings_2.67.2        
- [73] knitr_1.42                gridExtra_2.3            
- [75] bookdown_0.33             ProtGenerics_1.31.0      
- [77] edgeR_3.41.6              xfun_0.38                
- [79] stringi_1.7.12            lazyeval_0.2.2           
- [81] yaml_2.3.7                evaluate_0.20            
- [83] codetools_0.2-19          MsCoreUtils_1.11.6       
- [85] tibble_3.2.1              BiocManager_1.30.20      
- [87] cli_3.6.1                 uwot_0.1.14              
- [89] xtable_1.8-4              systemfonts_1.0.4        
- [91] munsell_0.5.0             jquerylib_0.1.4          
- [93] Rcpp_1.0.10               png_0.1-8                
- [95] XML_3.99-0.14             parallel_4.3.0           
- [97] pkgdown_2.0.7.9000        blob_1.2.4               
- [99] AnnotationFilter_1.23.0   sparseMatrixStats_1.11.1 
-[101] bitops_1.0-7              viridisLite_0.4.1        
-[103] scales_1.2.1              purrr_1.0.1              
-[105] crayon_1.5.2              rlang_1.1.0              
-[107] KEGGREST_1.39.0          </code></pre>
+ [13] S4Arrays_1.1.4            BiocBaseUtils_1.3.0      
+ [15] BiocNeighbors_1.19.0      SparseArray_1.1.6        
+ [17] sass_0.4.6                bslib_0.4.2              
+ [19] desc_1.4.2                impute_1.75.1            
+ [21] cachem_1.0.8              igraph_1.4.3             
+ [23] lifecycle_1.0.3           pkgconfig_2.0.3          
+ [25] rsvd_1.0.5                Matrix_1.5-4.1           
+ [27] R6_2.5.1                  fastmap_1.1.1            
+ [29] GenomeInfoDbData_1.2.10   clue_0.3-64              
+ [31] digest_0.6.31             colorspace_2.1-0         
+ [33] AnnotationDbi_1.63.1      rprojroot_2.0.3          
+ [35] irlba_2.3.5.1             textshaping_0.3.6        
+ [37] RSQLite_2.3.1             beachmat_2.17.2          
+ [39] labeling_0.4.2            fansi_1.0.4              
+ [41] httr_1.4.6                compiler_4.3.0           
+ [43] bit64_4.0.5               withr_2.5.0              
+ [45] viridis_0.6.3             DBI_1.1.3                
+ [47] highr_0.10                MASS_7.3-60              
+ [49] DelayedArray_0.27.4       tools_4.3.0              
+ [51] vipor_0.4.5               beeswarm_0.4.0           
+ [53] glue_1.6.2                grid_4.3.0               
+ [55] cluster_2.1.4             generics_0.1.3           
+ [57] gtable_0.3.3              BiocSingular_1.17.0      
+ [59] ScaledMatrix_1.9.1        utf8_1.2.3               
+ [61] XVector_0.41.1            ggrepel_0.9.3            
+ [63] pillar_1.9.0              stringr_1.5.0            
+ [65] limma_3.57.1              splines_4.3.0            
+ [67] lattice_0.21-8            FNN_1.1.3.2              
+ [69] survival_3.5-5            bit_4.0.5                
+ [71] annotate_1.79.0           tidyselect_1.2.0         
+ [73] locfit_1.5-9.7            Biostrings_2.69.1        
+ [75] knitr_1.43                gridExtra_2.3            
+ [77] bookdown_0.34             ProtGenerics_1.33.0      
+ [79] edgeR_3.43.2              xfun_0.39                
+ [81] stringi_1.7.12            lazyeval_0.2.2           
+ [83] yaml_2.3.7                evaluate_0.21            
+ [85] codetools_0.2-19          MsCoreUtils_1.13.1       
+ [87] tibble_3.2.1              BiocManager_1.30.20      
+ [89] cli_3.6.1                 uwot_0.1.14              
+ [91] xtable_1.8-4              systemfonts_1.0.4        
+ [93] munsell_0.5.0             jquerylib_0.1.4          
+ [95] Rcpp_1.0.10               png_0.1-8                
+ [97] XML_3.99-0.14             parallel_4.3.0           
+ [99] pkgdown_2.0.7.9000        blob_1.2.4               
+[101] AnnotationFilter_1.25.0   sparseMatrixStats_1.13.0 
+[103] bitops_1.0-7              viridisLite_0.4.2        
+[105] scales_1.2.1              purrr_1.0.1              
+[107] crayon_1.5.2              rlang_1.1.1              
+[109] KEGGREST_1.41.0          </code></pre>
 </div>
 <div class="section level2">
 <h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
@@ -1219,22 +1221,13 @@ loaded via a namespace (and not attached):
 <span id="cb57-9"><a href="#cb57-9" aria-hidden="true" tabindex="-1"></a>  single<span class="sc">-</span>cell proteomics data analysis. Current Protocols <span class="dv">3</span> (<span class="dv">1</span>)<span class="sc">:</span> e658.;</span>
 <span id="cb57-10"><a href="#cb57-10" aria-hidden="true" tabindex="-1"></a>  doi<span class="sc">:</span> https<span class="sc">:</span><span class="er">//</span>doi.org<span class="sc">/</span><span class="fl">10.1002</span><span class="sc">/</span><span class="fu">cpz1.658</span> (<span class="dv">2023</span>).</span>
 <span id="cb57-11"><a href="#cb57-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb57-12"><a href="#cb57-12" aria-hidden="true" tabindex="-1"></a>  Vanderaa Christophe and Laurent Gatto. The current state of</span>
-<span id="cb57-13"><a href="#cb57-13" aria-hidden="true" tabindex="-1"></a>  single<span class="sc">-</span>cell proteomics data analysis. arXiv<span class="sc">:</span><span class="fl">2210.01020</span>; doi<span class="sc">:</span></span>
-<span id="cb57-14"><a href="#cb57-14" aria-hidden="true" tabindex="-1"></a>  https<span class="sc">:</span><span class="er">//</span>doi.org<span class="sc">/</span><span class="fl">10.48550</span><span class="sc">/</span><span class="fu">arXiv.2210.01020</span> (<span class="dv">2022</span>).</span>
+<span id="cb57-12"><a href="#cb57-12" aria-hidden="true" tabindex="-1"></a>  Vanderaa Christophe and Laurent Gatto. Replication of Single<span class="sc">-</span>Cell</span>
+<span id="cb57-13"><a href="#cb57-13" aria-hidden="true" tabindex="-1"></a>  Proteomics Data Reveals Important Computational Challenges. Expert</span>
+<span id="cb57-14"><a href="#cb57-14" aria-hidden="true" tabindex="-1"></a>  Review of Proteomics, 1–<span class="dv">9</span> (<span class="dv">2021</span>).</span>
 <span id="cb57-15"><a href="#cb57-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb57-16"><a href="#cb57-16" aria-hidden="true" tabindex="-1"></a>  Vanderaa Christophe and Laurent Gatto. Replication of Single<span class="sc">-</span>Cell</span>
-<span id="cb57-17"><a href="#cb57-17" aria-hidden="true" tabindex="-1"></a>  Proteomics Data Reveals Important Computational Challenges. Expert</span>
-<span id="cb57-18"><a href="#cb57-18" aria-hidden="true" tabindex="-1"></a>  Review of Proteomics, 1–<span class="dv">9</span> (<span class="dv">2021</span>).</span>
-<span id="cb57-19"><a href="#cb57-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb57-20"><a href="#cb57-20" aria-hidden="true" tabindex="-1"></a>  Vanderaa Christophe and Laurent Gatto. Replication of Single<span class="sc">-</span>Cell</span>
-<span id="cb57-21"><a href="#cb57-21" aria-hidden="true" tabindex="-1"></a>  Proteomics Data Reveals Important Computational Challenges. bioRxiv</span>
-<span id="cb57-22"><a href="#cb57-22" aria-hidden="true" tabindex="-1"></a>  <span class="dv">2021</span>.<span class="dv">04</span>.<span class="fl">12.439408</span>; doi<span class="sc">:</span> https<span class="sc">:</span><span class="er">//</span>doi.org<span class="sc">/</span><span class="fl">10.1101</span><span class="sc">/</span><span class="dv">2021</span>.<span class="dv">04</span>.<span class="fl">12.439408</span></span>
-<span id="cb57-23"><a href="#cb57-23" aria-hidden="true" tabindex="-1"></a>  (<span class="dv">2021</span>).</span>
-<span id="cb57-24"><a href="#cb57-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb57-25"><a href="#cb57-25" aria-hidden="true" tabindex="-1"></a>To see these entries <span class="cf">in</span> BibTeX format, use <span class="st">'print(&lt;citation&gt;,</span></span>
-<span id="cb57-26"><a href="#cb57-26" aria-hidden="true" tabindex="-1"></a><span class="st">bibtex=TRUE)'</span>, <span class="st">'toBibtex(.)'</span>, or set</span>
-<span id="cb57-27"><a href="#cb57-27" aria-hidden="true" tabindex="-1"></a><span class="st">'options(citation.bibtex.max=999)'</span>.</span></code></pre></div>
+<span id="cb57-16"><a href="#cb57-16" aria-hidden="true" tabindex="-1"></a>To see these entries <span class="cf">in</span> BibTeX format, use <span class="st">'print(&lt;citation&gt;,</span></span>
+<span id="cb57-17"><a href="#cb57-17" aria-hidden="true" tabindex="-1"></a><span class="st">bibtex=TRUE)'</span>, <span class="st">'toBibtex(.)'</span>, or set</span>
+<span id="cb57-18"><a href="#cb57-18" aria-hidden="true" tabindex="-1"></a><span class="st">'options(citation.bibtex.max=999)'</span>.</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
@@ -1246,12 +1239,6 @@ license</a> license.</p>
 <h2 class="unnumbered" id="reference">Reference<a class="anchor" aria-label="anchor" href="#reference"></a>
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent">
-<div id="ref-Amezquita2019-bf" class="csl-entry">
-Amezquita, Robert A, Aaron T L Lun, Etienne Becht, Vince J Carey,
-Lindsay N Carpp, Ludwig Geistlinger, Federico Martini, et al. 2019.
-<span>“Orchestrating Single-Cell Analysis with Bioconductor.”</span>
-<em>Nat. Methods</em>, December, 1–9.
-</div>
 <div id="ref-Chen2019-uc" class="csl-entry">
 Chen, Albert Tian, Alexander Franks, and Nikolai Slavov. 2019.
 <span>“<span>DART-ID</span> Increases Single-Cell Proteome
@@ -1278,11 +1265,6 @@ Analysis of Macrophage Heterogeneity Using <span>SCoPE2</span>.”</span>
 Tyanova, Stefka, Tikira Temu, and Juergen Cox. 2016. <span>“The
 <span>MaxQuant</span> Computational Platform for Mass Spectrometry-Based
 Shotgun Proteomics.”</span> <em>Nat. Protoc.</em> 11 (12): 2301–19.
-</div>
-<div id="ref-Vanderaa2021-ue" class="csl-entry">
-Vanderaa, Christophe, and Laurent Gatto. 2021. <span>“Replication of
-Single-Cell Proteomics Data Reveals Important Computational
-Challenges.”</span> <em>Expert Rev. Proteomics</em>, October, 1–9.
 </div>
 </div>
 </div>
