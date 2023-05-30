@@ -46,7 +46,7 @@ the distribution of Jaccard indices.
 
 In this vignette, we will assume you are familiar with the `scp` 
 framework. If this is not the case, we suggest you first read the 
-[`introduction vignette`](https://uclouvain-cbio.github.io/scp/articles/scp.html).
+[introduction vignette](https://uclouvain-cbio.github.io/scp/articles/scp.html).
 
 # Minimal data processing
 
@@ -60,7 +60,7 @@ leduc <- leduc2022()
 ```
 
 Next, we reduce the size of the dataset to the 30 first acquisitions.
-This allows for a fast execution of the code while still being a
+This allows for a fast execution of the code for this vignette while still being a
 representative demonstration on a real dataset. We also keep only the
 feature annotations that will be used later in the vignette.
 
@@ -72,22 +72,22 @@ leduc <- selectRowData(leduc, c(
 ))
 ```
 
-This is the actual minimal processing: filtering contaminant and 
-low-quality features, replacing zeros by missing values, we keep only
-samples that correspond to single cells and we remove the feature 
-absent in all samples.
+This is the actual minimal processing: 
+1. filtering contaminant and low-quality features
+2. replacing zeros by missing values
+3. keep only samples that correspond to single cells
+4. remove the feature absent in all samples.
 
 ```{r}
 leduc <- filterFeatures(leduc, ~ Reverse != "+" &
                            Potential.contaminant != "+" &
-                           PEP < 0.01)
-leduc <- zeroIsNA(leduc, i = names(leduc))
+                           PEP < 0.01) ## 1.
+leduc <- zeroIsNA(leduc, i = names(leduc)) ## 2.
 leduc <- filterNA(leduc, i = names(leduc), pNA = 0.9999)
-leduc <- filterNA(leduc, i = names(leduc), pNA = 0.9999)
-leduc <- subsetByColData(
+leduc <- subsetByColData( ## 3.
     leduc, leduc$SampleType %in% c("Monocyte", "Melanoma cell")
 )
-leduc <- dropEmptyAssays(leduc)
+leduc <- dropEmptyAssays(leduc) ## 4.
 ```
 
 # Peptide identification data
@@ -96,8 +96,7 @@ Next, we build the peptide identification matrix, that is a matrix
 with single cells as columns and peptides as rows. We first need data 
 at peptide level, hence we aggregate the peptide to spectrum match 
 data to peptide data. We use a counting functions for aggregation, 
-meaning that we generate spectral count data for peptides. Then, we
-join all runs in a single assay. 
+meaning that we generate spectral count data for peptides. 
 
 ```{r, message=FALSE}
 leduc <- aggregateFeatures(
@@ -106,6 +105,11 @@ leduc <- aggregateFeatures(
     fcol = "Sequence", 
     fun = MsCoreUtils::colCounts
 )
+```
+
+Then, we join all runs in a single large assay. 
+
+```{r, message=FALSE}
 leduc <- joinAssays(
     leduc, i = grep("^spec", names(leduc)), 
     name = "spectral_counts"
@@ -123,7 +127,7 @@ assay(ids) <- ifelse(is.na(assay(ids)), 0, 1)
 
 # Report missing values
 
-We can now measure the for metrics. We recommend computing these for
+We can now compute the metrics of interest. We recommend computing these for
 each cell type separately, since biological properties specific to the
 cell type could influence the outcome.
 
