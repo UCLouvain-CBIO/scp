@@ -97,7 +97,7 @@ Vanderaa</h4>
                                     <h4 data-toc-skip class="author">Laurent
 Gatto</h4>
                         
-            <h4 data-toc-skip class="date">26 May 2023</h4>
+            <h4 data-toc-skip class="date">30 May 2023</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/HEAD/vignettes/reporting_missing_values.Rmd" class="external-link"><code>vignettes/reporting_missing_values.Rmd</code></a></small>
       <div class="hidden name"><code>reporting_missing_values.Rmd</code></div>
@@ -125,7 +125,8 @@ number of samples is too low and how to report data consistency using
 the distribution of Jaccard indices.</p>
 <p>In this vignette, we will assume you are familiar with the
 <code>scp</code> framework. If this is not the case, we suggest you
-first read the <a href="https://uclouvain-cbio.github.io/scp/articles/scp.html" class="external-link"><code>introduction vignette</code></a>.</p>
+first read the <a href="https://uclouvain-cbio.github.io/scp/articles/scp.html" class="external-link">introduction
+vignette</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="minimal-data-processing">Minimal data processing<a class="anchor" aria-label="anchor" href="#minimal-data-processing"></a>
@@ -137,9 +138,10 @@ dataset from the <code>scpdata</code> package.</p>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st">"scpdata"</span><span class="op">)</span></span>
 <span><span class="va">leduc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scpdata/man/leduc2022.html" class="external-link">leduc2022</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>Next, we reduce the size of the dataset to the 30 first acquisitions.
-This allows for a fast execution of the code while still being a
-representative demonstration on a real dataset. We also keep only the
-feature annotations that will be used later in the vignette.</p>
+This allows for a fast execution of the code for this vignette while
+still being a representative demonstration on a real dataset. We also
+keep only the feature annotations that will be used later in the
+vignette.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">leduc</span> <span class="op">&lt;-</span> <span class="va">leduc</span><span class="op">[</span>, , <span class="fl">1</span><span class="op">:</span><span class="fl">30</span><span class="op">]</span></span>
 <span><span class="co">#&gt; Warning: 'experiments' dropped; see 'metadata'</span></span>
@@ -150,24 +152,23 @@ feature annotations that will be used later in the vignette.</p>
 <span>    <span class="st">"Sequence"</span>, <span class="st">"Leading.razor.protein"</span>, <span class="st">"Reverse"</span>, </span>
 <span>    <span class="st">"Potential.contaminant"</span>, <span class="st">"PEP"</span></span>
 <span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>This is the actual minimal processing: filtering contaminant and
-low-quality features, replacing zeros by missing values, we keep only
-samples that correspond to single cells and we remove the feature absent
-in all samples.</p>
+<p>This is the actual minimal processing: 1. filtering contaminant and
+low-quality features 2. replacing zeros by missing values 3. keep only
+samples that correspond to single cells 4. remove the feature absent in
+all samples.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">leduc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-filtering.html" class="external-link">filterFeatures</a></span><span class="op">(</span><span class="va">leduc</span>, <span class="op">~</span> <span class="va">Reverse</span> <span class="op">!=</span> <span class="st">"+"</span> <span class="op">&amp;</span></span>
 <span>                           <span class="va">Potential.contaminant</span> <span class="op">!=</span> <span class="st">"+"</span> <span class="op">&amp;</span></span>
-<span>                           <span class="va">PEP</span> <span class="op">&lt;</span> <span class="fl">0.01</span><span class="op">)</span></span>
+<span>                           <span class="va">PEP</span> <span class="op">&lt;</span> <span class="fl">0.01</span><span class="op">)</span> <span class="co">## 1.</span></span>
 <span><span class="co">#&gt; 'Reverse' found in 30 out of 30 assay(s)</span></span>
 <span><span class="co">#&gt; 'Potential.contaminant' found in 30 out of 30 assay(s)</span></span>
 <span><span class="co">#&gt; 'PEP' found in 30 out of 30 assay(s)</span></span>
-<span><span class="va">leduc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-missing-data.html" class="external-link">zeroIsNA</a></span><span class="op">(</span><span class="va">leduc</span>, i <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">leduc</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">leduc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-missing-data.html" class="external-link">zeroIsNA</a></span><span class="op">(</span><span class="va">leduc</span>, i <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">leduc</span><span class="op">)</span><span class="op">)</span> <span class="co">## 2.</span></span>
 <span><span class="va">leduc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">filterNA</a></span><span class="op">(</span><span class="va">leduc</span>, i <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">leduc</span><span class="op">)</span>, pNA <span class="op">=</span> <span class="fl">0.9999</span><span class="op">)</span></span>
-<span><span class="va">leduc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">filterNA</a></span><span class="op">(</span><span class="va">leduc</span>, i <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">leduc</span><span class="op">)</span>, pNA <span class="op">=</span> <span class="fl">0.9999</span><span class="op">)</span></span>
-<span><span class="va">leduc</span> <span class="op">&lt;-</span> <span class="fu">subsetByColData</span><span class="op">(</span></span>
+<span><span class="va">leduc</span> <span class="op">&lt;-</span> <span class="fu">subsetByColData</span><span class="op">(</span> <span class="co">## 3.</span></span>
 <span>    <span class="va">leduc</span>, <span class="va">leduc</span><span class="op">$</span><span class="va">SampleType</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Monocyte"</span>, <span class="st">"Melanoma cell"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
-<span><span class="va">leduc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-class.html" class="external-link">dropEmptyAssays</a></span><span class="op">(</span><span class="va">leduc</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">leduc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-class.html" class="external-link">dropEmptyAssays</a></span><span class="op">(</span><span class="va">leduc</span><span class="op">)</span> <span class="co">## 4.</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="peptide-identification-data">Peptide identification data<a class="anchor" aria-label="anchor" href="#peptide-identification-data"></a>
@@ -176,23 +177,24 @@ in all samples.</p>
 with single cells as columns and peptides as rows. We first need data at
 peptide level, hence we aggregate the peptide to spectrum match data to
 peptide data. We use a counting functions for aggregation, meaning that
-we generate spectral count data for peptides. Then, we join all runs in
-a single assay.</p>
+we generate spectral count data for peptides.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">leduc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">aggregateFeatures</a></span><span class="op">(</span></span>
 <span>    <span class="va">leduc</span>, i <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">leduc</span><span class="op">)</span>, </span>
 <span>    name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"spectral_counts_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">leduc</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    fcol <span class="op">=</span> <span class="st">"Sequence"</span>, </span>
 <span>    fun <span class="op">=</span> <span class="fu">MsCoreUtils</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MsCoreUtils/man/colCounts.html" class="external-link">colCounts</a></span></span>
-<span><span class="op">)</span></span>
-<span><span class="va">leduc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/joinAssays.html" class="external-link">joinAssays</a></span><span class="op">(</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>Then, we join all runs in a single large assay.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">leduc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/joinAssays.html" class="external-link">joinAssays</a></span><span class="op">(</span></span>
 <span>    <span class="va">leduc</span>, i <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">"^spec"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">leduc</span><span class="op">)</span><span class="op">)</span>, </span>
 <span>    name <span class="op">=</span> <span class="st">"spectral_counts"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>Once all assay are joined, we extract that assay and replace any
 observed count by 1 and any missing value by 0. This is the peptide
 identification matrix.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ids</span> <span class="op">&lt;-</span> <span class="fu">getWithColData</span><span class="op">(</span><span class="va">leduc</span>, <span class="st">"spectral_counts"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: 'experiments' dropped; see 'metadata'</span></span>
 <span><span class="fu">assay</span><span class="op">(</span><span class="va">ids</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">ids</span><span class="op">)</span><span class="op">)</span>, <span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span></span></code></pre></div>
@@ -200,10 +202,10 @@ identification matrix.</p>
 <div class="section level2">
 <h2 id="report-missing-values">Report missing values<a class="anchor" aria-label="anchor" href="#report-missing-values"></a>
 </h2>
-<p>We can now measure the for metrics. We recommend computing these for
-each cell type separately, since biological properties specific to the
-cell type could influence the outcome.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<p>We can now compute the metrics of interest. We recommend computing
+these for each cell type separately, since biological properties
+specific to the cell type could influence the outcome.</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">(</span><span class="va">metrics</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">ids</span><span class="op">$</span><span class="va">SampleType</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">st</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">assay</span><span class="op">(</span><span class="va">ids</span><span class="op">)</span><span class="op">[</span>, <span class="va">ids</span><span class="op">$</span><span class="va">SampleType</span> <span class="op">==</span> <span class="va">st</span><span class="op">]</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
@@ -223,7 +225,7 @@ cell type could influence the outcome.</p>
 <p><strong>What about proteins?</strong> To generate the same table for
 proteins, we need to rebuild an identification matrix for peptides. In
 this case, you simply need to change the aggregation call</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">leduc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">aggregateFeatures</a></span><span class="op">(</span></span>
 <span>    <span class="va">leduc</span>, i <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">leduc</span><span class="op">)</span>, </span>
 <span>    name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"spectral_counts_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">leduc</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -231,7 +233,7 @@ this case, you simply need to change the aggregation call</p>
 <span>    fun <span class="op">=</span> <span class="fu">MsCoreUtils</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MsCoreUtils/man/colCounts.html" class="external-link">colCounts</a></span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>to</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">leduc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">aggregateFeatures</a></span><span class="op">(</span></span>
 <span>    <span class="va">leduc</span>, i <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">leduc</span><span class="op">)</span>, </span>
 <span>    name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"spectral_counts_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">leduc</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -256,7 +258,7 @@ in this context is the number of features shared by two columns divided
 by the number of distinct features identified in any of the two columns.
 This provides a good measure of how consistent the identifications are
 across single-cells.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">jaccardIndexFromIdMatrix</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">idMatrix</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="va">vectorSizes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">idMatrix</span><span class="op">)</span></span>
 <span>    <span class="va">pwVectorSizes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">sapply</a></span><span class="op">(</span><span class="va">vectorSizes</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="va">vectorSizes</span> <span class="op">+</span> <span class="va">x</span><span class="op">)</span></span>
@@ -268,14 +270,14 @@ across single-cells.</p>
 biological differences between cell types may decrease the consistency
 between single cells. Therefore, we compute and plot the Jaccard index
 for each cell type separately.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">st</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">ids</span><span class="op">$</span><span class="va">SampleType</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">assay</span><span class="op">(</span><span class="va">ids</span><span class="op">)</span><span class="op">[</span>, <span class="va">ids</span><span class="op">$</span><span class="va">SampleType</span> <span class="op">==</span> <span class="va">st</span><span class="op">]</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="fu">jaccardIndexFromIdMatrix</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, main <span class="op">=</span> <span class="va">st</span>, </span>
 <span>         xlab <span class="op">=</span> <span class="st">"Jaccard index"</span>, breaks <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span>
 <span><span class="op">}</span></span></code></pre></div>
-<p><img src="reporting_missing_values_files/figure-html/unnamed-chunk-10-1.png" width="700"></p>
+<p><img src="reporting_missing_values_files/figure-html/unnamed-chunk-11-1.png" width="700"></p>
 <p>The Jaccard index is mainly distributed across 50 and 60 %, meaning
 that about half of the features are consistently found across
 single-cells within the same cell type. Note also that some pairs of
@@ -292,7 +294,7 @@ matrix. The algorithm samples columns from the matrix in gradually
 increasing numbers (determined by <code>nsteps</code>). Each sampling is
 repeated <code>niters</code> times to account for the stochasticity of
 the approach.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">getSteps</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">assays</span>, <span class="va">nsteps</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="va">maxn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">assays</span><span class="op">)</span></span>
 <span>    <span class="va">steps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">maxn</span>, length.out <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">maxn</span>, <span class="va">nsteps</span><span class="op">)</span><span class="op">)</span></span>
@@ -327,7 +329,7 @@ the approach.</p>
 <span><span class="op">}</span></span></code></pre></div>
 <p>Again, we explore the csc for each cell type separately. Note that we
 group the cells by acquisition run (<code>Set</code>).</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">csc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">ids</span><span class="op">$</span><span class="va">SampleType</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">st</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="va">x</span> <span class="op">&lt;-</span> <span class="va">ids</span><span class="op">[</span>, <span class="va">ids</span><span class="op">$</span><span class="va">SampleType</span> <span class="op">==</span> <span class="va">st</span><span class="op">]</span></span>
 <span>    <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu">cumulativeSensitivity</span><span class="op">(</span></span>
@@ -339,7 +341,7 @@ group the cells by acquisition run (<code>Set</code>).</p>
 <span><span class="va">csc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html" class="external-link">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">csc</span><span class="op">)</span></span></code></pre></div>
 <p>Next, we plot the cumlulative sensitivity for each cell type
 separately.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span></span>
 <span><span class="op">(</span><span class="va">plCumS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">csc</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">NumberSamples</span>, y <span class="op">=</span> <span class="va">Sensitivity</span>, colour <span class="op">=</span> <span class="va">SampleType</span><span class="op">)</span> <span class="op">+</span></span>
@@ -351,7 +353,7 @@ separately.</p>
 <span>        legend.position <span class="op">=</span> <span class="st">"top"</span>,</span>
 <span>        axis.title.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>vjust <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
 <span>    <span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reporting_missing_values_files/figure-html/unnamed-chunk-13-1.png" width="700"></p>
+<p><img src="reporting_missing_values_files/figure-html/unnamed-chunk-14-1.png" width="700"></p>
 <p>The cumulative sensitivity does not plateau, although it almost
 reaches it. This means that we slightly underestimate the total
 sensitivity. This is because we have subset the data at the beginning of
@@ -362,7 +364,7 @@ types combined. We first fit an asymptotic regression model to assess
 the relationship between the sensitivity and the number of MS runs.
 Then, we predict the response and plot these preduction on the previous
 graph.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">AsymptoticRegressionModel</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/nls.html" class="external-link">nls</a></span><span class="op">(</span></span>
 <span>    formula <span class="op">=</span> <span class="va">Sensitivity</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/stats/SSasymp.html" class="external-link">SSasymp</a></span><span class="op">(</span><span class="va">NumberSamples</span>, <span class="va">Asym</span>, <span class="va">R0</span>, <span class="va">lrc</span><span class="op">)</span>,</span>
 <span>    data <span class="op">=</span> <span class="va">csc</span>,</span>
@@ -377,15 +379,15 @@ graph.</p>
 <span><span class="op">)</span></span>
 <span><span class="va">plCumS</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_line</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">predictedSensitivity</span>, colour <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="reporting_missing_values_files/figure-html/unnamed-chunk-14-1.png" width="700"></p>
+<p><img src="reporting_missing_values_files/figure-html/unnamed-chunk-15-1.png" width="700"></p>
 <p>We finally compute the predicted total sensitivity, that is
 sensitivity if we had an infinite number of samples.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span></span>
 <span>    <span class="va">AsymptoticRegressionModel</span>,</span>
 <span>    newdata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>NumberSamples <span class="op">=</span> <span class="cn">Inf</span><span class="op">)</span> </span>
 <span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 7266.76</span></span>
+<span><span class="co">#&gt; [1] 7294.176</span></span>
 <span><span class="co">#&gt; attr(,"gradient")</span></span>
 <span><span class="co">#&gt;      Asym R0 lrc</span></span>
 <span><span class="co">#&gt; [1,]    1  0 NaN</span></span></code></pre></div>
@@ -397,7 +399,7 @@ underestimate the total sensitivity by about 150 peptides.</p>
 <div class="section level2">
 <h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
 </h2>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"scp"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; To cite the scp package in publications use:</span></span>
 <span><span class="co">#&gt; </span></span>
