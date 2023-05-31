@@ -93,19 +93,28 @@ leduc <- dropEmptyAssays(leduc) ## 4.
 # Peptide identification data
 
 Next, we build the peptide identification matrix, that is a matrix
-with single cells as columns and peptides as rows. We first need data 
-at peptide level, hence we aggregate the peptide to spectrum match 
-data to peptide data. We use a counting functions for aggregation, 
-meaning that we generate spectral count data for peptides. 
+with single cells as columns and peptides as rows that indicate
+whether a given peptide is observed or not in a given cell. To build
+this matrix, we need data at peptide level, hence we aggregate the
+peptide to spectrum match (PSM) data to peptide data. To do so, we
+need an aggregation function, `isIdentified()`. This functions
+considers that a peptide is observed in a cell (returns a `TRUE`) if
+there is at least one observed PSM belonging to the peptide in that
+cell.
 
 ```{r, message=FALSE}
+isIdentified <- function(x) colSums(!is.na(x)) != 0
 leduc <- aggregateFeatures(
     leduc, i = names(leduc), 
     name = paste0("spectral_counts_", names(leduc)),
     fcol = "Sequence", 
-    fun = MsCoreUtils::colCounts
+    fun = isIdentified
 )
 ```
+
+**What about proteins?** if we were interested in reporting missing
+values at the protein level, we simply need to change
+`fcol = "Sequence"` to `fcol = "Leading.razor.protein"`.
 
 Then, we join all runs in a single large assay. 
 
@@ -114,15 +123,6 @@ leduc <- joinAssays(
     leduc, i = grep("^spec", names(leduc)), 
     name = "spectral_counts"
 )
-```
-
-Once all assay are joined, we extract that assay and replace any 
-observed count by 1 and any missing value by 0. This is the peptide
-identification matrix.
-
-```{r}
-ids <- getWithColData(leduc, "spectral_counts")
-assay(ids) <- ifelse(is.na(assay(ids)), 0, 1)
 ```
 
 # Report missing values
@@ -142,30 +142,6 @@ cell type could influence the outcome.
         NumberCells = ncol(x)
     )
 }))
-```
-
-**What about proteins?** To generate the same table for proteins, we 
-need to rebuild an identification matrix for peptides. In this case, 
-you simply need to change the aggregation call
-
-```{r, eval=FALSE}
-leduc <- aggregateFeatures(
-    leduc, i = names(leduc), 
-    name = paste0("spectral_counts_", names(leduc)),
-    fcol = "Sequence", 
-    fun = MsCoreUtils::colCounts
-)
-```
-
-to
-
-```{r, eval=FALSE}
-leduc <- aggregateFeatures(
-    leduc, i = names(leduc), 
-    name = paste0("spectral_counts_", names(leduc)),
-    fcol = "Leading.razor.protein", 
-    fun = MsCoreUtils::colCounts
-)
 ```
 
 All code that follows aggregation is exactly the same.
