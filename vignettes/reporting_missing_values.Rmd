@@ -42,7 +42,7 @@ missing
 
 We will also demonstrate how to estimate total sensitivity when the 
 number of samples is too low and how to report data consistency using
-the distribution of Jaccard indices.
+the distribution of the Jaccard indices.
 
 In this vignette, we will assume you are familiar with the `scp` 
 framework. If this is not the case, we suggest you first read the 
@@ -106,7 +106,7 @@ cell.
 isIdentified <- function(x) colSums(!is.na(x)) != 0
 leduc <- aggregateFeatures(
     leduc, i = names(leduc), 
-    name = paste0("spectral_counts_", names(leduc)),
+    name = paste0("id_", names(leduc)),
     fcol = "Sequence", 
     fun = isIdentified
 )
@@ -121,196 +121,127 @@ Then, we join all runs in a single large assay.
 ```{r, message=FALSE}
 leduc <- joinAssays(
     leduc, i = grep("^spec", names(leduc)), 
-    name = "spectral_counts"
+    name = "id"
 )
 ```
 
-# Report missing values
-
-We can now compute the metrics of interest. We recommend computing these for
-each cell type separately, since biological properties specific to the
-cell type could influence the outcome.
+Since not all peptides are found in all assays, some entries have been
+filled with `NA`s. These entries are missing and hence are replaced
+with `FALSE`.
 
 ```{r}
-(metrics <- sapply(unique(ids$SampleType), function(st) {
-    x <- assay(ids)[, ids$SampleType == st]
-    c(
-        LocalSensitivityMean = mean(colSums(x != 0)),
-        LocalSensitivitySd = sd(colSums(x != 0)),
-        TotalSensitivity = sum(rowSums(x) != 0),
-        Completeness = mean(x != 0),
-        NumberCells = ncol(x)
-    )
-}))
+isMissing <- is.na(assay(leduc[["id"]]))
+assay(leduc[["id"]])[isMissing] <- FALSE
 ```
 
-All code that follows aggregation is exactly the same.
+
+# Report missing values
+
+We can now compute the metrics of interest. We recommend computing 
+these for each cell type separately, since biological properties 
+specific to the cell type could influence the outcome. You can perform
+this using `reportMissingValues()`. We provide the dataset and point
+towards the assay with the identification matrix (`id`). The metrics
+are computed based on the cell annotation `SampleType` that is 
+available in the `colData`.
+
+```{r}
+reportMissingValues(leduc, "id", by = leduc$SampleType)
+```
 
 # Advanced criteria
 
-On top of the four metrics computed in the previous section, we
-also recommended exploring the jaccard indices and assessing whether
-enough single cells are acquired to accurately estimate the total 
-sensitivity. 
-
 ## Jaccard index distribution
 
-We first need a custom function that computes the Jaccard index for 
-all pairs of columns given an identification matrix. The Jaccard index
-in this context is the number of features shared by two columns 
-divided by the number of distinct features identified in any of the 
-two columns. This provides a good measure of how consistent the 
-identifications are across single-cells.
-
-```{r}
-jaccardIndexFromIdMatrix <- function(idMatrix) {
-    vectorSizes <- colSums(idMatrix)
-    pwVectorSizes <- sapply(vectorSizes, function(x) vectorSizes + x)
-    unionSize <- crossprod(idMatrix)
-    jacc <- unionSize / (pwVectorSizes - unionSize)
-    jacc[upper.tri(jacc)] ## jacc is a symmetric matrix
-}
-```
-
-Next we plot the distribution of the jaccard indices. Again, 
+The Jaccard index between a pair of cells is the number of features 
+shared by the two cells divided by the number of features identified
+in any of the two columns. This provides a good measure of how
+consistent the identifications are across single-cells. Again,
 biological differences between cell types may decrease the consistency
-between single cells. Therefore, we compute and plot the Jaccard index
-for each cell type separately.
+between single cells and we therefore suggest to compute the Jaccard
+index for each cell type separately. We compute the Jaccard index 
+using `jaccardIndex()`.
 
 ```{r}
-par(mfrow = c(2, 1))
-for (st in unique(ids$SampleType)) {
-    x <- assay(ids)[, ids$SampleType == st]
-    hist(jaccardIndexFromIdMatrix(x), main = st, 
-         xlab = "Jaccard index", breaks = 50)
-}
+ji <- jaccardIndex(leduc, "id", by = leduc$SampleType)
 ```
 
-The Jaccard index is mainly distributed across 50 and 60 \%, meaning
-that about half of the features are consistently found across 
+The function returns a `data.frame` that we visualize using the 
+`ggplot2` package.
+
+```{r}
+library("ggplot2")
+ggplot(ji) +
+    aes(x = jaccard) +
+    geom_histogram() +
+    facet_grid(~ by)
+```
+
+The Jaccard indices are mainly distributed between 40 and 60 \%, 
+meaning that about half of the features are consistently found across 
 single-cells within the same cell type. Note also that some pairs of
-cells have perfect consistency. These are pairs of cells from the same
-acquisition runs that were multiplexed together with TMT labelling.
+cells have consistency above 80 \%. These are pairs of cells from the
+same acquisition runs that were multiplexed together with TMT 
+labelling.
 
 ## Assessing the total sensitivity
 
 To assessing whether we can accurately estimate the total sensitivity,
-we generate a cumulative sensitivity curve (CSC). The functions below
-allows to generate that curve provided an identification matrix. The
-algorithm samples columns from the matrix in gradually increasing 
-numbers (determined by `nsteps`). Each sampling is repeated `niters` 
-times to account for the stochasticity of the approach. 
+we generate a cumulative sensitivity curve (CSC). More precisely, we
+sample the identification matrix for an increasing number of cells 
+(or runs) and count the number of distinct features found across the
+sampled cells. We repeat each sampling multiple times to account for
+the stochasticity of the approach. The approach is implemented in
+`cumulativeSensitivityCurve()`. Again, we compute the curve for each
+cell type separately. In the `leduc` dataset, several cells are
+acquired in an MS run. When a features is identified in a cell, it is
+most of the time also identified in all other cells of that run, and
+this will distort the cumulative sensitivity curve. Therefore, the 
+function provides a `batch` argument to account for this. Finally,
+`nSteps` defines the number of random draws with increasing sample 
+size, and `niters` defines how many times each draw must be iterated.
 
 ```{r}
-getSteps <- function(assays, nsteps) {
-    maxn <- length(assays)
-    steps <- seq(1, maxn, length.out = min(maxn, nsteps))
-    round(steps)
-}
-groupSamples <- function(x, by) {
-    sapply(unique(by), function(i) {
-        ifelse(rowSums(x[, by == i]) == 0, 0, 1)
-    })
-}
-cumulativeSensitivity <- function(idMatrix, niters, nsteps, 
-                                  groupSamplesBy = NULL) {
-    out <- list()
-    if (!is.null(groupSamplesBy)) {
-        idMatrix <- groupSamples(idMatrix, by = groupSamplesBy)
-    }
-    for (n in getSteps(colnames(idMatrix), nsteps)) {
-        for (i in 1:niters) {
-            sel <- sample(colnames(idMatrix), n)
-            s <- sum(rowSums(idMatrix[, sel, drop = FALSE]) != 0)
-            out <- c(
-                out,
-                list(data.frame(
-                    i = i,
-                    NumberSamples = n,
-                    Sensitivity = s
-                ))
-            )
-        }
-    }
-    do.call(rbind, out)
-}
+csc <- cumulativeSensitivityCurve(leduc, "id", by = leduc$SampleType,
+                                  batch = leduc$Set, niters = 10, 
+                                  nsteps = 30)
 ```
 
-Again, we explore the csc for each cell type separately. Note that we
-group the cells by acquisition run (`Set`).
+The function returns a `data.frame` that we visualize using the 
+`ggplot2` package.
 
 ```{r}
-csc <- lapply(unique(ids$SampleType), function(st) {
-    x <- ids[, ids$SampleType == st]
-    out <- cumulativeSensitivity(
-        assay(x), niters = 10, nsteps = 30, groupSamplesBy = x$Set
-    )
-    out$SampleType <- st
-    out
-})
-csc <- do.call(rbind, csc)
+(plCSC <- ggplot(csc) +
+    aes(x = SampleSize, y = Sensitivity, colour = by) +
+    geom_point(size = 1))
 ```
 
-Next, we plot the cumlulative sensitivity for each cell type 
-separately.
+The cumulative sensitivity does not reach a plateau. This means
+that we underestimated the total sensitivity in the previous section.
+We use `predictSensitivity()` to predict the total sensitivity from
+these curves. The function fits an asymptotic regression model to
+assess the relationship between the sensitivity and the sample size. 
+Then, it uses the model to predict the sensitivity for any sample 
+size. (supplied through  `nSamples`). The function requires the
+`data.frame` generated by `cumulativeSensitivityCurve()`. To assess
+the quality of the fit, we first predict the sensitivity for the range
+of sample size.
 
 ```{r}
-library("ggplot2")
-(plCumS <- ggplot(csc) +
-    aes(x = NumberSamples, y = Sensitivity, colour = SampleType) +
-    geom_point(size = 1) +
-    labs(y = "Sensitivity", x = "Number of MS acquisitions"
-    ) +
-    theme_minimal() +
-    theme(
-        legend.position = "top",
-        axis.title.x = element_text(vjust = 0)
-    ))
+predCSC <- predictSensitivity(csc, nSample = 1:30)
+plCSC + geom_line(data = predCSC)
 ```
 
-The cumulative sensitivity does not plateau, although it almost 
-reaches it. This means that we slightly underestimate the total 
-sensitivity. This is because we have subset the data at the beginning
-of the script, and including more datasets allows to reach the 
-plateau.
-
-We will now predict the total sensitivity. Since both cell types 
-exhibit the same trends, we will perform the prediction for the two 
-cell types combined. We first fit an asymptotic regression model to
-assess the relationship between the sensitivity and the number of 
-MS runs. Then, we predict the response and plot these preduction on
-the previous graph.
+We finally predict the total sensitivity, that is the sensitivity if
+we had an infinite number of samples.
 
 ```{r}
-AsymptoticRegressionModel <- nls(
-    formula = Sensitivity ~ SSasymp(NumberSamples, Asym, R0, lrc),
-    data = csc,
-    weights = csc$NumberSamples^2 ## data is heterorscedastic
-)
-predictedSensitivity <- data.frame(
-    NumberSamples = 1:max(csc$NumberSamples) 
-)
-predictedSensitivity$Sensitivity <- predict(
-    AsymptoticRegressionModel,
-    newdata = predictedSensitivity
-)
-plCumS +
-    geom_line(data = predictedSensitivity, colour = "red")
+predictSensitivity(csc, nSamples = Inf)
 ```
 
-We finally compute the predicted total sensitivity, that is 
-sensitivity if we had an infinite number of samples.
-
-```{r}
-predict(
-    AsymptoticRegressionModel,
-    newdata = data.frame(NumberSamples = Inf) 
-)
-```
-
-The total sensitivity is predicted to be 7282 peptides. Compared to 
-the total sensitivity of 7111 reported in the previous section, we 
-underestimate the total sensitivity by about 150 peptides.
+The total sensitivity is predicted to be about 7200 peptides for both
+cell types. So in the previous section, we underestimated the total 
+sensitivity by about 150-200 peptides.
 
 # Citation
 

@@ -31,6 +31,7 @@ Imports:
     MsCoreUtils,
     matrixStats,
     S4Vectors,
+    ggplot2,
     dplyr,
     magrittr
 Suggests:
@@ -40,7 +41,6 @@ Suggests:
     BiocStyle,
     rmarkdown,
     patchwork,
-    ggplot2,
     impute,
     scater,
     sva,
@@ -60,4 +60,4 @@ biocViews:
 BugReports: https://github.com/UCLouvain-CBIO/scp/issues
 URL: https://UCLouvain-CBIO.github.io/scp
 Roxygen: list(markdown=TRUE)
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
