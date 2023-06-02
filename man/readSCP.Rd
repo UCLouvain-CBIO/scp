@@ -26,7 +26,7 @@ default, but see \code{...}) or an object that can be coerced to a
 factors.}
 
 \item{colData}{A \code{data.frame} or any object that can be coerced
-to a \code{data.frame}. \code{colData} is expected to contains all the
+to a \code{data.frame}. \code{colData} is expected to contain all the
 sample meta information. Required fields are the acquisition
 batch (given by \code{batchCol}) and the acquisition channel within
 the batch (e.g. TMT channel, given by

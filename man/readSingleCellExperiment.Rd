@@ -46,7 +46,7 @@ are forbidden in the \code{rowData}. Avoid using the following names:
 data("mqScpData")
 
 ## Create the QFeatures object
-sce <- readSingleCellExperiment(mqScpData, 
+sce <- readSingleCellExperiment(mqScpData,
                                 grep("RI", colnames(mqScpData)))
 }
 \seealso{
