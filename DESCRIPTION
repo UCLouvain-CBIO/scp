@@ -31,7 +31,6 @@ Imports:
     MsCoreUtils,
     matrixStats,
     S4Vectors,
-    ggplot2,
     dplyr,
     magrittr
 Suggests:
@@ -40,6 +39,7 @@ Suggests:
     knitr,
     BiocStyle,
     rmarkdown,
+    ggplot2,
     patchwork,
     impute,
     scater,
