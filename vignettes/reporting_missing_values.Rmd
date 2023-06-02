@@ -120,7 +120,7 @@ Then, we join all runs in a single large assay.
 
 ```{r, message=FALSE}
 leduc <- joinAssays(
-    leduc, i = grep("^spec", names(leduc)), 
+    leduc, i = grep("^id_", names(leduc)), 
     name = "id"
 )
 ```

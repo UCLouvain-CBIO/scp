@@ -723,6 +723,7 @@ cumulativeSensitivityCurve <- function(object, i,  by = NULL,
 ##' @param nSamples A `numeric()` of samples sizes. If `Inf`, the
 ##'    prediction provides the extrapolated total sensitivity.
 ##'
+##' @importFrom stats nls predict
 ##' @export
 ##' @rdname cumulativeSensitivityCurve
 predictSensitivity <- function(df, nSamples) {
