@@ -12,8 +12,8 @@
                    na.rm = FALSE) {
     ## Check nobs
     if (nobs < 2)
-       stop("'nobs' must be at least 2. No sd can be computed for ",
-            "less than 2 observation.")
+        stop("'nobs' must be at least 2. No sd can be computed for ",
+             "less than 2 observation.")
     if (na.rm) {
         nna <- !is.na(x)
         mode(nna) <- "numeric"
@@ -48,6 +48,32 @@
     (cumsum(x[order(x)]) / seq_along(x))[order(order(x))]
 }
 
+## @param x A `SingleCellExperiment` object
+##     
+## @param group A `factor()` that indicates how features (rows) should
+##    be grouped. The CVs are computed for each group separately. 
+##      
+## @rdname medianCVperCell
+featureCV <- function(x, group, na.rm = TRUE, norm = "none", nobs = 2, ...) {
+    ## Check object
+    if (!inherits(x, "SingleCellExperiment"))
+        stop("'x' must inherit from a 'SingleCellExperiment'")
+    ## Optional normalization(s)   
+    if (identical(norm, "SCoPE2")) {
+        xnorm <- .normalizeSCP(x, method = "div.median")
+        assay(x) <- sweep(assay(x), 1, 
+                          rowMeans(assay(xnorm), na.rm = TRUE), "/")
+    } else if (!identical(norm, "none")) {
+        for(normi in norm)
+            x <- .normalizeSCP(x, method = normi, ...)
+    }
+    ## Compute CVs
+    .rowCV(assay(x), 
+           group = group, 
+           nobs = nobs,
+           reorder = TRUE, 
+           na.rm = na.rm)
+}
 
 ####---- Exported functions ----####
 
@@ -398,29 +424,330 @@ medianCVperCell <- function(object, i, groupBy, nobs = 5, na.rm = TRUE,
     return(object)
 }
 
-## @param x A `SingleCellExperiment` object
-##     
-## @param group A `factor()` that indicates how features (rows) should
-##    be grouped. The CVs are computed for each group separately. 
-##      
-## @rdname medianCVperCell
-featureCV <- function(x, group, na.rm = TRUE, norm = "none", nobs = 2, ...) {
-    ## Check object
-    if (!inherits(x, "SingleCellExperiment"))
-        stop("'x' must inherit from a 'SingleCellExperiment'")
-    ## Optional normalization(s)   
-    if (identical(norm, "SCoPE2")) {
-        xnorm <- .normalizeSCP(x, method = "div.median")
-        assay(x) <- sweep(assay(x), 1, 
-                          rowMeans(assay(xnorm), na.rm = TRUE), "/")
-    } else if (!identical(norm, "none")) {
-        for(normi in norm)
-            x <- .normalizeSCP(x, method = normi, ...)
+##---- Report missing values ---- 
+
+##' Four metrics to report missing values
+##'
+##' The function computes four metrics to report missing values in
+##' single-cell proteomics. 
+##'
+##' @param object An object of class [QFeatures].
+##' @param i The index of the assay in `object`. The assay must 
+##'     contain an identification matrix, that is a matrix where an
+##'     entry is `TRUE` if the value is observed and `FALSE` is the
+##'     value is missing (see examples).
+##' @param by A vector of length equal to the number of columns in 
+##'     assay `i` that defines groups for which the metrics should be
+##'     computed separately. If missing, the metrics are computed for
+##'     the complete assay.
+##'
+##' @return A `data.frame` with groups as rows and 5 columns: 
+##' 
+##' - `LocalSensitivityMean`: the average number of features per cell.
+##' - `LocalSensitivitySd`: the standard deviation of the local
+##'   sensitivity.
+##' - `TotalSensitivity`: the total number of features found in the 
+##'   dataset. 
+##' - `Completeness`: the proportion of values that are not missing in
+##'   the data.
+##' - `NumberCells`: the number of cells in the dataset.
+##' 
+##' @export
+##'
+##' @examples
+##' 
+##' data("scp1")
+##' 
+##' ## Define the identification matrix
+##' peps <- scp1[["peptides"]]
+##' assay(peps) <- ifelse(is.na(assay(peps)), FALSE, TRUE)
+##' scp1 <- addAssay(scp1, peps, "id")
+##' 
+##' ## Report metrics 
+##' reportMissingValues(scp1, "id")
+##' ## Report metrics by sample type
+##' reportMissingValues(scp1, "id", scp1$SampleType)
+##' 
+##' data
+##' 
+reportMissingValues <- function(object, i, by = NULL) {
+    i <- QFeatures:::.normIndex(object, i)
+    stopifnot(mode(assay(object[[i]])) == "logical")
+    if (is.null(by)) {
+        out <- .computeMissingValueMetrics(assay(object[[i]]))
+    } else {
+        stopifnot(length(by) == ncol(object[[i]]))
+        out <- sapply(unique(by), function(byi) {
+            .computeMissingValueMetrics(assay(object[[i]][, by == byi]))
+        })
     }
-    ## Compute CVs
-    .rowCV(assay(x), 
-           group = group, 
-           nobs = nobs,
-           reorder = TRUE, 
-           na.rm = na.rm)
+    as.data.frame(t(out))
+}
+
+.computeMissingValueMetrics <- function(x) {
+    c(
+        LocalSensitivityMean = mean(colSums(x != 0)),
+        LocalSensitivitySd = sd(colSums(x != 0)),
+        TotalSensitivity = sum(rowSums(x) != 0),
+        Completeness = mean(x != 0),
+        NumberCells = ncol(x)
+    )
+}
+
+##' Compute the pairwise Jaccard index
+##'
+##' The function computes the Jaccard index between all pairs of cells.
+##' 
+##' @param object An object of class [QFeatures].
+##' @param i The index of the assay in `object`. The assay must 
+##'     contain an identification matrix, that is a matrix where an
+##'     entry is `TRUE` if the value is observed and `FALSE` is the
+##'     value is missing (see examples).
+##' @param by A vector of length equal to the number of columns in 
+##'     assay `i` that defines groups for which the Jaccard index
+##'     should be computed separately. If missing, the Jaccard indices
+##'     are computed for all airs of cells in the dataset.
+##'
+##' @return  A `data.frame` with as many rows as pairs of cells
+##'  and the following column(s): 
+##'
+##' - `jaccard`: the computed Jaccard index
+##' - `by`: if `by` is not `NULL`, the group of the pair of cells
+##'   for which the Jaccard index is computed. 
+##'
+##' @export
+##'
+##' @examples
+##'
+##' data("scp1")
+##'
+##' ## Define the identification matrix
+##' peps <- scp1[["peptides"]]
+##' assay(peps) <- ifelse(is.na(assay(peps)), FALSE, TRUE)
+##' scp1 <- addAssay(scp1, peps, "id")
+##' 
+##' ## Compute Jaccard indices
+##' jaccardIndex(scp1, "id")
+##' ## Compute Jaccard indices by sample type
+##' jaccardIndex(scp1, "id", scp1$SampleType)
+##'
+##'
+jaccardIndex <- function(object, i, by = NULL) {
+    i <- QFeatures:::.normIndex(object, i)
+    stopifnot(mode(assay(object[[i]])) == "logical")
+    if (is.null(by)) {
+        data.frame(jaccard = .computeJaccardIndex(assay(object[[i]])))
+    } else {
+        stopifnot(length(by) == ncol(object[[i]]))
+        out <- lapply(unique(by), function(byi) {
+            ji <- .computeJaccardIndex(assay(object[[i]][, by == byi]))
+            ji <- data.frame(jaccard = ji)
+            ji$by <- byi
+            ji
+        })
+        do.call(rbind, out)
+    }
+}
+
+.computeJaccardIndex <- function(x) {
+    vectorSizes <- colSums(x)
+    pwVectorSizes <- sapply(vectorSizes, function(xx) vectorSizes + xx)
+    unionSize <- crossprod(x)
+    jacc <- unionSize / (pwVectorSizes - unionSize)
+    jacc[upper.tri(jacc)] ## jacc is a symmetric matrix
+}
+
+##' Cumulative sensitivity curve
+##'
+##' @description
+##'
+##' The cumulative sensitivity curve is used to evaluate if the sample
+##' size is sufficient to accurately estimate the total sensitivity. 
+##' If it is not the case, an asymptotic regression model may provide
+##' a prediction of the total sensitivity if more samples would have
+##' been acquired.
+##'
+##' @param object An object of class [QFeatures].
+##' @param i The index of the assay in `object`. The assay must 
+##'     contain an identification matrix, that is a matrix where an
+##'     entry is `TRUE` if the value is observed and `FALSE` is the
+##'     value is missing (see examples).
+##' @param by A vector of length equal to the number of columns in 
+##'     assay `i` that defines groups for a cumulative sensitivity
+##'     curve will be computed separately. If missing, the sensitivity
+##'     curve is computed for the completd dataset.
+##' @param batch  A vector of length equal to the number of columns in 
+##'     assay `i` that defines the cell batches. All cells in a batch
+##'     will be aggregated to a single sample.
+##' @param nsteps The number of equally spaced sample sizes to compute
+##'     the sensitivity.
+##' @param niters The number of iteration to compute 
+##'
+##' @return  A `data.frame` with groups as many rows as pairs of cells
+##'  and the following column(s): 
+##'
+##' - `jaccard`: the computed Jaccard index
+##' - `by`: if `by` is not `NULL`, the group of the pair of cells
+##'   for which the Jaccard index is computed. 
+##'
+##' @details
+##' 
+##' As more samples are added to a dataset, the total number of 
+##' distinct features increases. When sufficient number of samples are
+##' acquired, all peptides that are identifiable by the technology and
+##' increasing the sample size no longer increases the set of 
+##' identified features. The cumulative sensitivity curve depicts the
+##' relationship between sensitivity (number of distinct peptides in
+##' the data) and the sample size. More precisely, the curve is built
+##' by sampling cells in the data and count the number of distinct
+##' features found across the sampled cells. The sampling is repeated
+##' multiple times to account for the stochasticity of the approach. 
+##' Datasets that have a sample size sufficiently large should have a
+##' cumulative sensitivity curve with a plateau.
+##'
+##' The set of features present in a cell depends on the cell type.
+##' Therefore, we suggest to build the cumulative sensitivity curve
+##' for each cell type separately. This is possible when providing the
+##' `by` argument.
+##'
+##' For multiplexed experiments, several cells are acquired in a run.
+##' In that case, when a features is identified in a cell, it is 
+##' frequently also identified in all other cells of that run, and
+##' this will distort the cumulative sensitivity curve. Therefore, the
+##' function allows to compute the cumulative sensitivity curve at the
+##' batches level rather than at the cell level. This is possible when
+##' providing the `batch` argument.
+##' 
+##' Once the cumulative sensitivity curve is computed, the returned 
+##' data can be visualized to explore the relationship between the 
+##' sensitivity and the sample size. If enough samples are acquired,
+##' the curve should plateau at high numbers of samples. If it is not
+##' the case, the total sensitivity can be predicted using an
+##' asymptotic regression curve. To predict the total sensitivity, the
+##' model is extrapolated to infinite sample size. Therefore, the 
+##' accuracy of the extrapolation will highly depend on the available
+##' data. The closer the curve is to the plateau, the more accurate 
+##' the prediction.
+##'
+##' @export
+##'
+##' @examples
+##'
+##' ## Simulate data
+##' ## 1000 features in 100 cells
+##' library(SingleCellExperiment)
+##' id <- matrix(FALSE, 1000, 1000)
+##' id[sample(1:length(id), 5000)] <- TRUE
+##' dimnames(id) <- list(
+##'     paste0("feat", 1:1000),
+##'     paste0("cell", 1:1000)
+##' )
+##' sce <- SingleCellExperiment(assays = List(id))
+##' sim <- QFeatures(experiments = List(id = sce))
+##' sim$batch <- rep(1:100, each = 10)
+##' sim$SampleType <- rep(c("A", "B"), each = 500)
+##' sim
+##'
+##' ## Compute the cumulative sensitivity curve, take batch and sample
+##' ## type into account
+##' csc <- cumulativeSensitivityCurve(
+##'     sim, "id", by = sim$SampleType,
+##'     batch = sim$batch
+##' )
+##' predCSC <- predictSensitivity(csc, nSample = 1:50)
+##' 
+##' library(ggplot2)
+##' ggplot(csc) +
+##'     aes(x = SampleSize, y = Sensitivity, colour = by) +
+##'     geom_point() +
+##'     geom_line(data = predCSC)
+##'
+##' ## Extrapolate the total sensitivity
+##' predictSensitivity(csc, nSamples = Inf)
+##' ## (real total sensitivity = 1000)
+##'
+##' @rdname cumulativeSensitivityCurve
+cumulativeSensitivityCurve <- function(object, i,  by = NULL,
+                                       batch = NULL, nsteps = 30, 
+                                       niters = 10) {
+    i <- QFeatures:::.normIndex(object, i)
+    stopifnot(mode(assay(object[[i]])) == "logical")
+    x <- assay(object[[i]])
+    if (is.null(by)) {
+        .computeCumulativeSensitivityCurve(
+            x, batch, niters, nsteps
+        )
+    } else {
+        csc <- lapply(unique(by), function(byi) {
+            out <- .computeCumulativeSensitivityCurve(
+                x[, by == byi, drop = FALSE], batch[by == byi], 
+                niters, nsteps
+            )
+            out$by <- byi
+            out
+        })
+        do.call(rbind, csc)
+    }
+}
+
+.computeCumulativeSensitivityCurve <- function(x,
+                                               batch = NULL,
+                                               niters = 10, 
+                                               nsteps = 30) {
+    out <- list()
+    if (!is.null(batch)) {
+        x <- sapply(unique(batch), function(i) {
+            ifelse(rowSums(x[, batch == i, drop = FALSE]) == 0, FALSE, TRUE)
+        })
+    }
+    for (n in .getSteps(ncol(x), nsteps)) {
+        for (i in 1:niters) {
+            out <- c(out, list(.sampledSensitivity(x, n, i)))
+        }
+    }
+    do.call(rbind, out)
+}
+
+.getSteps <- function(maxn, nsteps) {
+    steps <- seq(1, maxn, length.out = min(maxn, nsteps))
+    round(steps)
+}
+
+.sampledSensitivity <- function(x, n, i) {
+    sel <- sample(1:ncol(x), n)
+    s <- sum(rowSums(x[, sel, drop = FALSE]) != 0)
+    data.frame(i = i, SampleSize = n, Sensitivity = s)
+}
+
+##' @param df The output from `cumulativeSensitivityCurve()`.
+##' @param nSamples A `numeric()` of samples sizes. If `Inf`, the
+##'    prediction provides the extrapolated total sensitivity.
+##'
+##' @importFrom stats nls predict
+##' @export
+##' @rdname cumulativeSensitivityCurve
+predictSensitivity <- function(df, nSamples) {
+    stopifnot(c("SampleSize", "Sensitivity") %in% colnames(df))
+    new <- data.frame(SampleSize = nSamples)
+    if (!"by" %in% colnames(df)) {
+        fit <- .modelSensitivity(df)
+        new$Sensitivity <- predict(fit, newdata = new)
+        new
+    } else {
+        out <- lapply(unique(df$by), function(byi) {
+            fit <- .modelSensitivity(df[df$by == byi, ])
+            new$Sensitivity <- predict(fit, newdata = new)
+            new$by <- byi
+            new
+        })
+        do.call(rbind, out)
+    }
+}
+
+.modelSensitivity <- function(df) {
+    nls(
+        formula = Sensitivity ~ SSasymp(SampleSize, Asym, R0, lrc),
+        data = df,
+        weights = df$SampleSize^2 ## data is heterorscedastic
+    )
 }
