@@ -97,7 +97,7 @@ Gatto</h4>
                                     <h4 data-toc-skip class="author">Christophe
 Vanderaa</h4>
                         
-            <h4 data-toc-skip class="date">30 May 2023</h4>
+            <h4 data-toc-skip class="date">7 June 2023</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/HEAD/vignettes/scp.Rmd" class="external-link"><code>vignettes/scp.Rmd</code></a></small>
       <div class="hidden name"><code>scp.Rmd</code></div>
@@ -401,7 +401,7 @@ This information is provided in the sample annotations and is accessed
 using the <code>colData</code>, under the <code>SampleType</code>
 field.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">scp</span><span class="op">)</span><span class="op">[</span>, <span class="st">"SampleType"</span><span class="op">]</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">scp</span><span class="op">)</span><span class="op">[</span>, <span class="st">"SampleType"</span><span class="op">]</span><span class="op">)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;      Blank    Carrier Macrophage   Monocyte  Reference     Unused </span></span>
 <span><span class="co">#&gt;          3          3         20          5          3          4</span></span></code></pre></div>
@@ -696,12 +696,14 @@ data analysis, where the library size is the sum of the counts in each
 single cell. We compute and store the median intensity in the
 <code>colData</code>.</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">medians</span> <span class="op">&lt;-</span> <span class="fu">colMedians</span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">scp</span><span class="op">[[</span><span class="st">"peptides"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">medians</span> <span class="op">&lt;-</span> <span class="fu">colMedians</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">scp</span><span class="op">[[</span><span class="st">"peptides"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: useNames = NA is deprecated. Instead, specify either useNames = TRUE</span></span>
+<span><span class="co">#&gt; or useNames = TRUE.</span></span>
 <span><span class="va">scp</span><span class="op">$</span><span class="va">MedianRI</span> <span class="op">&lt;-</span> <span class="va">medians</span></span></code></pre></div>
 <p>Looking at the distribution of the median per cell can highlight
 low-quality cells.</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">colData</span><span class="op">(</span><span class="va">scp</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">scp</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="va">data.frame</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">MedianRI</span>, </span>
@@ -801,14 +803,16 @@ More conventional normalization procedure can be found in
 <span>             i <span class="op">=</span> <span class="st">"peptides"</span>,</span>
 <span>             MARGIN <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>             FUN <span class="op">=</span> <span class="st">"/"</span>,</span>
-<span>             STATS <span class="op">=</span> <span class="fu">colMedians</span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">scp</span><span class="op">[[</span><span class="st">"peptides"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>             STATS <span class="op">=</span> <span class="fu">colMedians</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">scp</span><span class="op">[[</span><span class="st">"peptides"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
 <span>             name <span class="op">=</span> <span class="st">"peptides_norm_col"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: useNames = NA is deprecated. Instead, specify either useNames = TRUE</span></span>
+<span><span class="co">#&gt; or useNames = TRUE.</span></span>
 <span><span class="co">## Divide rows by mean</span></span>
 <span><span class="va">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-processing.html" class="external-link">sweep</a></span><span class="op">(</span><span class="va">scp</span>,</span>
 <span>             i <span class="op">=</span> <span class="st">"peptides_norm_col"</span>,</span>
 <span>             MARGIN <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>             FUN <span class="op">=</span> <span class="st">"/"</span>,</span>
-<span>             STATS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowMeans</a></span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">scp</span><span class="op">[[</span><span class="st">"peptides_norm_col"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,  na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>             STATS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowMeans</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">scp</span><span class="op">[[</span><span class="st">"peptides_norm_col"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,  na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
 <span>             name <span class="op">=</span> <span class="st">"peptides_norm"</span><span class="op">)</span></span></code></pre></div>
 <p>Notice each call to <code>sweep</code> created a new assay. Let’s
 have a look to the current stat of the <code>QFeatures</code> plot:</p>
@@ -897,14 +901,16 @@ dividing.</p>
 <span><span class="va">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-processing.html" class="external-link">sweep</a></span><span class="op">(</span><span class="va">scp</span>, i <span class="op">=</span> <span class="st">"proteins"</span>,</span>
 <span>             MARGIN <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>             FUN <span class="op">=</span> <span class="st">"-"</span>,</span>
-<span>             STATS <span class="op">=</span> <span class="fu">colMedians</span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">scp</span><span class="op">[[</span><span class="st">"proteins"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,</span>
+<span>             STATS <span class="op">=</span> <span class="fu">colMedians</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">scp</span><span class="op">[[</span><span class="st">"proteins"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,</span>
 <span>                                na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
 <span>             name <span class="op">=</span> <span class="st">"proteins_norm_col"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: useNames = NA is deprecated. Instead, specify either useNames = TRUE</span></span>
+<span><span class="co">#&gt; or useNames = TRUE.</span></span>
 <span><span class="co">## Center rows with mean</span></span>
 <span><span class="va">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-processing.html" class="external-link">sweep</a></span><span class="op">(</span><span class="va">scp</span>, i <span class="op">=</span> <span class="st">"proteins_norm_col"</span>,</span>
 <span>             MARGIN <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>             FUN <span class="op">=</span> <span class="st">"-"</span>,</span>
-<span>             STATS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowMeans</a></span><span class="op">(</span><span class="fu">assay</span><span class="op">(</span><span class="va">scp</span><span class="op">[[</span><span class="st">"proteins_norm_col"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,</span>
+<span>             STATS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowMeans</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">scp</span><span class="op">[[</span><span class="st">"proteins_norm_col"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,</span>
 <span>                              na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
 <span>             name <span class="op">=</span> <span class="st">"proteins_norm"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -964,14 +970,14 @@ be used using the same procedure.</p>
 <code>Combat</code>. The design matrix allows to protect variables of
 interest, in our case <code>SampleType</code>.</p>
 <div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">batch</span> <span class="op">&lt;-</span> <span class="fu">colData</span><span class="op">(</span><span class="va">sce</span><span class="op">)</span><span class="op">$</span><span class="va">Raw.file</span></span>
-<span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span><span class="op">~</span> <span class="va">SampleType</span>, data <span class="op">=</span> <span class="fu">colData</span><span class="op">(</span><span class="va">sce</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">batch</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">sce</span><span class="op">)</span><span class="op">$</span><span class="va">Raw.file</span></span>
+<span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span><span class="op">~</span> <span class="va">SampleType</span>, data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">sce</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>We then load and call <code>ComBat</code> and overwrite the data
 matrix. Recall the data matrix can be accessed using the
 <code>assay</code> function.</p>
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">sva</span><span class="op">)</span></span>
-<span><span class="fu">assay</span><span class="op">(</span><span class="va">sce</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sva/man/ComBat.html" class="external-link">ComBat</a></span><span class="op">(</span>dat <span class="op">=</span> <span class="fu">assay</span><span class="op">(</span><span class="va">sce</span><span class="op">)</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">sce</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/sva/man/ComBat.html" class="external-link">ComBat</a></span><span class="op">(</span>dat <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">sce</span><span class="op">)</span>,</span>
 <span>                     batch <span class="op">=</span> <span class="va">batch</span>,</span>
 <span>                     mod <span class="op">=</span> <span class="va">model</span><span class="op">)</span></span></code></pre></div>
 <p>Finally, we add the batch corrected assay to the
@@ -1015,7 +1021,9 @@ reduction results are stored in the <code>reducedDim</code> slot.</p>
 <span>                                   ntop <span class="op">=</span> <span class="cn">Inf</span>,</span>
 <span>                                   scale <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                                   exprs_values <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>                                   name <span class="op">=</span> <span class="st">"PCA"</span><span class="op">)</span></span></code></pre></div>
+<span>                                   name <span class="op">=</span> <span class="st">"PCA"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: useNames = NA is deprecated. Instead, specify either useNames = TRUE</span></span>
+<span><span class="co">#&gt; or useNames = TRUE.</span></span></code></pre></div>
 <p>The computed PCA can be displayed using the
 <code>plotReducedDim</code> function. The <code>dimred</code> arguments
 should give the name of the dimension reduction results to plot, here we
@@ -1143,22 +1151,22 @@ other attached packages:
  [7] mgcv_1.8-42                 nlme_3.1-162               
  [9] dplyr_1.1.2                 magrittr_2.0.3             
 [11] ggplot2_3.4.2               scp_1.11.1                 
-[13] QFeatures_1.9.4             MultiAssayExperiment_1.27.0
+[13] QFeatures_1.11.2            MultiAssayExperiment_1.27.0
 [15] SummarizedExperiment_1.31.1 Biobase_2.61.0             
 [17] GenomicRanges_1.53.1        GenomeInfoDb_1.37.1        
 [19] IRanges_2.35.1              S4Vectors_0.39.1           
 [21] BiocGenerics_0.47.0         MatrixGenerics_1.13.0      
-[23] matrixStats_0.63.0          BiocStyle_2.29.0           
+[23] matrixStats_1.0.0           BiocStyle_2.29.0           
 
 loaded via a namespace (and not attached):
-  [1] jsonlite_1.8.4            ggbeeswarm_0.7.2         
-  [3] farver_2.1.1              rmarkdown_2.21           
+  [1] jsonlite_1.8.5            ggbeeswarm_0.7.2         
+  [3] farver_2.1.1              rmarkdown_2.22           
   [5] fs_1.6.2                  zlibbioc_1.47.0          
   [7] ragg_1.2.5                vctrs_0.6.2              
   [9] memoise_2.0.1             DelayedMatrixStats_1.23.0
  [11] RCurl_1.98-1.12           htmltools_0.5.5          
  [13] S4Arrays_1.1.4            BiocBaseUtils_1.3.0      
- [15] BiocNeighbors_1.19.0      SparseArray_1.1.8        
+ [15] BiocNeighbors_1.19.0      SparseArray_1.1.9        
  [17] sass_0.4.6                bslib_0.4.2              
  [19] desc_1.4.2                impute_1.75.1            
  [21] cachem_1.0.8              igraph_1.4.3             
@@ -1169,7 +1177,7 @@ loaded via a namespace (and not attached):
  [31] digest_0.6.31             colorspace_2.1-0         
  [33] AnnotationDbi_1.63.1      rprojroot_2.0.3          
  [35] irlba_2.3.5.1             textshaping_0.3.6        
- [37] RSQLite_2.3.1             beachmat_2.17.3          
+ [37] RSQLite_2.3.1             beachmat_2.17.5          
  [39] labeling_0.4.2            fansi_1.0.4              
  [41] httr_1.4.6                compiler_4.3.0           
  [43] bit64_4.0.5               withr_2.5.0              
@@ -1183,14 +1191,14 @@ loaded via a namespace (and not attached):
  [59] ScaledMatrix_1.9.1        utf8_1.2.3               
  [61] XVector_0.41.1            ggrepel_0.9.3            
  [63] pillar_1.9.0              stringr_1.5.0            
- [65] limma_3.57.1              splines_4.3.0            
+ [65] limma_3.57.2              splines_4.3.0            
  [67] lattice_0.21-8            FNN_1.1.3.2              
  [69] survival_3.5-5            bit_4.0.5                
  [71] annotate_1.79.0           tidyselect_1.2.0         
  [73] locfit_1.5-9.7            Biostrings_2.69.1        
  [75] knitr_1.43                gridExtra_2.3            
  [77] bookdown_0.34             ProtGenerics_1.33.0      
- [79] edgeR_3.43.2              xfun_0.39                
+ [79] edgeR_3.43.3              xfun_0.39                
  [81] stringi_1.7.12            lazyeval_0.2.2           
  [83] yaml_2.3.7                evaluate_0.21            
  [85] codetools_0.2-19          MsCoreUtils_1.13.1       

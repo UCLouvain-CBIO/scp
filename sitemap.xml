@@ -37,10 +37,16 @@
     <loc>/reference/computeSCR.html</loc>
   </url>
   <url>
+    <loc>/reference/cumulativeSensitivityCurve.html</loc>
+  </url>
+  <url>
     <loc>/reference/divideByReference.html</loc>
   </url>
   <url>
     <loc>/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>/reference/jaccardIndex.html</loc>
   </url>
   <url>
     <loc>/reference/medianCVperCell.html</loc>
@@ -59,6 +65,9 @@
   </url>
   <url>
     <loc>/reference/readSingleCellExperiment.html</loc>
+  </url>
+  <url>
+    <loc>/reference/reportMissingValues.html</loc>
   </url>
   <url>
     <loc>/reference/sampleAnnotation.html</loc>
