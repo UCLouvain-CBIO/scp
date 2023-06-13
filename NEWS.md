@@ -2,11 +2,12 @@
 
 ## scp 1.11.2
 
-- feat: added reportMissingValues(), jaccardIndex(), 
+- feat: added reportMissingValues(), jaccardIndex(),
   cumulativeSensitivityCurve() and predictSensitivity() to facilitate
   reporting missing values. The vignette is also adapted with the new
   functionality.
 - docs: created vignette about reporting missing values in SCP
+- fix failing unit test.
 
 ## scp 1.11.1
 
