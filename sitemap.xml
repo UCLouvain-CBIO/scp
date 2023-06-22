@@ -64,6 +64,9 @@
     <loc>/reference/readSCP.html</loc>
   </url>
   <url>
+    <loc>/reference/readSCPfromDIANN.html</loc>
+  </url>
+  <url>
     <loc>/reference/readSingleCellExperiment.html</loc>
   </url>
   <url>
