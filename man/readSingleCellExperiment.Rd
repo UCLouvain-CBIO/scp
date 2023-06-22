@@ -19,7 +19,7 @@ indicating the names of the columns. Caution must be taken if
 the column names are composed of special characters like \code{(}
 or \code{-} that will be converted to a \code{.} by the \code{read.csv}
 function. If \code{ecol} does not match, the error message will
-dislpay the column names as seen by the \code{read.csv} function.}
+display the column names as seen by the \code{read.csv} function.}
 
 \item{fnames}{An optional \code{character(1)} or \code{numeric(1)}
 indicating the column to be used as row names.}
