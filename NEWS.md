@@ -1,5 +1,10 @@
 # scp 1.11
 
+## scp 1.11.3
+
+- feat: added readSCPfromDIANN() that creates a QFeatures object from
+  DIANN output tables.
+
 ## scp 1.11.2
 
 - Nothing yet.
