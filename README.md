@@ -47,9 +47,9 @@ BiocManager::install("UCLouvain-CBIO/scp")
 
 To cite the `scp` package in publications use:
 
-> Vanderaa Christophe and Laurent Gatto. Revisiting the thorny issue 
-  of missing values in single-cell proteomics. arXiv:2304.06654; 
-  doi: https://doi.org/2304.06654 (2023).
+> Vanderaa, Christophe, and Laurent Gatto. 2023. “Revisiting the
+  Thorny Issue of Missing Values in Single-Cell Proteomics.” Journal
+  of Proteome Research 22 (9): 2775–84.
 
 > Vanderaa Christophe and Laurent Gatto. The current state of 
   single-cell proteomics data analysis. Current Protocols 3 (1): 

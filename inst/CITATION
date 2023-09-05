@@ -6,11 +6,18 @@ citEntry(entry = "article",
          author = personList(
            person(given = "Christophe", family = "Vanderaa"),
            person(given = "Laurent", family = "Gatto")),
-         journal = "arXiv",
-         year = "2023",
-         textVersion = paste("Vanderaa Christophe and Laurent Gatto.",
-                             "Revisiting the thorny issue of missing values in single-cell proteomics.",
-                             "arXiv:2304.06654; doi: https://doi.org/2304.06654 (2023).")
+         journal  = "J. Proteome Res.",
+         volume   =  22,
+         number   =  9,
+         pages    = "2775--2784",
+         month    =  sep,
+         year     =  2023,
+         textVersion = paste(
+             "Vanderaa, Christophe, and Laurent Gatto. 2023. ", 
+             "Revisiting the Thorny Issue of Missing Values in ",
+             "Single-Cell Proteomics. Journal of Proteome Research ",
+             "22 (9): 2775–84."
+         )
          )
 
 citEntry(entry = "article",
