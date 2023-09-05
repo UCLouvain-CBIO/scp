@@ -97,7 +97,7 @@ Vanderaa</h4>
                                     <h4 data-toc-skip class="author">Laurent
 Gatto</h4>
                         
-            <h4 data-toc-skip class="date">22 June 2023</h4>
+            <h4 data-toc-skip class="date">5 September 2023</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/HEAD/vignettes/reporting_missing_values.Rmd" class="external-link"><code>vignettes/reporting_missing_values.Rmd</code></a></small>
       <div class="hidden name"><code>reporting_missing_values.Rmd</code></div>
@@ -144,7 +144,7 @@ keep only the feature annotations that will be used later in the
 vignette.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">leduc</span> <span class="op">&lt;-</span> <span class="va">leduc</span><span class="op">[</span>, , <span class="fl">1</span><span class="op">:</span><span class="fl">30</span><span class="op">]</span></span>
-<span><span class="co">#&gt; Warning: 'experiments' dropped; see 'metadata'</span></span>
+<span><span class="co">#&gt; Warning: 'experiments' dropped; see 'drops()'</span></span>
 <span><span class="co">#&gt; harmonizing input:</span></span>
 <span><span class="co">#&gt;   removing 8057 sampleMap rows not in names(experiments)</span></span>
 <span><span class="co">#&gt;   removing 1872 colData rownames not in sampleMap 'primary'</span></span>
@@ -220,12 +220,10 @@ and point towards the assay with the identification matrix
 <code>colData</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/reportMissingValues.html">reportMissingValues</a></span><span class="op">(</span><span class="va">leduc</span>, <span class="st">"id"</span>, by <span class="op">=</span> <span class="va">leduc</span><span class="op">$</span><span class="va">SampleType</span><span class="op">)</span></span>
-<span><span class="co">#&gt;               LocalSensitivityMean LocalSensitivitySd TotalSensitivity</span></span>
-<span><span class="co">#&gt; Monocyte                  2753.904           351.2502             7029</span></span>
-<span><span class="co">#&gt; Melanoma cell             3019.805           410.0743             7093</span></span>
-<span><span class="co">#&gt;               Completeness NumberCells</span></span>
-<span><span class="co">#&gt; Monocyte         0.3872737         197</span></span>
-<span><span class="co">#&gt; Melanoma cell    0.4246667         195</span></span></code></pre></div>
+<span><span class="co">#&gt;          LocalSensitivityMean LocalSensitivitySd TotalSensitivity Completeness</span></span>
+<span><span class="co">#&gt; Monocyte             2753.904           351.2502             7029    0.3872737</span></span>
+<span><span class="co">#&gt;          NumberCells</span></span>
+<span><span class="co">#&gt; Monocyte         197</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="advanced-criteria">Advanced criteria<a class="anchor" aria-label="anchor" href="#advanced-criteria"></a>
@@ -308,9 +306,8 @@ fit, we first predict the sensitivity for the range of sample size.</p>
 we had an infinite number of samples.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/cumulativeSensitivityCurve.html">predictSensitivity</a></span><span class="op">(</span><span class="va">csc</span>, nSamples <span class="op">=</span> <span class="cn">Inf</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   SampleSize Sensitivity            by</span></span>
-<span><span class="co">#&gt; 1        Inf    7203.288      Monocyte</span></span>
-<span><span class="co">#&gt; 2        Inf    7247.031 Melanoma cell</span></span></code></pre></div>
+<span><span class="co">#&gt;   SampleSize Sensitivity       by</span></span>
+<span><span class="co">#&gt; 1        Inf    7195.793 Monocyte</span></span></code></pre></div>
 <p>The total sensitivity is predicted to be about 7200 peptides for both
 cell types. So in the previous section, we underestimated the total
 sensitivity by about 150-200 peptides.</p>
@@ -323,9 +320,9 @@ sensitivity by about 150-200 peptides.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"scp"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; To cite the scp package in publications use:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;   Vanderaa Christophe and Laurent Gatto. Revisiting the thorny issue of</span></span>
-<span><span class="co">#&gt;   missing values in single-cell proteomics. arXiv:2304.06654; doi:</span></span>
-<span><span class="co">#&gt;   https://doi.org/2304.06654 (2023).</span></span>
+<span><span class="co">#&gt;   Vanderaa, Christophe, and Laurent Gatto. 2023.  Revisiting the Thorny</span></span>
+<span><span class="co">#&gt;   Issue of Missing Values in Single-Cell Proteomics. Journal of</span></span>
+<span><span class="co">#&gt;   Proteome Research 22 (9): 2775–84.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;   Vanderaa Christophe and Laurent Gatto. The current state of</span></span>
 <span><span class="co">#&gt;   single-cell proteomics data analysis. Current Protocols 3 (1): e658.;</span></span>

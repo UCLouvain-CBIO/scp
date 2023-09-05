@@ -97,7 +97,7 @@ Gatto</h4>
                                     <h4 data-toc-skip class="author">Christophe
 Vanderaa</h4>
                         
-            <h4 data-toc-skip class="date">22 June 2023</h4>
+            <h4 data-toc-skip class="date">5 September 2023</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/HEAD/vignettes/advanced.Rmd" class="external-link"><code>vignettes/advanced.Rmd</code></a></small>
       <div class="hidden name"><code>advanced.Rmd</code></div>
@@ -180,7 +180,6 @@ types required by the <code>normByType</code> function. We therefore use
 <code>getWithColData</code>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sce</span> <span class="op">&lt;-</span> <span class="fu">getWithColData</span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"proteins"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: 'experiments' dropped; see 'metadata'</span></span>
 <span><span class="va">sce</span></span>
 <span><span class="co">#&gt; class: SingleCellExperiment </span></span>
 <span><span class="co">#&gt; dim: 292 38 </span></span>
@@ -452,9 +451,9 @@ request</a>.</p>
 <div class="section level2">
 <h2 class="unnumbered" id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
 </h2>
-<pre><code>R version 4.3.0 (2023-04-21)
+<pre><code>R version 4.3.1 (2023-06-16)
 Platform: x86_64-pc-linux-gnu (64-bit)
-Running under: Ubuntu 22.04.2 LTS
+Running under: Ubuntu 22.04.3 LTS
 
 Matrix products: default
 BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -476,52 +475,52 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] ggplot2_3.4.2               scp_1.11.3                 
- [3] QFeatures_1.11.2            MultiAssayExperiment_1.27.0
+ [1] ggplot2_3.4.3               scp_1.11.3                 
+ [3] QFeatures_1.11.3            MultiAssayExperiment_1.27.5
  [5] SummarizedExperiment_1.31.1 Biobase_2.61.0             
- [7] GenomicRanges_1.53.1        GenomeInfoDb_1.37.1        
- [9] IRanges_2.35.1              S4Vectors_0.39.1           
-[11] BiocGenerics_0.47.0         MatrixGenerics_1.13.0      
-[13] matrixStats_1.0.0           BiocStyle_2.29.0           
+ [7] GenomicRanges_1.53.1        GenomeInfoDb_1.37.3        
+ [9] IRanges_2.35.2              S4Vectors_0.39.1           
+[11] BiocGenerics_0.47.0         MatrixGenerics_1.13.1      
+[13] matrixStats_1.0.0           BiocStyle_2.29.1           
 
 loaded via a namespace (and not attached):
- [1] gtable_0.3.3                xfun_0.39                  
- [3] bslib_0.5.0                 lattice_0.21-8             
+ [1] gtable_0.3.4                xfun_0.40                  
+ [3] bslib_0.5.1                 lattice_0.21-8             
  [5] generics_0.1.3              vctrs_0.6.3                
- [7] tools_4.3.0                 bitops_1.0-7               
+ [7] tools_4.3.1                 bitops_1.0-7               
  [9] tibble_3.2.1                fansi_1.0.4                
 [11] highr_0.10                  cluster_2.1.4              
-[13] BiocBaseUtils_1.3.0         pkgconfig_2.0.3            
-[15] Matrix_1.5-4.1              desc_1.4.2                 
+[13] BiocBaseUtils_1.3.2         pkgconfig_2.0.3            
+[15] Matrix_1.6-1                desc_1.4.2                 
 [17] lifecycle_1.0.3             GenomeInfoDbData_1.2.10    
-[19] farver_2.1.1                compiler_4.3.0             
+[19] farver_2.1.1                compiler_4.3.1             
 [21] stringr_1.5.0               textshaping_0.3.6          
 [23] munsell_0.5.0               clue_0.3-64                
-[25] htmltools_0.5.5             sass_0.4.6                 
+[25] htmltools_0.5.6             sass_0.4.7                 
 [27] RCurl_1.98-1.12             yaml_2.3.7                 
 [29] lazyeval_0.2.2              pillar_1.9.0               
 [31] pkgdown_2.0.7.9000          crayon_1.5.2               
 [33] jquerylib_0.1.4             MASS_7.3-60                
-[35] SingleCellExperiment_1.23.0 DelayedArray_0.27.5        
-[37] cachem_1.0.8                tidyselect_1.2.0           
-[39] digest_0.6.31               stringi_1.7.12             
-[41] dplyr_1.1.2                 purrr_1.0.1                
-[43] bookdown_0.34               labeling_0.4.2             
-[45] rprojroot_2.0.3             fastmap_1.1.1              
-[47] grid_4.3.0                  colorspace_2.1-0           
-[49] cli_3.6.1                   SparseArray_1.1.10         
-[51] magrittr_2.0.3              S4Arrays_1.1.4             
-[53] utf8_1.2.3                  withr_2.5.0                
-[55] scales_1.2.1                rmarkdown_2.22             
-[57] XVector_0.41.1              igraph_1.5.0               
-[59] ragg_1.2.5                  memoise_2.0.1              
-[61] evaluate_0.21               knitr_1.43                 
-[63] rlang_1.1.1                 glue_1.6.2                 
-[65] BiocManager_1.30.21         jsonlite_1.8.5             
-[67] AnnotationFilter_1.25.0     R6_2.5.1                   
-[69] systemfonts_1.0.4           fs_1.6.2                   
-[71] zlibbioc_1.47.0             ProtGenerics_1.33.1        
-[73] MsCoreUtils_1.13.1         </code></pre>
+[35] SingleCellExperiment_1.23.0 DelayedArray_0.27.10       
+[37] cachem_1.0.8                abind_1.4-5                
+[39] tidyselect_1.2.0            digest_0.6.33              
+[41] stringi_1.7.12              dplyr_1.1.3                
+[43] purrr_1.0.2                 bookdown_0.35              
+[45] labeling_0.4.3              rprojroot_2.0.3            
+[47] fastmap_1.1.1               grid_4.3.1                 
+[49] colorspace_2.1-0            cli_3.6.1                  
+[51] SparseArray_1.1.12          magrittr_2.0.3             
+[53] S4Arrays_1.1.6              utf8_1.2.3                 
+[55] withr_2.5.0                 scales_1.2.1               
+[57] rmarkdown_2.24              XVector_0.41.1             
+[59] igraph_1.5.1                ragg_1.2.5                 
+[61] memoise_2.0.1               evaluate_0.21              
+[63] knitr_1.43                  rlang_1.1.1                
+[65] glue_1.6.2                  BiocManager_1.30.22        
+[67] jsonlite_1.8.7              AnnotationFilter_1.25.0    
+[69] R6_2.5.1                    systemfonts_1.0.4          
+[71] fs_1.6.3                    zlibbioc_1.47.0            
+[73] ProtGenerics_1.33.1         MsCoreUtils_1.13.1         </code></pre>
 </div>
 <div class="section level2">
 <h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>

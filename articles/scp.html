@@ -97,7 +97,7 @@ Gatto</h4>
                                     <h4 data-toc-skip class="author">Christophe
 Vanderaa</h4>
                         
-            <h4 data-toc-skip class="date">22 June 2023</h4>
+            <h4 data-toc-skip class="date">5 September 2023</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/HEAD/vignettes/scp.Rmd" class="external-link"><code>vignettes/scp.Rmd</code></a></small>
       <div class="hidden name"><code>scp.Rmd</code></div>
@@ -372,7 +372,7 @@ assays that meet the criterion.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">keepAssay</span> <span class="op">&lt;-</span> <span class="fu">dims</span><span class="op">(</span><span class="va">scp</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span>, <span class="op">]</span> <span class="op">&gt;</span> <span class="fl">150</span></span>
 <span><span class="va">scp</span> <span class="op">&lt;-</span> <span class="va">scp</span><span class="op">[</span>, , <span class="va">keepAssay</span><span class="op">]</span></span>
-<span><span class="co">#&gt; Warning: 'experiments' dropped; see 'metadata'</span></span>
+<span><span class="co">#&gt; Warning: 'experiments' dropped; see 'drops()'</span></span>
 <span><span class="co">#&gt; harmonizing input:</span></span>
 <span><span class="co">#&gt;   removing 11 sampleMap rows not in names(experiments)</span></span>
 <span><span class="co">#&gt;   removing 11 colData rownames not in sampleMap 'primary'</span></span>
@@ -697,8 +697,6 @@ single cell. We compute and store the median intensity in the
 <code>colData</code>.</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">medians</span> <span class="op">&lt;-</span> <span class="fu">colMedians</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">scp</span><span class="op">[[</span><span class="st">"peptides"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: useNames = NA is deprecated. Instead, specify either useNames = TRUE</span></span>
-<span><span class="co">#&gt; or useNames = TRUE.</span></span>
 <span><span class="va">scp</span><span class="op">$</span><span class="va">MedianRI</span> <span class="op">&lt;-</span> <span class="va">medians</span></span></code></pre></div>
 <p>Looking at the distribution of the median per cell can highlight
 low-quality cells.</p>
@@ -805,8 +803,6 @@ More conventional normalization procedure can be found in
 <span>             FUN <span class="op">=</span> <span class="st">"/"</span>,</span>
 <span>             STATS <span class="op">=</span> <span class="fu">colMedians</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">scp</span><span class="op">[[</span><span class="st">"peptides"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
 <span>             name <span class="op">=</span> <span class="st">"peptides_norm_col"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: useNames = NA is deprecated. Instead, specify either useNames = TRUE</span></span>
-<span><span class="co">#&gt; or useNames = TRUE.</span></span>
 <span><span class="co">## Divide rows by mean</span></span>
 <span><span class="va">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-processing.html" class="external-link">sweep</a></span><span class="op">(</span><span class="va">scp</span>,</span>
 <span>             i <span class="op">=</span> <span class="st">"peptides_norm_col"</span>,</span>
@@ -904,8 +900,6 @@ dividing.</p>
 <span>             STATS <span class="op">=</span> <span class="fu">colMedians</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">scp</span><span class="op">[[</span><span class="st">"proteins"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,</span>
 <span>                                na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
 <span>             name <span class="op">=</span> <span class="st">"proteins_norm_col"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: useNames = NA is deprecated. Instead, specify either useNames = TRUE</span></span>
-<span><span class="co">#&gt; or useNames = TRUE.</span></span>
 <span><span class="co">## Center rows with mean</span></span>
 <span><span class="va">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-processing.html" class="external-link">sweep</a></span><span class="op">(</span><span class="va">scp</span>, i <span class="op">=</span> <span class="st">"proteins_norm_col"</span>,</span>
 <span>             MARGIN <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -965,7 +959,7 @@ be used using the same procedure.</p>
 <p>We first extract the assay to process.</p>
 <div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sce</span> <span class="op">&lt;-</span> <span class="fu">getWithColData</span><span class="op">(</span><span class="va">scp</span>, <span class="st">"proteins_imptd"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: 'experiments' dropped; see 'metadata'</span></span></code></pre></div>
+<span><span class="co">#&gt; Warning: 'experiments' dropped; see 'drops()'</span></span></code></pre></div>
 <p>Next, we need to provide a design matrix and the batch annotation to
 <code>Combat</code>. The design matrix allows to protect variables of
 interest, in our case <code>SampleType</code>.</p>
@@ -1021,9 +1015,7 @@ reduction results are stored in the <code>reducedDim</code> slot.</p>
 <span>                                   ntop <span class="op">=</span> <span class="cn">Inf</span>,</span>
 <span>                                   scale <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                                   exprs_values <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>                                   name <span class="op">=</span> <span class="st">"PCA"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: useNames = NA is deprecated. Instead, specify either useNames = TRUE</span></span>
-<span><span class="co">#&gt; or useNames = TRUE.</span></span></code></pre></div>
+<span>                                   name <span class="op">=</span> <span class="st">"PCA"</span><span class="op">)</span></span></code></pre></div>
 <p>The computed PCA can be displayed using the
 <code>plotReducedDim</code> function. The <code>dimred</code> arguments
 should give the name of the dimension reduction results to plot, here we
@@ -1121,9 +1113,9 @@ that describes more in details how to visualize and explore data in a
 <div class="section level2">
 <h2 class="unnumbered" id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
 </h2>
-<pre><code>R version 4.3.0 (2023-04-21)
+<pre><code>R version 4.3.1 (2023-06-16)
 Platform: x86_64-pc-linux-gnu (64-bit)
-Running under: Ubuntu 22.04.2 LTS
+Running under: Ubuntu 22.04.3 LTS
 
 Matrix products: default
 BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -1145,75 +1137,76 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] scater_1.29.0               scuttle_1.11.0             
+ [1] scater_1.29.4               scuttle_1.11.2             
  [3] SingleCellExperiment_1.23.0 sva_3.49.0                 
- [5] BiocParallel_1.35.2         genefilter_1.83.1          
- [7] mgcv_1.8-42                 nlme_3.1-162               
- [9] dplyr_1.1.2                 magrittr_2.0.3             
-[11] ggplot2_3.4.2               scp_1.11.3                 
-[13] QFeatures_1.11.2            MultiAssayExperiment_1.27.0
+ [5] BiocParallel_1.35.4         genefilter_1.83.1          
+ [7] mgcv_1.9-0                  nlme_3.1-163               
+ [9] dplyr_1.1.3                 magrittr_2.0.3             
+[11] ggplot2_3.4.3               scp_1.11.3                 
+[13] QFeatures_1.11.3            MultiAssayExperiment_1.27.5
 [15] SummarizedExperiment_1.31.1 Biobase_2.61.0             
-[17] GenomicRanges_1.53.1        GenomeInfoDb_1.37.1        
-[19] IRanges_2.35.1              S4Vectors_0.39.1           
-[21] BiocGenerics_0.47.0         MatrixGenerics_1.13.0      
-[23] matrixStats_1.0.0           BiocStyle_2.29.0           
+[17] GenomicRanges_1.53.1        GenomeInfoDb_1.37.3        
+[19] IRanges_2.35.2              S4Vectors_0.39.1           
+[21] BiocGenerics_0.47.0         MatrixGenerics_1.13.1      
+[23] matrixStats_1.0.0           BiocStyle_2.29.1           
 
 loaded via a namespace (and not attached):
-  [1] jsonlite_1.8.5            ggbeeswarm_0.7.2         
-  [3] farver_2.1.1              rmarkdown_2.22           
-  [5] fs_1.6.2                  zlibbioc_1.47.0          
+  [1] jsonlite_1.8.7            ggbeeswarm_0.7.2         
+  [3] farver_2.1.1              rmarkdown_2.24           
+  [5] fs_1.6.3                  zlibbioc_1.47.0          
   [7] ragg_1.2.5                vctrs_0.6.3              
-  [9] memoise_2.0.1             DelayedMatrixStats_1.23.0
- [11] RCurl_1.98-1.12           htmltools_0.5.5          
- [13] S4Arrays_1.1.4            BiocBaseUtils_1.3.0      
- [15] BiocNeighbors_1.19.0      SparseArray_1.1.10       
- [17] sass_0.4.6                bslib_0.5.0              
+  [9] memoise_2.0.1             DelayedMatrixStats_1.23.4
+ [11] RCurl_1.98-1.12           htmltools_0.5.6          
+ [13] S4Arrays_1.1.6            BiocBaseUtils_1.3.2      
+ [15] BiocNeighbors_1.19.0      SparseArray_1.1.12       
+ [17] sass_0.4.7                bslib_0.5.1              
  [19] desc_1.4.2                impute_1.75.1            
- [21] cachem_1.0.8              igraph_1.5.0             
+ [21] cachem_1.0.8              igraph_1.5.1             
  [23] lifecycle_1.0.3           pkgconfig_2.0.3          
- [25] rsvd_1.0.5                Matrix_1.5-4.1           
+ [25] rsvd_1.0.5                Matrix_1.6-1             
  [27] R6_2.5.1                  fastmap_1.1.1            
  [29] GenomeInfoDbData_1.2.10   clue_0.3-64              
- [31] digest_0.6.31             colorspace_2.1-0         
- [33] AnnotationDbi_1.63.1      rprojroot_2.0.3          
+ [31] digest_0.6.33             colorspace_2.1-0         
+ [33] AnnotationDbi_1.63.2      rprojroot_2.0.3          
  [35] irlba_2.3.5.1             textshaping_0.3.6        
- [37] RSQLite_2.3.1             beachmat_2.17.8          
- [39] labeling_0.4.2            fansi_1.0.4              
- [41] httr_1.4.6                compiler_4.3.0           
- [43] bit64_4.0.5               withr_2.5.0              
- [45] viridis_0.6.3             DBI_1.1.3                
- [47] highr_0.10                MASS_7.3-60              
- [49] DelayedArray_0.27.5       tools_4.3.0              
- [51] vipor_0.4.5               beeswarm_0.4.0           
- [53] glue_1.6.2                grid_4.3.0               
- [55] cluster_2.1.4             generics_0.1.3           
- [57] gtable_0.3.3              BiocSingular_1.17.0      
- [59] ScaledMatrix_1.9.1        utf8_1.2.3               
- [61] XVector_0.41.1            ggrepel_0.9.3            
- [63] pillar_1.9.0              stringr_1.5.0            
- [65] limma_3.57.6              splines_4.3.0            
- [67] lattice_0.21-8            FNN_1.1.3.2              
- [69] survival_3.5-5            bit_4.0.5                
- [71] annotate_1.79.0           tidyselect_1.2.0         
- [73] locfit_1.5-9.8            Biostrings_2.69.1        
- [75] knitr_1.43                gridExtra_2.3            
- [77] bookdown_0.34             ProtGenerics_1.33.1      
- [79] edgeR_3.43.6              xfun_0.39                
- [81] stringi_1.7.12            lazyeval_0.2.2           
- [83] yaml_2.3.7                evaluate_0.21            
- [85] codetools_0.2-19          MsCoreUtils_1.13.1       
- [87] tibble_3.2.1              BiocManager_1.30.21      
- [89] cli_3.6.1                 uwot_0.1.14              
- [91] xtable_1.8-4              systemfonts_1.0.4        
- [93] munsell_0.5.0             jquerylib_0.1.4          
- [95] Rcpp_1.0.10               png_0.1-8                
- [97] XML_3.99-0.14             parallel_4.3.0           
- [99] pkgdown_2.0.7.9000        blob_1.2.4               
-[101] AnnotationFilter_1.25.0   sparseMatrixStats_1.13.0 
-[103] bitops_1.0-7              viridisLite_0.4.2        
-[105] scales_1.2.1              purrr_1.0.1              
-[107] crayon_1.5.2              rlang_1.1.1              
-[109] KEGGREST_1.41.0          </code></pre>
+ [37] RSQLite_2.3.1             beachmat_2.17.16         
+ [39] labeling_0.4.3            fansi_1.0.4              
+ [41] httr_1.4.7                abind_1.4-5              
+ [43] compiler_4.3.1            bit64_4.0.5              
+ [45] withr_2.5.0               viridis_0.6.4            
+ [47] DBI_1.1.3                 highr_0.10               
+ [49] MASS_7.3-60               DelayedArray_0.27.10     
+ [51] tools_4.3.1               vipor_0.4.5              
+ [53] beeswarm_0.4.0            glue_1.6.2               
+ [55] grid_4.3.1                cluster_2.1.4            
+ [57] generics_0.1.3            gtable_0.3.4             
+ [59] BiocSingular_1.17.1       ScaledMatrix_1.9.1       
+ [61] utf8_1.2.3                XVector_0.41.1           
+ [63] ggrepel_0.9.3             pillar_1.9.0             
+ [65] stringr_1.5.0             limma_3.57.7             
+ [67] splines_4.3.1             lattice_0.21-8           
+ [69] FNN_1.1.3.2               survival_3.5-7           
+ [71] bit_4.0.5                 annotate_1.79.0          
+ [73] tidyselect_1.2.0          locfit_1.5-9.8           
+ [75] Biostrings_2.69.2         knitr_1.43               
+ [77] gridExtra_2.3             bookdown_0.35            
+ [79] ProtGenerics_1.33.1       edgeR_3.43.8             
+ [81] xfun_0.40                 statmod_1.5.0            
+ [83] stringi_1.7.12            lazyeval_0.2.2           
+ [85] yaml_2.3.7                evaluate_0.21            
+ [87] codetools_0.2-19          MsCoreUtils_1.13.1       
+ [89] tibble_3.2.1              BiocManager_1.30.22      
+ [91] cli_3.6.1                 uwot_0.1.16              
+ [93] xtable_1.8-4              systemfonts_1.0.4        
+ [95] munsell_0.5.0             jquerylib_0.1.4          
+ [97] Rcpp_1.0.11               png_0.1-8                
+ [99] XML_3.99-0.14             parallel_4.3.1           
+[101] pkgdown_2.0.7.9000        blob_1.2.4               
+[103] AnnotationFilter_1.25.0   sparseMatrixStats_1.13.4 
+[105] bitops_1.0-7              viridisLite_0.4.2        
+[107] scales_1.2.1              purrr_1.0.2              
+[109] crayon_1.5.2              rlang_1.1.1              
+[111] KEGGREST_1.41.0          </code></pre>
 </div>
 <div class="section level2">
 <h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
@@ -1221,9 +1214,9 @@ loaded via a namespace (and not attached):
 <div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">"scp"</span>)</span>
 <span id="cb57-2"><a href="#cb57-2" tabindex="-1"></a>To cite the scp package <span class="cf">in</span> publications use<span class="sc">:</span></span>
 <span id="cb57-3"><a href="#cb57-3" tabindex="-1"></a></span>
-<span id="cb57-4"><a href="#cb57-4" tabindex="-1"></a>  Vanderaa Christophe and Laurent Gatto. Revisiting the thorny issue of</span>
-<span id="cb57-5"><a href="#cb57-5" tabindex="-1"></a>  missing values <span class="cf">in</span> single<span class="sc">-</span>cell proteomics. arXiv<span class="sc">:</span><span class="fl">2304.06654</span>; doi<span class="sc">:</span></span>
-<span id="cb57-6"><a href="#cb57-6" tabindex="-1"></a>  https<span class="sc">:</span><span class="er">//</span>doi.org<span class="sc">/</span><span class="fl">2304.06654</span> (<span class="dv">2023</span>).</span>
+<span id="cb57-4"><a href="#cb57-4" tabindex="-1"></a>  Vanderaa, Christophe, and Laurent Gatto. <span class="fl">2023.</span>  Revisiting the Thorny</span>
+<span id="cb57-5"><a href="#cb57-5" tabindex="-1"></a>  Issue of Missing Values <span class="cf">in</span> Single<span class="sc">-</span>Cell Proteomics. Journal of</span>
+<span id="cb57-6"><a href="#cb57-6" tabindex="-1"></a>  Proteome Research <span class="dv">22</span> (<span class="dv">9</span>)<span class="sc">:</span> 2775–<span class="fl">84.</span></span>
 <span id="cb57-7"><a href="#cb57-7" tabindex="-1"></a></span>
 <span id="cb57-8"><a href="#cb57-8" tabindex="-1"></a>  Vanderaa Christophe and Laurent Gatto. The current state of</span>
 <span id="cb57-9"><a href="#cb57-9" tabindex="-1"></a>  single<span class="sc">-</span>cell proteomics data analysis. Current Protocols <span class="dv">3</span> (<span class="dv">1</span>)<span class="sc">:</span> e658.;</span>
