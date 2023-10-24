@@ -44,7 +44,7 @@ The last point will allow you to generate SCP data that is suitable
 for downstream analysis, such as clustering or trajectory inference.
 The figure below provides a roadmap of the workflow: 
 
-![modelling workflow](figs/ScpModel-class.png)
+![modelling workflow](figures/ScpModel-class.png)
 
 The vignette will start with the processed data extracted as a 
 `SingleCellExperiment` object from a processed `QFeatures` object. We

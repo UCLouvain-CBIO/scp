@@ -360,7 +360,7 @@ SCR. We collect the `rowData` from several assays in a single table
 
 ```{r plot_SCR, warning=FALSE, message=FALSE}
 rbindRowData(scp, i = 1:3) |>
-    data.frame |>
+    data.frame() |>
     ggplot(aes(x = MeanSCR)) +
     geom_histogram() +
     geom_vline(xintercept = c(1/200, 0.1),
@@ -579,7 +579,7 @@ low-quality cells.
 
 ```{r plot_medianRI, warning=FALSE, message=FALSE}
 colData(scp) |>
-    data.frame |>
+    data.frame() |>
     ggplot() +
     aes(x = MedianRI, 
         y = SampleType,
@@ -632,8 +632,8 @@ that contain noisy quantification.
 
 ```{r plot_medianCV, message = FALSE, warning = FALSE}
 getWithColData(scp, "peptides") |>
-    colData |>
-    data.frame |>
+    colData() |>
+    data.frame() |>
     ggplot(aes(x = MedianCV,
                fill = SampleType)) +
     geom_boxplot() +
@@ -795,9 +795,9 @@ The protein data contains a lot of missing values.
 
 ```{r missingness}
 scp[["proteins_norm"]] |>
-    assay |>
-    is.na |>
-    mean
+    assay() |>
+    is.na() |>
+    mean()
 ```
 
 The average missingness in the `proteins` assay is around 25
@@ -824,9 +824,9 @@ Note that after imputation, no value are missing.
 
 ```{r missingness_imputed}
 scp[["proteins_imptd"]] |>
-    assay |>
-    is.na |>
-    mean
+    assay() |>
+    is.na() |>
+    mean()
 ```
 
 
@@ -984,7 +984,7 @@ formatted to a long format table that can easily be plugged in the
 subsetByFeature(scp, "P13796") |>
     ## Format the `QFeatures` to a long format table
     longFormat(colvars = c("Raw.file", "SampleType", "Channel")) |>
-    data.frame |>
+    data.frame() |>
     ## This is used to preserve ordering of the samples and assays in ggplot2
     mutate(assay = factor(assay, levels = names(scp)),
            Channel = sub("Reporter.intensity.", "TMT-", Channel),
