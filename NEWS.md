@@ -2,6 +2,7 @@
 
 ## scp 1.11.3
 
+- Major feat: added SCP data modelling workflow + documentation
 - feat: added readSCPfromDIANN() that creates a QFeatures object from
   DIANN output tables.
 

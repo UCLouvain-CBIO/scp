@@ -19,32 +19,38 @@ Description: Utility functions for manipulating, processing, and
     and more) into data tables ready for downstream analysis and data
     visualization.
 Depends:
-    R (>= 4.2.0),
+    R (>= 4.3.0),
     QFeatures (>= 1.3.5)
 Imports:
+    dplyr, 
+    IHW, 
+    ggplot2,
+    ggrepel,
+    magrittr,
+    matrixStats,
+    metapod,
     methods,
-    stats,
-    utils,
+    MsCoreUtils,
+    MultiAssayExperiment,
+    nipals,
+    RColorBrewer,
+    S4Vectors,
     SingleCellExperiment,
     SummarizedExperiment,
-    MultiAssayExperiment,
-    MsCoreUtils,
-    matrixStats,
-    S4Vectors,
-    dplyr,
-    magrittr
+    stats,
+    tidyr,
+    utils
 Suggests:
-    scpdata,
-    testthat,
-    knitr,
     BiocStyle,
-    rmarkdown,
-    ggplot2,
-    patchwork,
     impute,
-    scater,
-    sva,
+    knitr,
+    patchwork,
     preprocessCore,
+    rmarkdown,
+    scater,
+    scpdata,
+    sva,
+    testthat,
     vsn,
     uwot
 License: Artistic-2.0

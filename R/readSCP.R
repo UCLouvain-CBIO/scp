@@ -1,7 +1,6 @@
 ##' @import SingleCellExperiment
 ##' @import QFeatures
 ##' @import dplyr
-##' @import magrittr
 
 ##' @title Read single-cell proteomics data as a QFeatures object from
 ##'     tabular data and metadata
@@ -253,6 +252,8 @@ readSingleCellExperiment <- function(table,
 ##' @return An instance of class QFeatures. The expression data of
 ##'     each acquisition run is stored in a separate assay as a
 ##'     SingleCellExperiment object.
+##' 
+##' @importFrom tidyr pivot_wider
 ##' 
 ##' @export
 readSCPfromDIANN <- function(colData, reportData, extractedData = NULL,
