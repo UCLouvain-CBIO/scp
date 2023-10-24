@@ -351,7 +351,7 @@ scpModelWorkflow <- function(object, formula,
 }
 
 .computeModelEffect <- function(beta, x, effect) {
-    sel <- grepl(paste0("^", effect, "\\d*"), names(beta))
+    sel <- grep(paste0("^", effect, "\\d*"), names(beta))
     if (!length(sel)){
         rown <- rownames(x)
         return(structure(rep(NA, length(rown)), names = rown))
