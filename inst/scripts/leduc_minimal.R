@@ -96,7 +96,7 @@ leduc <- medianCVperCell(
     nobs = 3, na.rm = TRUE, colDataName = "MedianCV", norm = "SCoPE2"
 )
 
-data.frame(colData(leduc)) %>%
+data.frame(colData(leduc)) |>
     ggplot() +
     aes(
         y = MedianIntensity,
@@ -134,7 +134,7 @@ ppMap <- rbindRowData(leduc, i = grep("^pep", names(leduc))) |>
            Leading.razor.protein.id =
                names(sort(table(Leading.razor.protein.id),
                           decreasing = TRUE))[1]) |> 
-    dplyr::select(Sequence, Leading.razor.protein.symbol, Leading.razor.protein.id) %>%
+    dplyr::select(Sequence, Leading.razor.protein.symbol, Leading.razor.protein.id) |>
     dplyr::filter(!duplicated(Sequence, Leading.razor.protein.symbol))
 consensus <- lapply(peptideAssays, function(i) {
     ind <- match(rowData(leduc)[[i]]$Sequence, ppMap$Sequence)

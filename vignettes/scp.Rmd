@@ -66,12 +66,11 @@ Before running the vignette we need to load the `scp` package.
 library("scp")
 ```
 
-We also load `ggplot2`, `magrittr` and `dplyr` for convenient data
+We also load `ggplot2` and `dplyr` for convenient data
 manipulation and plotting.
 
 ```{r load_other_package, message = FALSE}
 library("ggplot2")
-library("magrittr")
 library("dplyr")
 ```
 
@@ -360,8 +359,8 @@ SCR. We collect the `rowData` from several assays in a single table
 `DataFrame` using the `rbindRowData` function from `QFeatures`.
 
 ```{r plot_SCR, warning=FALSE, message=FALSE}
-rbindRowData(scp, i = 1:3) %>%
-    data.frame %>%
+rbindRowData(scp, i = 1:3) |>
+    data.frame |>
     ggplot(aes(x = MeanSCR)) +
     geom_histogram() +
     geom_vline(xintercept = c(1/200, 0.1),
@@ -579,8 +578,8 @@ Looking at the distribution of the median per cell can highlight
 low-quality cells.
 
 ```{r plot_medianRI, warning=FALSE, message=FALSE}
-colData(scp) %>%
-    data.frame %>%
+colData(scp) |>
+    data.frame |>
     ggplot() +
     aes(x = MedianRI, 
         y = SampleType,
@@ -632,9 +631,9 @@ distribution helps defining a threshold that filters out single-cells
 that contain noisy quantification.
 
 ```{r plot_medianCV, message = FALSE, warning = FALSE}
-getWithColData(scp, "peptides") %>%
-    colData %>%
-    data.frame %>%
+getWithColData(scp, "peptides") |>
+    colData |>
+    data.frame |>
     ggplot(aes(x = MedianCV,
                fill = SampleType)) +
     geom_boxplot() +
@@ -795,9 +794,9 @@ scp <- sweep(scp, i = "proteins_norm_col",
 The protein data contains a lot of missing values.
 
 ```{r missingness}
-scp[["proteins_norm"]] %>%
-    assay %>%
-    is.na %>%
+scp[["proteins_norm"]] |>
+    assay |>
+    is.na |>
     mean
 ```
 
@@ -824,9 +823,9 @@ scp <- impute(scp,
 Note that after imputation, no value are missing.
 
 ```{r missingness_imputed}
-scp[["proteins_imptd"]] %>%
-    assay %>%
-    is.na %>%
+scp[["proteins_imptd"]] |>
+    assay |>
+    is.na |>
     mean
 ```
 
@@ -982,14 +981,14 @@ formatted to a long format table that can easily be plugged in the
 
 ```{r monitor_plot, warning = FALSE, fig.width = 10, fig.height = 10, out.width = "100%"}
 ## Get the features related to Plastin-2 (P13796)
-subsetByFeature(scp, "P13796") %>%
+subsetByFeature(scp, "P13796") |>
     ## Format the `QFeatures` to a long format table
-    longFormat(colvars = c("Raw.file", "SampleType", "Channel")) %>%
-    data.frame %>%
+    longFormat(colvars = c("Raw.file", "SampleType", "Channel")) |>
+    data.frame |>
     ## This is used to preserve ordering of the samples and assays in ggplot2
     mutate(assay = factor(assay, levels = names(scp)),
            Channel = sub("Reporter.intensity.", "TMT-", Channel),
-           Channel = factor(Channel, levels = unique(Channel))) %>%
+           Channel = factor(Channel, levels = unique(Channel))) |>
     ## Start plotting
     ggplot(aes(x = Channel, y = value, group = rowname, col = SampleType)) +
     geom_point() +
