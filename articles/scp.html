@@ -97,7 +97,7 @@ Gatto</h4>
                                     <h4 data-toc-skip class="author">Christophe
 Vanderaa</h4>
                         
-            <h4 data-toc-skip class="date">5 September 2023</h4>
+            <h4 data-toc-skip class="date">6 December 2023</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/HEAD/vignettes/scp.Rmd" class="external-link"><code>vignettes/scp.Rmd</code></a></small>
       <div class="hidden name"><code>scp.Rmd</code></div>
@@ -1113,8 +1113,8 @@ that describes more in details how to visualize and explore data in a
 <div class="section level2">
 <h2 class="unnumbered" id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
 </h2>
-<pre><code>R version 4.3.1 (2023-06-16)
-Platform: x86_64-pc-linux-gnu (64-bit)
+<pre><code>R Under development (unstable) (2023-11-22 r85609)
+Platform: x86_64-pc-linux-gnu
 Running under: Ubuntu 22.04.3 LTS
 
 Matrix products: default
@@ -1137,76 +1137,76 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] scater_1.29.4               scuttle_1.11.2             
- [3] SingleCellExperiment_1.23.0 sva_3.49.0                 
- [5] BiocParallel_1.35.4         genefilter_1.83.1          
- [7] mgcv_1.9-0                  nlme_3.1-163               
- [9] dplyr_1.1.3                 magrittr_2.0.3             
-[11] ggplot2_3.4.3               scp_1.11.3                 
-[13] QFeatures_1.11.3            MultiAssayExperiment_1.27.5
-[15] SummarizedExperiment_1.31.1 Biobase_2.61.0             
-[17] GenomicRanges_1.53.1        GenomeInfoDb_1.37.3        
-[19] IRanges_2.35.2              S4Vectors_0.39.1           
-[21] BiocGenerics_0.47.0         MatrixGenerics_1.13.1      
-[23] matrixStats_1.0.0           BiocStyle_2.29.1           
+ [1] scater_1.31.1               scuttle_1.13.0             
+ [3] SingleCellExperiment_1.25.0 sva_3.51.0                 
+ [5] BiocParallel_1.37.0         genefilter_1.85.0          
+ [7] mgcv_1.9-0                  nlme_3.1-164               
+ [9] dplyr_1.1.4                 magrittr_2.0.3             
+[11] ggplot2_3.4.4               scp_1.11.3                 
+[13] QFeatures_1.13.1            MultiAssayExperiment_1.29.0
+[15] SummarizedExperiment_1.33.1 Biobase_2.63.0             
+[17] GenomicRanges_1.55.1        GenomeInfoDb_1.39.1        
+[19] IRanges_2.37.0              S4Vectors_0.41.2           
+[21] BiocGenerics_0.49.1         MatrixGenerics_1.15.0      
+[23] matrixStats_1.1.0           BiocStyle_2.31.0           
 
 loaded via a namespace (and not attached):
-  [1] jsonlite_1.8.7            ggbeeswarm_0.7.2         
-  [3] farver_2.1.1              rmarkdown_2.24           
-  [5] fs_1.6.3                  zlibbioc_1.47.0          
-  [7] ragg_1.2.5                vctrs_0.6.3              
-  [9] memoise_2.0.1             DelayedMatrixStats_1.23.4
- [11] RCurl_1.98-1.12           htmltools_0.5.6          
- [13] S4Arrays_1.1.6            BiocBaseUtils_1.3.2      
- [15] BiocNeighbors_1.19.0      SparseArray_1.1.12       
- [17] sass_0.4.7                bslib_0.5.1              
- [19] desc_1.4.2                impute_1.75.1            
+  [1] jsonlite_1.8.8            ggbeeswarm_0.7.2         
+  [3] farver_2.1.1              rmarkdown_2.25           
+  [5] fs_1.6.3                  zlibbioc_1.49.0          
+  [7] ragg_1.2.6                vctrs_0.6.5              
+  [9] memoise_2.0.1             DelayedMatrixStats_1.25.1
+ [11] RCurl_1.98-1.13           htmltools_0.5.7          
+ [13] S4Arrays_1.3.1            BiocBaseUtils_1.5.0      
+ [15] BiocNeighbors_1.21.1      SparseArray_1.3.1        
+ [17] sass_0.4.8                bslib_0.6.1              
+ [19] desc_1.4.2                impute_1.77.0            
  [21] cachem_1.0.8              igraph_1.5.1             
- [23] lifecycle_1.0.3           pkgconfig_2.0.3          
- [25] rsvd_1.0.5                Matrix_1.6-1             
+ [23] lifecycle_1.0.4           pkgconfig_2.0.3          
+ [25] rsvd_1.0.5                Matrix_1.6-4             
  [27] R6_2.5.1                  fastmap_1.1.1            
- [29] GenomeInfoDbData_1.2.10   clue_0.3-64              
+ [29] GenomeInfoDbData_1.2.11   clue_0.3-65              
  [31] digest_0.6.33             colorspace_2.1-0         
- [33] AnnotationDbi_1.63.2      rprojroot_2.0.3          
- [35] irlba_2.3.5.1             textshaping_0.3.6        
- [37] RSQLite_2.3.1             beachmat_2.17.16         
- [39] labeling_0.4.3            fansi_1.0.4              
+ [33] AnnotationDbi_1.65.2      rprojroot_2.0.4          
+ [35] irlba_2.3.5.1             textshaping_0.3.7        
+ [37] RSQLite_2.3.3             beachmat_2.19.0          
+ [39] labeling_0.4.3            fansi_1.0.5              
  [41] httr_1.4.7                abind_1.4-5              
- [43] compiler_4.3.1            bit64_4.0.5              
- [45] withr_2.5.0               viridis_0.6.4            
+ [43] compiler_4.4.0            bit64_4.0.5              
+ [45] withr_2.5.2               viridis_0.6.4            
  [47] DBI_1.1.3                 highr_0.10               
- [49] MASS_7.3-60               DelayedArray_0.27.10     
- [51] tools_4.3.1               vipor_0.4.5              
+ [49] MASS_7.3-60.1             DelayedArray_0.29.0      
+ [51] tools_4.4.0               vipor_0.4.5              
  [53] beeswarm_0.4.0            glue_1.6.2               
- [55] grid_4.3.1                cluster_2.1.4            
+ [55] grid_4.4.0                cluster_2.1.5            
  [57] generics_0.1.3            gtable_0.3.4             
- [59] BiocSingular_1.17.1       ScaledMatrix_1.9.1       
- [61] utf8_1.2.3                XVector_0.41.1           
- [63] ggrepel_0.9.3             pillar_1.9.0             
- [65] stringr_1.5.0             limma_3.57.7             
- [67] splines_4.3.1             lattice_0.21-8           
+ [59] BiocSingular_1.19.0       ScaledMatrix_1.11.0      
+ [61] utf8_1.2.4                XVector_0.43.0           
+ [63] ggrepel_0.9.4             pillar_1.9.0             
+ [65] stringr_1.5.1             limma_3.59.1             
+ [67] splines_4.4.0             lattice_0.22-5           
  [69] FNN_1.1.3.2               survival_3.5-7           
- [71] bit_4.0.5                 annotate_1.79.0          
+ [71] bit_4.0.5                 annotate_1.81.0          
  [73] tidyselect_1.2.0          locfit_1.5-9.8           
- [75] Biostrings_2.69.2         knitr_1.43               
- [77] gridExtra_2.3             bookdown_0.35            
- [79] ProtGenerics_1.33.1       edgeR_3.43.8             
- [81] xfun_0.40                 statmod_1.5.0            
- [83] stringi_1.7.12            lazyeval_0.2.2           
- [85] yaml_2.3.7                evaluate_0.21            
- [87] codetools_0.2-19          MsCoreUtils_1.13.1       
+ [75] Biostrings_2.71.1         knitr_1.45               
+ [77] gridExtra_2.3             bookdown_0.37            
+ [79] ProtGenerics_1.35.0       edgeR_4.1.2              
+ [81] xfun_0.41                 statmod_1.5.0            
+ [83] stringi_1.8.2             lazyeval_0.2.2           
+ [85] yaml_2.3.7                evaluate_0.23            
+ [87] codetools_0.2-19          MsCoreUtils_1.15.1       
  [89] tibble_3.2.1              BiocManager_1.30.22      
  [91] cli_3.6.1                 uwot_0.1.16              
- [93] xtable_1.8-4              systemfonts_1.0.4        
+ [93] xtable_1.8-4              systemfonts_1.0.5        
  [95] munsell_0.5.0             jquerylib_0.1.4          
  [97] Rcpp_1.0.11               png_0.1-8                
- [99] XML_3.99-0.14             parallel_4.3.1           
+ [99] XML_3.99-0.16             parallel_4.4.0           
 [101] pkgdown_2.0.7.9000        blob_1.2.4               
-[103] AnnotationFilter_1.25.0   sparseMatrixStats_1.13.4 
+[103] AnnotationFilter_1.27.0   sparseMatrixStats_1.15.0 
 [105] bitops_1.0-7              viridisLite_0.4.2        
-[107] scales_1.2.1              purrr_1.0.2              
-[109] crayon_1.5.2              rlang_1.1.1              
-[111] KEGGREST_1.41.0          </code></pre>
+[107] scales_1.3.0              purrr_1.0.2              
+[109] crayon_1.5.2              rlang_1.1.2              
+[111] KEGGREST_1.43.0          </code></pre>
 </div>
 <div class="section level2">
 <h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>

@@ -243,21 +243,7 @@ the data.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                     name, paste(names(rds), collapse = ",")), </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                     domain = NA)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             if (file_test("-f", file.path(p, "Rdata.zip"))) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 warning("zipped data found for package ", sQuote(basename(dirname(p))), </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                   ".\nThat is defunct, so please re-install the package.", </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                   domain = NA)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 if (file_test("-f", fp &lt;- file.path(p, "filelist"))) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                   files &lt;- file.path(p, scan(fp, what = "", quiet = TRUE))</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 else {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                   warning(gettextf("file 'filelist' is missing for directory %s", </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                     sQuote(p)), domain = NA)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                   next</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             else {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 files &lt;- list.files(p, full.names = TRUE)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             files &lt;- list.files(p, full.names = TRUE)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             files &lt;- files[grep(name, files, fixed = TRUE)]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             if (length(files) &gt; 1L) {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                 o &lt;- match(fileExt(files), dataExts, nomatch = 100L)</span>
@@ -276,29 +262,15 @@ the data.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                     found &lt;- FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                   else {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                     found &lt;- TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                     zfile &lt;- file</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                     zipname &lt;- file.path(dirname(file), "Rdata.zip")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                     if (file.exists(zipname)) {</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                       Rdatadir &lt;- tempfile("Rdata")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                       dir.create(Rdatadir, showWarnings = FALSE)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                       topic &lt;- basename(file)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                       rc &lt;- .External(C_unzip, zipname, topic, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                         Rdatadir, FALSE, TRUE, FALSE, FALSE)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                       if (rc == 0L) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                         zfile &lt;- file.path(Rdatadir, topic)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                     }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                     if (zfile != file) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                       on.exit(unlink(zfile))</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                     switch(ext, R = , r = {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                       library("utils")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                       sys.source(zfile, chdir = TRUE, envir = tmp_env)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                     }, RData = , rdata = , rda = load(zfile, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                       envir = tmp_env), TXT = , txt = , tab = , </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                       tab.gz = , tab.bz2 = , tab.xz = , txt.gz = , </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                       txt.bz2 = , txt.xz = assign(name, my_read_table(zfile, </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                         header = TRUE, as.is = FALSE), envir = tmp_env), </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                       CSV = , csv = , csv.gz = , csv.bz2 = , </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                       csv.xz = assign(name, my_read_table(zfile, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       sys.source(file, chdir = TRUE, envir = tmp_env)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                     }, RData = , rdata = , rda = load(file, envir = tmp_env), </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       TXT = , txt = , tab = , tab.gz = , tab.bz2 = , </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       tab.xz = , txt.gz = , txt.bz2 = , txt.xz = assign(name, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         my_read_table(file, header = TRUE, as.is = FALSE), </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         envir = tmp_env), CSV = , csv = , csv.gz = , </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       csv.bz2 = , csv.xz = assign(name, my_read_table(file, </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                         header = TRUE, sep = ";", as.is = FALSE), </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                         envir = tmp_env), found &lt;- FALSE)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                   }</span>
@@ -329,7 +301,7 @@ the data.</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     invisible(names)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x55d2a19be100&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;bytecode: 0x5616ef4dced0&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;environment: namespace:utils&gt;</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
