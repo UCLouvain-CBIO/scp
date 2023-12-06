@@ -19,7 +19,7 @@ scpModelComponentMethods
 scpComponentAnalysis(
   object,
   method = "ASCA",
-  effects = scpModelEffectNames(object),
+  effects = NULL,
   pcaFUN = "auto",
   residuals = TRUE,
   unmodelled = TRUE,

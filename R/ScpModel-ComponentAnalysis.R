@@ -184,12 +184,13 @@ NULL
 ##' @export
 scpComponentAnalysis <- function(object,
                                  method = "ASCA",
-                                 effects = scpModelEffectNames(object),
+                                 effects = NULL,
                                  pcaFUN = "auto",
                                  residuals = TRUE,
                                  unmodelled = TRUE,
                                  name, ...) {
-    stopifnot(all(effects %in% scpModelEffectNames(object)))
+    if (is.null(effects)) effects <- scpModelEffectNames(object, name)
+    stopifnot(all(effects %in% scpModelEffectNames(object, name)))
     method <- match.arg(method, scpModelComponentMethods, several.ok = TRUE)
     pcaFUN <- .getPcaFunction(pcaFUN, object, name)
     out <- List()
@@ -362,9 +363,7 @@ scpComponentAnalysis <- function(object,
                            startcol = function(x) sum(!is.na(x)),
                            scale = FALSE, ...) {
     stopifnot(ncomp <= min(nrow(mat), ncol(mat)))
-    if (any(rowSums(is.na(mat)) == ncol(mat))) {
-        stop("Some features (rows) are all NAs.")
-    }
+    mat <- mat[rowSums(!is.na(mat)) > 0, ]
     res <- nipals(t(mat), ncomp = ncomp, center = center,
                   startcol = startcol,
                   scale = scale, ...)
