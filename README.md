@@ -16,7 +16,7 @@ objects.
 
 <img
 src="https://raw.githubusercontent.com/UCLouvain-CBIO/scp/master/sticker/sticker.png"
-height="150">
+height="150px">
 
 ## Installation
 
