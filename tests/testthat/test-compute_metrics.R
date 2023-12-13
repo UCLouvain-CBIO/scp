@@ -1,5 +1,7 @@
 data("scp1")
 
+####---- Internal functions ----####
+
 ## Create a matrix with the following cases for testing CV computation
 ## - 1 NA -> CV = NA
 ## - >1 NA -> CV = NA
@@ -39,6 +41,104 @@ test_that(".rowCV", {
                  regexp = "No sd can be computed")
 })
 
+test_that("featureCV", {
+    ## Create a SingleCellExperiment
+    sce <- SingleCellExperiment(m, rowData = DataFrame(group = group))
+    ## No normalization
+    expect_identical(.rowCV(m, group = group, reorder = TRUE,
+                            na.rm = TRUE),
+                     featureCV(x = sce, group = rowData(sce)$group,
+                               norm = "none", na.rm = TRUE))
+    ## With normalization: divide columns by median
+    expect_identical(.rowCV(sweep(m, 2, colMedians(m, na.rm = TRUE), "/"),
+                            group = group, reorder = TRUE, na.rm = TRUE),
+                     featureCV(x = sce, group = rowData(sce)$group,
+                               norm = "div.median", na.rm = TRUE))
+    ## Double normalization: divide columns by median and divide rows
+    ## by sum
+    mproc <- sweep(m, 2, colMedians(m, na.rm = TRUE), "/")
+    mproc <- sweep(mproc, 1, rowSums(mproc, na.rm = TRUE), "/")
+    expect_identical(.rowCV(mproc, group = group, reorder = TRUE,
+                            na.rm = TRUE),
+                     featureCV(x = sce, group = rowData(sce)$group,
+                               norm = c("div.median", "sum"), na.rm = TRUE))
+    ## SCoPE2 normalization: the normalization factor is computed by
+    ## dividing columns by the median and then dividing rows by the mean.
+    nf <- sweep(m, 2, colMedians(m, na.rm = TRUE), "/")
+    nf <- rowMeans(nf, na.rm = TRUE)
+    expect_identical(.rowCV(sweep(m, 1, nf, "/"), group = group,
+                            reorder = TRUE, na.rm = TRUE),
+                     featureCV(x = sce, group = rowData(sce)$group,
+                               norm = "SCoPE2", na.rm = TRUE))
+})
+
+
+test_that(".getDetectionMatrix", {
+    data("scp1")
+    expect_error(.getDetectionMatrix(scp1, "peptide"), 
+                 regexp = "assay.*is/are not found.*peptide$")
+    expect_error(.getDetectionMatrix(scp1, c("peptides", "proteins")), 
+                 regexp = "You selected multiple assays")
+    expect_error(.getDetectionMatrix(scp1, 1:2), 
+                 regexp = "You selected multiple assays")
+    expect_error(.getDetectionMatrix(scp1, rep(TRUE, length(scp1))), 
+                 regexp = "You selected multiple assays")
+    x <- .getDetectionMatrix(scp1, "peptides")
+    expect_identical(dim(scp1[["peptides"]]), dim(x))
+    expect_identical(dimnames(scp1[["peptides"]]), dimnames(x))
+    expect_identical(class(x), c("matrix", "array"))
+    expect_identical(mode(x), "logical")
+    
+    assay(scp1[["peptides"]])[is.na(assay(scp1[["peptides"]]))] <- 0
+    x2 <- .getDetectionMatrix(scp1, "peptides")
+    expect_identical(x, x2)
+})
+
+test_that(".computeMissingValueMetrics", {
+    expNames <- c(
+        "LocalSensitivityMean", "LocalSensitivitySd", "TotalSensitivity",
+        "Completeness", "NumberCells"
+    )
+    
+    x <- matrix()
+    exp <- structure(c(rep(NA, 4), 1), names = expNames)
+    expect_identical(.computeMissingValueMetrics(x), exp)
+    
+    set.seed(1)
+    x <- matrix(TRUE, 10, 10)
+    x[sample(1:100, 10)] <- FALSE
+    exp <- structure(c(9, sd(colSums(x)), 10, 0.9, 10), names = expNames)
+    expect_identical(.computeMissingValueMetrics(x), exp)
+})
+
+test_that(".computeJaccardIndex", {
+    expNames <- c(
+        "LocalSensitivityMean", "LocalSensitivitySd", "TotalSensitivity",
+        "Completeness", "NumberCells"
+    )
+    s1 <- rep(TRUE, 6)
+    s2 <- c(rep(TRUE, 3), rep(FALSE, 3))
+    s3 <- c(rep(TRUE, 3), rep(FALSE, 3))
+    s4 <- rep(FALSE, 6)
+    s5 <- rep(FALSE, 6)
+    x <- cbind(s1, s2, s3, s4, s5)
+    exp <- c(
+        0.5, ## s1 vs s2  = 50%
+        0.5, ## s1 vs s3  = 50%
+        1,   ## s2 vs s3  = 100%
+        0,   ## s1 vs s4  = 0%
+        0,   ## s2 vs s4  = 0%
+        0,   ## s3 vs s4  = 0%
+        0,   ## s1 vs s5  = 0%
+        0,   ## s2 vs s5  = 0%
+        0,   ## s3 vs s5  = 0%
+        NaN  ## s4 vs s5  = similarity between null sets does not make sense
+    )
+    expect_identical(.computeJaccardIndex(x), exp)
+})
+
+
+####---- Exported functions ----####
 
 test_that("computeSCR", {
     ## Single assay
@@ -53,8 +153,8 @@ test_that("computeSCR", {
                      unname(assay(scp1[[2]])[, 2] / assay(scp1[[2]])[, 1]))
     ## Multiple match for carrier: compute mean carrier
     test <- computeSCR(scp1, i = 1:2, colvar = "SampleType",
-                        samplePattern = "Reference", carrierPattern = "Carrier|Blank",
-                        carrierFUN = "mean")
+                       samplePattern = "Reference", carrierPattern = "Carrier|Blank",
+                       carrierFUN = "mean")
     expect_identical(rowData(test[[2]])$SCR,
                      unname(assay(scp1[[2]])[, 2] / rowMeans(assay(scp1[[2]])[, c(1, 5)], na.rm = TRUE)))
     ## Multiple match for sample: compute median instead of mean, and
@@ -119,37 +219,6 @@ test_that("pep2qvalue", {
                  regexp = "already exists")
 })
 
-test_that("featureCV", {
-    ## Create a SingleCellExperiment
-    sce <- SingleCellExperiment(m, rowData = DataFrame(group = group))
-    ## No normalization
-    expect_identical(.rowCV(m, group = group, reorder = TRUE,
-                            na.rm = TRUE),
-                     featureCV(x = sce, group = rowData(sce)$group,
-                               norm = "none", na.rm = TRUE))
-    ## With normalization: divide columns by median
-    expect_identical(.rowCV(sweep(m, 2, colMedians(m, na.rm = TRUE), "/"),
-                            group = group, reorder = TRUE, na.rm = TRUE),
-                     featureCV(x = sce, group = rowData(sce)$group,
-                               norm = "div.median", na.rm = TRUE))
-    ## Double normalization: divide columns by median and divide rows
-    ## by sum
-    mproc <- sweep(m, 2, colMedians(m, na.rm = TRUE), "/")
-    mproc <- sweep(mproc, 1, rowSums(mproc, na.rm = TRUE), "/")
-    expect_identical(.rowCV(mproc, group = group, reorder = TRUE,
-                            na.rm = TRUE),
-                     featureCV(x = sce, group = rowData(sce)$group,
-                               norm = c("div.median", "sum"), na.rm = TRUE))
-    ## SCoPE2 normalization: the normalization factor is computed by
-    ## dividing columns by the median and then dividing rows by the mean.
-    nf <- sweep(m, 2, colMedians(m, na.rm = TRUE), "/")
-    nf <- rowMeans(nf, na.rm = TRUE)
-    expect_identical(.rowCV(sweep(m, 1, nf, "/"), group = group,
-                            reorder = TRUE, na.rm = TRUE),
-                     featureCV(x = sce, group = rowData(sce)$group,
-                               norm = "SCoPE2", na.rm = TRUE))
-})
-
 test_that("medianCVperCell", {
     ## Check for single assay
     scpfilt <- filterFeatures(scp1, ~ !is.na(Proteins))
@@ -180,5 +249,38 @@ test_that("medianCVperCell", {
     ## Error: the assays contain duplicated samples
     expect_error(medianCVperCell(scp1, i = 1:5, groupBy = "Proteins"),
                  regexp = "Duplicated samples")
+    
+})
 
+test_that("reportMissingValues", {
+    data("scp1")
+    expNames <- c(
+        "LocalSensitivityMean", "LocalSensitivitySd", "TotalSensitivity",
+        "Completeness", "NumberCells"
+    )
+    expect_error(reportMissingValues(scp1, "peptides", 1), 
+                 regexp = "length.by.*ncol.*is not TRUE")
+    
+    test1 <- reportMissingValues(scp1, "peptides")
+    expect_identical(class(test1), "data.frame")
+    expect_identical(dimnames(test1), list("all", expNames))
+    test2 <- reportMissingValues(scp1, "peptides", scp1$SampleType)
+    expect_identical(dimnames(test2), list(unique(scp1$SampleType), expNames))
+})
+
+test_that("jaccardIndex", {
+    data("scp1")
+    test1 <- jaccardIndex(scp1, "peptides")
+    expn <- (ncol(scp1[["peptides"]])^2 - ncol(scp1[["peptides"]])) / 2
+    expect_identical(class(test1), "data.frame")
+    expect_identical(nrow(test1), as.integer(expn))
+    expect_identical(test1$by, rep("all", expn))
+    test2 <- jaccardIndex(scp1, "peptides", scp1$SampleType)
+    expn2 <- table(scp1$SampleType)
+    expn2 <- (expn2^2 - expn2) / 2
+    expect_identical(nrow(test2), as.integer(sum(expn2)))
+    expect_identical(
+        test2$by, 
+        unlist(lapply(unique(scp1$SampleType), function(n) rep(n, expn2[[n]])))
+    )
 })

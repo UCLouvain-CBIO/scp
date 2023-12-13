@@ -76,64 +76,40 @@ This is the actual minimal processing:
 1. filtering contaminant and low-quality features
 2. replacing zeros by missing values
 3. keep only samples that correspond to single cells
-4. remove the feature absent in all samples.
+4. remove the feature absent in all samples
+5. aggregate PSMs to peptides
+6. join all runs in a single large assay
 
-```{r}
-leduc <- filterFeatures(leduc, ~ Reverse != "+" &
-                           Potential.contaminant != "+" &
-                           PEP < 0.01) ## 1.
-leduc <- zeroIsNA(leduc, i = names(leduc)) ## 2.
-leduc <- filterNA(leduc, i = names(leduc), pNA = 0.9999)
-leduc <- subsetByColData( ## 3.
-    leduc, leduc$SampleType %in% c("Monocyte", "Melanoma cell")
-)
-leduc <- dropEmptyAssays(leduc) ## 4.
-```
-
-# Peptide identification data
-
-Next, we build the peptide identification matrix, that is a matrix
-with single cells as columns and peptides as rows that indicate
-whether a given peptide is observed or not in a given cell. To build
-this matrix, we need data at peptide level, hence we aggregate the
-peptide to spectrum match (PSM) data to peptide data. To do so, we
-need an aggregation function, `isIdentified()`. This functions
-considers that a peptide is observed in a cell (returns a `TRUE`) if
-there is at least one observed PSM belonging to the peptide in that
-cell.
 
 ```{r, message=FALSE}
-isIdentified <- function(x) colSums(!is.na(x)) != 0
-leduc <- aggregateFeatures(
-    leduc, i = names(leduc), 
-    name = paste0("id_", names(leduc)),
-    fcol = "Sequence", 
-    fun = isIdentified
+## 1.
+leduc <- filterFeatures(leduc, ~ Reverse != "+" &
+                           Potential.contaminant != "+" &
+                           PEP < 0.01)
+## 2.
+leduc <- zeroIsNA(leduc, i = names(leduc)) 
+## 3.
+leduc <- subsetByColData( 
+    leduc, leduc$SampleType %in% c("Monocyte", "Melanoma")
+)
+## 4.
+leduc <- filterNA(leduc, i = names(leduc), pNA = 0.9999) 
+leduc <- dropEmptyAssays(leduc) 
+## 5.
+leduc <- aggregateFeatures( 
+    leduc, i = names(leduc), name = paste0("peptides_", names(leduc)),
+    fcol = "Sequence", fun = colMedians
+)
+## 6.
+leduc <- joinAssays(
+    leduc, i = grep("^peptides_", names(leduc)), name = "peptides"
 )
 ```
 
 **What about proteins?** if we were interested in reporting missing
 values at the protein level, we simply need to change
-`fcol = "Sequence"` to `fcol = "Leading.razor.protein"`.
-
-Then, we join all runs in a single large assay. 
-
-```{r, message=FALSE}
-leduc <- joinAssays(
-    leduc, i = grep("^id_", names(leduc)), 
-    name = "id"
-)
-```
-
-Since not all peptides are found in all assays, some entries have been
-filled with `NA`s. These entries are missing and hence are replaced
-with `FALSE`.
-
-```{r}
-isMissing <- is.na(assay(leduc[["id"]]))
-assay(leduc[["id"]])[isMissing] <- FALSE
-```
-
+`fcol = "Sequence"` to `fcol = "Leading.razor.protein"` in
+`aggregateFeatures()`.
 
 # Report missing values
 
@@ -141,12 +117,13 @@ We can now compute the metrics of interest. We recommend computing
 these for each cell type separately, since biological properties 
 specific to the cell type could influence the outcome. You can perform
 this using `reportMissingValues()`. We provide the dataset and point
-towards the assay with the identification matrix (`id`). The metrics
+towards the assay with the peptide quantification matrix (`peptides`).
+The metrics
 are computed based on the cell annotation `SampleType` that is 
 available in the `colData`.
 
 ```{r}
-reportMissingValues(leduc, "id", by = leduc$SampleType)
+reportMissingValues(leduc, "peptides", by = leduc$SampleType)
 ```
 
 # Advanced criteria
@@ -163,7 +140,7 @@ index for each cell type separately. We compute the Jaccard index
 using `jaccardIndex()`.
 
 ```{r}
-ji <- jaccardIndex(leduc, "id", by = leduc$SampleType)
+ji <- jaccardIndex(leduc, "peptides", by = leduc$SampleType)
 ```
 
 The function returns a `data.frame` that we visualize using the 
@@ -177,16 +154,15 @@ ggplot(ji) +
     facet_grid(~ by)
 ```
 
-The Jaccard indices are mainly distributed between 40 and 60 \%, 
-meaning that about half of the features are consistently found across 
-single-cells within the same cell type. Note also that some pairs of
-cells have consistency above 80 \%. These are pairs of cells from the
-same acquisition runs that were multiplexed together with TMT 
-labelling.
+The Jaccard indices peak around 50 \%, meaning that about half of the
+features are consistently found across single-cells within the same 
+cell type. Note also that some pairs of cells have consistency above 
+75 \%. These are pairs of cells from the same acquisition runs that 
+were multiplexed together with TMT labelling.
 
 ## Assessing the total sensitivity
 
-To assessing whether we can accurately estimate the total sensitivity,
+To assess whether we can accurately estimate the total sensitivity,
 we generate a cumulative sensitivity curve (CSC). More precisely, we
 sample the identification matrix for an increasing number of cells 
 (or runs) and count the number of distinct features found across the
@@ -202,7 +178,7 @@ function provides a `batch` argument to account for this. Finally,
 size, and `niters` defines how many times each draw must be iterated.
 
 ```{r}
-csc <- cumulativeSensitivityCurve(leduc, "id", by = leduc$SampleType,
+csc <- cumulativeSensitivityCurve(leduc, "peptides", by = leduc$SampleType,
                                   batch = leduc$Set, niters = 10, 
                                   nsteps = 30)
 ```
@@ -241,7 +217,7 @@ predictSensitivity(csc, nSamples = Inf)
 
 The total sensitivity is predicted to be about 7200 peptides for both
 cell types. So in the previous section, we underestimated the total 
-sensitivity by about 150-200 peptides.
+sensitivity by about 150 peptides.
 
 # Citation
 
