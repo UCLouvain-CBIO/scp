@@ -271,7 +271,7 @@ readSCPfromDIANN <- function(colData, reportData, extractedData = NULL,
              "a link to the 'File.Name' column in 'reportData'")
     if (multiplexing == "none" && !is.null(extractedData)) 
         stop("Providing 'extractedData' for label-free experiments ",
-             "('multiplexed == \"none\"') is not expected. Raise an ",
+             "('multiplexed == \"none\"') is not expected. Open an ",
              "issue if you need this feature: ",
              "https://github.com/UCLouvain-CBIO/scp/issues/new/choose")
     
@@ -310,7 +310,7 @@ readSCPfromDIANN <- function(colData, reportData, extractedData = NULL,
         args$suffix <- ""
     } else {
         stop("The '", multiplexing, "' multiplexing strategy is not ",
-             "implemented. Raise an issue if you need this feature: ",
+             "implemented. Open an issue if you need this feature: ",
              "https://github.com/UCLouvain-CBIO/scp/issues/new/choose")
     }
     
