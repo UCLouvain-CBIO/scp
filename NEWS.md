@@ -3,6 +3,7 @@
 ## scp 1.13.1
 
 - docs: fixed vignette about reporting missing values
+- docs: add a QFeatures figure to the nutshell vignette
 
 ## scp 1.13.0
 
