@@ -188,6 +188,11 @@ jobs:
       #     remotes::install_git("https://git.bioconductor.org/packages/vsn")
       #   shell: Rscript {0}
 
+      - name: Manually install genefilter
+        run: |
+          remotes::install_git("https://git.bioconductor.org/packages/genefilter")
+        shell: Rscript {0}
+
       # - name: Manually install sva
       #   run: |
       #     BiocManager::install("sva")
