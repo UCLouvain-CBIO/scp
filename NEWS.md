@@ -1,4 +1,19 @@
-# scp 1.11
+# scp 1.13
+
+## scp 1.13.1
+
+- docs: fixed vignette about reporting missing values
+- docs: add a QFeatures figure to the nutshell vignette
+
+## scp 1.13.0
+
+- New Bioconductor 3.18 (devel) release
+
+# scp 1.12
+
+## scp 1.12.0
+
+- New Bioconductor 3.18 (stable) release
 
 ## scp 1.11.3
 
