@@ -1,5 +1,9 @@
 # scp 1.13
 
+## scp 1.13.2
+
+- New *scplainer* workflow
+
 ## scp 1.13.1
 
 - docs: fixed vignette about reporting missing values
