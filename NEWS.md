@@ -3,6 +3,7 @@
 ## scp 1.13.2
 
 - New *scplainer* workflow
+- Add `addReducedDims()` (see #52)
 
 ## scp 1.13.1
 
