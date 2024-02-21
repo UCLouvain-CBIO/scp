@@ -190,7 +190,7 @@ scpModelWorkflow <- function(object, formula,
 .checkExperimentalDesignRank <- function(formula, coldata) {
     X <- model.matrix(formula, data = droplevels(coldata))
     if (ncol(X) > nrow(X)) {
-        stop("The design matrix is over specified, i.e. there are ",
+        stop("The design matrix is underdetermined, i.e. there are ",
              "more coefficients to fit than observations. Solve this ",
              "issue by simplifying the model formula.")
     }

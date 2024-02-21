@@ -173,34 +173,67 @@ scpDifferentialAnalysis <- function(object,
 }
 
 ## cf https://stats.stackexchange.com/a/446699
+## Developer's note: If only 2 groups, then
+## abs(logFC) = 2 * abs(coefficient)
+## Var(logFC) = Var(2*coefficient) = 2^2 * Var(coefficient)
+## => se(logFC) = 2 * sqrt(Var(coefficient))
 .contrastToEstimates <- function(object, contrast, name) {
     fits <- scpModelFitList(object, name, filtered = TRUE)
     out <- sapply(fits, function(fit) {
         coef <- scpModelFitCoefficients(fit)
         vcov <- scpModelFitVcov(fit)
-        ii <- .contrastToCoefficentNames(contrast, scpModelFitLevels(fit))
-        if (any(is.na(ii))) return(c(logFc = NA, se = NA))
-        sign <- ifelse(ii[1] == ii[2], -1, 1)
-        logFc <- coef[ii[1]] - sign * coef[ii[2]]
-        if (ii[1] == ii[2]) {
-            se <- sqrt(2 * sum(vcov[ii, ii]))
-        } else {
-            se <- sqrt(sum(vcov[ii, ii]))  
+        contrastMat <- .levelsToContrastMatrix(
+            contrast, scpModelFitLevels(fit)
+        )
+        sel <- grepl(contrast[[1]], names(coef))
+        logFc <- contrastMat %*% coef[sel]
+        se <- sqrt(contrastMat %*% vcov[sel, sel] %*% t(contrastMat))
+        if (length(contrastMat) == 1){
+            logFc <- logFc * 2
+            se <- se * 2
         }
-        c(logFc = unname(logFc), se = unname(se))
+        c(logFc = logFc, se = se)
     })
     list(logFc = out["logFc", ], se = out["se", ])
 }
 
-.contrastToCoefficentNames <- function(contrast, levels) {
-    leveli <- levels[[contrast[1]]]
-    group1 <- which(leveli %in% contrast[2])
-    group2 <- which(leveli %in% contrast[3])
-    if (length(group1) == 0 || length(group2) == 0) return(NA)
-    if (any(c(group1, group2) == length(leveli))) {
-        group1 <- group2 <- min(group1, group2)
+.levelsToContrastMatrix <- function(contrast, levels) {
+    levelsi <- levels[[contrast[[1]]]]
+    if (length(levelsi) == 2) {
+        out <- .twoLevelsToContrastMatrix(contrast, levelsi)
+    } else if (length(levelsi) > 2) {
+        out <- .multiLevelsToContrastMatrix(contrast, levelsi)
+    } else {
+        stop("Cannot make comparison for factors with less than 2 groups.")
     }
-    paste0(contrast[1], c(group1, group2))
+    out
+}
+
+.twoLevelsToContrastMatrix <- function(contrast, levels) {
+    if (identical(contrast[2:3], levels)) {
+        out <- 1
+    } else if(identical(contrast[2:3], rev(levels))) {
+        out <- -1
+    } else {
+        stop("Invalid contrast groups provided.")
+    }
+    names(out) <- contrast[1]
+    out
+}
+
+.multiLevelsToContrastMatrix <- function(contrast, levels) {
+    df <- data.frame(group = as.factor(levels))
+    mm <- model.matrix(
+        ~ 1 + group, data = df,
+        contrasts.arg = .modelContrasts(df)
+    )[, -1]
+    colnames(mm) <- sub("group", contrast[[1]], colnames(mm))
+    rownames(mm) <- levels
+    l <- rep(0, length(levels))
+    names(l) <- rownames(mm)
+    l[[contrast[[2]]]] <- 1
+    l[[contrast[[3]]]] <- -1
+    t(l) %*% mm
 }
 
 .scpDifferentialAnalysisOnCoefficient <- function(object, coefficients,

@@ -2,6 +2,7 @@
 
 ## scp 1.13.2
 
+- fix: logFC and associated SE are now correctly computed
 - New *scplainer* workflow
 - Add `addReducedDims()` (see #52)
 
