@@ -215,7 +215,7 @@ scpDifferentialAnalysis <- function(object,
     } else if(identical(contrast[2:3], rev(levels))) {
         out <- -1
     } else {
-        stop("Invalid contrast groups provided.")
+        out <- NA
     }
     names(out) <- contrast[1]
     out
