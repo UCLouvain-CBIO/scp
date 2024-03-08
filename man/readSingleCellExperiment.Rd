@@ -36,10 +36,10 @@ Convert tabular data from a spreadsheet or a \code{data.frame} into a
 }
 \note{
 The \code{SingleCellExperiment} class is built on top of the
-\code{RangedSummarizedExperiment} class. This means that some column names
-are forbidden in the \code{rowData}. Avoid using the following names:
-\code{seqnames}, \code{ranges}, \code{strand}, \code{start}, \code{end},
-\code{width},  \code{element}
+\code{RangedSummarizedExperiment} class. This means that some
+column names are forbidden in the \code{rowData}. Avoid using the
+following names: \code{seqnames}, \code{ranges}, \code{strand}, \code{start},
+\code{end}, \code{width}, \code{element}
 }
 \examples{
 ## Load a data.frame with PSM-level data
@@ -51,7 +51,7 @@ sce <- readSingleCellExperiment(mqScpData,
 }
 \seealso{
 The code relies on
-\link[QFeatures:readQFeatures]{QFeatures::readSummarizedExperiment}.
+\code{\link[QFeatures:readQFeatures]{QFeatures::readSummarizedExperiment()}}.
 }
 \author{
 Laurent Gatto, Christophe Vanderaa

@@ -1,5 +1,11 @@
 # scp 1.13
 
+## scp 1.13.2
+
+- refactor: `readSCP()` uses `QFeatures::readQFeatures()` and
+  `readSCPfromDIANN()` uses `readQFeaturesFromDIANN()` (see QFeature
+  issue #199).
+
 ## scp 1.13.1
 
 - docs: fixed vignette about reporting missing values

@@ -2,31 +2,27 @@
 % Please edit documentation in R/readSCP.R
 \name{readSCP}
 \alias{readSCP}
-\title{Read single-cell proteomics data as a QFeatures object from
-tabular data and metadata}
+\title{Single-cell proteomics data from tabular data}
 \usage{
 readSCP(
-  featureData,
-  colData,
+  assayData,
+  colAnnotation,
   batchCol,
   channelCol,
   suffix = NULL,
   sep = "",
   removeEmptyCols = FALSE,
-  verbose = TRUE,
-  ...
+  verbose = TRUE
 )
 }
 \arguments{
-\item{featureData}{File or object holding the identification and
-quantitative data. Can be either a \code{character(1)} with the
-path to a text-based spreadsheet (comma-separated values by
-default, but see \code{...}) or an object that can be coerced to a
-\code{data.frame}. It is advised not to encode characters as
-factors.}
+\item{assayData}{A \code{data.frame}, or any object that can be coerced
+to a \code{data.frame}, holding the quantitative assay. For
+\code{readSummarizedExperiment()}, this can also be a
+\code{character(1)} to a filename.}
 
-\item{colData}{A \code{data.frame} or any object that can be coerced
-to a \code{data.frame}. \code{colData} is expected to contain all the
+\item{colAnnotation}{A \code{data.frame} or any object that can be
+coerced to a \code{data.frame}. It is expected to contain all the
 sample meta information. Required fields are the acquisition
 batch (given by \code{batchCol}) and the acquisition channel within
 the batch (e.g. TMT channel, given by
@@ -34,28 +30,32 @@ the batch (e.g. TMT channel, given by
 acquisition date,...) are allowed and will be stored as sample
 meta data.}
 
-\item{batchCol}{A \code{numeric(1)} or \code{character(1)} pointing to the
-column of \code{featureData} and \code{colData} that contain the batch
-names. Make sure that the column name in both table are either
-identical and syntactically valid (if you supply a \code{character})
-or have the same index (if you supply a \code{numeric}). Note that
-characters can be converted to syntactically valid names using
+\item{batchCol}{For the multi-set case, a \code{numeric(1)} or
+\code{character(1)} pointing to the column of \code{assayData} and
+\code{colAnnotation} that contain the batch names. Make sure that
+the column name in both table are either identical and
+syntactically valid (if you supply a \code{character}) or have the
+same index (if you supply a \code{numeric}). Note that characters
+can be converted to syntactically valid names using
 \code{make.names}}
 
-\item{channelCol}{A \code{numeric(1)} or \code{character(1)} pointing to the
-column of \code{colData} that contains the column names of the
-quantitative data in \code{featureData} (see Example).}
+\item{channelCol}{For the multi-set case, a \code{numeric(1)} or
+\code{character(1)} pointing to the column of \code{colData} that
+contains the column names of the quantitative data in
+\code{assayData} (see Example).}
 
-\item{suffix}{A \code{character()} giving the suffix of the column
-names in each assay. Sample/single-cell (column) names are
-automatically generated using: batch name + sep + suffix. Make
-sure suffix contains unique character elements. The length of
-the vector should equal the number of quantification channels.
-If NULL (default), the suffix is derived from the the names of
-the quantification columns in \code{featureData}.}
+\item{suffix}{For the multi-set case, a \code{character()} giving the
+suffix of the column names in each set. Sample/single-cell
+(column) names are automatically generated using: batch name +
+sep + suffix. Make sure suffix contains unique character
+elements. The length of the vector should equal the number of
+quantification channels.  If \code{NULL} (default), the suffix is
+derived from the the names of the quantification columns in
+\code{assayData}.}
 
-\item{sep}{A \code{character(1)} that is inserted between the assay
-name and the \code{suffix} (see \code{suffix} argument for more details).}
+\item{sep}{A \code{character(1)} that is inserted between the set
+name and the \code{suffix} (see \code{suffix} argument for more
+details).}
 
 \item{removeEmptyCols}{A \code{logical(1)}. If true, the function will
 remove in each batch the columns that contain only missing
@@ -64,26 +64,23 @@ values.}
 \item{verbose}{A \code{logical(1)} indicating whether the progress of
 the data reading and formatting should be printed to the
 console. Default is \code{TRUE}.}
-
-\item{...}{Further arguments that can be passed on to \link{read.csv}
-except \code{stringsAsFactors}, which is always \code{FALSE}.}
 }
 \value{
-An instance of class \link{QFeatures}. The expression data of
-each batch is stored in a separate assay as a
-\link{SingleCellExperiment} object.
+An instance of class \code{\link[QFeatures:QFeatures-class]{QFeatures::QFeatures()}}. The
+expression data of each batch is stored in a separate assay as
+a \code{\link[SingleCellExperiment:SingleCellExperiment]{SingleCellExperiment::SingleCellExperiment()}} object.
 }
 \description{
-Convert tabular quantitative MS data and metadata from a
-spreadsheet or a \code{data.frame} into a \link{QFeatures} object containing
-\link{SingleCellExperiment} objects.
+Converts tabular quantitative MS data and metadata from a
+\code{data.frame} into a \code{QFeatures} object containing
+\code{SingleCellExperiment} sets.
 }
 \note{
 The \code{SingleCellExperiment} class is built on top of the
-\code{RangedSummarizedExperiment} class. This means that some column names
-are forbidden in the \code{rowData}. Avoid using the following names:
-\code{seqnames}, \code{ranges}, \code{strand}, \code{start}, \code{end},
-\code{width},  \code{element}
+\code{RangedSummarizedExperiment} class. This means that some
+column names are forbidden in the \code{rowData}. Avoid using the
+following names: \code{seqnames}, \code{ranges}, \code{strand}, \code{start},
+\code{end}, \code{width}, \code{element}
 }
 \examples{
 
@@ -94,11 +91,19 @@ data("mqScpData")
 data("sampleAnnotation")
 
 ## Format the tables into a QFeatures object
-readSCP(featureData = mqScpData,
-        colData = sampleAnnotation,
+readSCP(assayData = mqScpData,
+        colAnnotation = sampleAnnotation,
         batchCol = "Raw.file",
         channelCol = "Channel")
-
+}
+\seealso{
+\itemize{
+\item The more general \code{\link[QFeatures:readQFeatures]{QFeatures::readQFeatures()}} function, which
+this function depends on.
+\item The \code{\link[SingleCellExperiment:SingleCellExperiment]{SingleCellExperiment::SingleCellExperiment()}} class.
+\item The \code{\link[=readSCPfromDIANN]{readSCPfromDIANN()}} function to import DIA-NN quantitative
+single-cell data.
+}
 }
 \author{
 Laurent Gatto, Christophe Vanderaa
