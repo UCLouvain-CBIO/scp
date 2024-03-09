@@ -12,7 +12,8 @@ reportMissingValues(object, i, by = NULL)
 \item{i}{The index of the assay in \code{object}. The assay must
 contain an identification matrix, that is a matrix where an
 entry is \code{TRUE} if the value is observed and \code{FALSE} is the
-value is missing (see examples).}
+value is missing (see examples). \code{i} may be numeric, character
+or logical, but it must select only one assay.}
 
 \item{by}{A vector of length equal to the number of columns in
 assay \code{i} that defines groups for which the metrics should be
@@ -42,7 +43,7 @@ data("scp1")
 
 ## Define the identification matrix
 peps <- scp1[["peptides"]]
-assay(peps) <- ifelse(is.na(assay(peps)), FALSE, TRUE)
+assay(peps) <- !is.na(assay(peps))
 scp1 <- addAssay(scp1, peps, "id")
 
 ## Report metrics 
