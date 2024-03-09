@@ -74,7 +74,7 @@ readSingleCellExperiment <- function(table, ecol,
 ##' @param colAnnotation A `data.frame` or any object that can be
 ##'     coerced to a `data.frame`. It is expected to contain all the
 ##'     sample meta information. Required fields are the acquisition
-##'     batch (given by `batchCol`) and the acquisition channel within
+##'     batch (given by `runCol`) and the acquisition channel within
 ##'     the batch (e.g. TMT channel, given by
 ##'     `channelCol`). Additional fields (e.g. sample type,
 ##'     acquisition date,...) are allowed and will be stored as sample
@@ -121,14 +121,14 @@ readSingleCellExperiment <- function(table, ecol,
 ##' ## Format the tables into a QFeatures object
 ##' readSCP(assayData = mqScpData,
 ##'         colAnnotation = sampleAnnotation,
-##'         batchCol = "Raw.file",
+##'         runCol = "Raw.file",
 ##'         channelCol = "Channel")
-readSCP <- function(assayData, colAnnotation, batchCol, channelCol,
+readSCP <- function(assayData, colAnnotation, runCol, channelCol,
                     suffix = NULL, sep = "", removeEmptyCols = FALSE,
                     verbose = TRUE) {
     ans <- readQFeatures(assayData = assayData,
                          colAnnotation = colAnnotation,
-                         batchCol = batchCol,
+                         runCol = runCol,
                          channelCol = channelCol,
                          suffix = suffix,
                          sep = sep,
@@ -155,11 +155,11 @@ readSCP <- function(assayData, colAnnotation, batchCol, channelCol,
 ##'     `SingleCellExperiment` object.
 ##'
 ##' @export
-readSCPfromDIANN <- function(colData, reportData, extractedData = NULL,
-                             ecol = "MS1.Area",
+readSCPfromDIANN <- function(colAnnotation, assayData,
+                             extractedData = NULL, ecol = "MS1.Area",
                              multiplexing = "none", # "none" or "mTRAQ"
                              ...) {
-    ans <- readQFeaturesFromDIANN(colData, reportData,
+    ans <- readQFeaturesFromDIANN(colAnnotation, assayData,
                                   extractedData,
                                   ecol, ...)
     el <- ExperimentList(lapply(experiments(ans),

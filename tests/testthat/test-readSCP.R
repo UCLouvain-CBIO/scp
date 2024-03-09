@@ -5,7 +5,7 @@ test_that("readSCP: correct use", {
     ## Multiple batches
     scp <- readSCP(mqScpData,
                    sampleAnnotation,
-                   batchCol = "Raw.file",
+                   runCol = "Raw.file",
                    channelCol = "Channel")
     expect_identical(sort(names(scp)), sort(unique(mqScpData$Raw.file)))
     expect_true(all(dims(scp)[2, ] == 16L))
@@ -21,7 +21,7 @@ test_that("readSCP: correct use", {
         dplyr::filter(Raw.file == "190222S_LCA9_X_FP94BM")
     scp <- readSCP(onebatch,
                    sampleAnnotation,
-                   batchCol = "Raw.file",
+                   runCol = "Raw.file",
                    channelCol = "Channel")
     expect_identical(dims(scp)[1, ],
                      c("190222S_LCA9_X_FP94BM" = nrow(onebatch)))
@@ -30,7 +30,7 @@ test_that("readSCP: correct use", {
     ## Test remove empty columns
     scp <- readSCP(mqScpData,
                    sampleAnnotation,
-                   batchCol = "Raw.file",
+                   runCol = "Raw.file",
                    channelCol = "Channel",
                    removeEmptyCols = TRUE)
     expect_identical(sort(names(scp)), sort(unique(mqScpData$Raw.file)))
@@ -39,7 +39,7 @@ test_that("readSCP: correct use", {
     ## Test suffix
     scp <- readSCP(mqScpData,
                    sampleAnnotation,
-                   batchCol = "Raw.file",
+                   runCol = "Raw.file",
                    channelCol = "Channel",
                    suffix = paste0("_TMT", 1:16))
     expectedCols <- paste0(rep(unique(mqScpData$Raw.file), 16),
@@ -53,7 +53,7 @@ test_that("readSCP: correct use", {
     ## Test sep
     scp <- readSCP(mqScpData,
                    sampleAnnotation,
-                   batchCol = "Raw.file",
+                   runCol = "Raw.file",
                    channelCol = "Channel",
                    suffix = paste0("TMT", 1:16),
                    sep = "_")
@@ -73,7 +73,7 @@ test_that("readSCP: warnings", {
     expect_warning(scp <- readSCP(mqScpData,
                                   dplyr::filter(sampleAnnotation,
                                                 Raw.file == "190222S_LCA9_X_FP94BM"),
-                                  batchCol = "Raw.file",
+                                  runCol = "Raw.file",
                                   channelCol = "Channel"),
                    regexp = "Missing metadata. The features are removed")
     expect_identical(names(scp), "190222S_LCA9_X_FP94BM")
@@ -86,7 +86,7 @@ test_that("readSCP: error", {
     ## Suffix has not correct size
     expect_error(scp <- readSCP(mqScpData,
                                 sampleAnnotation,
-                                batchCol = "Raw.file",
+                                runCol = "Raw.file",
                                 channelCol = "Channel",
                                 suffix = (1:2)),
                  regex = "invalid rownames length")
@@ -94,7 +94,7 @@ test_that("readSCP: error", {
     expect_error(expect_warning(
         scp <- readSCP(mqScpData,
                                 sampleAnnotation,
-                                batchCol = "Raw.file",
+                                runCol = "Raw.file",
                                 channelCol = "Channel",
                                 suffix = rep(1, 16)),
         regexp = "non-unique values"),

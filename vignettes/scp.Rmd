@@ -176,7 +176,7 @@ formatted as described above.
 scp <- readSCP(assayData = mqScpData,
                colAnnotation = sampleAnnotation,
                channelCol = "Channel",
-               batchCol = "Raw.file",
+               runCol = "Raw.file",
                removeEmptyCols = TRUE)
 scp
 ```

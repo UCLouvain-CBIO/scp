@@ -7,7 +7,7 @@
 readSCP(
   assayData,
   colAnnotation,
-  batchCol,
+  runCol,
   channelCol,
   suffix = NULL,
   sep = "",
@@ -24,13 +24,13 @@ to a \code{data.frame}, holding the quantitative assay. For
 \item{colAnnotation}{A \code{data.frame} or any object that can be
 coerced to a \code{data.frame}. It is expected to contain all the
 sample meta information. Required fields are the acquisition
-batch (given by \code{batchCol}) and the acquisition channel within
+batch (given by \code{runCol}) and the acquisition channel within
 the batch (e.g. TMT channel, given by
 \code{channelCol}). Additional fields (e.g. sample type,
 acquisition date,...) are allowed and will be stored as sample
 meta data.}
 
-\item{batchCol}{For the multi-set case, a \code{numeric(1)} or
+\item{runCol}{For the multi-set case, a \code{numeric(1)} or
 \code{character(1)} pointing to the column of \code{assayData} and
 \code{colAnnotation} that contain the batch names. Make sure that
 the column name in both table are either identical and
@@ -40,9 +40,10 @@ can be converted to syntactically valid names using
 \code{make.names}}
 
 \item{channelCol}{For the multi-set case, a \code{numeric(1)} or
-\code{character(1)} pointing to the column of \code{colData} that
+\code{character(1)} pointing to the column of \code{colAnnotation} that
 contains the column names of the quantitative data in
-\code{assayData} (see Example).}
+\code{assayData} (see example). Useful for multiplexed experiments
+such as mTRAQ or TMT.}
 
 \item{suffix}{For the multi-set case, a \code{character()} giving the
 suffix of the column names in each set. Sample/single-cell
@@ -93,7 +94,7 @@ data("sampleAnnotation")
 ## Format the tables into a QFeatures object
 readSCP(assayData = mqScpData,
         colAnnotation = sampleAnnotation,
-        batchCol = "Raw.file",
+        runCol = "Raw.file",
         channelCol = "Channel")
 }
 \seealso{
