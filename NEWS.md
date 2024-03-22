@@ -1,5 +1,11 @@
 # scp 1.13
 
+## scp 1.13.2
+
+- fix: logFC and associated SE are now correctly computed
+- New *scplainer* workflow
+- Add `addReducedDims()` (see #52)
+
 ## scp 1.13.1
 
 - docs: fixed vignette about reporting missing values
@@ -17,6 +23,7 @@
 
 ## scp 1.11.3
 
+- Major feat: added SCP data modelling workflow + documentation
 - feat: added readSCPfromDIANN() that creates a QFeatures object from
   DIANN output tables.
 
