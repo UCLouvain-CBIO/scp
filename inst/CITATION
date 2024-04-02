@@ -47,7 +47,7 @@ citEntry(entry = "article",
 
 
 citEntry(entry = "article",
-         title  = ""scplainer: using linear models to understand mass spectrometry-based single-cell proteomics data,
+         title  = "scplainer: using linear models to understand mass spectrometry-based single-cell proteomics data",
          author = personList(
            person(given = "Christophe", family = "Vanderaa"),
            person(given = "Laurent", family = "Gatto")),
