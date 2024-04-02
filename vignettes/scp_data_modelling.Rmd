@@ -29,9 +29,10 @@ knitr::opts_chunk$set(
 
 # Introduction
 
-In this tutorial, we'll walk you through the process of modelling 
-single-cell proteomics (SCP) data. By the end of this vignette, you 
-will be able to:
+In this tutorial, we'll walk you through the process of modelling
+single-cell proteomics (SCP) data using the *scplainer* appreach
+[@Vanderaa2023-scplainer]. By the end of this vignette, you will be
+able to:
 
 - Define and estimate a model suitable for SCP data
 - Filter peptides based on the patterns of missing values
@@ -40,15 +41,15 @@ will be able to:
 - Exploring the model output through component analysis
 - Perform batch correction to remove unwanted technical artefacts
 
-The last point will allow you to generate SCP data that is suitable 
+The last point will allow you to generate SCP data that is suitable
 for downstream analysis, such as clustering or trajectory inference.
-The figure below provides a roadmap of the workflow: 
+The figure below provides a roadmap of the workflow:
 
-![modelling workflow](figures/ScpModel-class.png)
+![scplainer modelling workflow](figures/ScpModel-class.png)
 
-The vignette will start with the processed data extracted as a 
+The vignette will start with the processed data extracted as a
 `SingleCellExperiment` object from a processed `QFeatures` object. We
-will not cover data processing as it is covered in another vignette. 
+will not cover data processing as it is covered in another vignette.
 
 ```{r, message = FALSE}
 library("scp")
@@ -59,14 +60,14 @@ library("ggplot2")
 
 # Example data set
 
-The example data set is a subset of the `leduc2022_pSCoPE` data set 
+The example data set is a subset of the `leduc2022_pSCoPE` data set
 (see `?scpdata::leduc2022_pSCoPE` for more info). The data is acquired
-using TMT-18 multiplexing and data-dependent acquisition (DDA). The 
-data has been processed using a minimal workflow: 
+using TMT-18 multiplexing and data-dependent acquisition (DDA). The
+data has been processed using a minimal workflow:
 
 - Any zero value has been replaced by NA.
 - Any peptide was removed from the data set if it matched to a decoy or
-  contaminant peptide, had low spectral purity, had low identification 
+  contaminant peptide, had low spectral purity, had low identification
   confidence, or had a high sample to carrier ratio.
 - Any cell was removed from the data set if it had a high coefficient of
   variation, had an abberrant median intensity, or had few identified
@@ -77,9 +78,9 @@ data has been processed using a minimal workflow:
 - To limit intensive computation, we have limited the data set to 200
   peptides in 73 cells.
 
-We suggest using this minimal processing workflow, although the 
-approach presented here is agnostic of previous processing and allows 
-for other custom workflows. The data processing was conducted with 
+We suggest using this minimal processing workflow, although the
+approach presented here is agnostic of previous processing and allows
+for other custom workflows. The data processing was conducted with
 `QFeatures` and `scp`.
 
 ```{r}
@@ -88,19 +89,19 @@ leduc_minimal
 ```
 
 The data set is formatted as a `SingleCellExperiment` object. The data
-set consists of 200 peptides and 73 cells. Peptide annotations can be 
-retrieved from the `rowData` and cell annotations can be retrieved 
+set consists of 200 peptides and 73 cells. Peptide annotations can be
+retrieved from the `rowData` and cell annotations can be retrieved
 from the `colData`. The cell annotation will be used during modelling.
 
 # Data modelling
 
 The core of the approach relies on statistical modelling of the data
 using linear regression. Under the hood, the model fetches as
-input the intensity matrix stored in `assay(leduc_minimal)`. 
-The cell annotations are retrieved using `colData(leduc_minimal)`. 
-They describe known technical and biological variables that may 
-influence the acquired peptide intensities. The annotations are used 
-to build a regression model with $p$ parameters. Then, the model 
+input the intensity matrix stored in `assay(leduc_minimal)`.
+The cell annotations are retrieved using `colData(leduc_minimal)`.
+They describe known technical and biological variables that may
+influence the acquired peptide intensities. The annotations are used
+to build a regression model with $p$ parameters. Then, the model
 estimates the coefficients. Coefficients provide the contributions of
 each parameter to the expression of each of peptide as well as the
 uncertainty of the estimation. These will be explored in the following
@@ -109,15 +110,15 @@ section.
 We'll start by defining the variables to include in the model. Recall
 that the example data set contains TMT-labeled cells. This means that
 each MS acquisition run contains multiple cells. Each run is subject
-to technical fluctuations that can lead to undesired variation, this is 
-known as a batch effect. 
+to technical fluctuations that can lead to undesired variation, this is
+known as a batch effect.
 
 ```{r technical_variables1}
 table(leduc_minimal$Set)
 ```
 
-The labelling reagent (`Channel`) can also 
-lead to undesired systematic effects and will also be considered as a 
+The labelling reagent (`Channel`) can also
+lead to undesired systematic effects and will also be considered as a
 source for batch effects.
 
 ```{r technical_variables2}
@@ -126,10 +127,10 @@ table(leduc_minimal$Channel)
 
 Finally, each cell is processed individually and the amount of peptide
 material recovered from each cell may lead to undesired variation as
-well. This issue is usually solved through normalization, such as 
-removing the median intensity from each cell. Normalization was 
-internationally omitted in the minimal data processing so that we can 
-account for it during modelling. The median intensity were already 
+well. This issue is usually solved through normalization, such as
+removing the median intensity from each cell. Normalization was
+internationally omitted in the minimal data processing so that we can
+account for it during modelling. The median intensity were already
 computed (`MedianIntensity`).
 
 ```{r technical_variables3}
@@ -155,9 +156,9 @@ f <- ~ 1 + ## intercept
 ```
 
 Note that the formula can be adapted to the data set. For instance, no
-labelling reagents is used for LFQ experiments, so it can be dropped. 
+labelling reagents is used for LFQ experiments, so it can be dropped.
 Similarly, each cell in an LFQ experiment is acquired in a single run
-so MS run cannot be used as a batch effect variable. The day of 
+so MS run cannot be used as a batch effect variable. The day of
 acquisition could be used instead.
 
 Once a model is defined, we fit it with `scpModelWorkflow()`.
@@ -172,14 +173,14 @@ You can always retrieve the formula that was used to fit model using
 scpModelFormula(leduc_minimal)
 ```
 
-The data that is modelled by each variable are contained in the 
-so-called effect matrices. 
+The data that is modelled by each variable are contained in the
+so-called effect matrices.
 
 ```{r scpModelEffects}
 scpModelEffects(leduc_minimal)
 ```
 
-Similarly, the data that could not be captured by the model are 
+Similarly, the data that could not be captured by the model are
 contained in the residual matrix.
 
 ```{r scpModelResiduals}
@@ -192,7 +193,7 @@ Finally, the input data used to model the can also be retrieved.
 scpModelInput(leduc_minimal)[1:5, 1:5]
 ```
 
-Note that the number of peptides changed. This is the consequence of 
+Note that the number of peptides changed. This is the consequence of
 peptide filtering.
 
 ```{r dim_scpModelInput}
@@ -201,17 +202,17 @@ dim(scpModelInput(leduc_minimal))
 
 # Peptide filtering
 
-The proportion of missing values for each features is high in 
-single-cell proteomics data. 
+The proportion of missing values for each features is high in
+single-cell proteomics data.
 
 ```{r}
 table(missing = is.na(assay(leduc_minimal)))
 ```
 
 Many features can typically contain more coefficients to estimate than
-observed values. These features cannot be estimated and will be 
-ignored during further steps. These features are identified by 
-computing the ratio between the number of observed values and the 
+observed values. These features cannot be estimated and will be
+ignored during further steps. These features are identified by
+computing the ratio between the number of observed values and the
 number of coefficients to estimate. We call it the n/p ratio.
 You can extract the n/p ratio for each feature:
 
@@ -220,18 +221,18 @@ head(scpModelFilterNPRatio(leduc_minimal))
 ```
 
 Once the model is estimated, use `scpModelFilterPlot()` to explore the
-distribution of n/p ratios across the features. 
+distribution of n/p ratios across the features.
 
 ```{r scpModelFilterPlot}
 scpModelFilterPlot(leduc_minimal)
 ```
 
-By default, any feature that has an n/p ration greater than 1 is 
+By default, any feature that has an n/p ration greater than 1 is
 included in the analysis. However, feature with an n/p ratio close to
 1 may lead to unreliable outcome because there are not enough observed
-data. You could consider the n/p ratio as the average number of 
-replicate per coefficient to estimate. Therefore, you may want to 
-increase the n/p threshold. 
+data. You could consider the n/p ratio as the average number of
+replicate per coefficient to estimate. Therefore, you may want to
+increase the n/p threshold.
 
 ```{r set_np_threshold}
 scpModelFilterThreshold(leduc_minimal) ## default is 1
@@ -247,7 +248,7 @@ scpModelFilterPlot(leduc_minimal)
 
 There is no guidelines for defining a suitable threshold. If too low,
 you may include noisy peptides that have too few observations. If too
-high, you may remove many informative peptides. The definition of the 
+high, you may remove many informative peptides. The definition of the
 threshold relies on a trade off between precision and sensitivity.
 
 # Model exploration: analysis of variance
@@ -262,10 +263,10 @@ in the data.
 (vaRes <- scpVarianceAnalysis(leduc_minimal))
 ```
 
-The results are a list of tables, one table for each variable. Each 
-table reports for each peptide the variance captures (`SS`), the 
+The results are a list of tables, one table for each variable. Each
+table reports for each peptide the variance captures (`SS`), the
 residual degrees of freedom for estimating the variance (`df`) and the
-percentage of total variance explained (`percentExplainedVar`). 
+percentage of total variance explained (`percentExplainedVar`).
 
 ```{r vaRes_SampleType, out.width = "40%"}
 vaRes$SampleType
@@ -295,7 +296,7 @@ scpVariancePlot(
 ```
 
 We can also group the peptide by protein. To do so, we first need to
-add the peptides annotations available from the `rowData`. 
+add the peptides annotations available from the `rowData`.
 
 ```{r}
 vaRes <- scpAnnotateResults(
@@ -304,7 +305,7 @@ vaRes <- scpAnnotateResults(
 vaRes$SampleType
 ```
 
-Then, we draw the same plot, but this time we provide the `fcol` 
+Then, we draw the same plot, but this time we provide the `fcol`
 argument.
 
 ```{r scpVariancePlot_protein, fig.width=10, fig.height=7}
@@ -319,11 +320,11 @@ scpVariancePlot(
     plot_layout(ncol = 1, guides = "collect")
 ```
 
-In this example dataset, we retrieve peptides that all belong to a 
+In this example dataset, we retrieve peptides that all belong to a
 different protein, however grouping becomes interesting when analyzing
 real data sets.
 
-Alternatively, we can generate protein level results by aggregating 
+Alternatively, we can generate protein level results by aggregating
 peptide level results.
 
 ```{r scpVarianceAggregate}
@@ -347,29 +348,29 @@ statistical significance.
 
 The difference of interest is specified using the `contrast` argument.
 The first element points to the variable to test and the two following
-element are the groups of interest to compare. You can provide 
+element are the groups of interest to compare. You can provide
 multiple contrast in a list.
 
 ```{r scpDifferentialAnalysis}
 (daRes <- scpDifferentialAnalysis(
-    leduc_minimal, 
+    leduc_minimal,
     contrasts = list(c("SampleType", "Melanoma", "Monocyte"))
 ))
 ```
 
-Similarly to variance analysis, the results are a list of tables, one 
-table for each contrast. Each table reports for each peptide the 
-estimated difference between the two groups, the standard error 
-associated to the estimation, the degrees of freedom, the 
+Similarly to variance analysis, the results are a list of tables, one
+table for each contrast. Each table reports for each peptide the
+estimated difference between the two groups, the standard error
+associated to the estimation, the degrees of freedom, the
 t-statistics, the associated p-value and the p-value FDR-adjusted for
-multiple testing across all peptides. 
+multiple testing across all peptides.
 
 ```{r daRes$SampleType_Melanoma_vs_Monocyte}
 daRes$SampleType_Melanoma_vs_Monocyte
 ```
 
 We then visualize the results using a volcano plot. The function below
-return a volcano plot for each contrast. 
+return a volcano plot for each contrast.
 
 ```{r}
 scpVolcanoPlot(daRes)
@@ -378,39 +379,39 @@ scpVolcanoPlot(daRes)
 Since we subset the data set for only a few cell, we lack statistical
 power. Still, two peptides come out as significant. Again, to better
 explore the results, we add peptide annotations available from the
-`rowData`, but we also add the n/p ratio as annotation. 
+`rowData`, but we also add the n/p ratio as annotation.
 
 ```{r}
 daRes <- scpAnnotateResults(
-    daRes, rowData(leduc_minimal), 
+    daRes, rowData(leduc_minimal),
     by = "feature", by2 = "Sequence"
 )
 np <- scpModelFilterNPRatio(leduc_minimal)
 daRes <- scpAnnotateResults(
-    daRes, data.frame(feature = names(np), npRatio = np), 
+    daRes, data.frame(feature = names(np), npRatio = np),
     by = "feature"
 )
 ```
 
 We plot the same volcano plot, but instead of labeling points with
-the peptide sequence, we will show the associated gene symbol. Also, 
-we can control for point aesthetics by providing a list of 
-`ggplot2::geom_point()` arguments. For example, we can colour each 
+the peptide sequence, we will show the associated gene symbol. Also,
+we can control for point aesthetics by providing a list of
+`ggplot2::geom_point()` arguments. For example, we can colour each
 point based on the n/p ratio, and adjust point size and shape.
 
 ```{r}
 scpVolcanoPlot(
-    daRes, top = 30, textBy = "gene", 
+    daRes, top = 30, textBy = "gene",
     pointParams = list(aes(colour = npRatio), size = 1.5, shape = 3)
 )
 ```
 
-We can also provide protein-level results. To do so, the 
+We can also provide protein-level results. To do so, the
 `scpDifferentialAggregate()` relies on the `metapod` package. We here
 combine the statistical test results for peptides that belong to the
-same protein using Simes' method. Simes' method will reject the 
-combined null hypothesis (that is the mean **protein** intensities are 
-identical between two groups) if any of the peptide nulls are 
+same protein using Simes' method. Simes' method will reject the
+combined null hypothesis (that is the mean **protein** intensities are
+identical between two groups) if any of the peptide nulls are
 rejected.
 
 ```{r scpDifferentialAggregate}
@@ -436,7 +437,7 @@ this framework is it is generic and works for any linear model. Also,
 this approach is well suited for single-cell applications as it
 enables the visualization and exploration of the effects of a known
 variable along the unmodelled information that contains cellular
-heterogeneity. 
+heterogeneity.
 
 ```{r component_analysis}
 (caRes <- scpComponentAnalysis(
@@ -449,7 +450,7 @@ contains the PC scores, that is the component results in cell space.
 `byFeature` contains the eigenvectors, that is the component results
 in peptide space. Each of the two elements contains components results
 for the data before modelling (`unmodelled`), for the residuals or for
-the APCA on the sample type variable (`APCA_SampleType`). 
+the APCA on the sample type variable (`APCA_SampleType`).
 
 ```{r component_bySample}
 (caResCells <- caRes$bySample)
@@ -467,8 +468,8 @@ caResCells <- scpAnnotateResults(
 ```
 
 We then generate the component plot. Providing the `pointParams`
-argument, we can shape the points by `SampleType`.  To assess the 
-impact of batch effects, we also colour the points according to 
+argument, we can shape the points by `SampleType`.  To assess the
+impact of batch effects, we also colour the points according to
 the MS acquisition run.
 
 ```{r scpComponentPlot_cell, fig.height=9, fig.width=5}
@@ -480,20 +481,20 @@ scpComponentPlot(
 ```
 
 While the data before modelling is mainly driven by batch effects, the
-APCA clearly separates the two cell populations. The plot can however 
+APCA clearly separates the two cell populations. The plot can however
 only show 2 components at a time. We can explore more components using
 a subsequent dimension reduction, such as t-SNE. The `scater` package
-offers a comprehensive set of tools for dimension reduction on data 
-contained in a `SingleCellExperiment` object and requires the 
+offers a comprehensive set of tools for dimension reduction on data
+contained in a `SingleCellExperiment` object and requires the
 components to be stored in the `reducedDim` slot. This is streamlined
-thanks to `addReducedDims()`. 
+thanks to `addReducedDims()`.
 
 ```{r addReducedDims}
 leduc_minimal <- addReducedDims(leduc_minimal, caResCells)
 reducedDims(leduc_minimal)
 ```
 
-We can now explore the `SampleType` effects for the 20 computed 
+We can now explore the `SampleType` effects for the 20 computed
 components through t-SNE.
 
 ```{r t-SNE, fig.height=3, fig.width=4}
@@ -503,12 +504,12 @@ plotTSNE(leduc_minimal, colour_by = "Set", shape_by = "SampleType") +
     ggtitle("t-SNE on 20 APCA components")
 ```
 
-The two cell populations remain clearly separated with an 
+The two cell populations remain clearly separated with an
 excellent mixing of the acquisition runs, even when considering the
 20 first APCA components.
 
 We use the same approach to explore the component results in peptide
-space. 
+space.
 
 ```{r scpComponentPlot_peptide, fig.height=9, fig.width=5}
 caResPeps <- caRes$byFeature
@@ -521,7 +522,7 @@ scpComponentPlot(
     wrap_plots(ncol = 1)
 ```
 
-This exploration may identify groups of covarying peptides, although 
+This exploration may identify groups of covarying peptides, although
 no clear patterns appear in the example data set.
 
 We can also combine the exploration of the components in cell and
@@ -529,7 +530,7 @@ peptide space. This is possible thanks to biplots.
 
 ```{r biplot, warning=FALSE, fig.height=9, fig.width=5}
 scpComponentBiplot(
-    caResCells, caResPeps, 
+    caResCells, caResPeps,
     pointParams = list(aes(colour = SampleType)),
     labelParams = list(size = 1.5, max.overlaps = 15),
     textBy = "gene", top = 10
@@ -537,21 +538,21 @@ scpComponentBiplot(
     wrap_plots(ncol = 1, guides = "collect")
 ```
 
-Finally, we offer functionality to aggregate the results at the 
-protein level instead of the peptide level. 
+Finally, we offer functionality to aggregate the results at the
+protein level instead of the peptide level.
 
 ```{r scpComponentAggregate, fig.width=9, fig.height=3}
 caResProts <- scpComponentAggregate(caResPeps, fcol = "gene")
 caResProts$APCA_SampleType
 ```
 
-Note that the aggregated tables in `caResProts` can be explored with 
-the visualisation function `scpComponentPlot()`. 
+Note that the aggregated tables in `caResProts` can be explored with
+the visualisation function `scpComponentPlot()`.
 
 # Batch correction
 
-Based on the estimated model, we generate batch-corrected data, that 
-is data with only the effect of cell type and the residual data. We 
+Based on the estimated model, we generate batch-corrected data, that
+is data with only the effect of cell type and the residual data. We
 also remove the intercept.
 
 ```{r batch_correction}
@@ -587,6 +588,6 @@ citation("scp")
 
 # License
 
-This vignette is distributed under a 
-[CC BY-SA license](https://creativecommons.org/licenses/by-sa/2.0/) 
+This vignette is distributed under a
+[CC BY-SA license](https://creativecommons.org/licenses/by-sa/2.0/)
 license.
