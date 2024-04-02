@@ -52,6 +52,7 @@ will not cover data processing as it is covered in another vignette.
 
 ```{r, message = FALSE}
 library("scp")
+library("SingleCellExperiment")
 library("patchwork")
 library("ggplot2")
 ```
@@ -439,7 +440,7 @@ heterogeneity.
 
 ```{r component_analysis}
 (caRes <- scpComponentAnalysis(
-    leduc_minimal, ncomp = 2, method = "APCA", effect = "SampleType"
+    leduc_minimal, ncomp = 20, method = "APCA", effect = "SampleType"
 ))
 ```
 
@@ -479,7 +480,32 @@ scpComponentPlot(
 ```
 
 While the data before modelling is mainly driven by batch effects, the
-APCA clearly separates the two cell populations.
+APCA clearly separates the two cell populations. The plot can however 
+only show 2 components at a time. We can explore more components using
+a subsequent dimension reduction, such as t-SNE. The `scater` package
+offers a comprehensive set of tools for dimension reduction on data 
+contained in a `SingleCellExperiment` object and requires the 
+components to be stored in the `reducedDim` slot. This is streamlined
+thanks to `addReducedDims()`. 
+
+```{r addReducedDims}
+leduc_minimal <- addReducedDims(leduc_minimal, caResCells)
+reducedDims(leduc_minimal)
+```
+
+We can now explore the `SampleType` effects for the 20 computed 
+components through t-SNE.
+
+```{r t-SNE, fig.height=3, fig.width=4}
+library("scater")
+leduc_minimal <- runTSNE(leduc_minimal, dimred = "APCA_SampleType")
+plotTSNE(leduc_minimal, colour_by = "Set", shape_by = "SampleType") +
+    ggtitle("t-SNE on 20 APCA components")
+```
+
+The two cell populations remain clearly separated with an 
+excellent mixing of the acquisition runs, even when considering the
+20 first APCA components.
 
 We use the same approach to explore the component results in peptide
 space. 
@@ -518,6 +544,9 @@ protein level instead of the peptide level.
 caResProts <- scpComponentAggregate(caResPeps, fcol = "gene")
 caResProts$APCA_SampleType
 ```
+
+Note that the aggregated tables in `caResProts` can be explored with 
+the visualisation function `scpComponentPlot()`. 
 
 # Batch correction
 
