@@ -112,8 +112,9 @@ Vanderaa</h4>
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
 <p>In this tutorial, we’ll walk you through the process of modelling
-single-cell proteomics (SCP) data. By the end of this vignette, you will
-be able to:</p>
+single-cell proteomics (SCP) data using the <em>scplainer</em> appreach
+<span class="citation">[@Vanderaa2023-scplainer]</span>. By the end of
+this vignette, you will be able to:</p>
 <ul>
 <li>Define and estimate a model suitable for SCP data</li>
 <li>Filter peptides based on the patterns of missing values</li>
@@ -127,7 +128,7 @@ analysis</li>
 for downstream analysis, such as clustering or trajectory inference. The
 figure below provides a roadmap of the workflow:</p>
 <div class="float">
-<img src="figures/ScpModel-class.png" alt="modelling workflow"><div class="figcaption">modelling workflow</div>
+<img src="figures/ScpModel-class.png" alt="scplainer modelling workflow"><div class="figcaption">scplainer modelling workflow</div>
 </div>
 <p>The vignette will start with the processed data extracted as a
 <code>SingleCellExperiment</code> object from a processed
@@ -484,7 +485,7 @@ to test and the two following element are the groups of interest to
 compare. You can provide multiple contrast in a list.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">(</span><span class="va">daRes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ScpModel-DifferentialAnalysis.html">scpDifferentialAnalysis</a></span><span class="op">(</span></span>
-<span>    <span class="va">leduc_minimal</span>, </span>
+<span>    <span class="va">leduc_minimal</span>,</span>
 <span>    contrasts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SampleType"</span>, <span class="st">"Melanoma"</span>, <span class="st">"Monocyte"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of length 1</span></span>
@@ -536,12 +537,12 @@ explore the results, we add peptide annotations available from the
 <code>rowData</code>, but we also add the n/p ratio as annotation.</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">daRes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/scpAnnotateResults.html">scpAnnotateResults</a></span><span class="op">(</span></span>
-<span>    <span class="va">daRes</span>, <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">leduc_minimal</span><span class="op">)</span>, </span>
+<span>    <span class="va">daRes</span>, <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">leduc_minimal</span><span class="op">)</span>,</span>
 <span>    by <span class="op">=</span> <span class="st">"feature"</span>, by2 <span class="op">=</span> <span class="st">"Sequence"</span></span>
 <span><span class="op">)</span></span>
 <span><span class="va">np</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ScpModel-class.html">scpModelFilterNPRatio</a></span><span class="op">(</span><span class="va">leduc_minimal</span><span class="op">)</span></span>
 <span><span class="va">daRes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/scpAnnotateResults.html">scpAnnotateResults</a></span><span class="op">(</span></span>
-<span>    <span class="va">daRes</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>feature <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">np</span><span class="op">)</span>, npRatio <span class="op">=</span> <span class="va">np</span><span class="op">)</span>, </span>
+<span>    <span class="va">daRes</span>, <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>feature <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">np</span><span class="op">)</span>, npRatio <span class="op">=</span> <span class="va">np</span><span class="op">)</span>,</span>
 <span>    by <span class="op">=</span> <span class="st">"feature"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>We plot the same volcano plot, but instead of labeling points with
@@ -551,7 +552,7 @@ can control for point aesthetics by providing a list of
 each point based on the n/p ratio, and adjust point size and shape.</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/ScpModel-DifferentialAnalysis.html">scpVolcanoPlot</a></span><span class="op">(</span></span>
-<span>    <span class="va">daRes</span>, top <span class="op">=</span> <span class="fl">30</span>, textBy <span class="op">=</span> <span class="st">"gene"</span>, </span>
+<span>    <span class="va">daRes</span>, top <span class="op">=</span> <span class="fl">30</span>, textBy <span class="op">=</span> <span class="st">"gene"</span>,</span>
 <span>    pointParams <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="va">npRatio</span><span class="op">)</span>, size <span class="op">=</span> <span class="fl">1.5</span>, shape <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt; $SampleType_Melanoma_vs_Monocyte</span></span>
@@ -762,7 +763,7 @@ no clear patterns appear in the example data set.</p>
 peptide space. This is possible thanks to biplots.</p>
 <div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/ScpModel-ComponentAnalysis.html">scpComponentBiplot</a></span><span class="op">(</span></span>
-<span>    <span class="va">caResCells</span>, <span class="va">caResPeps</span>, </span>
+<span>    <span class="va">caResCells</span>, <span class="va">caResPeps</span>,</span>
 <span>    pointParams <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="va">SampleType</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    labelParams <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">1.5</span>, max.overlaps <span class="op">=</span> <span class="fl">15</span><span class="op">)</span>,</span>
 <span>    textBy <span class="op">=</span> <span class="st">"gene"</span>, top <span class="op">=</span> <span class="fl">10</span></span>
