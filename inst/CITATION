@@ -13,11 +13,10 @@ citEntry(entry = "article",
          month    =  "sep",
          year     =  "2023",
          textVersion = paste(
-             "Vanderaa, Christophe, and Laurent Gatto. 2023. ", 
+             "Vanderaa, Christophe, and Laurent Gatto. 2023. ",
              "Revisiting the Thorny Issue of Missing Values in ",
              "Single-Cell Proteomics. Journal of Proteome Research ",
-             "22 (9): 2775–84."
-         )
+             "22 (9): 2775–84.")
          )
 
 citEntry(entry = "article",
@@ -44,4 +43,17 @@ citEntry(entry = "article",
          textVersion = paste("Vanderaa Christophe and Laurent Gatto.",
                              "Replication of Single-Cell Proteomics Data Reveals Important Computational Challenges.",
                              "Expert Review of Proteomics, 1–9 (2021).")
+         )
+
+
+citEntry(entry = "article",
+         title  = ""scplainer: using linear models to understand mass spectrometry-based single-cell proteomics data,
+         author = personList(
+           person(given = "Christophe", family = "Vanderaa"),
+           person(given = "Laurent", family = "Gatto")),
+         journal = "bioRxiv",
+         year = "2024",
+         textVersion = paste("Vanderaa Christophe and Laurent Gatto.",
+                             "scplainer: using linear models to understand mass spectrometry-based single-cell proteomics data.",
+                             "bioRxiv 2023.12.14.571792; doi: https://doi.org/10.1101/2023.12.14.571792")
          )

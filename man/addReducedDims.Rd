@@ -19,7 +19,7 @@ A \code{SingleCellExperiment} with updated \code{reducedDims}.
 The function will add the component results computed
 by \code{\link[=scpComponentAnalysis]{scpComponentAnalysis()}} to a \code{SingleCellExperiment}'s
 \code{reducedDims} slot, to all using the many \code{scater} functions,
-such as \code{\link[scater:plotReducedDim]{scater::plotReducedDim()}}, \code{\link[=plotTNSE]{plotTNSE()}}, ...
+such as \code{\link[scater:plotReducedDim]{scater::plotReducedDim()}}, \code{\link[scater:plot_reddim]{scater::plotTSNE()}}, ...
 }
 \examples{
 

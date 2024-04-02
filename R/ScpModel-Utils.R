@@ -171,7 +171,7 @@ scpRemoveBatchEffect <- function(object, effects = NULL,
 ##' @description The function will add the component results computed
 ##'     by [scpComponentAnalysis()] to a `SingleCellExperiment`'s
 ##'     `reducedDims` slot, to all using the many `scater` functions,
-##'     such as [scater::plotReducedDim()], [plotTNSE()], ...
+##'     such as [scater::plotReducedDim()], [scater::plotTSNE()], ...
 ##'
 ##' @param sce An instance of class [SingleCellExperiment].
 ##'
