@@ -30,8 +30,8 @@ knitr::opts_chunk$set(
 # Introduction
 
 In this tutorial, we'll walk you through the process of modelling
-single-cell proteomics (SCP) data using the *scplainer* appreach
-[@Vanderaa2023-scplainer]. By the end of this vignette, you will be
+single-cell proteomics (SCP) data using the *scplainer* approach
+(@Vanderaa2023-scplainer). By the end of this vignette, you will be
 able to:
 
 - Define and estimate a model suitable for SCP data
@@ -580,14 +580,10 @@ knitr::opts_chunk$set(
 sessionInfo()
 ```
 
-# Citation
-
-```{r citation}
-citation("scp")
-```
-
-# License
+# License {-}
 
 This vignette is distributed under a
 [CC BY-SA license](https://creativecommons.org/licenses/by-sa/2.0/)
 license.
+
+# Reference {-}

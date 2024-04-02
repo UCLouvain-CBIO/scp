@@ -31,7 +31,7 @@ knitr::opts_chunk$set(
 # The `scp` data framework
 
 Our data structure is relying on two curated data classes: `QFeatures`
-(@Gatto2020-ry) and `SingleCellExperiment` ([@Amezquita2019-bf]).
+(@Gatto2023-ry) and `SingleCellExperiment` (@Amezquita2019-bf).
 `QFeatures` is dedicated to the manipulation and processing of
 MS-based quantitative data. It explicitly records the successive steps
 to allow users to navigate up and down the different MS levels.
@@ -352,10 +352,10 @@ knitr::opts_chunk$set(
 sessionInfo()
 ```
 
-# License
+# License {-}
 
 This vignette is distributed under a
 [CC BY-SA license](https://creativecommons.org/licenses/by-sa/2.0/)
 license.
 
-# Reference
+# Reference {-}
