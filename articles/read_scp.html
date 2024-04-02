@@ -114,16 +114,15 @@ Vanderaa</h4>
 <h2 id="the-scp-data-framework">The <code>scp</code> data framework<a class="anchor" aria-label="anchor" href="#the-scp-data-framework"></a>
 </h2>
 <p>Our data structure is relying on two curated data classes:
-<code>QFeatures</code> (<span class="citation">Gatto (2020)</span>) and
-<code>SingleCellExperiment</code> (<span class="citation">(Amezquita et
-al. 2020)</span>). <code>QFeatures</code> is dedicated to the
-manipulation and processing of MS-based quantitative data. It explicitly
-records the successive steps to allow users to navigate up and down the
-different MS levels. <code>SingleCellExperiment</code> is another class
-designed as an efficient data container that serves as an interface to
-state-of-the-art methods and algorithms for single-cell data. Our
-framework combines the two classes to inherit from their respective
-advantages.</p>
+<code>QFeatures</code> (<span class="citation">Gatto and Vanderaa
+(2023)</span>) and <code>SingleCellExperiment</code> (<span class="citation">Amezquita et al. (2020)</span>). <code>QFeatures</code>
+is dedicated to the manipulation and processing of MS-based quantitative
+data. It explicitly records the successive steps to allow users to
+navigate up and down the different MS levels.
+<code>SingleCellExperiment</code> is another class designed as an
+efficient data container that serves as an interface to state-of-the-art
+methods and algorithms for single-cell data. Our framework combines the
+two classes to inherit from their respective advantages.</p>
 <p>Because mass spectrometry (MS)-based single-cell proteomics (SCP)
 only captures the proteome of between one and a few tens of single-cells
 in a single run, the data is usually acquired across many MS batches.
@@ -656,7 +655,7 @@ loaded via a namespace (and not attached):
 [79] pkgconfig_2.0.3            </code></pre>
 </div>
 <div class="section level2">
-<h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
+<h2 class="unnumbered" id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
 </h2>
 <p>This vignette is distributed under a <a href="https://creativecommons.org/licenses/by-sa/2.0/" class="external-link">CC BY-SA
 license</a> license.</p>
@@ -671,9 +670,9 @@ Lindsay N Carpp, Ludwig Geistlinger, Federico Marini, et al. 2020.
 <span>“Orchestrating Single-Cell Analysis with Bioconductor.”</span>
 <em>Nat. Methods</em> 17 (2): 137–45.
 </div>
-<div id="ref-Gatto2020-ry" class="csl-entry">
-Gatto, Laurent. 2020. <span>“<span>QFeatures</span>: Quantitative
-Features for Mass Spectrometry Data.”</span>
+<div id="ref-Gatto2023-ry" class="csl-entry">
+Gatto, Laurent, and Christophe Vanderaa. 2023. <span>“QFeatures:
+Quantitative Features for Mass Spectrometry Data.”</span> <a href="https://doi.org/10.18129/B9.bioc.QFeatures" class="external-link">https://doi.org/10.18129/B9.bioc.QFeatures</a>.
 </div>
 </div>
 </div>

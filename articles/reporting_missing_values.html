@@ -152,7 +152,7 @@ vignette.</p>
 <span><span class="co">#&gt;   removing 8057 sampleMap rows not in names(experiments)</span></span>
 <span><span class="co">#&gt;   removing 1872 colData rownames not in sampleMap 'primary'</span></span>
 <span><span class="va">leduc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-class.html" class="external-link">selectRowData</a></span><span class="op">(</span><span class="va">leduc</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
-<span>    <span class="st">"Sequence"</span>, <span class="st">"Leading.razor.protein"</span>, <span class="st">"Reverse"</span>, </span>
+<span>    <span class="st">"Sequence"</span>, <span class="st">"Leading.razor.protein"</span>, <span class="st">"Reverse"</span>,</span>
 <span>    <span class="st">"Potential.contaminant"</span>, <span class="st">"PEP"</span></span>
 <span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>This is the actual minimal processing: 1. filtering contaminant and
@@ -166,16 +166,16 @@ large assay</p>
 <span>                           <span class="va">Potential.contaminant</span> <span class="op">!=</span> <span class="st">"+"</span> <span class="op">&amp;</span></span>
 <span>                           <span class="va">PEP</span> <span class="op">&lt;</span> <span class="fl">0.01</span><span class="op">)</span></span>
 <span><span class="co">## 2.</span></span>
-<span><span class="va">leduc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-missing-data.html" class="external-link">zeroIsNA</a></span><span class="op">(</span><span class="va">leduc</span>, i <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">leduc</span><span class="op">)</span><span class="op">)</span> </span>
+<span><span class="va">leduc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-missing-data.html" class="external-link">zeroIsNA</a></span><span class="op">(</span><span class="va">leduc</span>, i <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">leduc</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">## 3.</span></span>
-<span><span class="va">leduc</span> <span class="op">&lt;-</span> <span class="fu">subsetByColData</span><span class="op">(</span> </span>
+<span><span class="va">leduc</span> <span class="op">&lt;-</span> <span class="fu">subsetByColData</span><span class="op">(</span></span>
 <span>    <span class="va">leduc</span>, <span class="va">leduc</span><span class="op">$</span><span class="va">SampleType</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Monocyte"</span>, <span class="st">"Melanoma"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">## 4.</span></span>
-<span><span class="va">leduc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">filterNA</a></span><span class="op">(</span><span class="va">leduc</span>, i <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">leduc</span><span class="op">)</span>, pNA <span class="op">=</span> <span class="fl">0.9999</span><span class="op">)</span> </span>
-<span><span class="va">leduc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-class.html" class="external-link">dropEmptyAssays</a></span><span class="op">(</span><span class="va">leduc</span><span class="op">)</span> </span>
+<span><span class="va">leduc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">filterNA</a></span><span class="op">(</span><span class="va">leduc</span>, i <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">leduc</span><span class="op">)</span>, pNA <span class="op">=</span> <span class="fl">0.9999</span><span class="op">)</span></span>
+<span><span class="va">leduc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-class.html" class="external-link">dropEmptyAssays</a></span><span class="op">(</span><span class="va">leduc</span><span class="op">)</span></span>
 <span><span class="co">## 5.</span></span>
-<span><span class="va">leduc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">aggregateFeatures</a></span><span class="op">(</span> </span>
+<span><span class="va">leduc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">aggregateFeatures</a></span><span class="op">(</span></span>
 <span>    <span class="va">leduc</span>, i <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">leduc</span><span class="op">)</span>, name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"peptides_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">leduc</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>    fcol <span class="op">=</span> <span class="st">"Sequence"</span>, fun <span class="op">=</span> <span class="va">colMedians</span></span>
 <span><span class="op">)</span></span>
@@ -261,7 +261,7 @@ random draws with increasing sample size, and <code>niters</code>
 defines how many times each draw must be iterated.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">csc</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cumulativeSensitivityCurve.html">cumulativeSensitivityCurve</a></span><span class="op">(</span><span class="va">leduc</span>, <span class="st">"peptides"</span>, by <span class="op">=</span> <span class="va">leduc</span><span class="op">$</span><span class="va">SampleType</span>,</span>
-<span>                                  batch <span class="op">=</span> <span class="va">leduc</span><span class="op">$</span><span class="va">Set</span>, niters <span class="op">=</span> <span class="fl">10</span>, </span>
+<span>                                  batch <span class="op">=</span> <span class="va">leduc</span><span class="op">$</span><span class="va">Set</span>, niters <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>                                  nsteps <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span></code></pre></div>
 <p>The function returns a <code>data.frame</code> that we visualize
 using the <code>ggplot2</code> package.</p>
@@ -297,35 +297,7 @@ sensitivity by about 150 peptides.</p>
 </div>
 </div>
 <div class="section level2">
-<h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
-</h2>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/citation.html" class="external-link">citation</a></span><span class="op">(</span><span class="st">"scp"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; To cite the scp package in publications use:</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;   Vanderaa, Christophe, and Laurent Gatto. 2023.  Revisiting the Thorny</span></span>
-<span><span class="co">#&gt;   Issue of Missing Values in Single-Cell Proteomics. Journal of</span></span>
-<span><span class="co">#&gt;   Proteome Research 22 (9): 2775–84.</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;   Vanderaa Christophe and Laurent Gatto. The current state of</span></span>
-<span><span class="co">#&gt;   single-cell proteomics data analysis. Current Protocols 3 (1): e658.;</span></span>
-<span><span class="co">#&gt;   doi: https://doi.org/10.1002/cpz1.658 (2023).</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;   Vanderaa Christophe and Laurent Gatto. Replication of Single-Cell</span></span>
-<span><span class="co">#&gt;   Proteomics Data Reveals Important Computational Challenges. Expert</span></span>
-<span><span class="co">#&gt;   Review of Proteomics, 1–9 (2021).</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;   Vanderaa Christophe and Laurent Gatto. scplainer: using linear models</span></span>
-<span><span class="co">#&gt;   to understand mass spectrometry-based single-cell proteomics data.</span></span>
-<span><span class="co">#&gt;   bioRxiv 2023.12.14.571792; doi:</span></span>
-<span><span class="co">#&gt;   https://doi.org/10.1101/2023.12.14.571792</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; To see these entries in BibTeX format, use 'print(&lt;citation&gt;,</span></span>
-<span><span class="co">#&gt; bibtex=TRUE)', 'toBibtex(.)', or set</span></span>
-<span><span class="co">#&gt; 'options(citation.bibtex.max=999)'.</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
+<h2 class="unnumbered" id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
 </h2>
 <p>This vignette is distributed under a <a href="https://creativecommons.org/licenses/by-sa/2.0/" class="external-link">CC BY-SA
 license</a> license.</p>
