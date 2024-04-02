@@ -135,6 +135,7 @@ figure below provides a roadmap of the workflow:</p>
 is covered in another vignette.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://UCLouvain-CBIO.github.io/scp" class="external-link">"scp"</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st">"SingleCellExperiment"</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://patchwork.data-imaginist.com" class="external-link">"patchwork"</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -630,7 +631,7 @@ known variable along the unmodelled information that contains cellular
 heterogeneity.</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">(</span><span class="va">caRes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ScpModel-ComponentAnalysis.html">scpComponentAnalysis</a></span><span class="op">(</span></span>
-<span>    <span class="va">leduc_minimal</span>, ncomp <span class="op">=</span> <span class="fl">2</span>, method <span class="op">=</span> <span class="st">"APCA"</span>, effect <span class="op">=</span> <span class="st">"SampleType"</span></span>
+<span>    <span class="va">leduc_minimal</span>, ncomp <span class="op">=</span> <span class="fl">20</span>, method <span class="op">=</span> <span class="st">"APCA"</span>, effect <span class="op">=</span> <span class="st">"SampleType"</span></span>
 <span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of length 2</span></span>
 <span><span class="co">#&gt; names(2): bySample byFeature</span></span></code></pre></div>
@@ -646,20 +647,59 @@ sample type variable (<code>APCA_SampleType</code>).</p>
 <span><span class="co">#&gt; List of length 3</span></span>
 <span><span class="co">#&gt; names(3): unmodelled residuals APCA_SampleType</span></span>
 <span><span class="va">caResCells</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
-<span><span class="co">#&gt; DataFrame with 73 rows and 3 columns</span></span>
-<span><span class="co">#&gt;                    PC1       PC2          cell</span></span>
-<span><span class="co">#&gt;              &lt;numeric&gt; &lt;numeric&gt;   &lt;character&gt;</span></span>
-<span><span class="co">#&gt; eAL00219RI5   1.652635  3.711020 eAL00219RI...</span></span>
-<span><span class="co">#&gt; eAL00219RI6   0.122763  5.156328 eAL00219RI...</span></span>
-<span><span class="co">#&gt; eAL00219RI7  -1.356183  6.042980 eAL00219RI...</span></span>
-<span><span class="co">#&gt; eAL00219RI8  -2.700162  4.483173 eAL00219RI...</span></span>
-<span><span class="co">#&gt; eAL00219RI9   2.546416  0.572361 eAL00219RI...</span></span>
-<span><span class="co">#&gt; ...                ...       ...           ...</span></span>
-<span><span class="co">#&gt; wAL00286RI12  -7.98580 -1.856855 wAL00286RI...</span></span>
-<span><span class="co">#&gt; wAL00286RI14  -8.20192 -0.746896 wAL00286RI...</span></span>
-<span><span class="co">#&gt; wAL00286RI16  -1.81072 -2.407762 wAL00286RI...</span></span>
-<span><span class="co">#&gt; wAL00286RI17  -2.86441 -3.393967 wAL00286RI...</span></span>
-<span><span class="co">#&gt; wAL00286RI18  -2.25612 -4.270107 wAL00286RI...</span></span></code></pre></div>
+<span><span class="co">#&gt; DataFrame with 73 rows and 21 columns</span></span>
+<span><span class="co">#&gt;                    PC1       PC2       PC3       PC4        PC5       PC6</span></span>
+<span><span class="co">#&gt;              &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;  &lt;numeric&gt; &lt;numeric&gt;</span></span>
+<span><span class="co">#&gt; eAL00219RI5   1.652635  3.711020  -4.21156 -1.079196  0.0666983  1.408647</span></span>
+<span><span class="co">#&gt; eAL00219RI6   0.122763  5.156328  -5.49091  0.184137 -0.3458518  1.048142</span></span>
+<span><span class="co">#&gt; eAL00219RI7  -1.356183  6.042980  -5.04466  0.372945 -2.1629620  0.234317</span></span>
+<span><span class="co">#&gt; eAL00219RI8  -2.700162  4.483173  -5.34451  0.548601 -1.5492215 -0.345117</span></span>
+<span><span class="co">#&gt; eAL00219RI9   2.546416  0.572361  -5.35620  0.723007 -0.1841323  4.479647</span></span>
+<span><span class="co">#&gt; ...                ...       ...       ...       ...        ...       ...</span></span>
+<span><span class="co">#&gt; wAL00286RI12  -7.98580 -1.856855  0.757797  2.716883   0.389962  1.670132</span></span>
+<span><span class="co">#&gt; wAL00286RI14  -8.20192 -0.746896  1.535207 -1.595404   2.795661  0.498499</span></span>
+<span><span class="co">#&gt; wAL00286RI16  -1.81072 -2.407762  3.963677 -1.732718   0.143329 -0.745458</span></span>
+<span><span class="co">#&gt; wAL00286RI17  -2.86441 -3.393967 -1.515343 -1.529139  -2.434284  0.121065</span></span>
+<span><span class="co">#&gt; wAL00286RI18  -2.25612 -4.270107  0.987672 -0.145896  -1.382700 -1.306674</span></span>
+<span><span class="co">#&gt;                    PC7       PC8       PC9       PC10       PC11        PC12</span></span>
+<span><span class="co">#&gt;              &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;  &lt;numeric&gt;  &lt;numeric&gt;   &lt;numeric&gt;</span></span>
+<span><span class="co">#&gt; eAL00219RI5   -1.40664 -0.569028  1.816091  -0.335920  -3.425797   -0.261528</span></span>
+<span><span class="co">#&gt; eAL00219RI6   -2.03264  0.242179  2.257062   0.808499  -1.271131    0.486000</span></span>
+<span><span class="co">#&gt; eAL00219RI7   -1.26036 -1.921333 -0.241230   0.825305  -1.820185    2.704122</span></span>
+<span><span class="co">#&gt; eAL00219RI8   -1.31727 -0.876115 -0.826323   2.179410   2.105049    0.760836</span></span>
+<span><span class="co">#&gt; eAL00219RI9    1.28303  0.785622 -0.545883  -0.625327  -0.676794   -0.943669</span></span>
+<span><span class="co">#&gt; ...                ...       ...       ...        ...        ...         ...</span></span>
+<span><span class="co">#&gt; wAL00286RI12  1.117698 -0.812645 -0.223081 -0.4827100  1.1006363 -0.99808069</span></span>
+<span><span class="co">#&gt; wAL00286RI14  0.979609 -0.959699  3.834839 -0.9982881  0.3246867 -0.00491314</span></span>
+<span><span class="co">#&gt; wAL00286RI16  3.800138 -1.646333  1.374409 -1.5396094 -0.8875749  2.42672153</span></span>
+<span><span class="co">#&gt; wAL00286RI17  1.894991 -0.681766 -0.612739  0.0177883 -0.4717603  1.93884428</span></span>
+<span><span class="co">#&gt; wAL00286RI18  1.586430 -1.000224 -0.140993  0.8425007 -0.0447968  1.01835905</span></span>
+<span><span class="co">#&gt;                    PC13       PC14      PC15      PC16       PC17      PC18</span></span>
+<span><span class="co">#&gt;               &lt;numeric&gt;  &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;  &lt;numeric&gt; &lt;numeric&gt;</span></span>
+<span><span class="co">#&gt; eAL00219RI5   1.3248564 -0.6213675  0.275210 -0.376301  0.2819763 -0.112223</span></span>
+<span><span class="co">#&gt; eAL00219RI6  -0.0312991  0.1282374 -0.977545 -0.638003 -0.0905137  0.443276</span></span>
+<span><span class="co">#&gt; eAL00219RI7   0.2210126 -0.8594984 -1.371305  0.293012 -1.2920848 -0.211974</span></span>
+<span><span class="co">#&gt; eAL00219RI8  -0.1068177 -0.0299786 -0.293472 -1.618090  1.0066113  0.699695</span></span>
+<span><span class="co">#&gt; eAL00219RI9  -0.1327679  0.8920529  0.332752 -1.424903  0.2110955  0.484973</span></span>
+<span><span class="co">#&gt; ...                 ...        ...       ...       ...        ...       ...</span></span>
+<span><span class="co">#&gt; wAL00286RI12   1.258691  -1.038123  0.715850  0.594017 -0.0320364  0.386167</span></span>
+<span><span class="co">#&gt; wAL00286RI14  -1.463484  -1.115054  1.304641  0.471641 -1.2468862  1.135240</span></span>
+<span><span class="co">#&gt; wAL00286RI16  -0.128652   0.438629  0.405675 -1.249913  0.8714631 -0.245134</span></span>
+<span><span class="co">#&gt; wAL00286RI17  -2.385663  -0.696050 -0.636856 -0.639397 -0.5319913  0.677671</span></span>
+<span><span class="co">#&gt; wAL00286RI18   0.286674   0.861364 -0.262798  1.071512 -0.0554080 -0.132846</span></span>
+<span><span class="co">#&gt;                    PC19       PC20          cell</span></span>
+<span><span class="co">#&gt;               &lt;numeric&gt;  &lt;numeric&gt;   &lt;character&gt;</span></span>
+<span><span class="co">#&gt; eAL00219RI5  -0.2408148 -0.4442979 eAL00219RI...</span></span>
+<span><span class="co">#&gt; eAL00219RI6  -0.0921259  0.0940622 eAL00219RI...</span></span>
+<span><span class="co">#&gt; eAL00219RI7  -0.3802431  0.7556116 eAL00219RI...</span></span>
+<span><span class="co">#&gt; eAL00219RI8   0.2000259 -0.5325636 eAL00219RI...</span></span>
+<span><span class="co">#&gt; eAL00219RI9  -1.0358553  1.0556220 eAL00219RI...</span></span>
+<span><span class="co">#&gt; ...                 ...        ...           ...</span></span>
+<span><span class="co">#&gt; wAL00286RI12  -0.244162  1.4868339 wAL00286RI...</span></span>
+<span><span class="co">#&gt; wAL00286RI14   0.602194  0.0939671 wAL00286RI...</span></span>
+<span><span class="co">#&gt; wAL00286RI16  -1.108754  0.3540490 wAL00286RI...</span></span>
+<span><span class="co">#&gt; wAL00286RI17   0.955012  0.7391520 wAL00286RI...</span></span>
+<span><span class="co">#&gt; wAL00286RI18   2.147393  0.3731584 wAL00286RI...</span></span></code></pre></div>
 <p>Let’s explore the component analysis in cell space. Similarly to the
 previous explorations, we annotate the results.</p>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
@@ -679,10 +719,34 @@ colour the points according to the MS acquisition run.</p>
 <span>    <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span>ncol <span class="op">=</span> <span class="fl">1</span>, guides <span class="op">=</span> <span class="st">"collect"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="scp_data_modelling_files/figure-html/scpComponentPlot_cell-1.png" width="480"></p>
 <p>While the data before modelling is mainly driven by batch effects,
-the APCA clearly separates the two cell populations.</p>
+the APCA clearly separates the two cell populations. The plot can
+however only show 2 components at a time. We can explore more components
+using a subsequent dimension reduction, such as t-SNE. The
+<code>scater</code> package offers a comprehensive set of tools for
+dimension reduction on data contained in a
+<code>SingleCellExperiment</code> object and requires the components to
+be stored in the <code>reducedDim</code> slot. This is streamlined
+thanks to <code><a href="../reference/addReducedDims.html">addReducedDims()</a></code>.</p>
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">leduc_minimal</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/addReducedDims.html">addReducedDims</a></span><span class="op">(</span><span class="va">leduc_minimal</span>, <span class="va">caResCells</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDims</a></span><span class="op">(</span><span class="va">leduc_minimal</span><span class="op">)</span></span>
+<span><span class="co">#&gt; List of length 3</span></span>
+<span><span class="co">#&gt; names(3): unmodelled residuals APCA_SampleType</span></span></code></pre></div>
+<p>We can now explore the <code>SampleType</code> effects for the 20
+computed components through t-SNE.</p>
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="http://bioconductor.org/packages/scater/" class="external-link">"scater"</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Loading required package: scuttle</span></span>
+<span><span class="va">leduc_minimal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scater/man/runTSNE.html" class="external-link">runTSNE</a></span><span class="op">(</span><span class="va">leduc_minimal</span>, dimred <span class="op">=</span> <span class="st">"APCA_SampleType"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/scater/man/plot_reddim.html" class="external-link">plotTSNE</a></span><span class="op">(</span><span class="va">leduc_minimal</span>, colour_by <span class="op">=</span> <span class="st">"Set"</span>, shape_by <span class="op">=</span> <span class="st">"SampleType"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"t-SNE on 20 APCA components"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="scp_data_modelling_files/figure-html/t-SNE-1.png" width="384"></p>
+<p>The two cell populations remain clearly separated with an excellent
+mixing of the acquisition runs, even when considering the 20 first APCA
+components.</p>
 <p>We use the same approach to explore the component results in peptide
 space.</p>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">caResPeps</span> <span class="op">&lt;-</span> <span class="va">caRes</span><span class="op">$</span><span class="va">byFeature</span></span>
 <span><span class="va">caResPeps</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/scpAnnotateResults.html">scpAnnotateResults</a></span><span class="op">(</span></span>
 <span>    <span class="va">caResPeps</span>, <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">leduc_minimal</span><span class="op">)</span>, by <span class="op">=</span> <span class="st">"feature"</span>, by2 <span class="op">=</span> <span class="st">"Sequence"</span></span>
@@ -696,7 +760,7 @@ space.</p>
 no clear patterns appear in the example data set.</p>
 <p>We can also combine the exploration of the components in cell and
 peptide space. This is possible thanks to biplots.</p>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/ScpModel-ComponentAnalysis.html">scpComponentBiplot</a></span><span class="op">(</span></span>
 <span>    <span class="va">caResCells</span>, <span class="va">caResPeps</span>, </span>
 <span>    pointParams <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>colour <span class="op">=</span> <span class="va">SampleType</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -707,24 +771,63 @@ peptide space. This is possible thanks to biplots.</p>
 <p><img src="scp_data_modelling_files/figure-html/biplot-1.png" width="480"></p>
 <p>Finally, we offer functionality to aggregate the results at the
 protein level instead of the peptide level.</p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">caResProts</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ScpModel-ComponentAnalysis.html">scpComponentAggregate</a></span><span class="op">(</span><span class="va">caResPeps</span>, fcol <span class="op">=</span> <span class="st">"gene"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Components may no longer be orthogonal after aggregation.</span></span>
 <span><span class="va">caResProts</span><span class="op">$</span><span class="va">APCA_SampleType</span></span>
-<span><span class="co">#&gt; DataFrame with 86 rows and 8 columns</span></span>
-<span><span class="co">#&gt;                PC1        PC2     Reverse Potential.contaminant</span></span>
-<span><span class="co">#&gt;          &lt;numeric&gt;  &lt;numeric&gt; &lt;character&gt;           &lt;character&gt;</span></span>
-<span><span class="co">#&gt; ABCE1   -0.0523935 -0.0136777                                  </span></span>
-<span><span class="co">#&gt; ACLY    -0.2188357  0.0295186                                  </span></span>
-<span><span class="co">#&gt; ACTN4   -0.0119062  0.0384471                                  </span></span>
-<span><span class="co">#&gt; AIFM1    0.1006538 -0.0362258                                  </span></span>
-<span><span class="co">#&gt; APMAP    0.0195111  0.0211236                                  </span></span>
-<span><span class="co">#&gt; ...            ...        ...         ...                   ...</span></span>
-<span><span class="co">#&gt; TPP2   -0.05528458 -0.0310194                                  </span></span>
-<span><span class="co">#&gt; TUBA1C -0.14532912 -0.0163971                                  </span></span>
-<span><span class="co">#&gt; VAT1   -0.08475507 -0.0831661                                  </span></span>
-<span><span class="co">#&gt; XRCC6   0.00292548  0.0614277                                  </span></span>
-<span><span class="co">#&gt; YWHAG  -0.00908836  0.1134883                                  </span></span>
+<span><span class="co">#&gt; DataFrame with 86 rows and 26 columns</span></span>
+<span><span class="co">#&gt;                PC1        PC2        PC3        PC4         PC5          PC6</span></span>
+<span><span class="co">#&gt;          &lt;numeric&gt;  &lt;numeric&gt;  &lt;numeric&gt;  &lt;numeric&gt;   &lt;numeric&gt;    &lt;numeric&gt;</span></span>
+<span><span class="co">#&gt; ABCE1   -0.0523935 -0.0136777  0.0903348  0.1693285   0.0665345    0.0493461</span></span>
+<span><span class="co">#&gt; ACLY    -0.2188357  0.0295186 -0.2475794 -0.0555763  -0.1122432    0.0431707</span></span>
+<span><span class="co">#&gt; ACTN4   -0.0119062  0.0384471  0.2774156 -0.0797822  -0.0941029   -0.1243163</span></span>
+<span><span class="co">#&gt; AIFM1    0.1006538 -0.0362258  0.1976476  0.0301861  -0.1747488    0.0622619</span></span>
+<span><span class="co">#&gt; APMAP    0.0195111  0.0211236  0.0436172  0.0675338   0.0634203    0.1031632</span></span>
+<span><span class="co">#&gt; ...            ...        ...        ...        ...         ...          ...</span></span>
+<span><span class="co">#&gt; TPP2   -0.05528458 -0.0310194  0.0431430 -0.1027764 -0.08156241 -0.015980101</span></span>
+<span><span class="co">#&gt; TUBA1C -0.14532912 -0.0163971  0.0198204  0.0211471 -0.02163806 -0.000503111</span></span>
+<span><span class="co">#&gt; VAT1   -0.08475507 -0.0831661  0.1167588  0.0591425 -0.00581566 -0.013318437</span></span>
+<span><span class="co">#&gt; XRCC6   0.00292548  0.0614277  0.1692137  0.0295988 -0.02905814 -0.000397610</span></span>
+<span><span class="co">#&gt; YWHAG  -0.00908836  0.1134883 -0.2952287  0.0902165 -0.12814301  0.008616979</span></span>
+<span><span class="co">#&gt;               PC7        PC8        PC9        PC10       PC11       PC12</span></span>
+<span><span class="co">#&gt;         &lt;numeric&gt;  &lt;numeric&gt;  &lt;numeric&gt;   &lt;numeric&gt;  &lt;numeric&gt;  &lt;numeric&gt;</span></span>
+<span><span class="co">#&gt; ABCE1   0.0288414  0.0154912 -0.0128954  -0.0168423  0.0485774 -0.0481859</span></span>
+<span><span class="co">#&gt; ACLY    0.0716542 -0.1018500 -0.0276287  -0.0739296  0.0719484  0.1163738</span></span>
+<span><span class="co">#&gt; ACTN4  -0.0886529  0.0746792 -0.0886262  -0.2615099 -0.0949204  0.2439664</span></span>
+<span><span class="co">#&gt; AIFM1   0.0447698 -0.1740009  0.0274838   0.0931568 -0.0445237  0.1537508</span></span>
+<span><span class="co">#&gt; APMAP  -0.0839194  0.0436465 -0.0291126  -0.1366302  0.0780494 -0.0467466</span></span>
+<span><span class="co">#&gt; ...           ...        ...        ...         ...        ...        ...</span></span>
+<span><span class="co">#&gt; TPP2   0.01002283  0.0613254 -0.0657707 -0.02449126 -0.0726705  0.0386026</span></span>
+<span><span class="co">#&gt; TUBA1C 0.02632304 -0.0177832  0.0100838 -0.00880753 -0.0311755  0.0127917</span></span>
+<span><span class="co">#&gt; VAT1   0.00580065 -0.0525127 -0.0188442 -0.13095970  0.1962062  0.0253535</span></span>
+<span><span class="co">#&gt; XRCC6  0.10658824 -0.0676993 -0.0815302  0.23972712  0.1148027  0.0353619</span></span>
+<span><span class="co">#&gt; YWHAG  0.01593590 -0.0617372 -0.0961599  0.18878619  0.0708525  0.1197667</span></span>
+<span><span class="co">#&gt;                PC13       PC14        PC15       PC16        PC17       PC18</span></span>
+<span><span class="co">#&gt;           &lt;numeric&gt;  &lt;numeric&gt;   &lt;numeric&gt;  &lt;numeric&gt;   &lt;numeric&gt;  &lt;numeric&gt;</span></span>
+<span><span class="co">#&gt; ABCE1  -0.001663287  0.0343296   0.0343627  0.0990232  0.01865067 -0.0327103</span></span>
+<span><span class="co">#&gt; ACLY    0.192738461  0.1474133  -0.1739438  0.1289705  0.05033950  0.0287668</span></span>
+<span><span class="co">#&gt; ACTN4  -0.133406589  0.0132553  -0.0693790 -0.0808312 -0.08205540  0.2087751</span></span>
+<span><span class="co">#&gt; AIFM1  -0.077020737 -0.0493539  -0.1162488  0.0365235  0.00510608 -0.1441099</span></span>
+<span><span class="co">#&gt; APMAP  -0.000121253 -0.1390497  -0.0867093 -0.0410053 -0.11611495  0.1792133</span></span>
+<span><span class="co">#&gt; ...             ...        ...         ...        ...         ...        ...</span></span>
+<span><span class="co">#&gt; TPP2     0.07597089  0.0558818 -0.00337644 -0.0121018  0.04283655  0.0476116</span></span>
+<span><span class="co">#&gt; TUBA1C  -0.02998746 -0.0217296 -0.00789350  0.0565058 -0.00373714 -0.0119916</span></span>
+<span><span class="co">#&gt; VAT1    -0.05204097 -0.0852005 -0.02017030  0.0952139 -0.16910390 -0.0715073</span></span>
+<span><span class="co">#&gt; XRCC6   -0.00257737  0.0259900  0.10724778 -0.0564281  0.08246124  0.0499968</span></span>
+<span><span class="co">#&gt; YWHAG    0.03318137  0.0621676 -0.05404994  0.0792021 -0.12921509 -0.0384467</span></span>
+<span><span class="co">#&gt;              PC19       PC20     Reverse Potential.contaminant</span></span>
+<span><span class="co">#&gt;         &lt;numeric&gt;  &lt;numeric&gt; &lt;character&gt;           &lt;character&gt;</span></span>
+<span><span class="co">#&gt; ABCE1  -0.0365880 -0.0681561                                  </span></span>
+<span><span class="co">#&gt; ACLY    0.1118103 -0.0208683                                  </span></span>
+<span><span class="co">#&gt; ACTN4   0.0596604  0.0966149                                  </span></span>
+<span><span class="co">#&gt; AIFM1  -0.2174666  0.1085721                                  </span></span>
+<span><span class="co">#&gt; APMAP  -0.0331397  0.1518794                                  </span></span>
+<span><span class="co">#&gt; ...           ...        ...         ...                   ...</span></span>
+<span><span class="co">#&gt; TPP2   -0.0150711  0.0560492                                  </span></span>
+<span><span class="co">#&gt; TUBA1C -0.0269349  0.0296168                                  </span></span>
+<span><span class="co">#&gt; VAT1    0.0480006  0.1489793                                  </span></span>
+<span><span class="co">#&gt; XRCC6   0.0529253 -0.0198865                                  </span></span>
+<span><span class="co">#&gt; YWHAG  -0.1012201  0.1127549                                  </span></span>
 <span><span class="co">#&gt;        Leading.razor.protein.id Leading.razor.protein.symbol        gene</span></span>
 <span><span class="co">#&gt;                     &lt;character&gt;                  &lt;character&gt; &lt;character&gt;</span></span>
 <span><span class="co">#&gt; ABCE1                    P61221                        ABCE1       ABCE1</span></span>
@@ -751,6 +854,9 @@ protein level instead of the peptide level.</p>
 <span><span class="co">#&gt; VAT1           2</span></span>
 <span><span class="co">#&gt; XRCC6          1</span></span>
 <span><span class="co">#&gt; YWHAG          1</span></span></code></pre></div>
+<p>Note that the aggregated tables in <code>caResProts</code> can be
+explored with the visualisation function
+<code><a href="../reference/ScpModel-ComponentAnalysis.html">scpComponentPlot()</a></code>.</p>
 </div>
 <div class="section level2">
 <h2 id="batch-correction">Batch correction<a class="anchor" aria-label="anchor" href="#batch-correction"></a>
@@ -758,7 +864,7 @@ protein level instead of the peptide level.</p>
 <p>Based on the estimated model, we generate batch-corrected data, that
 is data with only the effect of cell type and the residual data. We also
 remove the intercept.</p>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">(</span><span class="va">leduc_batchCorrect</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ScpModel-DataCorrection.html">scpRemoveBatchEffect</a></span><span class="op">(</span></span>
 <span>    <span class="va">leduc_minimal</span>, effects <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Set"</span>, <span class="st">"Channel"</span>, <span class="st">"MedianIntensity"</span><span class="op">)</span>,</span>
 <span>    intercept <span class="op">=</span> <span class="cn">TRUE</span></span>
@@ -806,84 +912,93 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] ggplot2_3.5.0               patchwork_1.2.0            
- [3] scp_1.13.2                  QFeatures_1.13.3           
- [5] MultiAssayExperiment_1.29.1 SummarizedExperiment_1.33.3
- [7] Biobase_2.63.1              GenomicRanges_1.55.4       
- [9] GenomeInfoDb_1.39.9         IRanges_2.37.1             
-[11] S4Vectors_0.41.5            BiocGenerics_0.49.1        
-[13] MatrixGenerics_1.15.0       matrixStats_1.2.0          
-[15] BiocStyle_2.31.0           
+ [1] scater_1.31.2               scuttle_1.13.1             
+ [3] ggplot2_3.5.0               patchwork_1.2.0            
+ [5] SingleCellExperiment_1.25.1 scp_1.13.2                 
+ [7] QFeatures_1.13.3            MultiAssayExperiment_1.29.1
+ [9] SummarizedExperiment_1.33.3 Biobase_2.63.1             
+[11] GenomicRanges_1.55.4        GenomeInfoDb_1.39.9        
+[13] IRanges_2.37.1              S4Vectors_0.41.5           
+[15] BiocGenerics_0.49.1         MatrixGenerics_1.15.0      
+[17] matrixStats_1.2.0           BiocStyle_2.31.0           
 
 loaded via a namespace (and not attached):
- [1] tidyselect_1.2.1            farver_2.1.1               
- [3] dplyr_1.1.4                 bitops_1.0-7               
- [5] fastmap_1.1.1               SingleCellExperiment_1.25.1
- [7] lazyeval_0.2.2              RCurl_1.98-1.14            
- [9] nipals_0.8                  digest_0.6.35              
-[11] lifecycle_1.0.4             cluster_2.1.6              
-[13] ProtGenerics_1.35.4         magrittr_2.0.3             
-[15] compiler_4.5.0              rlang_1.1.3                
-[17] sass_0.4.9                  tools_4.5.0                
-[19] igraph_2.0.3                utf8_1.2.4                 
-[21] yaml_2.3.8                  knitr_1.45                 
-[23] labeling_0.4.3              S4Arrays_1.3.6             
-[25] htmlwidgets_1.6.4           DelayedArray_0.29.9        
-[27] RColorBrewer_1.1-3          abind_1.4-5                
-[29] withr_3.0.0                 purrr_1.0.2                
-[31] desc_1.4.3                  grid_4.5.0                 
-[33] fansi_1.0.6                 colorspace_2.1-0           
-[35] scales_1.3.0                MASS_7.3-60.2              
-[37] cli_3.6.2                   rmarkdown_2.26             
-[39] crayon_1.5.2                ragg_1.3.0                 
-[41] generics_0.1.3              metapod_1.11.1             
-[43] cachem_1.0.8                zlibbioc_1.49.3            
-[45] AnnotationFilter_1.27.0     BiocManager_1.30.22        
-[47] XVector_0.43.1              vctrs_0.6.5                
-[49] Matrix_1.7-0                jsonlite_1.8.8             
-[51] slam_0.1-50                 bookdown_0.38              
-[53] IHW_1.31.0                  ggrepel_0.9.5              
-[55] clue_0.3-65                 systemfonts_1.0.6          
-[57] tidyr_1.3.1                 jquerylib_0.1.4            
-[59] glue_1.7.0                  pkgdown_2.0.7.9000         
-[61] gtable_0.3.4                munsell_0.5.1              
-[63] lpsymphony_1.31.0           tibble_3.2.1               
-[65] pillar_1.9.0                htmltools_0.5.8            
-[67] GenomeInfoDbData_1.2.12     R6_2.5.1                   
-[69] textshaping_0.3.7           evaluate_0.23              
-[71] lattice_0.22-6              highr_0.10                 
-[73] memoise_2.0.1               bslib_0.7.0                
-[75] Rcpp_1.0.12                 fdrtool_1.2.17             
-[77] SparseArray_1.3.4           xfun_0.43                  
-[79] MsCoreUtils_1.15.5          fs_1.6.3                   
-[81] pkgconfig_2.0.3            </code></pre>
+ [1] bitops_1.0-7              gridExtra_2.3            
+ [3] fdrtool_1.2.17            rlang_1.1.3              
+ [5] magrittr_2.0.3            clue_0.3-65              
+ [7] compiler_4.5.0            DelayedMatrixStats_1.25.1
+ [9] systemfonts_1.0.6         vctrs_0.6.5              
+[11] nipals_0.8                ProtGenerics_1.35.4      
+[13] pkgconfig_2.0.3           crayon_1.5.2             
+[15] fastmap_1.1.1             XVector_0.43.1           
+[17] labeling_0.4.3            utf8_1.2.4               
+[19] rmarkdown_2.26            ggbeeswarm_0.7.2         
+[21] ragg_1.3.0                purrr_1.0.2              
+[23] xfun_0.43                 zlibbioc_1.49.3          
+[25] cachem_1.0.8              beachmat_2.19.4          
+[27] jsonlite_1.8.8            highr_0.10               
+[29] DelayedArray_0.29.9       BiocParallel_1.37.1      
+[31] irlba_2.3.5.1             parallel_4.5.0           
+[33] cluster_2.1.6             R6_2.5.1                 
+[35] bslib_0.7.0               RColorBrewer_1.1-3       
+[37] jquerylib_0.1.4           Rcpp_1.0.12              
+[39] bookdown_0.38             knitr_1.45               
+[41] Matrix_1.7-0              igraph_2.0.3             
+[43] tidyselect_1.2.1          viridis_0.6.5            
+[45] abind_1.4-5               yaml_2.3.8               
+[47] codetools_0.2-19          lattice_0.22-6           
+[49] tibble_3.2.1              withr_3.0.0              
+[51] Rtsne_0.17                evaluate_0.23            
+[53] desc_1.4.3                IHW_1.31.0               
+[55] pillar_1.9.0              BiocManager_1.30.22      
+[57] lpsymphony_1.31.0         generics_0.1.3           
+[59] RCurl_1.98-1.14           sparseMatrixStats_1.15.0 
+[61] munsell_0.5.1             scales_1.3.0             
+[63] glue_1.7.0                slam_0.1-50              
+[65] metapod_1.11.1            lazyeval_0.2.2           
+[67] tools_4.5.0               BiocNeighbors_1.21.2     
+[69] ScaledMatrix_1.11.1       fs_1.6.3                 
+[71] grid_4.5.0                tidyr_1.3.1              
+[73] MsCoreUtils_1.15.5        colorspace_2.1-0         
+[75] GenomeInfoDbData_1.2.12   beeswarm_0.4.0           
+[77] BiocSingular_1.19.0       vipor_0.4.7              
+[79] rsvd_1.0.5                cli_3.6.2                
+[81] textshaping_0.3.7         fansi_1.0.6              
+[83] viridisLite_0.4.2         S4Arrays_1.3.6           
+[85] dplyr_1.1.4               AnnotationFilter_1.27.0  
+[87] gtable_0.3.4              sass_0.4.9               
+[89] digest_0.6.35             SparseArray_1.3.4        
+[91] ggrepel_0.9.5             htmlwidgets_1.6.4        
+[93] farver_2.1.1              memoise_2.0.1            
+[95] htmltools_0.5.8           pkgdown_2.0.7.9000       
+[97] lifecycle_1.0.4           MASS_7.3-60.2            </code></pre>
 </div>
 <div class="section level2">
 <h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
 </h2>
-<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">"scp"</span>)</span>
-<span id="cb41-2"><a href="#cb41-2" tabindex="-1"></a>To cite the scp package <span class="cf">in</span> publications use<span class="sc">:</span></span>
-<span id="cb41-3"><a href="#cb41-3" tabindex="-1"></a></span>
-<span id="cb41-4"><a href="#cb41-4" tabindex="-1"></a>  Vanderaa, Christophe, and Laurent Gatto. <span class="fl">2023.</span>  Revisiting the Thorny</span>
-<span id="cb41-5"><a href="#cb41-5" tabindex="-1"></a>  Issue of Missing Values <span class="cf">in</span> Single<span class="sc">-</span>Cell Proteomics. Journal of</span>
-<span id="cb41-6"><a href="#cb41-6" tabindex="-1"></a>  Proteome Research <span class="dv">22</span> (<span class="dv">9</span>)<span class="sc">:</span> 2775–<span class="fl">84.</span></span>
-<span id="cb41-7"><a href="#cb41-7" tabindex="-1"></a></span>
-<span id="cb41-8"><a href="#cb41-8" tabindex="-1"></a>  Vanderaa Christophe and Laurent Gatto. The current state of</span>
-<span id="cb41-9"><a href="#cb41-9" tabindex="-1"></a>  single<span class="sc">-</span>cell proteomics data analysis. Current Protocols <span class="dv">3</span> (<span class="dv">1</span>)<span class="sc">:</span> e658.;</span>
-<span id="cb41-10"><a href="#cb41-10" tabindex="-1"></a>  doi<span class="sc">:</span> https<span class="sc">:</span><span class="er">//</span>doi.org<span class="sc">/</span><span class="fl">10.1002</span><span class="sc">/</span><span class="fu">cpz1.658</span> (<span class="dv">2023</span>).</span>
-<span id="cb41-11"><a href="#cb41-11" tabindex="-1"></a></span>
-<span id="cb41-12"><a href="#cb41-12" tabindex="-1"></a>  Vanderaa Christophe and Laurent Gatto. Replication of Single<span class="sc">-</span>Cell</span>
-<span id="cb41-13"><a href="#cb41-13" tabindex="-1"></a>  Proteomics Data Reveals Important Computational Challenges. Expert</span>
-<span id="cb41-14"><a href="#cb41-14" tabindex="-1"></a>  Review of Proteomics, 1–<span class="dv">9</span> (<span class="dv">2021</span>).</span>
-<span id="cb41-15"><a href="#cb41-15" tabindex="-1"></a></span>
-<span id="cb41-16"><a href="#cb41-16" tabindex="-1"></a>  Vanderaa Christophe and Laurent Gatto. scplainer<span class="sc">:</span> using linear models</span>
-<span id="cb41-17"><a href="#cb41-17" tabindex="-1"></a>  to understand mass spectrometry<span class="sc">-</span>based single<span class="sc">-</span>cell proteomics data.</span>
-<span id="cb41-18"><a href="#cb41-18" tabindex="-1"></a>  bioRxiv <span class="dv">2023</span>.<span class="dv">12</span>.<span class="fl">14.571792</span>; doi<span class="sc">:</span></span>
-<span id="cb41-19"><a href="#cb41-19" tabindex="-1"></a>  https<span class="sc">:</span><span class="er">//</span>doi.org<span class="sc">/</span><span class="fl">10.1101</span><span class="sc">/</span><span class="dv">2023</span>.<span class="dv">12</span>.<span class="fl">14.571792</span></span>
-<span id="cb41-20"><a href="#cb41-20" tabindex="-1"></a></span>
-<span id="cb41-21"><a href="#cb41-21" tabindex="-1"></a>To see these entries <span class="cf">in</span> BibTeX format, use <span class="st">'print(&lt;citation&gt;,</span></span>
-<span id="cb41-22"><a href="#cb41-22" tabindex="-1"></a><span class="st">bibtex=TRUE)'</span>, <span class="st">'toBibtex(.)'</span>, or set</span>
-<span id="cb41-23"><a href="#cb41-23" tabindex="-1"></a><span class="st">'options(citation.bibtex.max=999)'</span>.</span></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" tabindex="-1"></a><span class="fu">citation</span>(<span class="st">"scp"</span>)</span>
+<span id="cb43-2"><a href="#cb43-2" tabindex="-1"></a>To cite the scp package <span class="cf">in</span> publications use<span class="sc">:</span></span>
+<span id="cb43-3"><a href="#cb43-3" tabindex="-1"></a></span>
+<span id="cb43-4"><a href="#cb43-4" tabindex="-1"></a>  Vanderaa, Christophe, and Laurent Gatto. <span class="fl">2023.</span>  Revisiting the Thorny</span>
+<span id="cb43-5"><a href="#cb43-5" tabindex="-1"></a>  Issue of Missing Values <span class="cf">in</span> Single<span class="sc">-</span>Cell Proteomics. Journal of</span>
+<span id="cb43-6"><a href="#cb43-6" tabindex="-1"></a>  Proteome Research <span class="dv">22</span> (<span class="dv">9</span>)<span class="sc">:</span> 2775–<span class="fl">84.</span></span>
+<span id="cb43-7"><a href="#cb43-7" tabindex="-1"></a></span>
+<span id="cb43-8"><a href="#cb43-8" tabindex="-1"></a>  Vanderaa Christophe and Laurent Gatto. The current state of</span>
+<span id="cb43-9"><a href="#cb43-9" tabindex="-1"></a>  single<span class="sc">-</span>cell proteomics data analysis. Current Protocols <span class="dv">3</span> (<span class="dv">1</span>)<span class="sc">:</span> e658.;</span>
+<span id="cb43-10"><a href="#cb43-10" tabindex="-1"></a>  doi<span class="sc">:</span> https<span class="sc">:</span><span class="er">//</span>doi.org<span class="sc">/</span><span class="fl">10.1002</span><span class="sc">/</span><span class="fu">cpz1.658</span> (<span class="dv">2023</span>).</span>
+<span id="cb43-11"><a href="#cb43-11" tabindex="-1"></a></span>
+<span id="cb43-12"><a href="#cb43-12" tabindex="-1"></a>  Vanderaa Christophe and Laurent Gatto. Replication of Single<span class="sc">-</span>Cell</span>
+<span id="cb43-13"><a href="#cb43-13" tabindex="-1"></a>  Proteomics Data Reveals Important Computational Challenges. Expert</span>
+<span id="cb43-14"><a href="#cb43-14" tabindex="-1"></a>  Review of Proteomics, 1–<span class="dv">9</span> (<span class="dv">2021</span>).</span>
+<span id="cb43-15"><a href="#cb43-15" tabindex="-1"></a></span>
+<span id="cb43-16"><a href="#cb43-16" tabindex="-1"></a>  Vanderaa Christophe and Laurent Gatto. scplainer<span class="sc">:</span> using linear models</span>
+<span id="cb43-17"><a href="#cb43-17" tabindex="-1"></a>  to understand mass spectrometry<span class="sc">-</span>based single<span class="sc">-</span>cell proteomics data.</span>
+<span id="cb43-18"><a href="#cb43-18" tabindex="-1"></a>  bioRxiv <span class="dv">2023</span>.<span class="dv">12</span>.<span class="fl">14.571792</span>; doi<span class="sc">:</span></span>
+<span id="cb43-19"><a href="#cb43-19" tabindex="-1"></a>  https<span class="sc">:</span><span class="er">//</span>doi.org<span class="sc">/</span><span class="fl">10.1101</span><span class="sc">/</span><span class="dv">2023</span>.<span class="dv">12</span>.<span class="fl">14.571792</span></span>
+<span id="cb43-20"><a href="#cb43-20" tabindex="-1"></a></span>
+<span id="cb43-21"><a href="#cb43-21" tabindex="-1"></a>To see these entries <span class="cf">in</span> BibTeX format, use <span class="st">'print(&lt;citation&gt;,</span></span>
+<span id="cb43-22"><a href="#cb43-22" tabindex="-1"></a><span class="st">bibtex=TRUE)'</span>, <span class="st">'toBibtex(.)'</span>, or set</span>
+<span id="cb43-23"><a href="#cb43-23" tabindex="-1"></a><span class="st">'options(citation.bibtex.max=999)'</span>.</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
