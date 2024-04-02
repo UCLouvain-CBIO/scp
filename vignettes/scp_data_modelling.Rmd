@@ -12,6 +12,7 @@ output:
         code_folding: show
 date: "`r BiocStyle::doc_date()`"
 package: "`r BiocStyle::pkg_ver('scp')`"
+bibliography: scp.bib
 vignette: >
     %\VignetteIndexEntry{Single Cell Proteomics data modelling}
     %\VignetteEngine{knitr::rmarkdown}
