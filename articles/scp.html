@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Single Cell Proteomics data processing and analysis • scp</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.2</span>
       </span>
     </div>
 
@@ -63,6 +63,9 @@
     </li>
     <li>
       <a href="../articles/reporting_missing_values.html">Reporting missing values for Single Cell Proteomics</a>
+    </li>
+    <li>
+      <a href="../articles/scp_data_modelling.html">Single Cell Proteomics data modelling</a>
     </li>
   </ul>
 </li>
@@ -97,7 +100,7 @@ Gatto</h4>
                                     <h4 data-toc-skip class="author">Christophe
 Vanderaa</h4>
                         
-            <h4 data-toc-skip class="date">13 December 2023</h4>
+            <h4 data-toc-skip class="date">2 April 2024</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/HEAD/vignettes/scp.Rmd" class="external-link"><code>vignettes/scp.Rmd</code></a></small>
       <div class="hidden name"><code>scp.Rmd</code></div>
@@ -113,8 +116,8 @@ Vanderaa</h4>
 spectrometry (MS)-based single cell proteomics (SCP) data. The functions
 rely on a specific data structure that wraps <a href="https://rformassspectrometry.github.io/QFeatures/" class="external-link"><code>QFeatures</code></a>
 objects (<span class="citation">Gatto (2020)</span>) around <a href="http://bioconductor.org/packages/release/bioc/html/SingleCellExperiment.html" class="external-link"><code>SingleCellExperiment</code></a>
-objects (<span class="citation">(<strong>Amezquita2019-bf?</strong>)</span>). This data
-structure could be seen as Matryoshka dolls were the
+objects (<span class="citation">Amezquita et al. (2020)</span>). This
+data structure could be seen as Matryoshka dolls were the
 <code>SingleCellExperiment</code> objects are small dolls contained in
 the bigger <code>QFeatures</code> doll.</p>
 <p>The <code>SingleCellExperiment</code> class provides a dedicated
@@ -142,11 +145,10 @@ project</a>.</p>
 package.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://UCLouvain-CBIO.github.io/scp" class="external-link">"scp"</a></span><span class="op">)</span></span></code></pre></div>
-<p>We also load <code>ggplot2</code>, <code>magrittr</code> and
-<code>dplyr</code> for convenient data manipulation and plotting.</p>
+<p>We also load <code>ggplot2</code> and <code>dplyr</code> for
+convenient data manipulation and plotting.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://magrittr.tidyverse.org" class="external-link">"magrittr"</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://dplyr.tidyverse.org" class="external-link">"dplyr"</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -160,9 +162,9 @@ the steps presented here are the best steps for this type of data
 analysis. This vignette performs the steps that were described in the
 SCoPE2 landmark paper (<span class="citation">Specht et al.
 (2021)</span>) and that were reproduced in another work using the
-<code>scp</code> package (<span class="citation">(<strong>Vanderaa2021-ue?</strong>)</span>). The
-replication on the full SCoPE2 dataset using <code>scp</code> is
-available in <a href="https://uclouvain-cbio.github.io/SCP.replication/articles/SCoPE2.html" class="external-link">this
+<code>scp</code> package (<span class="citation">Vanderaa and Gatto
+(2021)</span>). The replication on the full SCoPE2 dataset using
+<code>scp</code> is available in <a href="https://uclouvain-cbio.github.io/SCP.replication/articles/SCoPE2.html" class="external-link">this
 vignette</a>. We hope to convince the reader that, although the workflow
 is probably not optimal, <code>scp</code> has the full potential to
 perform standardized and principled data analysis. All functions
@@ -337,7 +339,7 @@ meet the provided condition(s). For instance,
 <code>"+"</code> (<em>i.e.</em> the PSM is not matched to the decoy
 database).</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-filtering.html" class="external-link">filterFeatures</a></span><span class="op">(</span><span class="va">scp</span>,</span>
+<code class="sourceCode R"><span><span class="va">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/filterFeatures.html" class="external-link">filterFeatures</a></span><span class="op">(</span><span class="va">scp</span>,</span>
 <span>                      <span class="op">~</span> <span class="va">Reverse</span> <span class="op">!=</span> <span class="st">"+"</span> <span class="op">&amp;</span></span>
 <span>                          <span class="va">Potential.contaminant</span> <span class="op">!=</span> <span class="st">"+"</span> <span class="op">&amp;</span></span>
 <span>                          <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">PIF</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">PIF</span> <span class="op">&gt;</span> <span class="fl">0.8</span><span class="op">)</span></span>
@@ -476,8 +478,8 @@ SCR. We collect the <code>rowData</code> from several assays in a single
 table <code>DataFrame</code> using the <code>rbindRowData</code>
 function from <code>QFeatures</code>.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-class.html" class="external-link">rbindRowData</a></span><span class="op">(</span><span class="va">scp</span>, i <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="va">data.frame</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-class.html" class="external-link">rbindRowData</a></span><span class="op">(</span><span class="va">scp</span>, i <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">MeanSCR</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html" class="external-link">geom_histogram</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span>xintercept <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="fl">200</span>, <span class="fl">0.1</span><span class="op">)</span>,</span>
@@ -493,7 +495,7 @@ quantification of those PSMs. We therefore filter out PSMs with an
 average SCR higher than 0.1 (solide line). This is again easily
 performed using the <code>filterFeatures</code> functions.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-filtering.html" class="external-link">filterFeatures</a></span><span class="op">(</span><span class="va">scp</span>,</span>
+<code class="sourceCode R"><span><span class="va">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/filterFeatures.html" class="external-link">filterFeatures</a></span><span class="op">(</span><span class="va">scp</span>,</span>
 <span>                      <span class="op">~</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">MeanSCR</span><span class="op">)</span> <span class="op">&amp;</span></span>
 <span>                          <span class="va">MeanSCR</span> <span class="op">&lt;</span> <span class="fl">0.1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 'MeanSCR' found in 3 out of 3 assay(s)</span></span></code></pre></div>
@@ -534,7 +536,7 @@ time, we store the q-values in a new field called
 1%. This can be performed using <code>filterFeatures</code> because the
 q-values were stored in the <code>rowData</code>.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-filtering.html" class="external-link">filterFeatures</a></span><span class="op">(</span><span class="va">scp</span>,</span>
+<code class="sourceCode R"><span><span class="va">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/filterFeatures.html" class="external-link">filterFeatures</a></span><span class="op">(</span><span class="va">scp</span>,</span>
 <span>                      <span class="op">~</span> <span class="va">qvalue_proteins</span> <span class="op">&lt;</span> <span class="fl">0.01</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 'qvalue_proteins' found in 3 out of 3 assay(s)</span></span></code></pre></div>
 </div>
@@ -701,8 +703,8 @@ single cell. We compute and store the median intensity in the
 <p>Looking at the distribution of the median per cell can highlight
 low-quality cells.</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">scp</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="va">data.frame</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">scp</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">MedianRI</span>, </span>
 <span>        y <span class="op">=</span> <span class="va">SampleType</span>,</span>
@@ -751,9 +753,9 @@ quantifications and hence can be used to estimate an empirical null
 distribution of the CV. This distribution helps defining a threshold
 that filters out single-cells that contain noisy quantification.</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">getWithColData</span><span class="op">(</span><span class="va">scp</span>, <span class="st">"peptides"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="va">colData</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="va">data.frame</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<code class="sourceCode R"><span><span class="fu">getWithColData</span><span class="op">(</span><span class="va">scp</span>, <span class="st">"peptides"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">MedianCV</span>,</span>
 <span>               fill <span class="op">=</span> <span class="va">SampleType</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html" class="external-link">geom_boxplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -913,10 +915,10 @@ dividing.</p>
 </h3>
 <p>The protein data contains a lot of missing values.</p>
 <div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">scp</span><span class="op">[[</span><span class="st">"proteins_norm"</span><span class="op">]</span><span class="op">]</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="va">assay</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="va">is.na</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="va">mean</span></span>
+<code class="sourceCode R"><span><span class="va">scp</span><span class="op">[[</span><span class="st">"proteins_norm"</span><span class="op">]</span><span class="op">]</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0.3291962</span></span></code></pre></div>
 <p>The average missingness in the <code>proteins</code> assay is around
 25 %. Including more samples and hence more batches can increase the
@@ -938,10 +940,10 @@ can be found in <code><a href="https://rdrr.io/pkg/impute/man/impute.knn.html" c
 <span><span class="co">#&gt; Imputing along margin 1 (features/rows).</span></span></code></pre></div>
 <p>Note that after imputation, no value are missing.</p>
 <div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">scp</span><span class="op">[[</span><span class="st">"proteins_imptd"</span><span class="op">]</span><span class="op">]</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="va">assay</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="va">is.na</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="va">mean</span></span>
+<code class="sourceCode R"><span><span class="va">scp</span><span class="op">[[</span><span class="st">"proteins_imptd"</span><span class="op">]</span><span class="op">]</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -1081,14 +1083,14 @@ data is formatted to a long format table that can easily be plugged in
 the <code>ggplot2</code> visualization tool.</p>
 <div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Get the features related to Plastin-2 (P13796)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-subsetBy.html" class="external-link">subsetByFeature</a></span><span class="op">(</span><span class="va">scp</span>, <span class="st">"P13796"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-subsetBy.html" class="external-link">subsetByFeature</a></span><span class="op">(</span><span class="va">scp</span>, <span class="st">"P13796"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="co">## Format the `QFeatures` to a long format table</span></span>
-<span>    <span class="fu">longFormat</span><span class="op">(</span>colvars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Raw.file"</span>, <span class="st">"SampleType"</span>, <span class="st">"Channel"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="va">data.frame</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="fu">longFormat</span><span class="op">(</span>colvars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Raw.file"</span>, <span class="st">"SampleType"</span>, <span class="st">"Channel"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="co">## This is used to preserve ordering of the samples and assays in ggplot2</span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>assay <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">assay</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">scp</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>           Channel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"Reporter.intensity."</span>, <span class="st">"TMT-"</span>, <span class="va">Channel</span><span class="op">)</span>,</span>
-<span>           Channel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">Channel</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">Channel</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>           Channel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">Channel</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">Channel</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="co">## Start plotting</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Channel</span>, y <span class="op">=</span> <span class="va">value</span>, group <span class="op">=</span> <span class="va">rowname</span>, col <span class="op">=</span> <span class="va">SampleType</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -1113,9 +1115,9 @@ that describes more in details how to visualize and explore data in a
 <div class="section level2">
 <h2 class="unnumbered" id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
 </h2>
-<pre><code>R Under development (unstable) (2023-11-22 r85609)
+<pre><code>R Under development (unstable) (2024-03-28 r86224)
 Platform: x86_64-pc-linux-gnu
-Running under: Ubuntu 22.04.3 LTS
+Running under: Ubuntu 22.04.4 LTS
 
 Matrix products: default
 BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -1137,75 +1139,79 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] scater_1.31.1               scuttle_1.13.0             
- [3] SingleCellExperiment_1.25.0 sva_3.51.0                 
- [5] BiocParallel_1.37.0         genefilter_1.85.0          
- [7] mgcv_1.9-0                  nlme_3.1-164               
- [9] dplyr_1.1.4                 magrittr_2.0.3             
-[11] ggplot2_3.4.4               scp_1.13.0                 
-[13] QFeatures_1.13.1            MultiAssayExperiment_1.29.0
-[15] SummarizedExperiment_1.33.1 Biobase_2.63.0             
-[17] GenomicRanges_1.55.1        GenomeInfoDb_1.39.1        
-[19] IRanges_2.37.0              S4Vectors_0.41.2           
-[21] BiocGenerics_0.49.1         MatrixGenerics_1.15.0      
-[23] matrixStats_1.2.0           BiocStyle_2.31.0           
+ [1] scater_1.31.2               scuttle_1.13.1             
+ [3] SingleCellExperiment_1.25.1 sva_3.51.0                 
+ [5] BiocParallel_1.37.1         genefilter_1.85.1          
+ [7] mgcv_1.9-1                  nlme_3.1-164               
+ [9] dplyr_1.1.4                 ggplot2_3.5.0              
+[11] scp_1.13.2                  QFeatures_1.13.3           
+[13] MultiAssayExperiment_1.29.1 SummarizedExperiment_1.33.3
+[15] Biobase_2.63.1              GenomicRanges_1.55.4       
+[17] GenomeInfoDb_1.39.9         IRanges_2.37.1             
+[19] S4Vectors_0.41.5            BiocGenerics_0.49.1        
+[21] MatrixGenerics_1.15.0       matrixStats_1.2.0          
+[23] BiocStyle_2.31.0           
 
 loaded via a namespace (and not attached):
-  [1] jsonlite_1.8.8            ggbeeswarm_0.7.2         
-  [3] farver_2.1.1              rmarkdown_2.25           
-  [5] fs_1.6.3                  zlibbioc_1.49.0          
-  [7] ragg_1.2.7                vctrs_0.6.5              
-  [9] memoise_2.0.1             DelayedMatrixStats_1.25.1
- [11] RCurl_1.98-1.13           htmltools_0.5.7          
- [13] S4Arrays_1.3.1            BiocBaseUtils_1.5.0      
- [15] BiocNeighbors_1.21.1      SparseArray_1.3.1        
- [17] sass_0.4.8                bslib_0.6.1              
- [19] desc_1.4.3                impute_1.77.0            
- [21] cachem_1.0.8              igraph_1.6.0             
- [23] lifecycle_1.0.4           pkgconfig_2.0.3          
- [25] rsvd_1.0.5                Matrix_1.6-4             
- [27] R6_2.5.1                  fastmap_1.1.1            
- [29] GenomeInfoDbData_1.2.11   clue_0.3-65              
- [31] digest_0.6.33             colorspace_2.1-0         
- [33] AnnotationDbi_1.65.2      irlba_2.3.5.1            
- [35] textshaping_0.3.7         RSQLite_2.3.4            
- [37] beachmat_2.19.0           labeling_0.4.3           
- [39] fansi_1.0.6               httr_1.4.7               
- [41] abind_1.4-5               compiler_4.4.0           
- [43] bit64_4.0.5               withr_2.5.2              
- [45] viridis_0.6.4             DBI_1.1.3                
- [47] highr_0.10                MASS_7.3-60.1            
- [49] DelayedArray_0.29.0       tools_4.4.0              
- [51] vipor_0.4.5               beeswarm_0.4.0           
- [53] glue_1.6.2                grid_4.4.0               
- [55] cluster_2.1.6             generics_0.1.3           
- [57] gtable_0.3.4              BiocSingular_1.19.0      
- [59] ScaledMatrix_1.11.0       utf8_1.2.4               
- [61] XVector_0.43.0            ggrepel_0.9.4            
- [63] pillar_1.9.0              stringr_1.5.1            
- [65] limma_3.59.1              splines_4.4.0            
- [67] lattice_0.22-5            FNN_1.1.3.2              
- [69] survival_3.5-7            bit_4.0.5                
- [71] annotate_1.81.0           tidyselect_1.2.0         
- [73] locfit_1.5-9.8            Biostrings_2.71.1        
- [75] knitr_1.45                gridExtra_2.3            
- [77] bookdown_0.37             ProtGenerics_1.35.0      
- [79] edgeR_4.1.3               xfun_0.41                
- [81] statmod_1.5.0             stringi_1.8.3            
- [83] lazyeval_0.2.2            yaml_2.3.8               
- [85] evaluate_0.23             codetools_0.2-19         
- [87] MsCoreUtils_1.15.1        tibble_3.2.1             
- [89] BiocManager_1.30.22       cli_3.6.2                
- [91] uwot_0.1.16               xtable_1.8-4             
- [93] systemfonts_1.0.5         munsell_0.5.0            
- [95] jquerylib_0.1.4           Rcpp_1.0.11              
- [97] png_0.1-8                 XML_3.99-0.16            
- [99] parallel_4.4.0            pkgdown_2.0.7.9000       
-[101] blob_1.2.4                AnnotationFilter_1.27.0  
-[103] sparseMatrixStats_1.15.0  bitops_1.0-7             
-[105] viridisLite_0.4.2         scales_1.3.0             
-[107] purrr_1.0.2               crayon_1.5.2             
-[109] rlang_1.1.2               KEGGREST_1.43.0          </code></pre>
+  [1] RColorBrewer_1.1-3        jsonlite_1.8.8           
+  [3] magrittr_2.0.3            ggbeeswarm_0.7.2         
+  [5] farver_2.1.1              rmarkdown_2.26           
+  [7] fs_1.6.3                  zlibbioc_1.49.3          
+  [9] ragg_1.3.0                vctrs_0.6.5              
+ [11] memoise_2.0.1             DelayedMatrixStats_1.25.1
+ [13] RCurl_1.98-1.14           htmltools_0.5.8          
+ [15] S4Arrays_1.3.6            BiocBaseUtils_1.5.1      
+ [17] BiocNeighbors_1.21.2      SparseArray_1.3.4        
+ [19] sass_0.4.9                bslib_0.7.0              
+ [21] htmlwidgets_1.6.4         desc_1.4.3               
+ [23] impute_1.77.0             cachem_1.0.8             
+ [25] igraph_2.0.3              lifecycle_1.0.4          
+ [27] pkgconfig_2.0.3           rsvd_1.0.5               
+ [29] Matrix_1.7-0              R6_2.5.1                 
+ [31] fastmap_1.1.1             GenomeInfoDbData_1.2.12  
+ [33] clue_0.3-65               digest_0.6.35            
+ [35] fdrtool_1.2.17            colorspace_2.1-0         
+ [37] AnnotationDbi_1.65.2      irlba_2.3.5.1            
+ [39] textshaping_0.3.7         lpsymphony_1.31.0        
+ [41] RSQLite_2.3.6             beachmat_2.19.4          
+ [43] labeling_0.4.3            fansi_1.0.6              
+ [45] httr_1.4.7                abind_1.4-5              
+ [47] compiler_4.5.0            bit64_4.0.5              
+ [49] withr_3.0.0               viridis_0.6.5            
+ [51] DBI_1.2.2                 highr_0.10               
+ [53] MASS_7.3-60.2             DelayedArray_0.29.9      
+ [55] tools_4.5.0               vipor_0.4.7              
+ [57] beeswarm_0.4.0            glue_1.7.0               
+ [59] grid_4.5.0                cluster_2.1.6            
+ [61] generics_0.1.3            gtable_0.3.4             
+ [63] tidyr_1.3.1               ScaledMatrix_1.11.1      
+ [65] BiocSingular_1.19.0       metapod_1.11.1           
+ [67] utf8_1.2.4                XVector_0.43.1           
+ [69] ggrepel_0.9.5             pillar_1.9.0             
+ [71] limma_3.59.6              splines_4.5.0            
+ [73] lattice_0.22-6            FNN_1.1.4                
+ [75] survival_3.5-8            bit_4.0.5                
+ [77] annotate_1.81.2           tidyselect_1.2.1         
+ [79] locfit_1.5-9.9            Biostrings_2.71.5        
+ [81] knitr_1.45                gridExtra_2.3            
+ [83] bookdown_0.38             ProtGenerics_1.35.4      
+ [85] edgeR_4.1.19              IHW_1.31.0               
+ [87] xfun_0.43                 statmod_1.5.0            
+ [89] lazyeval_0.2.2            yaml_2.3.8               
+ [91] evaluate_0.23             codetools_0.2-19         
+ [93] nipals_0.8                MsCoreUtils_1.15.5       
+ [95] tibble_3.2.1              BiocManager_1.30.22      
+ [97] cli_3.6.2                 uwot_0.1.16              
+ [99] xtable_1.8-4              systemfonts_1.0.6        
+[101] munsell_0.5.1             jquerylib_0.1.4          
+[103] Rcpp_1.0.12               png_0.1-8                
+[105] XML_3.99-0.16.1           parallel_4.5.0           
+[107] pkgdown_2.0.7.9000        blob_1.2.4               
+[109] AnnotationFilter_1.27.0   sparseMatrixStats_1.15.0 
+[111] bitops_1.0-7              viridisLite_0.4.2        
+[113] slam_0.1-50               scales_1.3.0             
+[115] purrr_1.0.2               crayon_1.5.2             
+[117] rlang_1.1.3               KEGGREST_1.43.0          </code></pre>
 </div>
 <div class="section level2">
 <h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
@@ -1239,6 +1245,12 @@ license</a> license.</p>
 <h2 class="unnumbered" id="reference">Reference<a class="anchor" aria-label="anchor" href="#reference"></a>
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-Amezquita2019-bf" class="csl-entry">
+Amezquita, Robert A, Aaron T L Lun, Etienne Becht, Vince J Carey,
+Lindsay N Carpp, Ludwig Geistlinger, Federico Marini, et al. 2020.
+<span>“Orchestrating Single-Cell Analysis with Bioconductor.”</span>
+<em>Nat. Methods</em> 17 (2): 137–45.
+</div>
 <div id="ref-Chen2019-uc" class="csl-entry">
 Chen, Albert Tian, Alexander Franks, and Nikolai Slavov. 2019.
 <span>“<span>DART-ID</span> Increases Single-Cell Proteome
@@ -1265,6 +1277,12 @@ Analysis of Macrophage Heterogeneity Using <span>SCoPE2</span>.”</span>
 Tyanova, Stefka, Tikira Temu, and Juergen Cox. 2016. <span>“The
 <span>MaxQuant</span> Computational Platform for Mass Spectrometry-Based
 Shotgun Proteomics.”</span> <em>Nat. Protoc.</em> 11 (12): 2301–19.
+</div>
+<div id="ref-Vanderaa2021-ue" class="csl-entry">
+Vanderaa, Christophe, and Laurent Gatto. 2021. <span>“Replication of
+Single-Cell Proteomics Data Reveals Important Computational
+Challenges.”</span> <em>Expert Review of Proteomics</em> 18 (10):
+835–43. <a href="https://doi.org/10.1080/14789450.2021.1988571" class="external-link">https://doi.org/10.1080/14789450.2021.1988571</a>.
 </div>
 </div>
 </div>

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>QFeatures in a nutshell • scp</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
+<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.2</span>
       </span>
     </div>
 
@@ -63,6 +63,9 @@
     </li>
     <li>
       <a href="../articles/reporting_missing_values.html">Reporting missing values for Single Cell Proteomics</a>
+    </li>
+    <li>
+      <a href="../articles/scp_data_modelling.html">Single Cell Proteomics data modelling</a>
     </li>
   </ul>
 </li>
@@ -96,7 +99,7 @@ Gatto</h4>
                                     <h4 data-toc-skip class="author">Christophe
 Vanderaa</h4>
                         
-            <h4 data-toc-skip class="date">13 December 2023</h4>
+            <h4 data-toc-skip class="date">2 April 2024</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/HEAD/vignettes/QFeatures_nutshell.Rmd" class="external-link"><code>vignettes/QFeatures_nutshell.Rmd</code></a></small>
       <div class="hidden name"><code>QFeatures_nutshell.Rmd</code></div>
@@ -119,6 +122,12 @@ it) objects termed <strong>assays</strong>. The assays in a
 composed of peptides, themselves produced by spectra, as depicted in
 figure below.</p>
 <p><img src="https://rformassspectrometry.github.io/QFeatures/articles/QFeatures_files/figure-html/featuresplot-1.png"></p>
+<p>A more technical representation is shown below, highlighting that
+each assay is a <code>SummarizedExperiment</code> (containing the
+quantitative data, row and column annotations for each individual
+assay), as well as a global sample annotation table, that annotates
+cells across all assays.</p>
+<p><img src="https://lgatto.github.io/QFeaturesScpWorkshop2021/articles/figs/SCP_framework.png"></p>
 <p>Those links are stored as part as the <code>QFeatures</code> object
 and connect the assays together. We load an example dataset from the
 <code>scp</code> package that is formatted as an <code>QFeatures</code>
@@ -467,7 +476,7 @@ different MS runs.</p>
 is performed by <code>filterFeatures</code>. For example, we want to
 remove features that are associated to reverse sequence hits.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-filtering.html" class="external-link">filterFeatures</a></span><span class="op">(</span><span class="va">scp1</span>, <span class="op">~</span> <span class="va">Reverse</span> <span class="op">!=</span> <span class="st">"+"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/filterFeatures.html" class="external-link">filterFeatures</a></span><span class="op">(</span><span class="va">scp1</span>, <span class="op">~</span> <span class="va">Reverse</span> <span class="op">!=</span> <span class="st">"+"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 'Reverse' found in 4 out of 5 assay(s)</span></span>
 <span><span class="co">#&gt; No filter applied to the following assay(s) because one or more filtering variables are missing in the rowData: proteins.</span></span>
 <span><span class="co">#&gt; You can control whether to remove or keep the features using the 'keep' argument (see '?filterFeature').</span></span>
@@ -539,7 +548,7 @@ that aggregates its features with respect to a grouping variable in the
 function.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">aggregateFeatures</a></span><span class="op">(</span><span class="va">scp1</span>, i <span class="op">=</span> <span class="st">"190321S_LCA10_X_FP97AG"</span>, fcol <span class="op">=</span> <span class="st">"protein"</span>,</span>
-<span>                  name <span class="op">=</span> <span class="st">"190321S_LCA10_X_FP97AG_aggr"</span>, </span>
+<span>                  name <span class="op">=</span> <span class="st">"190321S_LCA10_X_FP97AG_aggr"</span>,</span>
 <span>                  fun <span class="op">=</span> <span class="fu">MsCoreUtils</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/MsCoreUtils/man/robustSummary.html" class="external-link">robustSummary</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; Your row data contain missing values. Please read the relevant</span></span>
 <span><span class="co">#&gt; section(s) in the aggregateFeatures manual page regarding the effects</span></span>
@@ -569,7 +578,7 @@ an interface to a wide variety of normalization methods. See
 available normalization methods. Below, we normalize the samples so that
 they are mean centered.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/normalize.html" class="external-link">normalize</a></span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"proteins"</span>, method <span class="op">=</span> <span class="st">"center.mean"</span>, </span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/normalize.html" class="external-link">normalize</a></span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"proteins"</span>, method <span class="op">=</span> <span class="st">"center.mean"</span>,</span>
 <span>          name <span class="op">=</span> <span class="st">"proteins_mcenter"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; An instance of class QFeatures containing 6 assays:</span></span>
 <span><span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 11 columns </span></span>
@@ -584,7 +593,7 @@ supplied manually. As an example, we here normalize the samples using a
 scaled size factor.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"proteins"</span><span class="op">)</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">/</span> <span class="fl">1E4</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-processing.html" class="external-link">sweep</a></span><span class="op">(</span><span class="va">scp1</span>, i <span class="op">=</span> <span class="st">"proteins"</span>, </span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-processing.html" class="external-link">sweep</a></span><span class="op">(</span><span class="va">scp1</span>, i <span class="op">=</span> <span class="st">"proteins"</span>,</span>
 <span>      MARGIN <span class="op">=</span> <span class="fl">2</span>, <span class="co">## 1 = by feature; 2 = by sample</span></span>
 <span>      STATS <span class="op">=</span> <span class="va">sf</span>, FUN <span class="op">=</span> <span class="st">"/"</span>,</span>
 <span>      name <span class="op">=</span> <span class="st">"proteins_sf"</span><span class="op">)</span></span>
@@ -604,7 +613,7 @@ scaled size factor.</p>
 the quantitative data. We here show its usage by transforming the
 protein data using a base 2 logarithm with a pseudo-count of one.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-processing.html" class="external-link">logTransform</a></span><span class="op">(</span><span class="va">scp1</span>, i <span class="op">=</span> <span class="st">"proteins"</span>, base <span class="op">=</span> <span class="fl">2</span>, pc <span class="op">=</span> <span class="fl">1</span>, </span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-processing.html" class="external-link">logTransform</a></span><span class="op">(</span><span class="va">scp1</span>, i <span class="op">=</span> <span class="st">"proteins"</span>, base <span class="op">=</span> <span class="fl">2</span>, pc <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>             name <span class="op">=</span> <span class="st">"proteins_log"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; An instance of class QFeatures containing 6 assays:</span></span>
 <span><span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 11 columns </span></span>
@@ -647,13 +656,13 @@ can be applied. Note however that using <code>ggplot2</code> require
 another. For example, we plot the parental ion fraction (measure of
 spectral purity) for each of the three MS batches.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">rd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-class.html" class="external-link">rbindRowData</a></span><span class="op">(</span><span class="va">scp1</span>, i <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span> </span>
+<code class="sourceCode R"><span><span class="va">rd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-class.html" class="external-link">rbindRowData</a></span><span class="op">(</span><span class="va">scp1</span>, i <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://ggplot2.tidyverse.org" class="external-link">"ggplot2"</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">rd</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">PIF</span>, </span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y <span class="op">=</span> <span class="va">PIF</span>,</span>
 <span>        x <span class="op">=</span> <span class="va">assay</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html" class="external-link">geom_boxplot</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: Removed 64 rows containing non-finite values</span></span>
+<span><span class="co">#&gt; Warning: Removed 64 rows containing non-finite outside the scale range</span></span>
 <span><span class="co">#&gt; (`stat_boxplot()`).</span></span></code></pre></div>
 <p><img src="QFeatures_nutshell_files/figure-html/vis1-1.png" width="624"></p>
 <p>Combining the metadata and the quantitative data is more challenging
@@ -666,13 +675,13 @@ respect to the sample type. Both pieces of information are taken from
 the <code>colData</code>, so we provide them as
 <code>colvars</code>.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">lf</span> <span class="op">&lt;-</span> <span class="fu">longFormat</span><span class="op">(</span><span class="va">scp1</span><span class="op">[</span>, , <span class="fl">1</span><span class="op">]</span>, </span>
+<code class="sourceCode R"><span><span class="va">lf</span> <span class="op">&lt;-</span> <span class="fu">longFormat</span><span class="op">(</span><span class="va">scp1</span><span class="op">[</span>, , <span class="fl">1</span><span class="op">]</span>,</span>
 <span>                 colvars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SampleType"</span>, <span class="st">"Channel"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; harmonizing input:</span></span>
 <span><span class="co">#&gt;   removing 141 sampleMap rows not in names(experiments)</span></span>
 <span><span class="co">#&gt;   removing 27 colData rownames not in sampleMap 'primary'</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">lf</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Channel</span>, </span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Channel</span>,</span>
 <span>        y <span class="op">=</span> <span class="va">value</span>,</span>
 <span>        colour <span class="op">=</span> <span class="va">SampleType</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html" class="external-link">geom_boxplot</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
@@ -684,9 +693,9 @@ visualization <a href="https://rformassspectrometry.github.io/QFeatures/articles
 <div class="section level2">
 <h2 class="unnumbered" id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
 </h2>
-<pre><code>R Under development (unstable) (2023-11-22 r85609)
+<pre><code>R Under development (unstable) (2024-03-28 r86224)
 Platform: x86_64-pc-linux-gnu
-Running under: Ubuntu 22.04.3 LTS
+Running under: Ubuntu 22.04.4 LTS
 
 Matrix products: default
 BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -708,52 +717,57 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] ggplot2_3.4.4               scp_1.13.0                 
- [3] QFeatures_1.13.1            MultiAssayExperiment_1.29.0
- [5] SummarizedExperiment_1.33.1 Biobase_2.63.0             
- [7] GenomicRanges_1.55.1        GenomeInfoDb_1.39.1        
- [9] IRanges_2.37.0              S4Vectors_0.41.2           
+ [1] ggplot2_3.5.0               scp_1.13.2                 
+ [3] QFeatures_1.13.3            MultiAssayExperiment_1.29.1
+ [5] SummarizedExperiment_1.33.3 Biobase_2.63.1             
+ [7] GenomicRanges_1.55.4        GenomeInfoDb_1.39.9        
+ [9] IRanges_2.37.1              S4Vectors_0.41.5           
 [11] BiocGenerics_0.49.1         MatrixGenerics_1.15.0      
 [13] matrixStats_1.2.0           BiocStyle_2.31.0           
 
 loaded via a namespace (and not attached):
- [1] gtable_0.3.4                impute_1.77.0              
- [3] xfun_0.41                   bslib_0.6.1                
- [5] lattice_0.22-5              generics_0.1.3             
- [7] vctrs_0.6.5                 tools_4.4.0                
- [9] bitops_1.0-7                tibble_3.2.1               
-[11] fansi_1.0.6                 highr_0.10                 
-[13] cluster_2.1.6               BiocBaseUtils_1.5.0        
-[15] pkgconfig_2.0.3             Matrix_1.6-4               
-[17] desc_1.4.3                  lifecycle_1.0.4            
-[19] GenomeInfoDbData_1.2.11     farver_2.1.1               
-[21] compiler_4.4.0              stringr_1.5.1              
-[23] textshaping_0.3.7           munsell_0.5.0              
-[25] clue_0.3-65                 htmltools_0.5.7            
-[27] sass_0.4.8                  RCurl_1.98-1.13            
-[29] yaml_2.3.8                  lazyeval_0.2.2             
-[31] pillar_1.9.0                pkgdown_2.0.7.9000         
-[33] crayon_1.5.2                jquerylib_0.1.4            
-[35] MASS_7.3-60.1               SingleCellExperiment_1.25.0
-[37] DelayedArray_0.29.0         cachem_1.0.8               
-[39] abind_1.4-5                 tidyselect_1.2.0           
-[41] digest_0.6.33               stringi_1.8.3              
-[43] dplyr_1.1.4                 purrr_1.0.2                
-[45] bookdown_0.37               labeling_0.4.3             
-[47] fastmap_1.1.1               grid_4.4.0                 
-[49] colorspace_2.1-0            cli_3.6.2                  
-[51] SparseArray_1.3.1           magrittr_2.0.3             
-[53] S4Arrays_1.3.1              utf8_1.2.4                 
-[55] withr_2.5.2                 scales_1.3.0               
-[57] rmarkdown_2.25              XVector_0.43.0             
-[59] igraph_1.6.0                ragg_1.2.7                 
-[61] memoise_2.0.1               evaluate_0.23              
-[63] knitr_1.45                  rlang_1.1.2                
-[65] glue_1.6.2                  BiocManager_1.30.22        
-[67] jsonlite_1.8.8              AnnotationFilter_1.27.0    
-[69] R6_2.5.1                    systemfonts_1.0.5          
-[71] fs_1.6.3                    zlibbioc_1.49.0            
-[73] ProtGenerics_1.35.0         MsCoreUtils_1.15.1         </code></pre>
+ [1] tidyselect_1.2.1            farver_2.1.1               
+ [3] dplyr_1.1.4                 bitops_1.0-7               
+ [5] fastmap_1.1.1               SingleCellExperiment_1.25.1
+ [7] lazyeval_0.2.2              RCurl_1.98-1.14            
+ [9] nipals_0.8                  digest_0.6.35              
+[11] lifecycle_1.0.4             cluster_2.1.6              
+[13] ProtGenerics_1.35.4         magrittr_2.0.3             
+[15] compiler_4.5.0              rlang_1.1.3                
+[17] sass_0.4.9                  tools_4.5.0                
+[19] igraph_2.0.3                utf8_1.2.4                 
+[21] yaml_2.3.8                  knitr_1.45                 
+[23] labeling_0.4.3              S4Arrays_1.3.6             
+[25] htmlwidgets_1.6.4           DelayedArray_0.29.9        
+[27] RColorBrewer_1.1-3          abind_1.4-5                
+[29] withr_3.0.0                 purrr_1.0.2                
+[31] desc_1.4.3                  grid_4.5.0                 
+[33] fansi_1.0.6                 colorspace_2.1-0           
+[35] scales_1.3.0                MASS_7.3-60.2              
+[37] cli_3.6.2                   rmarkdown_2.26             
+[39] crayon_1.5.2                ragg_1.3.0                 
+[41] generics_0.1.3              metapod_1.11.1             
+[43] BiocBaseUtils_1.5.1         cachem_1.0.8               
+[45] zlibbioc_1.49.3             impute_1.77.0              
+[47] AnnotationFilter_1.27.0     BiocManager_1.30.22        
+[49] XVector_0.43.1              vctrs_0.6.5                
+[51] Matrix_1.7-0                jsonlite_1.8.8             
+[53] slam_0.1-50                 bookdown_0.38              
+[55] IHW_1.31.0                  ggrepel_0.9.5              
+[57] clue_0.3-65                 systemfonts_1.0.6          
+[59] tidyr_1.3.1                 jquerylib_0.1.4            
+[61] glue_1.7.0                  pkgdown_2.0.7.9000         
+[63] gtable_0.3.4                munsell_0.5.1              
+[65] lpsymphony_1.31.0           tibble_3.2.1               
+[67] pillar_1.9.0                htmltools_0.5.8            
+[69] GenomeInfoDbData_1.2.12     R6_2.5.1                   
+[71] textshaping_0.3.7           evaluate_0.23              
+[73] lattice_0.22-6              highr_0.10                 
+[75] memoise_2.0.1               bslib_0.7.0                
+[77] Rcpp_1.0.12                 fdrtool_1.2.17             
+[79] SparseArray_1.3.4           xfun_0.43                  
+[81] MsCoreUtils_1.15.5          fs_1.6.3                   
+[83] pkgconfig_2.0.3            </code></pre>
 </div>
 <div class="section level2">
 <h2 id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>

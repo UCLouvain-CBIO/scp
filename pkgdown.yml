@@ -1,11 +1,12 @@
 pandoc: 3.1.1
 pkgdown: 2.0.7.9000
-pkgdown_sha: 13d8d621105a3a527a05e46c6c805a6564c39791
+pkgdown_sha: 676cf1dce39e4dc5aa1bcb671b1e14e992589a0a
 articles:
   advanced: advanced.html
   QFeatures_nutshell: QFeatures_nutshell.html
   read_scp: read_scp.html
   reporting_missing_values: reporting_missing_values.html
+  scp_data_modelling: scp_data_modelling.html
   scp: scp.html
-last_built: 2023-12-13T15:14Z
+last_built: 2024-04-02T13:19Z
 
