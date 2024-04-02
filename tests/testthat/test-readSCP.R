@@ -40,8 +40,7 @@ test_that("readSCP: correct use", {
                            rep(paste0("Reporter.intensity.", 1:16), each = 4))
     expect_identical(character(0), setdiff(unlist(colnames(scp)), as.character(expectedCols)))
     ## Single batch
-    onebatch <- mqScpData %>% 
-        dplyr::filter(Raw.file == "190222S_LCA9_X_FP94BM")
+    onebatch <- dplyr::filter(mqScpData, Raw.file == "190222S_LCA9_X_FP94BM")
     scp <- readSCP(onebatch, 
                    sampleAnnotation, 
                    batchCol = "Raw.file", 
