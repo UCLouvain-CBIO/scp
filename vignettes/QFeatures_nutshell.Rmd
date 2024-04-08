@@ -35,12 +35,12 @@ This vignette briefly recaps the main concepts of `QFeatures` on which
 
 # The `QFeatures` class
 
-The `QFeatures` class is based on the `MultiAssayExperiment` class
-that holds a collection of `SummarizedExperiment` (or other classes
-that inherits from it) objects termed **assays**. The assays in a
-`QFeatures` object have a hierarchical relation: proteins are composed
-of peptides, themselves produced by spectra, as depicted in figure
-below.
+The `QFeatures` class (@Gatto2023-ry) is based on the
+`MultiAssayExperiment` class that holds a collection of
+`SummarizedExperiment` (or other classes that inherits from it)
+objects termed **assays**. The assays in a `QFeatures` object have a
+hierarchical relation: proteins are composed of peptides, themselves
+produced by spectra, as depicted in figure below.
 
 ![](https://rformassspectrometry.github.io/QFeatures/articles/QFeatures_files/figure-html/featuresplot-1.png)
 
@@ -379,10 +379,10 @@ knitr::opts_chunk$set(
 sessionInfo()
 ```
 
-# License
+# License {-}
 
 This vignette is distributed under a
 [CC BY-SA license](https://creativecommons.org/licenses/by-sa/2.0/)
 license.
 
-# Reference
+# Reference {-}
