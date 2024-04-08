@@ -647,190 +647,219 @@ test_that("scpModelUvcov", {
         scpModelUvcov(se),
         regexp = "scpModelFitList.*test1.*scpModelWorkflow"
     )
-    ## No residuals = error
+    ## No Uvcov = error
     l <- .createMinimalData(); se <- l$se; a <- l$a
     model <- .addScpModelFitList(model, rownames(se))
     metadata(se)[["test1"]] <- model
     expect_error(
         scpModelUvcov(se),
-        regexp = "Residuals.*test1.*scpModelWorkflow"
+        regexp = "Uvcov.*test1.*scpModelWorkflow"
     )
-    ## Retrieve residuals
-    resids <- lapply(seq_len(nrow(se)), function(x) {
-        structure(rep(0, ncol(se)), .Names = colnames(se))
+    ## Retrieve Uvcov
+    p <- 3
+    uvcov <- lapply(seq_len(nrow(se)), function(x) {
+        matrix(0, p, p, dimnames = list(paste0("param", 1:p), paste0("param", 1:p)))
     })
-    names(resids) <- rownames(se)
-    resids <- as(resids, "List")
-    model@scpModelFitList <- mendoapply(function(fl, res) {
-        names(res) <- colnames(se)
-        fl@residuals <- res
+    names(uvcov) <- rownames(se)
+    uvcov <- as(uvcov, "List")
+    model@scpModelFitList <- mendoapply(function(fl, u) {
+        fl@uvcov <- u
         fl
-    }, model@scpModelFitList, resids)
-    ## No filtering, no joining
+    }, model@scpModelFitList, uvcov)
+    ## No filtering
     metadata(se)[["test1"]] <- model
     expect_identical(
-        scpModelResiduals(se, join = FALSE, filtered = FALSE),
-        resids
+        scpModelUvcov(se, filtered = FALSE),
+        uvcov
     )
-    ## No filtering, with joining
-    expect_identical(
-        scpModelResiduals(se, join = TRUE, filtered = FALSE),
-        do.call(rbind, resids)
-    )
-    ## With filtering, no joining
+    ## With filtering
     model@scpModelFilterThreshold <- 5
     metadata(se)[["test1"]] <- model
     expect_identical(
-        scpModelResiduals(se, join = FALSE, filtered = TRUE),
-        resids[5:nrow(se)]
+        scpModelUvcov(se, filtered = TRUE),
+        uvcov[5:nrow(se)]
     )
-    ## With filtering, with joining
-    expect_identical(
-        scpModelResiduals(se, join = TRUE, filtered = TRUE),
-        do.call(rbind, resids[5:nrow(se)])
-    )
-    ## Test drop = FALSE
-    model@scpModelFilterThreshold <- 10
+})
+
+test_that("scpModelVcov", {
+    require(SummarizedExperiment)
+    se <- SummarizedExperiment()
+    model <- ScpModel()
     metadata(se)[["test1"]] <- model
-    exp <- t(resids[[10]])
-    rownames(exp) <- rownames(se)[10]
+    ## no model = error
+    expect_error(
+        scpModelVcov(se),
+        regexp = "scpModelFitList.*test1.*scpModelWorkflow"
+    )
+    ## No Uvcov = error
+    l <- .createMinimalData(); se <- l$se; a <- l$a
+    model <- .addScpModelFitList(model, rownames(se))
+    metadata(se)[["test1"]] <- model
+    expect_error(
+        scpModelVcov(se),
+        regexp = "Vcov.*test1.*scpModelWorkflow"
+    )
+    ## Retrieve Vcov
+    p <- 3
+    uvcov <- lapply(seq_len(nrow(se)), function(x) {
+        out <- matrix(0, p, p, dimnames = list(paste0("param", 1:p), paste0("param", 1:p)))
+        diag(out) <- 1
+        out
+    })
+    names(uvcov) <- rownames(se)
+    uvcov <- as(uvcov, "List")
+    var <- 2
+    model@scpModelFitList <- mendoapply(function(fl, u) {
+        fl@uvcov <- u
+        fl@var <- var
+        fl
+    }, model@scpModelFitList, uvcov)
+    ## No filtering
+    metadata(se)[["test1"]] <- model
     expect_identical(
-        scpModelResiduals(se, join = TRUE, filtered = TRUE),
+        scpModelVcov(se, filtered = FALSE),
+        endoapply(uvcov, function(x) x * var)
+    )
+    ## With filtering
+    model@scpModelFilterThreshold <- 5
+    metadata(se)[["test1"]] <- model
+    expect_identical(
+        scpModelVcov(se, filtered = TRUE),
+        endoapply(uvcov[5:10], function(x) x * var)
+    )
+})
+
+test_that("scpModelIntercept", {
+    require(SummarizedExperiment)
+    se <- SummarizedExperiment()
+    model <- ScpModel()
+    metadata(se)[["test1"]] <- model
+    ## no model = error
+    expect_error(
+        scpModelIntercept(se),
+        regexp = "scpModelFitList.*test1.*scpModelWorkflow"
+    )
+    ## No coefficients = error
+    l <- .createMinimalData(); se <- l$se; a <- l$a
+    model <- .addScpModelFitList(model, rownames(se))
+    metadata(se)[["test1"]] <- model
+    expect_error(
+        scpModelIntercept(se),
+        regexp = "Coefficients.*test1.*scpModelWorkflow"
+    )
+    ## Retrieve coefficients
+    coefs <- lapply(seq_len(nrow(se)), function(x) {
+        structure(c(1, 0, 0), .Names = c("(Intercept)", paste0("param", 2:3)))
+    })
+    names(coefs) <- rownames(se)
+    coefs <- as(coefs, "List")
+    model@scpModelFitList <- mendoapply(function(fl, coef) {
+        fl@coefficients <- coef
+        fl
+    }, model@scpModelFitList, coefs)
+    ## No filtering
+    metadata(se)[["test1"]] <- model
+    exp <- structure(rep(1, nrow(se)), .Names = rownames(se))
+    expect_identical(
+        scpModelIntercept(se, filtered = FALSE),
         exp
     )
-
-
+    ## With filtering
+    model@scpModelFilterThreshold <- 5
+    metadata(se)[["test1"]] <- model
+    expect_identical(
+        scpModelIntercept(se, filtered = TRUE),
+        exp[5:nrow(se)]
+    )
 })
 
-test_that("scpModelVariableNames", {
+test_that("scpModelFeatureNames", {
     require(SummarizedExperiment)
     se <- SummarizedExperiment()
-    ## When no model formula = error
+    model <- ScpModel()
+    metadata(se)[["test1"]] <- model
+    ## no model = error
+    expect_error(
+        scpModelFeatureNames(se),
+        regexp = "scpModelFilterThreshold.*test1.*scpModelWorkflow"
+    )
+    ## Retrieve feature names
+    l <- .createMinimalData(); se <- l$se; a <- l$a
+    model <- .addScpModelFitList(model, rownames(se))
+    model@scpModelFilterThreshold <- 0
+    metadata(se)[["test1"]] <- model
+    expect_identical(
+        scpModelFeatureNames(se),
+        rownames(se)
+    )
+    model@scpModelFilterThreshold <- 5
+    metadata(se)[["test1"]] <- model
+    expect_identical(
+        scpModelFeatureNames(se),
+        rownames(se)[5:10]
+    )
+})
+
+test_that("scpModelEffectNames", {
+    require(SummarizedExperiment)
+    se <- SummarizedExperiment()
+    ## When no model = error
+    expect_error(
+        scpModelEffectNames(se),
+        regexp = "No 'ScpModel'"
+    )
+    ## When no formula = error
     model <- ScpModel()
     metadata(se)[["test1"]] <- model
     expect_error(
-        scpModelVariableNames(se),
-        regexp = "scpModelFormula.*test1.*scpModelPrepare"
+        scpModelEffectNames(se),
+        regexp = "scpModelFormula.*test1.*scpModelWorkflow"
     )
-    ## Formula with no variable
-    model@scpModelFormula <- ~ 1
-    metadata(se)[["test1"]] <- model
-    expect_identical(scpModelVariableNames(se), character())
-    ## Formula with 1 variable
+    ## Retrieve effect names: one var
     model@scpModelFormula <- ~ var1
     metadata(se)[["test1"]] <- model
-    expect_identical(scpModelVariableNames(se), "var1")
-    ## Formula with interecept + 1 variable
-    model@scpModelFormula <- ~ 1 + var1
+    expect_identical(scpModelEffectNames(se), "var1")
+    ## Retrieve effect names: multiple var
+    model@scpModelFormula <- ~ var1 + var2 + var3
     metadata(se)[["test1"]] <- model
-    expect_identical(scpModelVariableNames(se), "var1")
-    ## Formula with interecept + 2 variables
-    model@scpModelFormula <- ~ 1 + var1 + var2
+    expect_identical(scpModelEffectNames(se), c("var1", "var2", "var3"))
+    ## Retrieve effect names: no var
+    model@scpModelFormula <- ~ 1
     metadata(se)[["test1"]] <- model
-    expect_identical(scpModelVariableNames(se), c("var1", "var2"))
-    ## Formula with interecept + interaction
-    model@scpModelFormula <- ~ 1 + var1 : var2
+    expect_identical(scpModelEffectNames(se), character())
+    ## Retrieve effect names: interaction
+    model@scpModelFormula <- ~ var1 * var2
     metadata(se)[["test1"]] <- model
-    expect_identical(scpModelVariableNames(se), c("var1", "var2"))
-    ## Formula with interecept + interaction + main effects
-    model@scpModelFormula <- ~ 1 + var1 * var2
-    metadata(se)[["test1"]] <- model
-    expect_identical(scpModelVariableNames(se), c("var1", "var2"))
-    ## Formula with .
+    expect_identical(scpModelEffectNames(se), c("var1", "var2", "var1:var2"))
+})
+
+## ---- Test exported setters ----
+
+test_that("scpModelFilterThreshold<-", {
+    require(SummarizedExperiment)
     se <- SummarizedExperiment(assays = List(a = matrix(1, 5, 5)))
-    metadata(se)[["test1"]] <- model
-    se$var1 <- 1
-    se$var2 <- 2
-    model@scpModelFormula <- ~ 1 + . + var1
-    metadata(se)[["test1"]] <- model
-    expect_identical(scpModelVariableNames(se), c("var1", "var2"))
-})
-
-test_that("scpModelAssays", {
-    require(SummarizedExperiment)
-    se <- SummarizedExperiment()
     model <- ScpModel()
-    a <- Assays(List(a = matrix(1, 2, 2), b = matrix(2, 2, 2)))
-    model@scpModelAssays <- a
-    metadata(se)[["test1"]] <- model
-    ## Retrieving the model assays
-    expect_identical(scpModel(se)@scpModelAssays, a)
-})
-
-
-test_that("scpModelUnscaledCovariance", {
-    skip("todo")
-})
-
-test_that("scpModelCovariance", {
-    skip("todo")
-})
-
-test_that("scpModelComponents", {
-    require(SummarizedExperiment)
-    se <- SummarizedExperiment()
-    model <- ScpModel()
-    ## Retrieve components from empty model
-    metadata(se)[["empty"]] <- model
-    expect_identical(
-        scpModelComponents(se),
-        List()
-    )
-    ## Retrieve components from non-empty model
-    smc <- List(name1 = 1, name2 = 2)
-    model@scpModelComponents <- smc
-    metadata(se)[["test1"]] <- model
-    expect_identical(
-        scpModelComponents(se, "test1"),
-        smc
-    )
-})
-
-test_that("scpModelComponentNames", {
-    require(SummarizedExperiment)
-    se <- SummarizedExperiment()
-    model <- ScpModel()
-    smc <- List(name1 = 1, name2 = 2)
-    model@scpModelComponents <- smc
-    metadata(se)[["test1"]] <- model
-    ## Retrieve component names from default model
-    expect_identical(
-        scpModelComponentNames(se),
-        c("name1", "name2")
-    )
-    ## Retrieve component names from other model
-    smc <- List(name3 = 1, name4 = 2)
-    model@scpModelComponents <- smc
-    metadata(se)[["test2"]] <- model
-    expect_identical(
-        scpModelComponentNames(se, "test2"),
-        c("name3", "name4")
-    )
-})
-
-test_that("parnames", {
-    require(SummarizedExperiment)
-    se <- SummarizedExperiment()
-    ## When no model design = error
-    model <- ScpModel()
-    metadata(se)[["test1"]] <- model
+    metadata(se)[["test"]] <- model
+    ## Value is not of class numeric = error
     expect_error(
-        parnames(se),
-        regexp = "scpModelDesign.*test1.*scpModelPrepare"
+        scpModelFilterThreshold(se) <- "foo",
+        regexp = "scpModelFilterThreshold.*numeric.*not TRUE"
     )
-    ## Unnamed columns design
-    m <- matrix(1, 10, 2)
-    model@scpModelDesign <- m
-    metadata(se)[["test1"]] <- model
-    expect_identical(parnames(se), NULL)
-    ## 2 variables design
-    colnames(m) <- c("var1", "var2")
-    model@scpModelDesign <- m
-    metadata(se)[["test1"]] <- model
-    expect_identical(parnames(se), c("var1", "var2"))
+    ## Value has length > 1 = error
+    expect_error(
+        scpModelFilterThreshold(se) <- 1:3,
+        regexp = "length.value. == 1 is not TRUE"
+    )
+    ## Value has length < 1 = error
+    expect_error(
+        scpModelFilterThreshold(se) <- 0,
+        regexp = "value >= 1 is not TRUE"
+    )
+    ##
 })
 
 ## ---- Test internal setters ----
+
 
 test_that("scpModel<-", {
     require(SummarizedExperiment)
