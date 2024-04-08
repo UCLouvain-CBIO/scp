@@ -182,9 +182,9 @@ scpDifferentialAnalysis <- function(object,
     out <- sapply(fits, function(fit) {
         coef <- scpModelFitCoefficients(fit)
         vcov <- scpModelFitVcov(fit)
-        contrastMat <- .levelsToContrastMatrix(
-            contrast, scpModelFitLevels(fit)
-        )
+        levs <- scpModelFitLevels(fit)[[contrast[[1]]]]
+        if (length(levs) <= 1) return(c(logFc = NA, se = NA))
+        contrastMat <- .levelsToContrastMatrix(contrast, levs)
         sel <- grepl(contrast[[1]], names(coef))
         logFc <- contrastMat %*% coef[sel]
         se <- sqrt(contrastMat %*% vcov[sel, sel] %*% t(contrastMat))
@@ -198,13 +198,12 @@ scpDifferentialAnalysis <- function(object,
 }
 
 .levelsToContrastMatrix <- function(contrast, levels) {
-    levelsi <- levels[[contrast[[1]]]]
-    if (length(levelsi) == 2) {
-        out <- .twoLevelsToContrastMatrix(contrast, levelsi)
-    } else if (length(levelsi) > 2) {
-        out <- .multiLevelsToContrastMatrix(contrast, levelsi)
+    if (length(levels) == 2) {
+        out <- .twoLevelsToContrastMatrix(contrast, levels)
+    } else if (length(levels) > 2) {
+        out <- .multiLevelsToContrastMatrix(contrast, levels)
     } else {
-        stop("Cannot make comparison for factors with less than 2 groups.")
+        stop("Cannot make contrast for factors with less than 2 groups.")
     }
     out
 }
