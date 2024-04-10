@@ -21,6 +21,8 @@
 ##'
 ##' @importFrom methods as
 ##' @import SingleCellExperiment
+##' @import SummarizedExperiment
+##' @importFrom MultiAssayExperiment ExperimentList experiments<-
 ##' @import QFeatures
 ##'
 ##' @seealso

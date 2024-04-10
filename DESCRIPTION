@@ -37,7 +37,6 @@ Imports:
     SingleCellExperiment,
     SummarizedExperiment,
     stats,
-    tidyr,
     utils
 Suggests:
     BiocStyle,
