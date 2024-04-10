@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.3</span>
       </span>
     </div>
 
@@ -100,7 +100,7 @@ Gatto</h4>
                                     <h4 data-toc-skip class="author">Christophe
 Vanderaa</h4>
                         
-            <h4 data-toc-skip class="date">8 April 2024</h4>
+            <h4 data-toc-skip class="date">10 April 2024</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/HEAD/vignettes/scp.Rmd" class="external-link"><code>vignettes/scp.Rmd</code></a></small>
       <div class="hidden name"><code>scp.Rmd</code></div>
@@ -178,11 +178,12 @@ requirement to follow this workflow is that the data should contain the
 following information:</p>
 <ul>
 <li>
-<code>Raw.file</code>: field in both the feature data and the sample
-data that gives the names of MS acquisition runs or files.</li>
+<code>runCol</code>/<code>Raw.file</code>: field in the feature data
+and the sample data that gives the names of MS acquisition runs or
+files.</li>
 <li>
-<code>Channel</code>: field in the sample data that links to columns
-in the quantification data and that allows to link samples to MS
+<code>quantCols</code>: field in the sample data that links to
+columns in the quantification data and that allows to link samples to MS
 channels (more details in another <a href="https://uclouvain-cbio.github.io/scp/articles/read_scp.html" class="external-link">vignette</a>).</li>
 <li>
 <code>SampleType</code>: field in the sample data that provides the
@@ -261,15 +262,15 @@ interest, that are macrophage (<code>Macrophage</code>) or monocyte
 <p>Using <code>readSCP</code>, we combine both tables in a
 <code>QFeatures</code> object formatted as described above.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readSCP.html">readSCP</a></span><span class="op">(</span>featureData <span class="op">=</span> <span class="va">mqScpData</span>,</span>
+<code class="sourceCode R"><span><span class="va">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readSCP.html">readSCP</a></span><span class="op">(</span>assayData <span class="op">=</span> <span class="va">mqScpData</span>,</span>
 <span>               colData <span class="op">=</span> <span class="va">sampleAnnotation</span>,</span>
-<span>               channelCol <span class="op">=</span> <span class="st">"Channel"</span>,</span>
-<span>               batchCol <span class="op">=</span> <span class="st">"Raw.file"</span>,</span>
+<span>               runCol <span class="op">=</span> <span class="st">"Raw.file"</span>,</span>
 <span>               removeEmptyCols <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Loading data as a 'SingleCellExperiment' object</span></span>
-<span><span class="co">#&gt; Splitting data based on 'Raw.file'</span></span>
-<span><span class="co">#&gt; Formatting sample metadata (colData)</span></span>
-<span><span class="co">#&gt; Formatting data as a 'QFeatures' object</span></span>
+<span><span class="co">#&gt; Checking arguments.</span></span>
+<span><span class="co">#&gt; Loading data as a 'SummarizedExperiment' object.</span></span>
+<span><span class="co">#&gt; Splitting data in runs.</span></span>
+<span><span class="co">#&gt; Formatting sample annotations (colData).</span></span>
+<span><span class="co">#&gt; Formatting data as a 'QFeatures' object.</span></span>
 <span><span class="va">scp</span></span>
 <span><span class="co">#&gt; An instance of class QFeatures containing 4 assays:</span></span>
 <span><span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 395 rows and 11 columns </span></span>
@@ -280,7 +281,7 @@ interest, that are macrophage (<code>Macrophage</code>) or monocyte
 to the TMT-11 labels and the last assay contains 16 columns that
 correspond to the TMT-16 labels.</p>
 <p><strong>Important</strong>: More details about the usage of
-<code>readSCP</code> and how to read your own data set are provided in
+<code><a href="../reference/readSCP.html">readSCP()</a></code> and how to read your own data set are provided in
 the <code>Load data using readSCP</code> <a href="https://uclouvain-cbio.github.io/scp/articles/read_scp.html" class="external-link">vignette</a>.</p>
 <p>Another way to get an overview of the scp object is to plot the
 <code>QFeatures</code> object. This will create a graph where each node
@@ -592,10 +593,10 @@ here the modified peptide sequence. We also need to supply an
 aggregating function that will tell how to combine the quantitative data
 of the PSMs to aggregate. We here aggregate the PSM data using the
 median value per sample thanks to the
-<code>matrixStats:colMedians</code> function. Other functions can be
+<code>matrixStats:colMedians()</code> function. Other functions can be
 used and we refer to <code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">?aggregateFeatures</a></code> for more
 information about available aggregation functions. The
-<code>aggregateFeaturesOverAssays</code> function will create a new
+<code><a href="../reference/aggregateFeaturesOverAssays.html">aggregateFeaturesOverAssays()</a></code> function will create a new
 assay for each aggregated assay. We name the aggregated assays using the
 original names and appending <code>peptides_</code> at the start.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
@@ -928,7 +929,7 @@ beneficial or deleterious for the data will not be discussed in this
 vignette. But taking those missing value into account is essential to
 avoid artefacts in downstream analyses. The data imputation is performed
 using the K nearest neighbors algorithm, with k = 3. This is available
-from the <code>impute</code> mehtod. More details about the arguments
+from the <code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">impute()</a></code> mehtod. More details about the arguments
 can be found in <code><a href="https://rdrr.io/pkg/impute/man/impute.knn.html" class="external-link">?impute::impute.knn</a></code>.</p>
 <div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">impute</a></span><span class="op">(</span><span class="va">scp</span>,</span>
@@ -954,7 +955,7 @@ can be found in <code><a href="https://rdrr.io/pkg/impute/man/impute.knn.html" c
 effects. Batch effects are caused by technical variation occurring
 during different MS runs. Since only a small number of single-cells can
 be acquired at once, batch effects are unavoidable.</p>
-<p>The <code>ComBat</code> function from the <code>sva</code> package
+<p>The <code><a href="https://rdrr.io/pkg/sva/man/ComBat.html" class="external-link">ComBat()</a></code> function from the <code>sva</code> package
 can be used to perform batch correction as it is performed in the SCoPE2
 analysis. We do not claim that <code>ComBat</code> is the best algorithm
 for batch correcting SCP data and other batch correcting methods could
@@ -967,7 +968,7 @@ be used using the same procedure.</p>
 <code>Combat</code>. The design matrix allows to protect variables of
 interest, in our case <code>SampleType</code>.</p>
 <div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">batch</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">sce</span><span class="op">)</span><span class="op">$</span><span class="va">Raw.file</span></span>
+<code class="sourceCode R"><span><span class="va">batch</span> <span class="op">&lt;-</span> <span class="va">sce</span><span class="op">$</span><span class="va">runCol</span></span>
 <span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span><span class="op">~</span> <span class="va">SampleType</span>, data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">sce</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>We then load and call <code>ComBat</code> and overwrite the data
 matrix. Recall the data matrix can be accessed using the
@@ -1086,11 +1087,11 @@ the <code>ggplot2</code> visualization tool.</p>
 <code class="sourceCode R"><span><span class="co">## Get the features related to Plastin-2 (P13796)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-subsetBy.html" class="external-link">subsetByFeature</a></span><span class="op">(</span><span class="va">scp</span>, <span class="st">"P13796"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="co">## Format the `QFeatures` to a long format table</span></span>
-<span>    <span class="fu">longFormat</span><span class="op">(</span>colvars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Raw.file"</span>, <span class="st">"SampleType"</span>, <span class="st">"Channel"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>    <span class="fu">longFormat</span><span class="op">(</span>colvars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"runCol"</span>, <span class="st">"SampleType"</span>, <span class="st">"quantCols"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="co">## This is used to preserve ordering of the samples and assays in ggplot2</span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>assay <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">assay</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">scp</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>           Channel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"Reporter.intensity."</span>, <span class="st">"TMT-"</span>, <span class="va">Channel</span><span class="op">)</span>,</span>
+<span>           Channel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"Reporter.intensity."</span>, <span class="st">"TMT-"</span>, <span class="va">quantCols</span><span class="op">)</span>,</span>
 <span>           Channel <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">Channel</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">Channel</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="co">## Start plotting</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Channel</span>, y <span class="op">=</span> <span class="va">value</span>, group <span class="op">=</span> <span class="va">rowname</span>, col <span class="op">=</span> <span class="va">SampleType</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
@@ -1145,7 +1146,7 @@ other attached packages:
  [5] BiocParallel_1.37.1         genefilter_1.85.1          
  [7] mgcv_1.9-1                  nlme_3.1-164               
  [9] dplyr_1.1.4                 ggplot2_3.5.0              
-[11] scp_1.13.2                  QFeatures_1.13.3           
+[11] scp_1.13.3                  QFeatures_1.13.6           
 [13] MultiAssayExperiment_1.29.1 SummarizedExperiment_1.33.3
 [15] Biobase_2.63.1              GenomicRanges_1.55.4       
 [17] GenomeInfoDb_1.39.13        IRanges_2.37.1             
@@ -1159,10 +1160,10 @@ loaded via a namespace (and not attached):
   [5] farver_2.1.1              rmarkdown_2.26           
   [7] fs_1.6.3                  zlibbioc_1.49.3          
   [9] ragg_1.3.0                vctrs_0.6.5              
- [11] DelayedMatrixStats_1.25.1 memoise_2.0.1            
+ [11] memoise_2.0.1             DelayedMatrixStats_1.25.1
  [13] RCurl_1.98-1.14           htmltools_0.5.8.1        
- [15] S4Arrays_1.3.6            BiocBaseUtils_1.5.1      
- [17] BiocNeighbors_1.21.2      SparseArray_1.3.4        
+ [15] S4Arrays_1.3.7            BiocBaseUtils_1.5.1      
+ [17] BiocNeighbors_1.21.2      SparseArray_1.3.5        
  [19] sass_0.4.9                bslib_0.7.0              
  [21] htmlwidgets_1.6.4         desc_1.4.3               
  [23] impute_1.77.0             cachem_1.0.8             
@@ -1189,14 +1190,14 @@ loaded via a namespace (and not attached):
  [65] BiocSingular_1.19.0       metapod_1.11.1           
  [67] utf8_1.2.4                XVector_0.43.1           
  [69] ggrepel_0.9.5             pillar_1.9.0             
- [71] limma_3.59.6              splines_4.5.0            
+ [71] limma_3.59.8              splines_4.5.0            
  [73] lattice_0.22-6            FNN_1.1.4                
  [75] survival_3.5-8            bit_4.0.5                
  [77] annotate_1.81.2           tidyselect_1.2.1         
  [79] locfit_1.5-9.9            Biostrings_2.71.5        
  [81] knitr_1.46                gridExtra_2.3            
  [83] bookdown_0.38             ProtGenerics_1.35.4      
- [85] edgeR_4.1.21              IHW_1.31.0               
+ [85] edgeR_4.1.22              IHW_1.31.0               
  [87] xfun_0.43                 statmod_1.5.0            
  [89] UCSC.utils_0.99.5         lazyeval_0.2.2           
  [91] yaml_2.3.8                evaluate_0.23            
@@ -1207,7 +1208,7 @@ loaded via a namespace (and not attached):
 [101] systemfonts_1.0.6         munsell_0.5.1            
 [103] jquerylib_0.1.4           Rcpp_1.0.12              
 [105] png_0.1-8                 XML_3.99-0.16.1          
-[107] parallel_4.5.0            pkgdown_2.0.7.9000       
+[107] parallel_4.5.0            pkgdown_2.0.8            
 [109] blob_1.2.4                AnnotationFilter_1.27.0  
 [111] sparseMatrixStats_1.15.0  bitops_1.0-7             
 [113] viridisLite_0.4.2         slam_0.1-50              
@@ -1285,7 +1286,7 @@ Challenges.”</span> <em>Expert Review of Proteomics</em> 18 (10):
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.9000.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.8.</p>
 </div>
 
       </footer>
