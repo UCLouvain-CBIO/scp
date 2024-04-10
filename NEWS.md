@@ -1,10 +1,15 @@
 # scp 1.13
 
+## scp 1.13.3
+
+- Refactor `readSCP()` and `readSCPFromDIANN()` to use new QFeatures
+  implementations.
+
 ## scp 1.13.2
 
-- fix: logFC and associated SE are now correctly computed
 - New *scplainer* workflow and citation
 - Add `addReducedDims()` (see #52)
+- fix: logFC and associated SE are now correctly computed
 
 ## scp 1.13.1
 
