@@ -853,7 +853,7 @@ Next, we need to provide a design matrix and the batch annotation to
 in our case `SampleType`.
 
 ```{r prepare_batch_correction}
-batch <- colData(sce)$Raw.file
+batch <- sce$runCol
 model <- model.matrix(~ SampleType, data = colData(sce))
 ```
 
