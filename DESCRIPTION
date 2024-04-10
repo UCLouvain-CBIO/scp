@@ -40,6 +40,7 @@ Imports:
     utils
 Suggests:
     BiocStyle,
+    MsDataHub (>= 1.3.3),
     impute,
     knitr,
     patchwork,
