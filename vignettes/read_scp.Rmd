@@ -56,7 +56,7 @@ conceptually shown below.
 knitr::include_graphics("./figures/SCP_framework.png")
 ```
 
-The main input table required for starting an analysis with `scp` is 
+The main input table required for starting an analysis with `scp` is
 called the `assayData`.
 
 # `assayData` table
@@ -93,7 +93,7 @@ knitr::include_graphics('figures/readSCP_inputTable.png')
 
 The quantification data can be composed of one (in case of label-free
 acquisition) or multiple columns (in case of multiplexing). In the
-example data set, the columns holding the quantification, the 
+example data set, the columns holding the quantification, the
 `quantCols`, start with `Reporter.intensity.` followed by a number.
 
 ```{r}
@@ -112,7 +112,7 @@ head(mqScpData[, quantCols])
 
 ### Run identifier column (`runCol`)
 
-This column provides the identifier of the MS runs in which each PSM 
+This column provides the identifier of the MS runs in which each PSM
 was acquired. MaxQuant uses the raw file name to identify the run.
 
 ```{r}
@@ -153,7 +153,7 @@ acquisition date, MS settings used to acquire the sample, the LC
 batch, the sample preparation batch, etc... However, `scp`
 **requires** 2 specific columns in the `colData` table:
 
-1. `runCol`: this column provides the MS run names (that match the 
+1. `runCol`: this column provides the MS run names (that match the
    `Raw.file` column in the `assayData` table).
 2. `quantCols`: this column tells `scp` the names of the columns in the feature
    data holds the quantification of the corresponding sample.
@@ -167,7 +167,7 @@ knitr::include_graphics('figures/readSCP_sampleTable.png')
 
 # `readSCP()`
 
-`readSCP` is the function that converts the `assayData` and the 
+`readSCP` is the function that converts the `assayData` and the
 `colData` into a `QFeatures` object following the data structure described
 above, that is storing the data belonging to each MS batch in a
 separate `SingleCellExperiment` object.
@@ -190,11 +190,11 @@ quantifications are `NA`) from the sets. Such samples can occur when
 samples that were acquired with different multiplexing labels are
 merged in a single table. For instance, the SCoPE2 data we provide as
 an example contains runs that were acquired with two TMT protocols.
-The 3 first sets were acquired using the TMT-11 protocol and the
-last set was acquired using a TMT-16 protocol. The missing label
-channels in the TMT-11 data are filled with `NA`s. When setting
-`removeEmptyCols = TRUE`, `readSCP` automatically detects and removes
-columns containing only `NA`s,
+The 3 first sets were acquired using the TMT-11 protocol and the last
+set was acquired using a TMT-16 protocol. The missing label channels
+in the TMT-11 data are filled with `NA`s. When setting
+`removeEmptyCols = TRUE`, `readSCP()` automatically detects and
+removes columns containing only `NA`s,
 
 ## Running `readSCP`
 
@@ -203,9 +203,9 @@ in a single command thanks to `readSCP`.
 
 ```{r readSCP}
 (scp <- readSCP(assayData = mqScpData,
-               colData = sampleAnnotation,
-               runCol = "Raw.file",
-               removeEmptyCols = TRUE))
+                colData = sampleAnnotation,
+                runCol = "Raw.file",
+                removeEmptyCols = TRUE))
 ```
 
 The object returned by `readSCP()` is a `QFeatures`
@@ -241,8 +241,8 @@ head(assay(scp, "190222S_LCA9_X_FP94BM"))
 
 `readSCP` proceeds as follows:
 
-1. The `assayData` table must be provided as a `data.frame`. 
-   `readSCP()` converts the table to a `SingleCellExperiment` object 
+1. The `assayData` table must be provided as a `data.frame`.
+   `readSCP()` converts the table to a `SingleCellExperiment` object
    but it needs to know which column(s) store the quantitative data.
    Those column name(s) is/are provided by the `quantCols`
    field in the annotation table (`colData` argument).
@@ -266,7 +266,7 @@ knitr::include_graphics('figures/readSCP_step2.png')
 3. The sample annotations is generated from the supplied sample table
    (`colData` argument). Note that in order for `readSCP()` to
    correctly match the feature data with the annotations, `colData`
-   must contain a `runCol` column with run names and a `quantCols` 
+   must contain a `runCol` column with run names and a `quantCols`
    column with the names of the quantitative columns in `assayData`.
 
 ```{r echo=FALSE, out.width='700px', fig.cap="Step3: Adding and matching the sample annotations", fig.align = 'center'}

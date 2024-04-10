@@ -14,7 +14,7 @@ test_that("readSCP", {
 test_that("readSCPfromDIANN", {
     diannData <- read.delim(MsDataHub::Report.Derks2022.plexDIA.tsv())
     diannData$FileFile.Name <- diannData$Run
-    scp <- readQFeaturesFromDIANN(diannData, multiplexing = "mTRAQ")
+    scp <- readSCPfromDIANN(diannData, multiplexing = "mTRAQ")
     expect_true(all(sapply(experiments(scp), inherits, "SingleCellExperiment")))
 })
 
@@ -22,7 +22,7 @@ test_that("readSingleCellExperiment", {
     ## Most unit testing is performed in readQFeatures()
     quantCols <- paste0("Reporter.intensity.", 1:16)
     sce <- readSingleCellExperiment(mqScpData,
-                                    ecol = grep("Reporter.intensity.[0-9]*$",
-                                                colnames(mqScpData)))
+                                    quantCols = grep("Reporter.intensity.[0-9]*$",
+                                                     colnames(mqScpData)))
     expect_true(inherits(sce, "SingleCellExperiment"))
 })
