@@ -171,7 +171,7 @@ table(sampleAnnotation$SampleType)
 Using `readSCP`, we combine both tables in a `QFeatures` object
 formatted as described above.
 
-```{r readSCP2}
+```{r readSCP}
 scp <- readSCP(assayData = mqScpData,
                colData = sampleAnnotation,
                runCol = "Raw.file",
@@ -183,7 +183,7 @@ See here that the 3 first assays contain 11 columns that correspond to
 the TMT-11 labels and the last assay contains 16 columns that
 correspond to the TMT-16 labels.
 
-**Important**: More details about the usage of `readSCP` and how to
+**Important**: More details about the usage of `readSCP()` and how to
 read your own data set are provided in the `Load data using readSCP`
 [vignette](https://uclouvain-cbio.github.io/scp/articles/read_scp.html).
 
