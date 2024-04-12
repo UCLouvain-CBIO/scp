@@ -3,93 +3,93 @@
 
 
 ##' @name ScpModel-Workflow
-##' 
+##'
 ##' @title Modelling single-cell proteomics data
 ##'
 ##' @description
 ##'
-##' Function to estimate a linear model for each feature (peptide or 
+##' Function to estimate a linear model for each feature (peptide or
 ##' protein) of a single-cell proteomics data set.
 ##'
 ##' @section Input data:
-##' 
-##' The main input is `object` that inherits from the 
-##' `SingleCellExperiment` class. The quantitative data will be 
-##' retrieve using `assay(object)`. If `object` contains multiple 
+##'
+##' The main input is `object` that inherits from the
+##' `SingleCellExperiment` class. The quantitative data will be
+##' retrieve using `assay(object)`. If `object` contains multiple
 ##' assays, you can specify which assay to take as input thanks to the
 ##' argument `i`, the function will then assume `assay(object, i)` as
-##' quantification input . 
+##' quantification input .
 ##'
 ##' The objective of modelling single-cell proteomics data is to
 ##' estimate, for each feature (peptide or protein), the effect of
 ##' known cell annotations on the measured intensities. These annotations
-##' may contain biological information such as the cell line, 
+##' may contain biological information such as the cell line,
 ##' FACS-derived cell type, treatment, etc. We also highly recommend
-##' including technical information, such as the MS acquisition run 
-##' information or the chemical label (in case of multiplexed 
+##' including technical information, such as the MS acquisition run
+##' information or the chemical label (in case of multiplexed
 ##' experiments). These annotation must be available from
 ##' `colData(object)`. `formula` specifies which annotations to use
 ##' during modelling.
-##' 
+##'
 ##' @section Data modelling workflow:
-##' 
-##' The modelling worflow starts with generating a model matrix for 
+##'
+##' The modelling worflow starts with generating a model matrix for
 ##' each feature given the `colData(object)` and `formula`. The model
 ##' matrix for peptide \eqn{i}, denoted \eqn{X_i}, is adapted to the
 ##' pattern of missing values (see section below). Then, the functions
 ##' fits the model matrix against the quantitative data. In other
-##' words, the function determines for each feature \eqn{i} (row in 
-##' the input data) the contribution of each variable in the model. 
+##' words, the function determines for each feature \eqn{i} (row in
+##' the input data) the contribution of each variable in the model.
 ##' More formally, the general model definition is:
 ##'
 ##' \deqn{Y_i = \beta_i X^T_{(i)} + \epsilon_i}
 ##'
-##' where \eqn{Y} is the feature by cell quantification matrix, 
-##' \eqn{\beta_i} contains the estimated coefficients for feature 
+##' where \eqn{Y} is the feature by cell quantification matrix,
+##' \eqn{\beta_i} contains the estimated coefficients for feature
 ##' \eqn{i} with as many coefficients as variables to estimate,
 ##' \eqn{X^T_{(i)}} is the model matrix generated for feature \eqn{i},
 ##' and \eqn{\epsilon} is the feature by cell matrix with
 ##' residuals.
-##' 
-##' The coefficients are estimated using penalized least squares 
-##' regression. Next, the function computes the residual matrix and 
-##' the effect matrices. An effect matrix contains the data that is 
+##'
+##' The coefficients are estimated using penalized least squares
+##' regression. Next, the function computes the residual matrix and
+##' the effect matrices. An effect matrix contains the data that is
 ##' captured by a given cell annotation. Formally, for each feature
 ##' \eqn{i}:
-##' 
-##' \deqn{\hat{M^f_i} = \hat{\beta^f_i} X^{fT}_{(i)} } 
-##' 
-##' where \eqn{\hat{M^f}} is a cell by feature matrix containing the 
-##' variables associated to annotation \eqn{f}, \eqn{\hat{\beta^f_i}} 
+##'
+##' \deqn{\hat{M^f_i} = \hat{\beta^f_i} X^{fT}_{(i)} }
+##'
+##' where \eqn{\hat{M^f}} is a cell by feature matrix containing the
+##' variables associated to annotation \eqn{f}, \eqn{\hat{\beta^f_i}}
 ##' are the estimated coefficients associated to annotation \eqn{f}
 ##' and estimated for feature \eqn{i}, and \eqn{X^{fT}_{(i)}} is the
 ##' model matrix for peptide \eqn{i} containing only the variables to
 ##' annotation \eqn{f}.
-##' 
+##'
 ##' All the results are stored in an [ScpModel] object which is stored
-##' in the `object`'s metadata. Note that multiple models can be 
+##' in the `object`'s metadata. Note that multiple models can be
 ##' estimated for the same `object`. In that case, provide the `name`
 ##' argument to store the results in a separate `ScpModel`.
 ##'
 ##' @section Feature filtering:
 ##'
-##' The proportion of missing values for each features is high in 
+##' The proportion of missing values for each features is high in
 ##' single-cell proteomics data. Many features can typically contain
 ##' more coefficients to estimate than observed values. These features
-##' cannot be estimated and will be ignored during further steps. 
-##' These features are identified by computing the ratio between the 
-##' number of observed values and the number of coefficients to 
+##' cannot be estimated and will be ignored during further steps.
+##' These features are identified by computing the ratio between the
+##' number of observed values and the number of coefficients to
 ##' estimate. We call it the **n/p ratio**. Once the model is
-##' estimated, use `scpModelFilterPlot(object)` to explore the 
-##' distribution of n/p ratios across the features. You can also 
-##' extract the n/p ratio for each feature using 
+##' estimated, use `scpModelFilterPlot(object)` to explore the
+##' distribution of n/p ratios across the features. You can also
+##' extract the n/p ratio for each feature using
 ##' `scpModelFilterNPRatio(object)`. By default, any feature that has
-##' an n/p ratio lower than 1 is ignored. However, feature with an 
+##' an n/p ratio lower than 1 is ignored. However, feature with an
 ##' n/p ratio close to 1 may lead to unreliable outcome because there
 ##' are not enough observed data. You could consider the n/p ratio as
-##' the average number of replicate per coefficient to estimate. 
+##' the average number of replicate per coefficient to estimate.
 ##' Therefore, you may want to increase the n/p threshold. You can do
-##' so using `scpModelFilter(object) <- npThreshold`. 
+##' so using `scpModelFilter(object) <- npThreshold`.
 ##'
 ##' @section About missing values:
 ##'
@@ -99,13 +99,13 @@
 ##' ignore missing values and will generate a model matrix using only
 ##' the observed values for each feature. However, the model matrices
 ##' for some features may contain highly correlated variables, leading
-##' to near singular designs. We include a small ridge penalty to 
-##' reduce numerical instability associated to correlated variables. 
+##' to near singular designs. We include a small ridge penalty to
+##' reduce numerical instability associated to correlated variables.
 ##'
 ##' @seealso
-##' 
+##'
 ##' - [ScpModel-class] for functions to extract information from the
-##'   `ScpModel` object 
+##'   `ScpModel` object
 ##' - [ScpModel-VarianceAnalysis], [ScpModel-DifferentialAnalysis],
 ##'   [ScpModel-ComponentAnalysis] to explore the model results
 ##' - [scpKeepEffect] and [scpRemoveBatchEffect] to perform batch
@@ -114,12 +114,12 @@
 ##' @author Christophe Vanderaa, Laurent Gatto
 ##'
 ##' @example inst/examples/examples_ScpModel-Workflow.R
-##' 
+##'
 NULL
 
 ##' @name ScpModel-Workflow
-##' 
-##' @param object An object that inherits from the 
+##'
+##' @param object An object that inherits from the
 ##'     `SingleCellExperiment` class.
 ##'
 ##' @param formula A `formula` object controlling which variables are
@@ -131,7 +131,7 @@ NULL
 ##'
 ##' @param name A `character(1)` providing the name to use to store or
 ##'     retrieve the modelling results. When retrieving a model and
-##'     `name` is missing, the name of the first model found in 
+##'     `name` is missing, the name of the first model found in
 ##'     `object` is used.
 ##'
 ##' @param verbose A `logical(1)` indicating whether to print progress
@@ -175,7 +175,7 @@ scpModelWorkflow <- function(object, formula,
 .checkAnnotations <- function(object, name) {
     formula <- scpModelFormula(object, name)
     coldata <- colData(object)[, all.vars(formula), drop = FALSE]
-    if (is.null(rownames(coldata))) 
+    if (is.null(rownames(coldata)))
         stop("'colData(object)' must have row names.")
     if (any(sapply(coldata, function(x) any(is.na(x)))))
         stop("Sample annotations (colData) cannot contain missing values.")
@@ -183,8 +183,8 @@ scpModelWorkflow <- function(object, formula,
     coldata <- .formatCategoricalVariables(colData(object))
 }
 
-## Internal function that makes sure that the design matrix is not 
-## singular, either because there are more coefficients than 
+## Internal function that makes sure that the design matrix is not
+## singular, either because there are more coefficients than
 ## observations or because of singular designs.
 ##' @importFrom stats model.matrix
 .checkExperimentalDesignRank <- function(formula, coldata) {
@@ -215,10 +215,10 @@ scpModelWorkflow <- function(object, formula,
         attr(out, "levels") <- List()
         return(out)
     }
-    coldata <- .centerNumericalVariables(coldata)
     coldata <- droplevels(coldata)
     formula <- .dropConstantVariables(coldata, formula)
     coldata <- coldata[, all.vars(formula), drop = FALSE]
+    coldata <- .centerNumericalVariables(coldata)
     out <- model.matrix(
         formula, data = coldata, contrasts.arg = .modelContrasts(coldata)
     )
@@ -226,7 +226,7 @@ scpModelWorkflow <- function(object, formula,
     out
 }
 
-## when the variable is already a factor, will still apply apply 
+## when the variable is already a factor, will still apply apply
 ## factor() to drop unused levels.
 .formatCategoricalVariables <- function(x) {
     categoricalClass <- c("factor", "character", "logical")
@@ -260,7 +260,7 @@ scpModelWorkflow <- function(object, formula,
     termLabels <- termLabels[sel]
     if (!length(termLabels)) return(~ 1)
     reformulate(
-        termLabels, intercept = TRUE, 
+        termLabels, intercept = TRUE,
         env = attr(formula, ".Environment")
     )
 }
@@ -287,12 +287,12 @@ scpModelWorkflow <- function(object, formula,
 
 ## ---- Model estimation ----
 
-## Note: I don't expose 'lambda' to the users because it 
+## Note: I don't expose 'lambda' to the users because it
 ## is solely implemented to avoid numerical instability issues due to
 ## correlated variables. I expect tuning lambda for ridge
-## regression to be beneficial, but we then need to implement more 
+## regression to be beneficial, but we then need to implement more
 ## advanced functionality for fitting and selecting the best lambda.
-## The difficulty here is that the best lambda will depend on the 
+## The difficulty here is that the best lambda will depend on the
 ## model and the input data and hence should be different for each
 ## feature.
 .estimateModel <- function(y, x, effects) {
@@ -301,7 +301,7 @@ scpModelWorkflow <- function(object, formula,
     res <- .fitRidge(y[rownames(x)], x)
     scpModelFitCoefficients(model) <- res$coefficients
     scpModelFitResiduals(model) <- res$residuals
-    scpModelFitEffects(model) <- 
+    scpModelFitEffects(model) <-
         .computeModelEffects(res$coefficients, x, effects)
     scpModelFitDf(model) <- res$df
     scpModelFitVar(model) <- res$var
@@ -311,16 +311,16 @@ scpModelWorkflow <- function(object, formula,
 }
 
 ## Internal function to fit a vector y to the design matrix x given a
-## ridge penalty weighted by lambda. The function returns the 
-## estimated coefficients, the residuals, the effective degrees of 
+## ridge penalty weighted by lambda. The function returns the
+## estimated coefficients, the residuals, the effective degrees of
 ## freedom, the residual variance and the unscaled variance-covariance
 ## matrix.
 ## @param ...
-## 
-## Watch out: the hat matrix can become huge for large number of 
+##
+## Watch out: the hat matrix can become huge for large number of
 ## cells! Also computing the effective degrees of freedom takes most
-## of the time... Since the lambda used is small, the effective df 
-## is close to n - p - 1, so we don't compute the edf for now, but 
+## of the time... Since the lambda used is small, the effective df
+## is close to n - p - 1, so we don't compute the edf for now, but
 ## this can be changed setting effectiveDf = TRUE.
 ## See refs for background:
 ## https://doi.org/10.1186/1471-2105-12-372
@@ -363,9 +363,9 @@ scpModelWorkflow <- function(object, formula,
 ## ---- ScpModel feature filtering ----
 
 ##' @name ScpModel-Workflow
-##' 
+##'
 ##' @import ggplot2
-##' 
+##'
 ##' @export
 scpModelFilterPlot <- function(object, name) {
     message(
@@ -376,14 +376,14 @@ scpModelFilterPlot <- function(object, name) {
     npThreshold <- scpModelFilterThreshold(object, name)
     .filterPlot(npr, npThreshold) +
         ggtitle(
-            "Distribution of the n/p ratio", 
+            "Distribution of the n/p ratio",
             subtitle = .filterSubtitle(npr, nrow(object), npThreshold)
         )
 }
 
 .filterSubtitle <- function(npr, m, threshold) {
     out <- paste(
-        "Total features:", m, 
+        "Total features:", m,
         "\nEstimated features (n/p >= 1): ", sum(npr >= 1)
     )
     if (threshold > 1) {
@@ -405,7 +405,7 @@ scpModelFilterPlot <- function(object, name) {
     levels(type) <- names(cols)
     df <- data.frame(npRatio = npRatio, type = type)
     ggplot(df) +
-        aes(x = npRatio, fill = type) + 
+        aes(x = npRatio, fill = type) +
         geom_histogram(bins = 50) +
         scale_fill_manual(values = cols, name = "") +
         theme_minimal() +
