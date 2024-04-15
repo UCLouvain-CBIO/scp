@@ -1,5 +1,9 @@
 # scp 1.13
 
+## scp 1.13.4
+
+- fix: first drop variable before centering numerical variables (see #54)
+
 ## scp 1.13.3
 
 - Refactor `readSCP()` and `readSCPFromDIANN()` to use new QFeatures
