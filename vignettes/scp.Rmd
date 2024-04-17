@@ -30,29 +30,29 @@ knitr::opts_chunk$set(
 
 # The `scp` package
 
-The `scp` package is used to process and analyse mass spectrometry 
-(MS)-based single cell proteomics (SCP) data. The functions rely on a 
-specific data structure that wraps 
+The `scp` package is used to process and analyse mass spectrometry
+(MS)-based single cell proteomics (SCP) data. The functions rely on a
+specific data structure that wraps
 [`QFeatures`](https://rformassspectrometry.github.io/QFeatures/)
-objects (@Gatto2020-ry) around 
+objects (@Gatto2023-ry) around
 [`SingleCellExperiment`](http://bioconductor.org/packages/release/bioc/html/SingleCellExperiment.html)
-objects (@Amezquita2019-bf). This data structure could be seen as 
-Matryoshka dolls were the `SingleCellExperiment` objects are small 
+objects (@Amezquita2019-bf). This data structure could be seen as
+Matryoshka dolls were the `SingleCellExperiment` objects are small
 dolls contained in the bigger `QFeatures` doll.
 
-The `SingleCellExperiment` class provides a dedicated framework for 
+The `SingleCellExperiment` class provides a dedicated framework for
 single-cell data. The `SingleCellExperiment` serves as an interface to
-many cutting-edge methods for processing, visualizing and analysis 
-single-cell data. More information about the `SingleCellExperiment` 
-class and associated methods can be found in the 
-[OSCA book](http://bioconductor.org/books/release/OSCA/). 
+many cutting-edge methods for processing, visualizing and analysis
+single-cell data. More information about the `SingleCellExperiment`
+class and associated methods can be found in the
+[OSCA book](http://bioconductor.org/books/release/OSCA/).
 
-The `QFeatures` class is a data framework dedicated to manipulate and 
-process MS-based quantitative data. It preserves the relationship 
+The `QFeatures` class is a data framework dedicated to manipulate and
+process MS-based quantitative data. It preserves the relationship
 between the different levels of information: peptide to spectrum match
-(PSM) data, peptide data and protein data. The `QFeatures` package 
+(PSM) data, peptide data and protein data. The `QFeatures` package
 also provides an interface to many utility functions to streamline the
-processing MS data. More information about MS data analysis tools can 
+processing MS data. More information about MS data analysis tools can
 be found in the
 [RforMassSpectrometry project](https://www.rformassspectrometry.org/).
 
@@ -78,70 +78,70 @@ library("dplyr")
 
 This vignette will guide you through some common steps of mass
 spectrometry-based single-cell proteomics (SCP) data analysis. SCP is
-an emerging field and further research is required to develop a 
-principled analysis workflow. Therefore, we **do not guarantee** that the 
+an emerging field and further research is required to develop a
+principled analysis workflow. Therefore, we **do not guarantee** that the
 steps presented here are the best steps for this type of data analysis.
-This vignette performs the steps that were described in the SCoPE2 
-landmark paper (@Specht2021-jm) and that were reproduced in another 
+This vignette performs the steps that were described in the SCoPE2
+landmark paper (@Specht2021-jm) and that were reproduced in another
 work using the `scp` package (@Vanderaa2021-ue). The replication on
-the full SCoPE2 dataset using `scp` is available in 
+the full SCoPE2 dataset using `scp` is available in
 [this vignette](https://uclouvain-cbio.github.io/SCP.replication/articles/SCoPE2.html).
 We hope to convince the reader that,
-although the workflow is probably not optimal, `scp` has the full 
-potential to perform standardized and principled data analysis. All 
+although the workflow is probably not optimal, `scp` has the full
+potential to perform standardized and principled data analysis. All
 functions presented here are comprehensively documented, highly modular,
-can easily be extended with new algorithms. Suggestions, feature 
+can easily be extended with new algorithms. Suggestions, feature
 requests or bug reports are warmly welcome. Feel free to open an issue
-in the 
+in the
 [GitHub repository](https://github.com/UCLouvain-CBIO/scp/issues).
 
-This workflow can be applied to any MS-based SCP data. The minimal 
-requirement to follow this workflow is that the data should contain 
-the following information: 
+This workflow can be applied to any MS-based SCP data. The minimal
+requirement to follow this workflow is that the data should contain
+the following information:
 
-- `Raw.file`: field in both the feature data and the sample data that gives
-the names of MS acquisition runs or files.
-- `Channel`: field in the sample data that links to columns in the 
-quantification data and that allows to link samples to MS channels 
-(more details in another 
-[vignette](https://uclouvain-cbio.github.io/scp/articles/read_scp.html)).
-- `SampleType`: field in the sample data that provides the type of sample
-that is acquired (carrier, reference, single-cell,...). Only needed 
-for multiplexing experiments.
-- `Potential.contaminant`:  field in the feature data that marks 
-contaminant peptides.
+- `runCol`/`Raw.file`: field in the feature data and the sample data
+  that gives the names of MS acquisition runs or files.
+- `quantCols`: field in the sample data that links to columns in the
+  quantification data and that allows to link samples to MS channels
+  (more details in another
+  [vignette](https://uclouvain-cbio.github.io/scp/articles/read_scp.html)).
+- `SampleType`: field in the sample data that provides the type of
+  sample that is acquired (carrier, reference, single-cell,...). Only
+  needed for multiplexing experiments.
+- `Potential.contaminant`: field in the feature data that marks
+  contaminant peptides.
 - `Reverse`: field in the feature data that marks reverse peptides.
 - `PIF`: field in the feature data that provides spectral purity.
 - `PEP` or `dart_PEP`: field in the feature data that provides peptide
-posterior error probabilities.
+  posterior error probabilities.
 - `Modified.sequence`: field in the feature data that provides the
-peptide identifiers.
+  peptide identifiers.
 - `Leading.razor.protein`: field in the feature data that provides the
-protein identifiers.
+  protein identifiers.
 - At least one field in the feature data that contains quantification
-values. In this case, there are 16 quantification columns named as
-`Reporter.intensity.` followed by an index (`1` to `16`).
+  values. In this case, there are 16 quantification columns named as
+  `Reporter.intensity.` followed by an index (`1` to `16`).
 
-Each required field will be described more in detail in the 
-corresponding sections. Names can be adapted by the user to 
-more meaningful ones or adapted to other output tables. 
+Each required field will be described more in detail in the
+corresponding sections. Names can be adapted by the user to more
+meaningful ones or adapted to other output tables.
 
 # Read in SCP data
 
-The first step is to read in the PSM quantification table
-generated by, for example, MaxQuant (@Tyanova2016-yj). We created a 
-small example data by subsetting the MaxQuant `evidence.txt` table 
-provided in the SCoPE2 landmark paper (@Specht2021-jm). The 
-`mqScpData` table is a typical example of what you would get after 
-reading in a CSV file using `read.csv` or `read.table`. See 
-`?mqScpData` for more information about the table content. 
+The first step is to read in the PSM quantification table generated
+by, for example, MaxQuant (@Tyanova2016-yj). We created a small
+example data by subsetting the MaxQuant `evidence.txt` table provided
+in the SCoPE2 landmark paper (@Specht2021-jm). The `mqScpData` table
+is a typical example of what you would get after reading in a CSV file
+using `read.csv` or `read.table`. See `?mqScpData` for more
+information about the table content.
 
 ```{r}
 data("mqScpData")
 ```
 
-We also provide an example of a sample annotation table that provides 
-useful information about the samples that are present in the example 
+We also provide an example of a sample annotation table that provides
+useful information about the samples that are present in the example
 data. See `?sampleAnnotation` for more information about the table
 content.
 
@@ -150,47 +150,46 @@ data("sampleAnnotation")
 ```
 
 As a note, the example sample data contains 5 different types of samples
-(`SampleType`) that can be found in a TMT-based SCP data set: 
+(`SampleType`) that can be found in a TMT-based SCP data set:
 
 ```{r}
 table(sampleAnnotation$SampleType)
 ```
 
 * The carrier channels (`Carrier`) contain 200 cell equivalents and
-are meant to boost the peptide identification rate.
+  are meant to boost the peptide identification rate.
 * The normalization channels (`Reference`) contain 5 cell equivalents
-and are used to partially correct for between-run variation.
+  and are used to partially correct for between-run variation.
 * The unused channels (`Unused`) are channels that are left empty due
-to isotopic cross-contamination by the carrier channel.
-* The negative control channels (`Blank`) contain samples that do not 
-contain any cell but are processed as single-cell samples.
+  to isotopic cross-contamination by the carrier channel.
+* The negative control channels (`Blank`) contain samples that do not
+  contain any cell but are processed as single-cell samples.
 * The single-cell sample channels contain the single-cell samples of
-interest, that are macrophage (`Macrophage`) or monocyte
-(`Monocyte`).
+  interest, that are macrophage (`Macrophage`) or monocyte
+  (`Monocyte`).
 
-Using `readSCP`, we combine both tables in a `QFeatures` object 
-formatted as described above. 
+Using `readSCP`, we combine both tables in a `QFeatures` object
+formatted as described above.
 
-```{r readSCP2}
-scp <- readSCP(featureData = mqScpData,
+```{r readSCP}
+scp <- readSCP(assayData = mqScpData,
                colData = sampleAnnotation,
-               channelCol = "Channel",
-               batchCol = "Raw.file",
+               runCol = "Raw.file",
                removeEmptyCols = TRUE)
 scp
 ```
 
 See here that the 3 first assays contain 11 columns that correspond to
-the TMT-11 labels and the last assay contains 16 columns that 
+the TMT-11 labels and the last assay contains 16 columns that
 correspond to the TMT-16 labels.
 
-**Important**: More details about the usage of `readSCP` and how to 
-read your own data set are provided in the `Load data using readSCP` 
-[vignette](https://uclouvain-cbio.github.io/scp/articles/read_scp.html). 
+**Important**: More details about the usage of `readSCP()` and how to
+read your own data set are provided in the `Load data using readSCP`
+[vignette](https://uclouvain-cbio.github.io/scp/articles/read_scp.html).
 
-Another way to get an overview of the scp object is to plot the 
+Another way to get an overview of the scp object is to plot the
 `QFeatures` object. This will create a graph where each node is an
-assay and links between assays are denoted as edges. 
+assay and links between assays are denoted as edges.
 
 ```{r plot1}
 plot(scp)
@@ -199,7 +198,7 @@ plot(scp)
 
 # Clean missing data
 
-All single-cell data contain many zeros. The zeros can be biological 
+All single-cell data contain many zeros. The zeros can be biological
 zeros or technical zeros and differentiating between the two types is
 not a trivial task. To avoid artefacts in downstream steps, we replace
 the zeros by the missing value `NA`. The `zeroIsNA` function takes the
@@ -214,9 +213,9 @@ scp <- zeroIsNA(scp, i = 1:4)
 # Filter PSMs
 
 A common steps in SCP is to filter out low-confidence PSMs. Each PSM
-assay contains feature meta-information that are stored in the 
-`rowData` of the assays. The `QFeatures` package allows to quickly 
-filter the rows of an assay by using these information. The available 
+assay contains feature meta-information that are stored in the
+`rowData` of the assays. The `QFeatures` package allows to quickly
+filter the rows of an assay by using these information. The available
 variables in the `rowData` are listed below for each assay.
 
 ```{r rowDataNames}
@@ -235,10 +234,10 @@ computed by MaxQuant:
 indicative of the purity of a spectrum
 
 We can perform this filtering using the `filterFeatures` function from
-`QFeatures`. `filterFeatures` automatically accesses the feature 
+`QFeatures`. `filterFeatures` automatically accesses the feature
 annotations and selects the rows that meet the provided condition(s). For
-instance, `Reverse != "+"` keeps the rows for which the `Reverse` 
-variable in the `rowData` is not `"+"` (*i.e.* the PSM is not matched 
+instance, `Reverse != "+"` keeps the rows for which the `Reverse`
+variable in the `rowData` is not `"+"` (*i.e.* the PSM is not matched
 to the decoy database).
 
 ```{r filter_psms}
@@ -301,46 +300,46 @@ In this dataset, `SampleType` gives the type of sample that is present
 in each TMT channel. The SCoPE2 protocole includes 5 types of samples:
 
 * The carrier channels (`Carrier`) contain 200 cell equivalents and
-are meant to boost the peptide identification rate.
+  are meant to boost the peptide identification rate.
 * The normalization channels (`Reference`) contain 5 cell equivalents
-and are used to partially correct for between-run variation.
+  and are used to partially correct for between-run variation.
 * The unused channels (`Unused`) are channels that are left empty due
-to isotopic cross-contamination by the carrier channel.
-* The negative control channels (`Blank`) contain samples that do not 
-contain any cell but are processed as single-cell samples.
+  to isotopic cross-contamination by the carrier channel.
+* The negative control channels (`Blank`) contain samples that do not
+  contain any cell but are processed as single-cell samples.
 * The single-cell sample channels contain the single-cell samples of
-interest, that are macrophage (`Macrophage`) or monocyte
-(`Monocyte`).
+  interest, that are macrophage (`Macrophage`) or monocyte
+  (`Monocyte`).
 
 The `computeSCR` function expects the following input:
 
 * The `QFeatures` dataset
 * The assay name(s) or index/indices for which the SCR should be
-computed
-* `colvar`: the variable in the sample annotations (`colData`) that hold
-the information used to discriminate sample channels from carrier 
-channels. 
-* `carrierPattern`: a string pattern (following regular expression 
-syntax) that identifies the carrier channel in each batch.
-* `samplePattern`: a string pattern (following regular expression 
-syntax) that identifies the samples to divide.
+  computed
+* `colvar`: the variable in the sample annotations (`colData`) that
+  hold the information used to discriminate sample channels from
+  carrier channels.
+* `carrierPattern`: a string pattern (following regular expression
+  syntax) that identifies the carrier channel in each batch.
+* `samplePattern`: a string pattern (following regular expression
+  syntax) that identifies the samples to divide.
 
-Optionally, you can also provide the following arguments: 
+Optionally, you can also provide the following arguments:
 
-* `rowDataName`: the name of the column in the `rowData` where to 
-store the computed SCR for each feature. 
-* `sampleFUN`: when multiple samples are present in an assay, there 
-are as many SCR as there are samples that need to be summarized to 
-a single value per feature. `sampleFUN` tells which function to use 
-for summarizing the sample values before computing the SCR; the 
-default is the `mean`.
-* `carrierFUN`: some designs might include several carriers per run 
-(not the case in this example). Similarly to `sampleFUN`,
-`carrierFUN` tells which function to use for summarizing the carrier
-values before computing the SCR; the default is the same function as
-`sampleFUN`.
+* `rowDataName`: the name of the column in the `rowData` where to
+  store the computed SCR for each feature.
+* `sampleFUN`: when multiple samples are present in an assay, there
+  are as many SCR as there are samples that need to be summarized to a
+  single value per feature. `sampleFUN` tells which function to use
+  for summarizing the sample values before computing the SCR; the
+  default is the `mean`.
+* `carrierFUN`: some designs might include several carriers per run
+  (not the case in this example). Similarly to `sampleFUN`,
+  `carrierFUN` tells which function to use for summarizing the carrier
+  values before computing the SCR; the default is the same function as
+  `sampleFUN`.
 
-The function creates a new field in the `rowData` of the assays. We 
+The function creates a new field in the `rowData` of the assays. We
 compute the average SCR for each PSM and store it in the corresponding
 `rowData`, under the `MeanSCR` column.
 
@@ -368,14 +367,14 @@ rbindRowData(scp, i = 1:3) |>
     scale_x_log10()
 ```
 
-The expected ratio between single cells and the carrier is 1/200 
-(dashed line). We can see that the distribution mode is slightly 
+The expected ratio between single cells and the carrier is 1/200
+(dashed line). We can see that the distribution mode is slightly
 shifted towards higher ratios with a mode around 0.01. However, there
-are a few PSMs that stand out of the distribution and have a much 
-higher signal than expected, indicating something wrong happened 
-during the quantification of those PSMs. We therefore filter out PSMs 
-with an average SCR higher than 0.1 (solide line). This is again easily
-performed using the `filterFeatures` functions.
+are a few PSMs that stand out of the distribution and have a much
+higher signal than expected, indicating something wrong happened
+during the quantification of those PSMs. We therefore filter out PSMs
+with an average SCR higher than 0.1 (solide line). This is again
+easily performed using the `filterFeatures` functions.
 
 ```{r filter_SCR}
 scp <- filterFeatures(scp,
@@ -386,13 +385,13 @@ scp <- filterFeatures(scp,
 ## Filter features to control for FDR
 
 Finally, we might also want to control for false discovery rate (FDR).
-MaxQuant already computes posterior error probabilities (PEP), but 
+MaxQuant already computes posterior error probabilities (PEP), but
 filtering on PEPs is too conservative (@Kall2008-hb) so we provide the
-`pep2qvalue` function to convert PEPs to q-values that are directly 
+`pep2qvalue` function to convert PEPs to q-values that are directly
 related to FDR. We here compute the q-values from the PEP (`dart_PEP`)
-across all 3 assays. `dart_PEP` contains the PEP values that have been 
-updated using the DART-ID algorithm (@Chen2019-uc). The function will 
-store the results in the `rowData`, we here asked to name the new 
+across all 3 assays. `dart_PEP` contains the PEP values that have been
+updated using the DART-ID algorithm (@Chen2019-uc). The function will
+store the results in the `rowData`, we here asked to name the new
 column `qvalue_PSMs`.
 
 ```{r compute_qvalues}
@@ -403,11 +402,11 @@ scp <- pep2qvalue(scp,
 ```
 
 We also allow to compute q-values at peptide or protein level rather
-than PSM. In this case, you need to supply the `groupBy` argument. 
+than PSM. In this case, you need to supply the `groupBy` argument.
 Suppose we want to compute the q-values at protein level, we can fetch
-the protein information stored under `Leading.razor.protein` in the 
+the protein information stored under `Leading.razor.protein` in the
 `rowData`. This time, we store the q-values in a new field called
-`qvalue_proteins`. 
+`qvalue_proteins`.
 
 ```{r compute_qvalues2}
 scp <- pep2qvalue(scp,
@@ -417,8 +416,8 @@ scp <- pep2qvalue(scp,
                   rowDataName = "qvalue_proteins")
 ```
 
-We can now filter the PSM to control, let's say, the protein FDR at 
-1\%. This can be performed using `filterFeatures` because the q-values 
+We can now filter the PSM to control, let's say, the protein FDR at
+1\%. This can be performed using `filterFeatures` because the q-values
 were stored in the `rowData`.
 
 ```{r filter_FDR}
@@ -468,16 +467,15 @@ scp
 ```
 
 The PSMs are aggregated over the `fcol` feature variable, here the
-modified peptide sequence. We also need to supply an aggregating 
-function that will
-tell how to combine the quantitative data of the PSMs to aggregate. We
-here aggregate the PSM data using the median value per sample thanks
-to the `matrixStats:colMedians` function. Other functions can be used 
-and we refer to `?aggregateFeatures` for more information about 
-available aggregation functions. The `aggregateFeaturesOverAssays` 
-function will create a new assay for each aggregated assay. We name 
-the aggregated assays using the original names and appending 
-`peptides_` at the start.
+modified peptide sequence. We also need to supply an aggregating
+function that will tell how to combine the quantitative data of the
+PSMs to aggregate. We here aggregate the PSM data using the median
+value per sample thanks to the `matrixStats:colMedians()`
+function. Other functions can be used and we refer to
+`?aggregateFeatures` for more information about available aggregation
+functions. The `aggregateFeaturesOverAssays()` function will create a
+new assay for each aggregated assay. We name the aggregated assays
+using the original names and appending `peptides_` at the start.
 
 ```{r aggregate_peptides, message = FALSE}
 scp <- aggregateFeaturesOverAssays(scp,
@@ -497,7 +495,7 @@ scp
 
 Under the hood, the `QFeatures` architecture preserves the
 relationship between the aggregated assays. See `?AssayLinks` for more
-information on relationships between assays. This is illustrated on 
+information on relationships between assays. This is illustrated on
 the `QFeatures` plot:
 
 ```{r plot2}
@@ -539,12 +537,12 @@ the median coefficient of variation (CV) per cell.
 
 ## Filter samples of interest
 
-We can subset the cells of interest, that is the negative control 
-samples, the macrophages and the monocytes. This 
-can easily be done by taking advantage of the `colData` and the 
-subsetting operators. Recall that `QFeatures` objects support 
-three-order subsetting, `x[rows, columns, assays]`, where columns are 
-the samples of interest. 
+We can subset the cells of interest, that is the negative control
+samples, the macrophages and the monocytes. This
+can easily be done by taking advantage of the `colData` and the
+subsetting operators. Recall that `QFeatures` objects support
+three-order subsetting, `x[rows, columns, assays]`, where columns are
+the samples of interest.
 
 ```{r subset samples}
 scp
@@ -552,7 +550,7 @@ scp <- scp[, scp$SampleType %in% c("Blank", "Macrophage", "Monocyte"), ]
 ```
 
 The subsetting removes unwanted samples from all assays. The filtered
-data set contains the same number of assays with the same number of 
+data set contains the same number of assays with the same number of
 features, but the number of columns (hence sampled) decreased.
 
 ```{r show_cell_filter}
@@ -566,8 +564,8 @@ We compute the median relative reporter ion intensity for each cell
 separately and apply a filter based on this statistic. This procedure
 recalls that of library size filtering commonly performed in scRNA-Seq
 data analysis, where the library size is the sum of the counts in each
-single cell. We compute and store the median intensity in the 
-`colData`. 
+single cell. We compute and store the median intensity in the
+`colData`.
 
 ```{r compute_colMedians}
 medians <- colMedians(assay(scp[["peptides"]]), na.rm = TRUE)
@@ -581,20 +579,21 @@ low-quality cells.
 colData(scp) |>
     data.frame() |>
     ggplot() +
-    aes(x = MedianRI, 
+    aes(x = MedianRI,
         y = SampleType,
         fill = SampleType) +
     geom_boxplot() +
     scale_x_log10()
 ```
 
-The negative control samples should not contain any peptide information and are 
-therefore used to assess the amount of background signal. The graph 
-above confirms that the signal measured in single-cells (macrophages 
-and monocytes) is above the background signal, hence no filtering is
-needed. Would it not be the case, the same procedure as in the 
-previous section can be used for selecting the cells that have an 
-associated median RI lower that a defined threshold.
+The negative control samples should not contain any peptide
+information and are therefore used to assess the amount of background
+signal. The graph above confirms that the signal measured in
+single-cells (macrophages and monocytes) is above the background
+signal, hence no filtering is needed. Would it not be the case, the
+same procedure as in the previous section can be used for selecting
+the cells that have an associated median RI lower that a defined
+threshold.
 
 ## Filter based on the median CV
 
@@ -603,11 +602,11 @@ of peptides that belong to a protein. We remove cells that exhibit
 high median CV over the different proteins. We compute the median CV
 per cell using the `computeMedianCV` function from the `scp`
 package. The function takes the `peptides` assay and computes the CV
-for each protein in each cell. To perform this, we must supply the 
-name of the `rowData` field that contains the protein information 
+for each protein in each cell. To perform this, we must supply the
+name of the `rowData` field that contains the protein information
 through the `groupBy` argument. We also only want to compute CVs if we
 have at least 5 peptides per protein. Finally, we also perform a
-normalization and divide the columns by the median. The computed 
+normalization and divide the columns by the median. The computed
 median CVs are automatically stored in the `colData` under the name
 that is supplied, here `MedianCV`.
 
@@ -615,20 +614,20 @@ that is supplied, here `MedianCV`.
 scp <- medianCVperCell(scp,
                        i = 1:3,
                        groupBy = "Leading.razor.protein",
-                       nobs = 5, 
+                       nobs = 5,
                        norm = "div.median",
                        na.rm = TRUE,
                        colDataName = "MedianCV")
 ```
 
-The computed CVs are stored in the `colData` of the `peptides`
-assay and holds the median CV per cell computed using at least 5
+The computed CVs are stored in the `colData` of the `peptides` assay
+and holds the median CV per cell computed using at least 5
 observations (peptides). The main interest of computing the median CV
-per cell is to filter cells with reliable quantification. The negative control
-samples are not expected to have reliable quantifications and hence
-can be used to estimate an empirical null distribution of the CV. This
-distribution helps defining a threshold that filters out single-cells
-that contain noisy quantification.
+per cell is to filter cells with reliable quantification. The negative
+control samples are not expected to have reliable quantifications and
+hence can be used to estimate an empirical null distribution of the
+CV. This distribution helps defining a threshold that filters out
+single-cells that contain noisy quantification.
 
 ```{r plot_medianCV, message = FALSE, warning = FALSE}
 getWithColData(scp, "peptides") |>
@@ -641,18 +640,18 @@ getWithColData(scp, "peptides") |>
 ```
 
 We can see that the protein quantification for single-cells are much
-more consistent than for negative control samples. Based on the 
-distribution of the negative controls, we decide to keep the cells 
-that have
-a median CV lower than 0.65. Note this example is inaccurate because
-the null distribution is based on only 3 negative controls, but more sets
-could lead to a better estimation of the CV null distribution. 
+more consistent than for negative control samples. Based on the
+distribution of the negative controls, we decide to keep the cells
+that have a median CV lower than 0.65. Note this example is inaccurate
+because the null distribution is based on only 3 negative controls,
+but more sets could lead to a better estimation of the CV null
+distribution.
 
 ```{r create_filter}
 scp <- scp[, !is.na(scp$MedianCV) & scp$MedianCV < 0.65, ]
 ```
 
-We can now remove the negative controls since all QC metrics are now 
+We can now remove the negative controls since all QC metrics are now
 computed.
 
 ```{r remove_NC}
@@ -681,7 +680,7 @@ found in `?QFeatures::normalize`.
 
 ```{r normalize_scale}
 ## Divide columns by median
-scp <- sweep(scp, 
+scp <- sweep(scp,
              i = "peptides",
              MARGIN = 2,
              FUN = "/",
@@ -808,7 +807,7 @@ the data will not be discussed in this vignette.  But taking those
 missing value into account is essential to avoid artefacts in
 downstream analyses. The data imputation is performed using the K
 nearest neighbors algorithm, with k = 3. This is available from the
-`impute` mehtod.  More details about the arguments can be found in
+`impute()` mehtod.  More details about the arguments can be found in
 `?impute::impute.knn`.
 
 ```{r impute}
@@ -837,7 +836,7 @@ effects.  Batch effects are caused by technical variation occurring
 during different MS runs. Since only a small number of single-cells
 can be acquired at once, batch effects are unavoidable.
 
-The `ComBat` function from the `sva` package can be used to perform
+The `ComBat()` function from the `sva` package can be used to perform
 batch correction as it is performed in the SCoPE2 analysis. We do not
 claim that `ComBat` is the best algorithm for batch correcting SCP
 data and other batch correcting methods could be used using the same
@@ -854,7 +853,7 @@ Next, we need to provide a design matrix and the batch annotation to
 in our case `SampleType`.
 
 ```{r prepare_batch_correction}
-batch <- colData(sce)$Raw.file
+batch <- sce$runCol
 model <- model.matrix(~ SampleType, data = colData(sce))
 ```
 
@@ -875,12 +874,12 @@ and create the feature links.
 scp <- addAssay(scp,
                 y = sce,
                 name = "proteins_batchC")
-scp <- addAssayLinkOneToOne(scp, 
+scp <- addAssayLinkOneToOne(scp,
                             from = "proteins_imptd",
                             to = "proteins_batchC")
 ```
 
-For the last time, we plot the overview of the fully processed data 
+For the last time, we plot the overview of the fully processed data
 set:
 
 ```{r plot5}
@@ -967,9 +966,9 @@ illustration.
 
 # Monitoring data processing
 
-`QFeatures` keeps the links between the different assays along the 
+`QFeatures` keeps the links between the different assays along the
 processing of the data. This greatly facilitates the visualization of
-the quantitative data for a features at the different processing 
+the quantitative data for a features at the different processing
 levels. For instance, suppose we are interested
 in the protein *Plastin-2* (protein ID is `P13796`). A useful QC is to
 monitor the data processing at the PSM, peptide and protein
@@ -983,11 +982,11 @@ formatted to a long format table that can easily be plugged in the
 ## Get the features related to Plastin-2 (P13796)
 subsetByFeature(scp, "P13796") |>
     ## Format the `QFeatures` to a long format table
-    longFormat(colvars = c("Raw.file", "SampleType", "Channel")) |>
+    longFormat(colvars = c("runCol", "SampleType", "quantCols")) |>
     data.frame() |>
     ## This is used to preserve ordering of the samples and assays in ggplot2
     mutate(assay = factor(assay, levels = names(scp)),
-           Channel = sub("Reporter.intensity.", "TMT-", Channel),
+           Channel = sub("Reporter.intensity.", "TMT-", quantCols),
            Channel = factor(Channel, levels = unique(Channel))) |>
     ## Start plotting
     ggplot(aes(x = Channel, y = value, group = rowname, col = SampleType)) +
@@ -1004,14 +1003,14 @@ subsetByFeature(scp, "P13796") |>
 ```
 
 This graph helps to keep track of the data processing. We can see how
-the different PSMs are progressively aggregated to peptides and then 
-to proteins as well as how the normalization, imputation or batch 
+the different PSMs are progressively aggregated to peptides and then
+to proteins as well as how the normalization, imputation or batch
 correction impact the distribution of the quantifications.
 
 We have dedicated a separate
-[vignette](https://rformassspectrometry.github.io/QFeatures/articles/Visualization.html) 
+[vignette](https://rformassspectrometry.github.io/QFeatures/articles/Visualization.html)
 that describes more in details how to visualize and explore data in a
-`QFeatures` object. 
+`QFeatures` object.
 
 # Session information {-}
 
@@ -1028,16 +1027,9 @@ knitr::opts_chunk$set(
 sessionInfo()
 ```
 
-# Citation
+# License {-}
 
-```{r citation}
-citation("scp")
-```
+This vignette is distributed under a [CC BY-SA
+license](https://creativecommons.org/licenses/by-sa/2.0/) license.
 
-# License
-
-This vignette is distributed under a 
-[CC BY-SA license](https://creativecommons.org/licenses/by-sa/2.0/) 
-license.
-
-# Reference
+# Reference {-}

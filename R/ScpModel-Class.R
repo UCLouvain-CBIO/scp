@@ -398,7 +398,10 @@ scpModelEffectNames <- function(object, name) {
 `scpModelInputIndex<-` <- function(object, name, value) {
     stopifnot(!is.null(colnames(object)))
     stopifnot(!is.null(rownames(object)))
-    value <- .indexToNumeric(value, assayNames(object), "i")
+    value <- .checkInputIndex(value, assayNames(object), "i")
+    x <- assay(object, value)
+    if (any(is.infinite(x)))
+        stop("The selected assay ('assay(object, i)') contains infinite values.")
     scpModel(object, name)@scpModelInputIndex <- value
     object
 }
@@ -560,7 +563,7 @@ scpModelEffectNames <- function(object, name) {
 ##     is pointing to.
 ## @param what A character string that indicates the name of the
 ##     index. It is used to provide meaningful error messages.
-.indexToNumeric <- function(index, choices, what = "name") {
+.checkInputIndex <- function(index, choices, what = "name") {
     if (is.logical(index) && !identical(index, NA)) {
         index <- which(index)
     }

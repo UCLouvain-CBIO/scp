@@ -2,81 +2,29 @@
 % Please edit documentation in R/readSCP.R
 \name{readSCP}
 \alias{readSCP}
-\title{Read single-cell proteomics data as a QFeatures object from
-tabular data and metadata}
+\alias{readSCPfromDIANN}
+\alias{readSingleCellExperiment}
+\title{Read single-cell proteomics tabular data}
 \usage{
-readSCP(
-  featureData,
-  colData,
-  batchCol,
-  channelCol,
-  suffix = NULL,
-  sep = "",
-  removeEmptyCols = FALSE,
-  verbose = TRUE,
-  ...
-)
+readSCP(...)
+
+readSCPfromDIANN(...)
+
+readSingleCellExperiment(...)
 }
 \arguments{
-\item{featureData}{File or object holding the identification and
-quantitative data. Can be either a \code{character(1)} with the
-path to a text-based spreadsheet (comma-separated values by
-default, but see \code{...}) or an object that can be coerced to a
-\code{data.frame}. It is advised not to encode characters as
-factors.}
-
-\item{colData}{A \code{data.frame} or any object that can be coerced
-to a \code{data.frame}. \code{colData} is expected to contain all the
-sample meta information. Required fields are the acquisition
-batch (given by \code{batchCol}) and the acquisition channel within
-the batch (e.g. TMT channel, given by
-\code{channelCol}). Additional fields (e.g. sample type,
-acquisition date,...) are allowed and will be stored as sample
-meta data.}
-
-\item{batchCol}{A \code{numeric(1)} or \code{character(1)} pointing to the
-column of \code{featureData} and \code{colData} that contain the batch
-names. Make sure that the column name in both table are either
-identical and syntactically valid (if you supply a \code{character})
-or have the same index (if you supply a \code{numeric}). Note that
-characters can be converted to syntactically valid names using
-\code{make.names}}
-
-\item{channelCol}{A \code{numeric(1)} or \code{character(1)} pointing to the
-column of \code{colData} that contains the column names of the
-quantitative data in \code{featureData} (see Example).}
-
-\item{suffix}{A \code{character()} giving the suffix of the column
-names in each assay. Sample/single-cell (column) names are
-automatically generated using: batch name + sep + suffix. Make
-sure suffix contains unique character elements. The length of
-the vector should equal the number of quantification channels.
-If NULL (default), the suffix is derived from the the names of
-the quantification columns in \code{featureData}.}
-
-\item{sep}{A \code{character(1)} that is inserted between the assay
-name and the \code{suffix} (see \code{suffix} argument for more details).}
-
-\item{removeEmptyCols}{A \code{logical(1)}. If true, the function will
-remove in each batch the columns that contain only missing
-values.}
-
-\item{verbose}{A \code{logical(1)} indicating whether the progress of
-the data reading and formatting should be printed to the
-console. Default is \code{TRUE}.}
-
-\item{...}{Further arguments that can be passed on to \link{read.csv}
-except \code{stringsAsFactors}, which is always \code{FALSE}.}
+\item{...}{Parameters passed to \code{\link[=readSummarizedExperiment]{readSummarizedExperiment()}},
+\code{\link[=readQFeatures]{readQFeatures()}} or \code{\link[=readQFeaturesFromDIANN]{readQFeaturesFromDIANN()}}. See these
+respective manual pages for details.}
 }
 \value{
-An instance of class \link{QFeatures}. The expression data of
-each batch is stored in a separate assay as a
-\link{SingleCellExperiment} object.
+An instance of class \code{SingleCellExperiment} or a
+\code{QFeatures}, composed of \code{SingleCellExperiment} objects.
 }
 \description{
-Convert tabular quantitative MS data and metadata from a
-spreadsheet or a \code{data.frame} into a \link{QFeatures} object containing
-\link{SingleCellExperiment} objects.
+Function to import and convert tabular data from a spreadsheet or
+a \code{data.frame} into a \code{SingleCellExperiment} and \code{QFeatures}
+object.
 }
 \note{
 The \code{SingleCellExperiment} class is built on top of the
@@ -87,6 +35,20 @@ are forbidden in the \code{rowData}. Avoid using the following names:
 }
 \examples{
 
+######################################################
+## Load a single acquisition as a SingleCellExperiment
+
+## Load a data.frame with PSM-level data
+data("mqScpData")
+
+## Create the QFeatures object
+sce <- readSingleCellExperiment(mqScpData,
+                                quantCols = grep("RI", colnames(mqScpData)))
+sce
+
+######################################################
+## Load multiple acquisitions as a QFeatures
+
 ## Load an example table containing MaxQuant output
 data("mqScpData")
 
@@ -94,12 +56,19 @@ data("mqScpData")
 data("sampleAnnotation")
 
 ## Format the tables into a QFeatures object
-readSCP(featureData = mqScpData,
+readSCP(assayData = mqScpData,
         colData = sampleAnnotation,
-        batchCol = "Raw.file",
-        channelCol = "Channel")
-
+        runCol = "Raw.file")
 }
-\author{
-Laurent Gatto, Christophe Vanderaa
+\seealso{
+\itemize{
+\item The more general \code{\link[QFeatures:readQFeatures]{QFeatures::readQFeatures()}} function, which
+this function depends on.
+\item The more general \code{\link[QFeatures:readQFeaturesFromDIANN]{QFeatures::readQFeaturesFromDIANN()}} function,
+for details and an example on how to read label-free and plexDIA
+(mTRAQ) data processed with DIA-NN.
+\item The \code{\link[QFeatures:readQFeatures]{QFeatures::readSummarizedExperiment()}} function, which
+\code{readSingleCellExperiment()} depends on.
+\item The \code{\link[SingleCellExperiment:SingleCellExperiment]{SingleCellExperiment::SingleCellExperiment()}} class.
+}
 }
