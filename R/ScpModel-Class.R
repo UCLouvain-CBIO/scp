@@ -2,26 +2,26 @@
 ## ---- ScpModel class definition ----
 
 ##' @rdname ScpModel-class
-##' 
-##' @title Class to store the results of single-cell proteomics 
+##'
+##' @title Class to store the results of single-cell proteomics
 ##' modelling
-##' 
+##'
 ##' @description
-##' 
+##'
 ##' An `ScpModel` object must be always stored in the `metadata()` of
 ##' an object that inherits from the `SingleCellExperiment` class. The
-##' `ScpModel` object should **never be accessed directly** by the 
+##' `ScpModel` object should **never be accessed directly** by the
 ##' user. Instead, we provide several setter function to retrieve
 ##' information that may be useful to the user.The `ScpModel` class
 ##' contains several slots:
 ##'
-##' - `scpModelFormula`: a `formula` object controlling which 
+##' - `scpModelFormula`: a `formula` object controlling which
 ##'   variables are to be modelled.
 ##' - `scpModelInputIndex`: a `numeric(1)`, selecting the assay to use
 ##'   in the `SingleCellExperiment` object as input matrix. Note that
-##'   this slot serves as a pointer, meaning that the quantitative 
+##'   this slot serves as a pointer, meaning that the quantitative
 ##'   data is not duplicated. Any change to the assay in the
-##'   `SingleCellExperiment` will impact the estimation of the 
+##'   `SingleCellExperiment` will impact the estimation of the
 ##'   `ScpModel` object.
 ##' - `scpModelFilterThreshold`: A `numeric(1)` indicating the minimal
 ##'   n/p ratio required for a feature to be included in further model
@@ -29,19 +29,19 @@
 ##'   divided by the number of coefficients to estimate. n/p cannot be
 ##'   smaller than 1 because this would lead to over-specified models.
 ##' - `scpModelFitList`: A `List` that contains the model results for
-##'   each feature. Each element is a `ScpModelFit` object (see 
+##'   each feature. Each element is a `ScpModelFit` object (see
 ##'   [`ScpModelFit-class`])
-##'   
+##'
 ##' @section Getters:
 ##'
 ##' Each slot has a getter function associated:
 ##'
-##' - `scpModelNames()`: returns a vector of names of `ScpModel` 
+##' - `scpModelNames()`: returns a vector of names of `ScpModel`
 ##'   objects stored in the `SingleCellExperiment` object.
 ##' - `scpModelFormula()`: returns the `formula` slot of the `ScpModel`
 ##'   within an object that inherits from the `SummarizedExperiment`
 ##'   class.
-##' - `scpModelFilterThreshold()`: returns the n/p ration threshold 
+##' - `scpModelFilterThreshold()`: returns the n/p ration threshold
 ##'   used for feature filtering.
 ##' - `scpModelInput()`: returns a `matrix` with the quantitative
 ##'   values used as input of the model. Hence, the matrix contains
@@ -53,38 +53,38 @@
 ##'   the n/p of the features that satisfy the n/p ratio threshold.
 ##' - `scpModelResiduals()`: when `join = FALSE`, the function returns
 ##'   a list where each element corresponds to a feature and contains
-##'   the estimated residuals. When `join = TRUE` (default), the function 
-##'   combines the list into a matrix with features in rows and cells 
+##'   the estimated residuals. When `join = TRUE` (default), the function
+##'   combines the list into a matrix with features in rows and cells
 ##'   in columns, and filling the gaps with `NA`. If `filtered = TRUE`,
-##'   the feature of the matrix are restricted to the features that 
+##'   the feature of the matrix are restricted to the features that
 ##'   satisfy the n/p ratio threshold.
 ##' - `scpModelEffects()`: when `join = FALSE`, the function return a
-##'   list where each element of the list corresponds to a feature. 
-##'   Each element contains another list with as many elements as 
+##'   list where each element of the list corresponds to a feature.
+##'   Each element contains another list with as many elements as
 ##'   variable in the model and each element contains the data  effect vector
 ##'   for that vector. When `join = TRUE` (default), each element of the list is
 ##'   a matrix with features in rows and cells in columns where gaps
 ##'   are filled with `NA`. If `filtered = TRUE`, the feature of the
-##'   matrix are restricted to the features that satisfy the n/p 
+##'   matrix are restricted to the features that satisfy the n/p
 ##'   ratio threshold.
 ##'
 ##' Setter:
 ##'
-##' - `scpModelFilterThreshold<-()`: the function changes the n/p 
-##'   ratio threshold used for filtering features. 
-##' 
+##' - `scpModelFilterThreshold<-()`: the function changes the n/p
+##'   ratio threshold used for filtering features.
+##'
 ##' @seealso
-##' - [ScpModelFit-class] for a description of the class that store 
-##'   modelling results 
+##' - [ScpModelFit-class] for a description of the class that store
+##'   modelling results
 ##' - [ScpModel-Workflow] that uses the class to store the estimated
 ##'   model.
-##' 
+##'
 ##' @author Christophe Vanderaa, Laurent Gatto
-##' 
+##'
 ##' @example inst/examples/examples_ScpModel-Class.R
-##' 
+##'
 ##' @importFrom methods new
-##' 
+##'
 ##' @name ScpModel
 ##' @aliases ScpModel ScpModel-class class:ScpModel
 ##' @exportClass ScpModel
@@ -119,13 +119,13 @@ scpModelFormula <- function(object, name) {
 }
 
 ##' @rdname ScpModel-class
-##' 
+##'
 ##' @param filtered A `logical(1)` indicating whether the output
-##'     should return all features (`FALSE`) or the features that 
+##'     should return all features (`FALSE`) or the features that
 ##'     comply to the n/p ratio threshold (`TRUE`).
-##' 
+##'
 ##' @importFrom SummarizedExperiment assay
-##' 
+##'
 ##' @export
 scpModelInput <- function(object, name, filtered = TRUE) {
     out <- assay(object, scpModelInputIndex(object, name))
@@ -146,7 +146,7 @@ scpModelFilterThreshold <- function(object, name) {
 ##'
 ##' @export
 scpModelFilterNPRatio <- function(object, name, filtered = TRUE) {
-    out <- scpModelN(object, name, filtered) / 
+    out <- scpModelN(object, name, filtered) /
         scpModelP(object, name, filtered)
     ## when all missing or no params
     out[is.na(out) | is.infinite(out)] <- 0
@@ -157,10 +157,10 @@ scpModelFilterNPRatio <- function(object, name, filtered = TRUE) {
 ##'
 ##' @param join A `logical(1)` indicating whether the output should be
 ##'     combined in a single matrix (`TRUE`) or it should be returned
-##'     as a list with one element for each feature (`FALSE`). When 
+##'     as a list with one element for each feature (`FALSE`). When
 ##'     `TRUE`, any gaps across features will be filled with NA's.
 ##' @export
-scpModelResiduals <- function(object, name, join = TRUE, 
+scpModelResiduals <- function(object, name, join = TRUE,
                               filtered = TRUE) {
     out <- scpModelFitElement(
         object, name, "Residuals", filtered, .estimationMessage
@@ -172,7 +172,7 @@ scpModelResiduals <- function(object, name, join = TRUE,
 ##' @rdname ScpModel-class
 ##'
 ##' @export
-scpModelEffects <- function(object, name, join = TRUE, 
+scpModelEffects <- function(object, name, join = TRUE,
                             filtered = TRUE) {
     out <- scpModelFitElement(
         object, name, "Effects", filtered, .estimationMessage
@@ -247,7 +247,7 @@ scpModelFitList <- function(object, name, filtered = FALSE) {
     out
 }
 
-scpModelFitElement <- function(object, name, what, filtered, 
+scpModelFitElement <- function(object, name, what, filtered,
                                helpMessage = "") {
     out <- scpModelFitList(object, name)
     scpModelFitSlot <- get(paste0("scpModelFit", what))
@@ -334,18 +334,18 @@ scpModelEffectNames <- function(object, name) {
 ## ---- Exported setters ----
 
 ##' @rdname ScpModel-class
-##' 
-##' @param object An object that inherits from the 
+##'
+##' @param object An object that inherits from the
 ##'     `SingleCellExperiment` class.
-##' 
-##' @param value An `numeric(1)`, the new value for the n/p ratio 
+##'
+##' @param value An `numeric(1)`, the new value for the n/p ratio
 ##'     threshold
-##' 
+##'
 ##' @param name A `character(1)` providing the name to use to store or
 ##'     retrieve the modelling results. When retrieving a model and
-##'     `name` is missing, the name of the first model found in 
+##'     `name` is missing, the name of the first model found in
 ##'     `object` is used.
-##' 
+##'
 ##' @export
 `scpModelFilterThreshold<-` <- function(object, name, value) {
     stopifnot(length(value) == 1)
@@ -358,8 +358,8 @@ scpModelEffectNames <- function(object, name) {
 
 ## All setters are internal function and hence not visible to the
 ## user, otherwise it may lead to corrupt model results.
-## We implement setters instead of initializing the slots when 
-## constructing the object because the validity depends on the SE 
+## We implement setters instead of initializing the slots when
+## constructing the object because the validity depends on the SE
 ## object that is outside of the ScpModel object.
 
 `scpModel<-` <- function(object, name, value) {
@@ -380,7 +380,10 @@ scpModelEffectNames <- function(object, name) {
 `scpModelInputIndex<-` <- function(object, name, value) {
     stopifnot(!is.null(colnames(object)))
     stopifnot(!is.null(rownames(object)))
-    value <- .indexToNumeric(value, assayNames(object), "i")
+    value <- .checkInputIndex(value, assayNames(object), "i")
+    x <- assay(object, value)
+    if (any(is.infinite(x)))
+        stop("The selected assay ('assay(object, i)') contains infinite values.")
     scpModel(object, name)@scpModelInputIndex <- value
     object
 }
@@ -561,7 +564,7 @@ scpModelEffectNames <- function(object, name) {
 ##     is pointing to.
 ## @param what A character string that indicates the name of the
 ##     index. It is used to provide meaningful error messages.
-.indexToNumeric <- function(index, choices, what = "name") {
+.checkInputIndex <- function(index, choices, what = "name") {
     if (is.logical(index) && !identical(index, NA)) {
         index <- which(index)
     }
