@@ -332,7 +332,8 @@ scpModelWorkflow <- function(object, formula,
         hat <- x %*% tcrossprod(xtxInvLam, x)
         df <- length(y) - sum(diag(2 * hat - tcrossprod(hat)))
     } else {
-        df <- max(length(y) - ncol(x) - 1, 1)
+        ## note: not - 1 because intercept is in x
+        df <- max(length(y) - ncol(x), 1)
     }
     residuals <- y - x %*% beta
     list(coefficients = beta[, 1],
