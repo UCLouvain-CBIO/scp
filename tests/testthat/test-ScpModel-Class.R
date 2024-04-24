@@ -12,10 +12,6 @@ test_that("ScpModel", {
     expect_identical(x, x2)
 })
 
-test_that("validObject", {
-
-})
-
 ## ----Test exported getters ----
 
 ## Internal function that creates a minimal SE object as expected by
@@ -839,7 +835,7 @@ test_that("scpModelFilterThreshold<-", {
     require(SummarizedExperiment)
     se <- SummarizedExperiment(assays = List(a = matrix(1, 5, 5)))
     model <- ScpModel()
-    metadata(se)[["test"]] <- model
+    metadata(se)[["model"]] <- model
     ## Value is not of class numeric = error
     expect_error(
         scpModelFilterThreshold(se) <- "foo",
@@ -850,16 +846,22 @@ test_that("scpModelFilterThreshold<-", {
         scpModelFilterThreshold(se) <- 1:3,
         regexp = "length.value. == 1 is not TRUE"
     )
-    ## Value has length < 1 = error
+    ## Value is < 1 = error
     expect_error(
         scpModelFilterThreshold(se) <- 0,
         regexp = "value >= 1 is not TRUE"
     )
-    ##
+    ## Value is NULL = length 0 = error
+    expect_error(
+        scpModelFilterThreshold(se) <- NULL,
+        regexp = "length.value. == 1 is not TRUE"
+    )
+    ## Correct case
+    scpModelFilterThreshold(se) <- 1
+    expect_identical(metadata(se)$model@scpModelFilterThreshold, 1)
 })
 
 ## ---- Test internal setters ----
-
 
 test_that("scpModel<-", {
     require(SummarizedExperiment)
@@ -871,7 +873,7 @@ test_that("scpModel<-", {
         regexp = "ScpModel.*is not TRUE"
     )
     ## Add model
-    ## name is not provided and model not initialised = error
+    ## name is not provided and there is no model to replace = error
     expect_error(
         scpModel(se) <- model,
         regexp = "No 'ScpModel'"
@@ -905,7 +907,7 @@ test_that("scpModel<-", {
     scpModel(se2, "test") <- NULL
     expect_identical(se, se2)
     ## name is provided and model initialised = remove
-    scpModel(se2, "test") <- model ## assuming this works (tested above)
+    scpModel(se2, "test") <- model ## add a model to immediately remove
     scpModel(se2, "test") <- NULL
     expect_identical(se, se2)
     ## name is not provided and model initialised = remove the default model
@@ -923,6 +925,99 @@ test_that("scpModel<-", {
     expect_error(
         scpModel(se) <- NULL,
         regexp = "No 'ScpModel'"
+    )
+})
+
+test_that("scpModelInputIndex<-", {
+    require(SummarizedExperiment)
+    se <- SummarizedExperiment(assays = list(
+        assay1 = matrix(1, 2, 2),
+        assay2 = matrix(1, 2, 2)
+    ))
+    model <- ScpModel()
+    metadata(se)[["test"]] <- model
+    ## Object has no dimension names
+    expect_error(
+        scpModelInputIndex(se) <- NA,
+        regexp = "!is.null.colnames.object.. is not TRUE"
+    )
+    colnames(se) <- LETTERS[1:2]
+    expect_error(
+        scpModelInputIndex(se) <- NA,
+        regexp = "!is.null.rownames.object.. is not TRUE"
+    )
+    rownames(se) <- letters[1:2]
+    ## Value has wrong type = error
+    expect_error(
+        scpModelInputIndex(se) <- NA,
+        regexp = "must be a character, numeric or logical"
+    )
+    expect_error(
+        scpModelInputIndex(se) <- factor(1),
+        regexp = "must be a character, numeric or logical"
+    )
+        expect_error(
+        scpModelInputIndex(se) <- data.frame(assay = 1),
+        regexp = "must be a character, numeric or logical"
+    )
+    expect_error(
+        scpModelInputIndex(se) <- matrix(1),
+        regexp = "must be a character, numeric or logical"
+    )
+    ## Value points to multiple assays = error
+    expect_error(
+        scpModelInputIndex(se) <- c(TRUE, TRUE),
+        regexp = "'i' points to multiple input assays."
+    )
+    expect_error(
+        scpModelInputIndex(se) <- 1:2,
+        regexp = "'i' points to multiple input assays."
+    )
+    expect_error(
+        scpModelInputIndex(se) <- c("assay1", "assay2"),
+        regexp = "'i' points to multiple input assays."
+    )
+    ## Value points to out of bound index = error
+    expect_error(
+        scpModelInputIndex(se) <- c(FALSE, FALSE, TRUE),
+        regexp = "out of bounds"
+    )
+    expect_error(
+        scpModelInputIndex(se) <- 3,
+        regexp = "out of bounds"
+    )
+    expect_error(
+        scpModelInputIndex(se) <- "assay3",
+        regexp = "'assay3' not found"
+    )
+    ## Replace input assay for missing model = error
+    expect_error(
+        scpModelInputIndex(se, "missingModel") <- 1,
+        regexp = "missingModel.*not found.*scpModelPrepare"
+    )
+    ## Replace input assay for empty model = add
+    scpModelInputIndex(se) <- 1
+    expect_identical(
+        metadata(se)[["test"]]@scpModelInputIndex,
+        1
+    )
+    ## Replace input assay for non-empty model = replace
+    scpModelInputIndex(se) <- 2
+    expect_identical(
+        metadata(se)[["test"]]@scpModelInputIndex,
+        2
+    )
+    ## Make sure it still works when assays in SE are not named
+    se <- SummarizedExperiment(assays = list(
+        matrix(1, 2, 2),
+        matrix(1, 2, 2)
+    ))
+    model <- ScpModel()
+    metadata(se)[["test"]] <- model
+    scpModelInputIndex(se) <- 1
+    expect_identical(
+        metadata(se)[["test"]]@scpModelInputIndex,
+        1
     )
 })
 
@@ -988,87 +1083,6 @@ test_that("scpModelFormula<-", {
     )
 })
 
-test_that("scpModelInputIndex<-", {
-    require(SummarizedExperiment)
-    se <- SummarizedExperiment(assays = list(
-        assay1 = matrix(1, 2, 2),
-        assay2 = matrix(1, 2, 2)
-    ))
-    model <- ScpModel()
-    metadata(se)[["test"]] <- model
-    ## Value has wrong type = error
-    expect_error(
-        scpModelInputIndex(se) <- NA,
-        regexp = "must be a character, numeric or logical"
-    )
-    expect_error(
-        scpModelInputIndex(se) <- factor(1),
-        regexp = "must be a character, numeric or logical"
-    )
-    expect_error(
-        scpModelInputIndex(se) <- data.frame(assay = 1),
-        regexp = "must be a character, numeric or logical"
-    )
-    expect_error(
-        scpModelInputIndex(se) <- matrix(1),
-        regexp = "must be a character, numeric or logical"
-    )
-    ## Value points to multiple assays = error
-    expect_error(
-        scpModelInputIndex(se) <- c(TRUE, TRUE),
-        regexp = "'i' points to multiple input assays."
-    )
-    expect_error(
-        scpModelInputIndex(se) <- 1:2,
-        regexp = "'i' points to multiple input assays."
-    )
-    expect_error(
-        scpModelInputIndex(se) <- c("assay1", "assay2"),
-        regexp = "'i' points to multiple input assays."
-    )
-    ## Value points to out of bound index = error
-    expect_error(
-        scpModelInputIndex(se) <- c(FALSE, FALSE, TRUE),
-        regexp = "out of bounds"
-    )
-    expect_error(
-        scpModelInputIndex(se) <- 3,
-        regexp = "out of bounds"
-    )
-    expect_error(
-        scpModelInputIndex(se) <- "assay3",
-        regexp = "'assay3' not found"
-    )
-    ## Replace input assay for missing model = error
-    expect_error(
-        scpModelInputIndex(se, "missingModel") <- 1,
-        regexp = "missingModel.*not found.*scpModelPrepare"
-    )
-    ## Replace input assay for empty model = add
-    scpModelInputIndex(se) <- 1
-    expect_identical(
-        metadata(se)[["test"]]@scpModelInputIndex,
-        1
-    )
-    ## Replace input assay for non-empty model = replace
-    scpModelInputIndex(se) <- 2
-    expect_identical(
-        metadata(se)[["test"]]@scpModelInputIndex,
-        2
-    )
-    ## Make sure it still works when assays in SE are not named
-    se <- SummarizedExperiment(assays = list(
-        matrix(1, 2, 2),
-        matrix(1, 2, 2)
-    ))
-    model <- ScpModel()
-    metadata(se)[["test"]] <- model
-    scpModelInputIndex(se) <- 1
-    expect_identical(
-        metadata(se)[["test"]]@scpModelInputIndex,
-        1
-    )
-})
 
 test_that("scpModelDesign<-", {
     require(SummarizedExperiment)
