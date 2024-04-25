@@ -142,6 +142,10 @@ scpModelWorkflow <- function(object, formula,
                              i = 1,
                              name = "model",
                              verbose = TRUE) {
+    if (name %in% names(metadata(object))) {
+        warning("'", name, "' is already present in the metadata. ",
+                "The associated content will be overwritten.")
+    }
     metadata(object)[[name]] <- ScpModel()
     scpModelFormula(object, name) <- formula
     scpModelInputIndex(object, name) <- i

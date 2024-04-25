@@ -182,7 +182,7 @@ test_that("scpModelResiduals", {
         names(res) <- colnames(se)
         fl@residuals <- res
         fl
-        }, model@scpModelFitList, resids)
+    }, model@scpModelFitList, resids)
     ## No filtering, no joining
     metadata(se)[["test1"]] <- model
     expect_identical(
@@ -928,6 +928,61 @@ test_that("scpModel<-", {
     )
 })
 
+test_that("scpModelFormula<-", {
+    require(SummarizedExperiment)
+    se <- SummarizedExperiment(assays = List(a = matrix(1, 5, 5)))
+    model <- ScpModel()
+    metadata(se)[["test"]] <- model
+    ## Value is not of class formula = error
+    expect_error(
+        scpModelFormula(se) <- matrix(),
+        regexp = "formula.*not TRUE"
+    )
+    ## Variable in model formula are absent from colData = error
+    expect_error(
+        scpModelFormula(se, "test1") <- ~ 1 + var1,
+        regexp = "empty"
+    )
+    se$var1 <- 1
+    se$var2 <- 2
+    ## Replace model formula for missing model = error
+    expect_error(
+        scpModelFormula(se, "missingModel") <- ~ 1 + var1,
+        regexp = "missingModel.*not found.*scpModelWorkflow"
+    )
+    ## Variable in model is not in colData = error
+    expect_error(
+        scpModelFormula(se, "test1") <- ~ 1 + var3,
+        regexp = "missing.*var3"
+    )
+    ## The formula has no intercept = error
+    expect_error(
+        scpModelFormula(se, "test1") <- ~ 0 + var1,
+        regexp = "The formula must contain an intercept"
+    )
+    ## Replace model formula for existing empty model = add
+    scpModelFormula(se) <- ~ 1 + var1
+    expect_identical(
+        metadata(se)[["test"]]@scpModelFormula,
+        ~ 1 + var1
+    )
+    ## Replace model formula for existing non-empty model = replace
+    scpModelFormula(se) <- ~ 1 + var1 + var2
+    expect_identical(
+        metadata(se)[["test"]]@scpModelFormula,
+        ~ 1 + var1 + var2
+    )
+    ## If model contains response variable = remove response + warning
+    expect_warning(
+        scpModelFormula(se) <- y + x ~ 1 + var1,
+        regexp = "The formula contains a response variable and is ignored"
+    )
+    expect_identical(
+        metadata(se)[["test"]]@scpModelFormula,
+        ~ 1 + var1
+    )
+})
+
 test_that("scpModelInputIndex<-", {
     require(SummarizedExperiment)
     se <- SummarizedExperiment(assays = list(
@@ -956,7 +1011,7 @@ test_that("scpModelInputIndex<-", {
         scpModelInputIndex(se) <- factor(1),
         regexp = "must be a character, numeric or logical"
     )
-        expect_error(
+    expect_error(
         scpModelInputIndex(se) <- data.frame(assay = 1),
         regexp = "must be a character, numeric or logical"
     )
@@ -993,7 +1048,7 @@ test_that("scpModelInputIndex<-", {
     ## Replace input assay for missing model = error
     expect_error(
         scpModelInputIndex(se, "missingModel") <- 1,
-        regexp = "missingModel.*not found.*scpModelPrepare"
+        regexp = "missingModel.*not found.*scpModelWorkflow"
     )
     ## Replace input assay for empty model = add
     scpModelInputIndex(se) <- 1
@@ -1008,12 +1063,7 @@ test_that("scpModelInputIndex<-", {
         2
     )
     ## Make sure it still works when assays in SE are not named
-    se <- SummarizedExperiment(assays = list(
-        matrix(1, 2, 2),
-        matrix(1, 2, 2)
-    ))
-    model <- ScpModel()
-    metadata(se)[["test"]] <- model
+    assays(se) <- unname(assays(se))
     scpModelInputIndex(se) <- 1
     expect_identical(
         metadata(se)[["test"]]@scpModelInputIndex,
@@ -1022,686 +1072,85 @@ test_that("scpModelInputIndex<-", {
 })
 
 test_that("scpModelFitList<-", {
-    ## TODO
-    ## Test error when fitList has wrong length
-    ## Test error when fitList has wrong names
-})
-
-
-test_that("scpModelFormula<-", {
-    require(SummarizedExperiment)
-    se <- SummarizedExperiment(assays = List(a = matrix(1, 5, 5)))
-    model <- ScpModel()
-    metadata(se)[["test"]] <- model
-    ## Value is not of class formula = error
-    expect_error(
-        scpModelFormula(se) <- matrix(),
-        regexp = "formula.*not TRUE"
-    )
-    ## Variable in model formula are absent from colData = error
-    expect_error(
-        scpModelFormula(se, "test1") <- ~ 1 + var1,
-        regexp = "empty"
-    )
-    se$var1 <- 1
-    se$var2 <- 2
-    ## Replace model formula for missing model = error
-    expect_error(
-        scpModelFormula(se, "missingModel") <- ~ 1 + var1,
-        regexp = "missingModel.*not found.*scpModelPrepare"
-    )
-    ## Variable in model is not in colData = error
-    expect_error(
-        scpModelFormula(se, "test1") <- ~ 1 + var3,
-        regexp = "missing.*var3"
-    )
-    ## The formula has no intercept = error
-    expect_error(
-        scpModelFormula(se, "test1") <- ~ 0 + var1,
-        regexp = "The formula must contain an intercept"
-    )
-    ## Replace model formula for existing empty model = add
-    scpModelFormula(se) <- ~ 1 + var1
-    expect_identical(
-        metadata(se)[["test"]]@scpModelFormula,
-        ~ 1 + var1
-    )
-    ## Replace model formula for existing non-empty model = replace
-    scpModelFormula(se) <- ~ 1 + var1 + var2
-    expect_identical(
-        metadata(se)[["test"]]@scpModelFormula,
-        ~ 1 + var1 + var2
-    )
-    ## If model contains response variable = remove response + warning
-    expect_warning(
-        scpModelFormula(se) <- y + x ~ 1 + var1,
-        regexp = "Response variables are ignored"
-    )
-    expect_identical(
-        metadata(se)[["test"]]@scpModelFormula,
-        ~ 1 + var1
-    )
-})
-
-
-test_that("scpModelDesign<-", {
-    require(SummarizedExperiment)
-    n <- 5
-    m <- 10
-    se <- SummarizedExperiment(assays = list(
-        assay1 = matrix(1, m, n),
-        assay2 = matrix(1, m, n)
-    ))
-    dimnames(se) <- list(letters[1:m], letters[1:n])
-    model <- ScpModel()
-    metadata(se)[["test"]] <- model
-    dm <- matrix(1, n, 3, dimnames = list(colnames(se), letters[1:3]))
-    ## Value is not of class matrix = error
-    expect_error(
-        scpModelDesign(se) <- array(),
-        regexp = "matrix.*not TRUE"
-    )
-    ## Replace model design for missing model = error
-    expect_error(
-        scpModelDesign(se, "missingModel") <- dm,
-        regexp = "missingModel.*not found.*scpModelPrepare"
-    )
-    ## Replace model design with missing dimension names = error
-    expect_error(
-        scpModelDesign(se, "test") <- matrix(),
-        regexp = "'scpModelDesign' is missing sample names."
-    )
-    ## Replace model design with wrong dimensions (rows) = error
-    expect_error(
-        scpModelDesign(se, "test") <- dm[1, , drop = FALSE],
-        regexp = paste("Expected", n, "but found 1")
-    )
-    ## Replace model design with wrong dimension names = error
-    se2 <- se
-    dm2 <- dm
-    colnames(se2) <- letters[1:n]
-    rownames(dm2) <- rev(colnames(se2))
-    expect_error(
-        scpModelDesign(se2, "test") <- dm2,
-        regexp = "scpModelDesign.*do not match"
-    )
-    ## Replace model design for existing empty model = add
-    scpModelDesign(se) <- dm
-    expect_identical(
-        metadata(se)[["test"]]@scpModelDesign,
-        dm
-    )
-    ## Replace model design for existing non-empty model = replace
-    scpModelDesign(se) <- dm * 2
-    expect_identical(
-        metadata(se)[["test"]]@scpModelDesign,
-        dm * 2
-    )
-    ## No dimnames = error
-    dimnames(dm) <- NULL
-    expect_error(
-        scpModelDesign(se) <- dm,
-        regexp = "'scpModelDesign' is missing sample names."
-    )
-})
-
-test_that("scpModelCoefficients<-", {
-    n <- 5
-    m <- 10
-    p <- 2
     require(SummarizedExperiment)
     se <- SummarizedExperiment(assays = list(
-        assay1 = matrix(1, m, n),
-        assay2 = matrix(1, m, n)
+        assay1 = matrix(1, 2, 2),
+        assay2 = matrix(1, 2, 2)
     ))
-    dimnames(se) <- list(letters[1:m], letters[1:n])
-    model <- ScpModel()
-    md <- matrix(1, n, p)
-    mc <- matrix(1, m, p)
-    dimnames(md) <- list(letters[1:n], letters[1:p])
-    dimnames(mc) <- list(letters[1:m], letters[1:p])
-    model@scpModelDesign <- md
-    metadata(se)[["test"]] <- model
-    ## Value is not of class matrix = error
-    expect_error(
-        scpModelCoefficients(se) <- c(),
-        regexp = "matrix.*not TRUE"
-    )
-    ## Replace model coefficients without dimension names = error
-    expect_error(
-        scpModelCoefficients(se) <- matrix(1, m, p),
-        regexp = "'scpModelCoefficients' is missing feature names."
-    )
-    ## Replace model coefficients with wrong dimensions = error
-    expect_error(
-        scpModelCoefficients(se) <- mc[1, , drop = FALSE],
-        regexp = paste("Expected", m, "but found 1")
-    )
-    expect_error(
-        scpModelCoefficients(se) <- mc[, 1, drop = FALSE],
-        regexp = paste("Expected", p, "but found 1")
-    )
-    ## Replace model coefficients with wrong dimension names = error
-    mc2 <- mc
-    rownames(mc2) <- rev(rownames(se))
-    expect_error(
-        scpModelCoefficients(se) <- mc2,
-        regexp = "scpModelCoefficients.*do not match"
-    )
-    mc2 <- mc
-    colnames(mc2) <- rev(colnames(md))
-    expect_error(
-        scpModelCoefficients(se) <- mc2,
-        regexp = "scpModelCoefficients.*do not match"
-    )
-    ## Replace model coefficients for missing model = error
-    expect_error(
-        scpModelCoefficients(se, "missingModel") <- mc2,
-        regexp = "missingModel.*not found.*scpModelPrepare"
-    )
-    ## Replace model coefficients for empty model = error
-    ## It makes no sense to add coefficients if no design is specified
-    se2 <- se
-    metadata(se2)[["empty"]] <- ScpModel()
-    expect_error(
-        scpModelCoefficients(se2, "empty") <- mc,
-        regexp = "No available 'scpModelDesign'"
-    )
-    ## Replace model coefficients for existing model = replace
-    scpModelCoefficients(se) <- mc + 10
-    expect_identical(
-        metadata(se)[["test"]]@scpModelCoefficients,
-        mc + 10
-    )
-})
-
-test_that("scpModelAssays<-", {
-    require(SummarizedExperiment)
-    se <- SummarizedExperiment()
+    dimnames(se) <- list(LETTERS[1:2], letters[1:2])
     model <- ScpModel()
     metadata(se)[["test"]] <- model
-    ## Value is not of class Assays = error
+    smFit <- ScpModelFit(n = 2L, p = 1L)
+    ## Value has wrong type = is not a List = error
     expect_error(
-        scpModelAssays(se) <- matrix(),
-        regexp = "Assays.*not TRUE"
+        scpModelFitList(se) <- smFit,
+        "inherits.value, .List.. is not TRUE"
     )
-    ## Replace model assays for missing model = error
     expect_error(
-        scpModelAssays(se, "missingModel") <- Assays(),
-        regexp = "missingModel.*not found.*scpModelPrepare"
+        scpModelFitList(se) <- list(smFit), ## base list does not work
+        "inherits.value, .List.. is not TRUE"
     )
-    ## Replace model assays with wrong dimensions = error
-    n <- 5
-    m <- 10
-    se <- SummarizedExperiment(assays = List(a1 = matrix(1, m, n)))
-    dimnames(se) <- list(letters[1:m], LETTERS[1:n])
-    metadata(se)[["test"]] <- model
-    m2 <- matrix(1, m, n)
-    ## Replace model assays without dimension names = error
     expect_error(
-        scpModelAssays(se, "test") <- Assays(List(b1 = m2)),
-        regexp = "'scpModelAssays' is missing feature names."
+        scpModelFitList(se) <- "smFit",
+        "inherits.value, .List.. is not TRUE"
     )
-    ## Replace model assays with wrong dimensions = error
-    m2 <- matrix(1, m, n, dimnames = dimnames(se))
-    m2 <- rbind(m2, z = 1)
     expect_error(
-        scpModelAssays(se, "test") <- Assays(List(b1 = m2)),
-        regexp = paste("Expected", m, "but found", m + 1)
+        scpModelFitList(se) <- 1L,
+        "inherits.value, .List.. is not TRUE"
     )
-    m2 <- matrix(1, m, n, dimnames = dimnames(se))
-    m2 <- cbind(m2, z = 1)
     expect_error(
-        scpModelAssays(se, "test") <- Assays(List(b1 = m2)),
-        regexp = paste("Expected", n, "but found", n + 1)
+        scpModelFitList(se) <- matrix(),
+        "inherits.value, .List.. is not TRUE"
     )
-    ## Replace model assays with wrong dimension names = error
-    m2 <- matrix(1, m, n, dimnames = list(rev(rownames(se)), colnames(se)))
+    ## Value is a List with elements that are not ScpModelFit
+    ## objects = error
     expect_error(
-        scpModelAssays(se, "test") <- Assays(List(b1 = m2)),
-        regexp = "Names in 'scpModelAssays' do not match with the rownames in 'object'"
+        scpModelFitList(se) <- List(A = "foo", B = 1L),
+        "all.*value.*inherits.*ScpModelFit.* not TRUE"
     )
-    m2 <- matrix(1, m, n, dimnames = list(rownames(se), rev(colnames(se))))
     expect_error(
-        scpModelAssays(se, "test") <- Assays(List(b1 = m2)),
-        regexp = "Names in 'scpModelAssays' do not match with the colnames in 'object'"
+        scpModelFitList(se) <- List(A = smFit, B = 1L),
+        "all.*value.*inherits.*ScpModelFit.* not TRUE"
     )
-    ## Replace model assays for empty model = add
-    a <- matrix(1, m, n)
-    dimnames(a) <- dimnames(se)
-    assays <- Assays(List(a1 = a, a2 = a))
-    metadata(se)[["test"]] <- ScpModel()
-    scpModelAssays(se, "test") <- assays
+    ## Value has wrong length = error
+    expect_error(
+        scpModelFitList(se) <- List(),
+        "identical.rownames.object., names.value.. is not TRUE"
+    )
+    expect_error(
+        scpModelFitList(se) <- List(A = smFit),
+        "identical.rownames.object., names.value.. is not TRUE"
+    )
+    expect_error(
+        scpModelFitList(se) <- List(A = smFit, B = smFit, C = smFit),
+        "identical.rownames.object., names.value.. is not TRUE"
+    )
+    ## Value has wrong names = error
+    expect_error(
+        scpModelFitList(se) <- List(A = smFit, C = smFit),
+        "identical.rownames.object., names.value.. is not TRUE"
+    )
+    expect_error(
+        scpModelFitList(se) <- List(smFit, smFit),
+        "identical.rownames.object., names.value.. is not TRUE"
+    )
+    ## Value has correct names but wrong order = error
+    expect_error(
+        scpModelFitList(se) <- List(B = smFit, A = smFit),
+        "identical.rownames.object., names.value.. is not TRUE"
+    )
+    ## Replace scpModelFitList for empty model = add
+    scpModelFitList(se) <- List(A = smFit, B = smFit)
     expect_identical(
-        metadata(se)[["test"]]@scpModelAssays,
-        assays
+        metadata(se)[["test"]]@scpModelFitList,
+        List(A = smFit, B = smFit)
     )
-    ## Replace model assays for existing model = replace,
-    ## no dimnames = message
-    a <- matrix(1, m, n)
-    assays <- Assays(List(a1 = a))
-    expect_error(
-        scpModelAssays(se) <- assays,
-        regexp = "'scpModelAssays' is missing feature names."
-    )
-    ## Replace model assays for existing model = replace
-    dimnames(a) <- dimnames(se)
-    assays <- Assays(List(a1 = a))
-    scpModelAssays(se) <- assays
+    ## Replace input assay for non-empty model = replace
+    smFit2 <- ScpModelFit(n = 2L, p = 2L)
+    scpModelFitList(se) <- List(A = smFit, B = smFit2)
     expect_identical(
-        metadata(se)[["test"]]@scpModelAssays,
-        assays
-    )
-})
-
-test_that("scpModelResiduals<-", {
-    ## TODO make sure the residuals must be named with the samlpe names
-    require(SummarizedExperiment)
-    n <- 5
-    m <- 10
-    se <- SummarizedExperiment(assays = List(a1 = matrix(1, m, n)))
-    dimnames(se) <- list(letters[1:m], letters[1:n])
-    model <- ScpModel()
-    metadata(se)[["test"]] <- model
-    ## Value is not of class matrix = error
-    expect_error(
-        scpModelResiduals(se) <- c(),
-        regexp = "matrix.*not TRUE"
-    )
-    ## Replace model residuals for missing model = error
-    expect_error(
-        scpModelResiduals(se, "missingModel") <- matrix(),
-        regexp = "missingModel.*not found.*scpModelPrepare"
-    )
-    ## Replace model residuals for model without prior requirement
-    ## No initialization = error
-    expect_error(
-        scpModelResiduals(se, "test") <- matrix(2, m + 1, n),
-        regexp = "scpModelInputIndex.*scpModelPrepare"
-    )
-    metadata(se)[["test"]]@scpModelInputIndex <- 1
-    ## No model estimation = error
-    expect_error(
-        scpModelResiduals(se, "test") <- matrix(2, m + 1, n),
-        regexp = "scpModelCoefficients.*scpModelRun"
-    )
-    metadata(se)[["test"]]@scpModelCoefficients <- matrix(1, n, 10)
-    ## no dimnames = error
-    mr <- matrix(2, m, n)
-    expect_error(
-        scpModelResiduals(se) <- mr,
-        regexp = "'scpModelAssays' is missing feature names."
-    )
-    rownames(mr) <- rownames(se)
-    expect_error(
-        scpModelResiduals(se) <- mr,
-        regexp = "'scpModelAssays' is missing sample names."
-    )
-    ## Replace model residuals with wrong dimensions = error
-    mr <- matrix(2, m + 1, n)
-    dimnames(mr) <- list(letters[1:(m + 1)], letters[1:n])
-    expect_error(
-        scpModelResiduals(se, "test") <- mr,
-        regexp = paste("Expected", m, "but found", m + 1)
-    )
-    mr <- matrix(2, m, n + 1)
-    dimnames(mr) <- list(letters[1:m], letters[1:(n + 1)])
-    expect_error(
-        scpModelResiduals(se, "test") <- mr,
-        regexp = paste("Expected", n, "but found", n + 1)
-    )
-    ## Replace model assays with wrong dimension names = error
-    mr <- matrix(1, m, n)
-    dimnames(mr) <- dimnames(se)
-    colnames(mr) <- rev(colnames(mr))
-    expect_error(
-        scpModelResiduals(se, "test") <- mr,
-        regexp = "'scpModelAssays' do not match"
-    )
-    dimnames(mr) <- dimnames(se)
-    rownames(mr) <- rev(rownames(mr))
-    expect_error(
-        scpModelResiduals(se, "test") <- mr,
-        regexp = "'scpModelAssays' do not match"
-    )
-    ## Replace model residuals for existing model = replace
-    dimnames(mr) <- dimnames(se)
-    scpModelResiduals(se) <- mr * 10
-    expect_identical(
-        getListElement(metadata(se)[["test"]]@scpModelAssays, "residuals"),
-        mr * 10
-    )
-})
-
-test_that("scpModelEffects<-", {
-    require(SummarizedExperiment)
-    n <- 5
-    m <- 10
-    a <- matrix(1, m, n)
-    se <- SummarizedExperiment(assays = List(a1 = a))
-    dimnames(se) <- list(letters[1:m], letters[1:n])
-    model <- ScpModel()
-    metadata(se)[["test"]] <- model
-    ## Value is not of class Assays = error
-    expect_error(
-        scpModelEffects(se) <- matrix(),
-        regexp = "Assays.*not TRUE"
-    )
-    ## Replace model effects for missing model = error
-    expect_error(
-        scpModelEffects(se, "missingModel") <- Assays(),
-        regexp = "missingModel.*not found.*scpModelPrepare"
-    )
-    ## Replace model effects for model without prior requirement
-    ## No initialization = error
-    expect_error(
-        scpModelEffects(se, "test") <- Assays(),
-        regexp = "scpModelInputIndex.*scpModelPrepare"
-    )
-    ## No model estimation = error
-    metadata(se)[["test"]]@scpModelInputIndex <- 1
-    expect_error(
-        scpModelEffects(se, "test") <- Assays(),
-        regexp = "scpModelCoefficients.*scpModelRun"
-    )
-    ## No formula = error
-    metadata(se)[["test"]]@scpModelCoefficients <- matrix(1, n, 10)
-    expect_error(
-        scpModelEffects(se, "test") <- Assays(),
-        regexp = "scpModelFormula.*scpModelPrepare"
-    )
-    ## Some effects are missing = error
-    metadata(se)[["test"]]@scpModelFormula <- ~ 1 + var1 + var2
-    var1 <- matrix(2, m, n)
-    dimnames(var1) <- dimnames(se)
-    expect_error(
-        scpModelEffects(se) <- Assays(List(var1 = var1)),
-        regexp = "Missing or unmodelled effects.*: var1, var2[.]"
-    )
-    ## Some effects are not modelled = error
-    expect_error(
-        scpModelEffects(se) <- Assays(List(
-            var1 = var1,
-            var2 = var1,
-            var3 = var1
-        )),
-        regexp = "Missing or unmodelled effects.*: var1, var2[.]"
-    )
-    ## Replace model effects without dimnames = error
-    dimnames(var1) <- NULL
-    expect_error(
-        scpModelEffects(se) <- Assays(List(var1 = var1, var2 = var1)),
-        regexp = "'scpModelAssays' is missing feature names."
-    )
-    rownames(var1) <- rownames(se)
-    expect_error(
-        scpModelEffects(se) <- Assays(List(var1 = var1, var2 = var1)),
-        regexp = "'scpModelAssays' is missing sample names."
-    )
-    ## Replace model effects with wrong dimensions = error
-    var1 <- matrix(2, m, n, dimnames = dimnames(se))
-    var1 <- rbind(var1, z = 1)
-    expect_error(
-        scpModelEffects(se) <- Assays(List(var1 = var1, var2 = var1)),
-        regexp = paste0(
-            "'scpModelAssays' does not contain the expected number ",
-            "of features. Expected ", m, " but found ", m + 1, "."
-        )
-    )
-    var1 <- matrix(2, m, n, dimnames = dimnames(se))
-    var1 <- cbind(var1, z = 1)
-    expect_error(
-        scpModelEffects(se) <- Assays(List(var1 = var1, var2 = var1)),
-        regexp = paste0(
-            "'scpModelAssays' does not contain the expected number ",
-            "of samples. Expected ", n, " but found ", n + 1, "."
-        )
-    )
-    ## Replace model effects for empty model = add
-    var1 <- matrix(2, m, n, dimnames = dimnames(se))
-    scpModelEffects(se) <- Assays(List(var1 = var1, var2 = var1 * 10))
-    expect_identical(
-        getListElement(metadata(se)[["test"]]@scpModelAssays, "var1"),
-        var1
-    )
-    expect_identical(
-        getListElement(metadata(se)[["test"]]@scpModelAssays, "var2"),
-        var1 * 10
-    )
-    ## Replace model effects for existing model = replace
-    scpModelEffects(se) <- Assays(List(
-        var1 = var1 * 20,
-        var2 = var1 * 30
-    ))
-    expect_identical(
-        getListElement(metadata(se)[["test"]]@scpModelAssays, "var1"),
-        var1 * 20
-    )
-    expect_identical(
-        getListElement(metadata(se)[["test"]]@scpModelAssays, "var2"),
-        var1 * 30
-    )
-})
-
-test_that("scpModelCovariance <-", {
-    skip("todo")
-})
-
-test_that("scpModelSumsOfSquares<-", {
-    skip("deprecated")
-    require(SummarizedExperiment)
-    n <- 5
-    m <- 10
-    a <- matrix(1, m, n)
-    se <- SummarizedExperiment(assays = List(a1 = a))
-    dimnames(se) <- list(letters[1:m], letters[1:n])
-    model <- ScpModel()
-    model@scpModelFormula <- ~ 1 + var1 + var2
-    effects <- c("var1", "var2")
-    p <- length(effects)
-    metadata(se)[["test"]] <- model
-    ## Value is not a numeric vector = error
-    expect_error(
-        scpModelSumsOfSquares(se) <- c(1),
-        regexp = "matrix.*not TRUE"
-    )
-    expect_error(
-        scpModelSumsOfSquares(se) <- matrix("foo"),
-        regexp = "numeric.*not TRUE"
-    )
-    expect_error(
-        scpModelSumsOfSquares(se) <- matrix(TRUE),
-        regexp = "numeric.*not TRUE"
-    )
-    ## Replace model effects for missing model = error
-    expect_error(
-        scpModelSumsOfSquares(se, "missingModel") <- matrix(1),
-        regexp = "missingModel.*not found.*scpModelPrepare"
-    )
-    ## No coefficient estimation = error
-    expect_error(
-        scpModelSumsOfSquares(se, "test") <- matrix(1),
-        regexp = "scpModelCoefficients.*scpModelRun"
-    )
-    metadata(se)[["test"]]@scpModelCoefficients <- matrix(1, m, p)
-    ## No residuals = error
-    expect_error(
-        scpModelSumsOfSquares(se, "test") <- matrix(1),
-        regexp = "scpModelResiduals.*scpModelRun"
-    )
-    metadata(se)[["test"]]@scpModelAssays <-
-        setListElement(
-            metadata(se)[["test"]]@scpModelAssays,
-            "residuals", a
-        )
-    ## SS has wrong dimensions = error
-    ssnames <- c("SSresiduals", "SStotal", effects)
-    expect_error(
-        scpModelSumsOfSquares(se) <- matrix(
-            1, nrow = m-1, ncol = p + 2,
-            dimnames = list(rownames(se)[-1], ssnames)
-        ),
-        regexp = paste0(
-            "does not contain the expected number of features. ",
-            "Expected ", m, " but found ", m - 1
-        )
-    )
-    expect_error(
-        scpModelSumsOfSquares(se) <- matrix(
-            1, nrow = m, ncol = p + 1,
-            dimnames = list(rownames(se), ssnames[-3])
-        ),
-        regexp = "Missing or unmodelled effects.*: var1, var2[.]"
-    )
-    ## SS has wrong dimension names = error
-    ## no names
-    ss <- ssnonames <- matrix(1, nrow = m, ncol = p + 2)
-    dimnames(ss) <- list(rownames(se), ssnames)
-    expect_error(
-        scpModelSumsOfSquares(se) <- ssnonames,
-        regexp = "'scpModelSumsOfSquares' is missing names"
-    )
-    ## wrong rownames
-    expect_error(
-        scpModelSumsOfSquares(se) <- ss[rev(seq_len(nrow(ss))), ],
-        regexp = "Names in 'scpModelSumsOfSquares' do not match"
-    )
-    ## Missing SS for one effect
-    expect_error(
-        scpModelSumsOfSquares(se) <- ss[, -3],
-        regexp = "Missing or unmodelled effects.*: var1, var2[.]"
-    )
-    ## Missing SS for "TotalSS" or "ResidualSS"
-    ss2 <- ss
-    colnames(ss2)[1] <- "SSres"
-    expect_error(
-        scpModelSumsOfSquares(se) <- ss2,
-        regexp = "SSresiduals"
-    )
-    ss2 <- ss
-    colnames(ss2)[2] <- "SStot"
-    expect_error(
-        scpModelSumsOfSquares(se) <- ss2,
-        regexp = "SStotal"
-    )
-    ## Replace model effects for empty model = add
-    scpModelSumsOfSquares(se) <- ss
-    expect_identical(
-        metadata(se)[["test"]]@scpModelSumsOfSquares,
-        ss
-    )
-    ## Replace model effects for existing model = replace
-    scpModelSumsOfSquares(se) <- ss * 10
-    expect_identical(
-        metadata(se)[["test"]]@scpModelSumsOfSquares,
-        ss * 10
-    )
-})
-
-test_that("scpModelComponent<-", {
-    require(SummarizedExperiment)
-    n <- 5
-    m <- 10
-    k <- 3
-    se <- SummarizedExperiment(assays = List(a1 = matrix(1, m, n)))
-    dimnames(se) <- list(letters[1:m], letters[1:n])
-    model <- ScpModel()
-    metadata(se)[["test"]] <- model
-    scores <- matrix(1, n, k, dimnames = list(letters[1:n], LETTERS[1:k]))
-    eigenvectors <- matrix(1, m, k, dimnames = list(letters[1:m], LETTERS[1:k]))
-    ca <- ScpModelComponent(scores, eigenvectors, 1:k, 1:k)
-    ## Value is not of class List = error
-    expect_error(
-        scpModelComponent(se) <- matrix(),
-        regexp = "inherits.value,.*ScpModelComponent.*is not TRUE"
-    )
-    ## Attempt to replace more than one component = error
-    scores <- matrix(1, n, 5, dimnames = list(colnames(se), 1:5))
-    eigenvectors <- matrix(1, m, 5, dimnames = list(rownames(se), 1:5))
-    smc <- ScpModelComponent(scores, eigenvectors, 1:5, 1:5)
-    expect_error(
-        scpModelComponent(se, effect = 1:2) <- smc,
-        regexp = "length.effect.*1.*not TRUE"
-    )
-    ## Replace component for missing model = error
-    expect_error(
-        scpModelComponent(se, "missingModel", effect = "residuals") <- smc,
-        regexp = "missingModel.*not found.*scpModelPrepare"
-    )
-    ## Replace component for unknown effect = error
-    metadata(se)[["test"]]@scpModelFormula <- ~ 1 + var1 + var2
-    expect_error(
-        scpModelComponent(se, method = "ASCA", effect = "var3") <- smc,
-        regexp = "unknown component.*ASCA_var3.*runComponentAnalysis"
-    )
-    ## Replace component for unknown method = error
-    expect_error(
-        scpModelComponent(se, method = "AXCA", effect = "var1") <- smc,
-        regexp = "unknown component.*AXCA_var1.*runComponentAnalysis"
-    )
-    ## Replace component with wrong dimensions = error
-    smcwrong <- ScpModelComponent(scores, scores, 1:5, 1:5)
-    expect_error(
-        scpModelComponent(se, method = "ASCA", effect = "var1") <- smcwrong,
-        regexp = paste0(
-            "eigenvectors.*not contain.*features.*", m,
-            " but found ", n
-        )
-    )
-    smcwrong <- ScpModelComponent(eigenvectors, eigenvectors, 1:5, 1:5)
-    expect_error(
-        scpModelComponent(se, method = "ASCA", effect = "var1") <- smcwrong,
-        regexp = paste0(
-            "scores.*not contain.*samples.*", n,
-            " but found ", m
-        )
-    )
-    ## Replace component with wrong dimension names = error
-    smcwrong <- ScpModelComponent(
-        scores[rev(seq_len(nrow(scores))), ],
-        eigenvectors, 1:5, 1:5
-    )
-    expect_error(
-        scpModelComponent(se, method = "ASCA", effect = "var1") <- smcwrong,
-        regexp = "Names in 'scores' do not match with the colnames in 'object'."
-    )
-    smcwrong <- ScpModelComponent(
-        scores,
-        eigenvectors[rev(seq_len(nrow(eigenvectors))), ], 1:5, 1:5
-    )
-    expect_error(
-        scpModelComponent(se, method = "ASCA", effect = "var1") <- smcwrong,
-        regexp = "Names in 'eigenvectors' do not match with the rownames in 'object'."
-    )
-    ## Replace component for known effect and model but absent = add
-    scpModelComponent(se, method = "ASCA", effect = "var1") <- smc
-    expect_identical(
-        metadata(se)[["test"]]@scpModelComponents,
-        List(ASCA_var1 = smc)
-    )
-    ## Replace a second component for known effect and model = append
-    scpModelComponent(se, method = "ASCA.E", effect = "var1") <- smc
-    expect_identical(
-        metadata(se)[["test"]]@scpModelComponents,
-        List(ASCA_var1 = smc, ASCA.E_var1 = smc)
-    )
-    ## Same but for residuals (whatever the method) = add
-    scpModelComponent(se, method = "ASCA", effect = "residuals") <- smc
-    expect_identical(
-        metadata(se)[["test"]]@scpModelComponents,
-        List(ASCA_var1 = smc, ASCA.E_var1 = smc, residuals = smc)
-    )
-    scpModelComponent(se, effect = "residuals") <- smc ## missing method
-    expect_identical(
-        metadata(se)[["test"]]@scpModelComponents,
-        List(ASCA_var1 = smc, ASCA.E_var1 = smc, residuals = smc)
-    )
-    ## Replace component for existing component = replace
-    smc2 <- ScpModelComponent(scores*2, eigenvectors * 2, 1:5, 1:5)
-    scpModelComponent(se, method = "ASCA.E", effect = "var1") <- smc2
-    expect_identical(
-        metadata(se)[["test"]]@scpModelComponents,
-        List(ASCA_var1 = smc, ASCA.E_var1 = smc2, residuals = smc)
+        metadata(se)[["test"]]@scpModelFitList,
+        List(A = smFit, B = smFit2)
     )
 })
 
@@ -1713,7 +1162,7 @@ test_that(".defaultModelName", {
     ## Error when no model
     expect_error(
         .defaultModelName(se),
-        regexp = "No 'ScpModel' found in object. Use 'scpModelPrepare"
+        regexp = "No 'ScpModel' found in object. Use 'scpModelWorkflow"
     )
     ## When 1 model, return first name
     metadata(se)[["test"]] <- ScpModel()
@@ -1723,104 +1172,46 @@ test_that(".defaultModelName", {
     expect_identical(.defaultModelName(se), "test")
 })
 
-test_that(".checkn", {
-    n <- 10
+test_that(".checkModelName", {
     require(SummarizedExperiment)
-    se <- SummarizedExperiment(assays = list(matrix(1, 10, n)))
-    colnames(se) <- letters[1:n]
-    ## nnames is NULL = error
+    se <- SummarizedExperiment()
+    ## No model in object = error
     expect_error(
-        .checkn(se, NULL, "test"),
-        "'test' is missing sample names."
+        .checkModelName(se, "foo"),
+        "Model name 'foo' not found in object. Use 'scpModelWorkflow"
     )
-    ## nnames has wrong length = error
+    metadata(se)$foo <- "bar"
+    metadata(se)$model1 <- ScpModel()
+    metadata(se)$model2 <- ScpModel()
+    metadata(se)$foo2 <- "bar"
+    ## Name points to multiple models = error
     expect_error(
-        .checkn(se, letters[1:(n + 1)], "test"),
-        paste0("'test' does not contain the expected number of ",
-               "samples. Expected ", n, " but found ", n + 1, ".")
+        .checkModelName(se, c("model1", "model2")),
+        "length.name.*1 is not TRUE"
     )
-    ## nnames is not correct = error
+    ## Name not in metadata = error
     expect_error(
-        .checkn(se, rev(letters[1:n]), "test"),
-        "Names in 'test' do not match with the colnames in 'object'"
+        .checkModelName(se, "bar"),
+        "Model name 'bar' not found in object.*scpModelWorkflow"
     )
-    ## No error
+    ## Name points to element that is not an ScpModel = error
+    expect_error(
+        .checkModelName(se, "foo"),
+        "Model name 'foo' not found in object.*scpModelWorkflow"
+    )
+    ## Name points to a valid element
     expect_identical(
-        .checkn(se, letters[1:n], "test"),
-        NULL
+        .checkModelName(se, "model1"),
+        "model1"
     )
-})
-
-test_that(".checkm", {
-    m <- 10
-    require(SummarizedExperiment)
-    se <- SummarizedExperiment(assays = list(matrix(1, m, 20)))
-    rownames(se) <- letters[1:m]
-    ## mnames is NULL = error
-    expect_error(
-        .checkm(se, "model", NULL, "test"),
-        "'test' is missing feature names."
-    )
-    ## mnames has wrong length = error
-    metadata(se)[["model"]] <- ScpModel()
-    expect_error(
-        .checkm(se, "model", letters[1:(m + 1)], "test"),
-        paste0("'test' does not contain the expected number of ",
-               "features. Expected ", m, " but found ", m + 1, ".")
-    )
-    ## mnames is not correct (without filter) = error
-    expect_error(
-        .checkm(se, "model", rev(letters[1:m]), "test"),
-        "Names in 'test' do not match with the rownames in 'object'"
-    )
-    ## No error (without filter)
     expect_identical(
-        .checkm(se, "model", letters[1:n], "test"),
-        NULL
+        .checkModelName(se, "model2"),
+        "model2"
     )
-    ## mnames is not correct (with filter) = error
-    rowData(se)[["scpModelFilter_model"]] <-
-        rep(c(TRUE, FALSE), each = m / 2)
-    expect_error(
-        .checkm(se, "model", rev(letters[1:(m / 2)]), "test"),
-        "Names in 'test' do not match with the rownames in 'object'"
-    )
-    ## No error (with filer)
+    ## No name = default model
     expect_identical(
-        .checkm(se, "model", letters[1:(m / 2)], "test"),
-        NULL
-    )
-})
-
-test_that(".checkp", {
-    p <- 3
-    require(SummarizedExperiment)
-    se <- SummarizedExperiment(assays = list(matrix(1, 10, 20)))
-    colnames(se) <- letters[1:20]
-    ## pnames is NULL = error
-    expect_error(
-        .checkp(se, "model", NULL, "test"),
-        "'test' is missing parameter names."
-    )
-    ## pnames has wrong length = error
-    model <- ScpModel()
-    model@scpModelDesign <- matrix(1, 20, p)
-    dimnames(model@scpModelDesign) <- list(colnames(se), letters[1:p])
-    metadata(se)[["model"]] <- model
-    expect_error(
-        .checkp(se, "model", letters[1:(p + 1)], "test"),
-        paste0("'test' does not contain the expected number of ",
-               "parameters. Expected ", p, " but found ", p + 1, ".")
-    )
-    ## pnames is not correct = error
-    expect_error(
-        .checkp(se, "model", rev(letters[1:p]), "test"),
-        "Names in 'test' do not match with the parameter names in 'object'"
-    )
-    ## No error
-    expect_identical(
-        .checkp(se, "model", letters[1:p], "test"),
-        NULL
+        .checkModelName(se, "model1"),
+        "model1"
     )
 })
 
@@ -1831,7 +1222,7 @@ test_that(".checkModelElement", {
         .checkModelElement(NULL, "model1", "element1", "More info."),
         regexp = "element1.*model1.*More info."
     )
-    ## Empty scpModelFormula = "formula",
+    ## Empty scpModelFormula = error
     expect_error(
         .checkModelElement(
             model@scpModelFormula,
@@ -1839,7 +1230,7 @@ test_that(".checkModelElement", {
         ),
         regexp = "element1.*model1.*More info."
     )
-    ## Empty scpModelInputIndex = "numeric",
+    ## Empty scpModelInputIndex = error
     expect_error(
         .checkModelElement(
             model@scpModelInputIndex,
@@ -1847,45 +1238,75 @@ test_that(".checkModelElement", {
         ),
         regexp = "element1.*model1.*More info."
     )
-    ## Empty scpModelDesign = "matrix",
+    ## Empty scpModelFilterThreshold = error
     expect_error(
         .checkModelElement(
-            model@scpModelDesign,
+            model@scpModelFilterThreshold,
             "model1", "element1", "More info."
         ),
         regexp = "element1.*model1.*More info."
     )
-    ## Empty scpModelCoefficients = "matrix",
+    ## Empty scpModelFitList = error
     expect_error(
         .checkModelElement(
-            model@scpModelCoefficients,
+            model@scpModelFitList,
             "model1", "element1", "More info."
         ),
         regexp = "element1.*model1.*More info."
     )
-    ## Empty scpModelAssays = "Assays",
+    ## x is an empty array = error
     expect_error(
         .checkModelElement(
-            model@scpModelAssays,
+            c(),
             "model1", "element1", "More info."
         ),
         regexp = "element1.*model1.*More info."
     )
-    ## Empty scpModelSumsOfSquares = "numeric",
+    ## x is an empty List = error
     expect_error(
         .checkModelElement(
-            model@scpModelSumsOfSquares,
+            List(),
             "model1", "element1", "More info."
         ),
         regexp = "element1.*model1.*More info."
     )
-    ## Empty scpModelComponentAnalysis = "SimpleList"
+    ## x is a List or list with empty elements
     expect_error(
         .checkModelElement(
-            model@scpModelComponents,
+            List(a = c(), b = c()),
             "model1", "element1", "More info."
         ),
         regexp = "element1.*model1.*More info."
+    )
+    expect_error(
+        .checkModelElement(
+            list(a = c(), b = c()),
+            "model1", "element1", "More info."
+        ),
+        regexp = "element1.*model1.*More info."
+    )
+    ## x is an non empty vector = NULL
+    expect_identical(
+        .checkModelElement(
+            1:10,
+            "model1", "element1", "More info."
+        ),
+        NULL
+    )
+    ## x is an non empty List or list = NULL
+    expect_identical(
+        .checkModelElement(
+            List(a = 1:10, b = 1:10),
+            "model1", "element1", "More info."
+        ),
+        NULL
+    )
+    expect_identical(
+        .checkModelElement(
+            list(a = 1:10, b = 1:10),
+            "model1", "element1", "More info."
+        ),
+        NULL
     )
 })
 
@@ -1894,15 +1315,15 @@ test_that(".checkScpModelFormula", {
     se <- SummarizedExperiment(assays = List(a = matrix(1, 5, 5)))
     ## The formula has no variables = warning
     expect_warning(
-        checkres <- .checkScpModelFormula(~ NULL, se),
-        regexp = "You provided a formula with no variable to model. "
+        test <- .checkScpModelFormula(~ NULL, se),
+        regexp = "You provided a formula with no variable to model."
     )
-    expect_identical(checkres, ~ NULL)
+    expect_identical(test, ~ 1)
     expect_warning(
-        checkres <- .checkScpModelFormula(~ 1, se),
-        regexp = "You provided a formula with no variable to model. "
+        test <- .checkScpModelFormula(~ 1, se),
+        regexp = "You provided a formula with no variable to model."
     )
-    expect_identical(checkres, ~ 1)
+    expect_identical(test, ~ 1)
     ## The colData is empty = error
     expect_error(
         .checkScpModelFormula(~ 1 + var1, se),
@@ -1920,29 +1341,32 @@ test_that(".checkScpModelFormula", {
         .checkScpModelFormula(~ 1 + var1 + var2 + var3 + var4, se),
         regexp = "missing one or more variables.*var3, var4"
     )
-    ## The formula has no intercept = error
-    expect_error(
+    ## The formula has no intercept = warning
+    expect_warning(
         .checkScpModelFormula(~ 0 + var1, se),
-        regexp = "The formula must contain an intercept"
+        regexp = "No intercept in the formula. It is added automatically."
     )
     ## The formula has a response variable = removed
     expect_warning(
-        checkres <- .checkScpModelFormula(y ~ 1 + var1, se),
+        test <- .checkScpModelFormula(y ~ 1 + var1, se),
         regexp = "contains a response"
     )
     expect_warning(
-        checkres <- .checkScpModelFormula(y + x ~ 1 + var1 + var2, se),
+        test <- .checkScpModelFormula(y + x ~ 1 + var1 + var2, se),
         regexp = "contains a response"
     )
-    expect_identical(checkres, ~ 1 + var1 + var2)
+    expect_identical(test, ~ 1 + var1 + var2)
     ## same but without intercept
     expect_warning(
-        checkres <- .checkScpModelFormula(y ~ var1, se),
+        test <- .checkScpModelFormula(y ~ var1, se),
         regexp = "contains a response"
     )
-    expect_identical(checkres, ~ var1)
+    expect_identical(test, ~ 1 + var1)
     ## 1 variable is present in colData
-    expect_identical(.checkScpModelFormula(~ 1 + var1, se), ~ 1 + var1)
+    expect_identical(
+        .checkScpModelFormula(~ 1 + var1, se),
+        ~ 1 + var1
+    )
     ## 2 variables are present in colData
     expect_identical(
         .checkScpModelFormula(~ 1 + var1 + var2, se),
@@ -1951,805 +1375,177 @@ test_that(".checkScpModelFormula", {
     ## dot assignment works
     expect_identical(
         .checkScpModelFormula(~ 1 + ., se),
-        ~ 1 + .
+        ~ 1 + var1 + var2
+    )
+})
+
+test_that(".removeResponseVariables", {
+    ## response variable = warning
+    ## response and no explanatory variable
+    expect_warning(
+        test <- .removeResponseVariables(y ~ 1, terms(y ~ 1)),
+        "The formula contains a response variable and is ignored."
+    )
+    expect_identical(test, ~ 1)
+    ## explanatory variable is retained
+    expect_warning(
+        test <- .removeResponseVariables(y ~ 1 + var1, terms(y ~ 1 + var1)),
+        "The formula contains a response variable and is ignored."
+    )
+    expect_identical(test, ~ 1 + var1)
+    ## dot "." variable is retained
+    expect_warning(
+        test <- .removeResponseVariables(y ~ 1 + ., terms(y ~ 1 + ., data = list(foo = 1))),
+        "The formula contains a response variable and is ignored."
+    )
+    expect_identical(test, ~ 1 + .)
+    ## There are multiple responses and explanatory variables
+    expect_warning(
+        test <- .removeResponseVariables(
+            y + x ~ 1 + var1 + var2, terms(y + x ~ 1 + var1 + var2)
+        ),
+        regexp = "The formula contains a response variable"
+    )
+    expect_identical(test, ~ 1 + var1 + var2)
+    ## When no response variable, input = output
+    expect_identical(
+        .removeResponseVariables(
+            ~ 1 + var1 + var2, terms(~ 1 + var1 + var2)
+        ),
+        ~ 1 + var1 + var2
     )
 })
 
 test_that(".checkExplanatoryVariables", {
     ## No model variables = warning
+    f <- ~ NULL
     expect_warning(
-        checkres <- .checkExplanatoryVariables(character(), "var1"),
-        regexp = "You provided a formula with no variable to model. "
+        test <- .checkExplanatoryVariables(f, terms(f), "var1"),
+        regexp = "You provided a formula with no variable to model."
     )
-    expect_identical(checkres, NULL)
+    expect_identical(test, ~1)
     ## The colData is empty = error
+    f <- ~ 1 + var1
     expect_error(
-        .checkExplanatoryVariables("var1", character()),
+        .checkExplanatoryVariables(f, terms(f), character()),
         regexp = "colData\\(object\\) is empty."
     )
     ## The colData is missing 1 variable = error
+    f <- ~ 1 + var1 + var2 + var3
     expect_error(
-        .checkExplanatoryVariables(
-            c("var1", "var2", "var3"),
-            c("var1", "var2")
-        ),
+        .checkExplanatoryVariables(f, terms(f), c("var1", "var2")),
         regexp = "missing one or more variables.*var3"
     )
     ## The colData is missing 2 variables = error
+    f <- ~ 1 + var1 + var2 + var3 + var4
     expect_error(
-        .checkExplanatoryVariables(
-            c("var1", "var2", "var3", "var4"),
-            c("var1", "var2")
-        ),
+        .checkExplanatoryVariables(f, terms(f), c("var1", "var2")),
         regexp = "missing one or more variables.*var3, var4.$"
     )
     ## 1 variable is present in colData
+    f <- ~ 1 + var1
     expect_identical(
-        .checkExplanatoryVariables("var1", c("var1", "var2")),
-        NULL
+        .checkExplanatoryVariables(f, terms(f), c("var1", "var2")),
+        ~ 1 + var1
     )
     ## 2 variables are present in colData
+    f <- ~ 1 + var1 + var2
     expect_identical(
-        .checkExplanatoryVariables(
-            c("var1", "var2"),
-            c("var1", "var2")
-        ),
-        NULL
+        .checkExplanatoryVariables(f, terms(f), c("var1", "var2")),
+        ~ 1 + var1 + var2
     )
     ## dot assignment works
+    f <- ~ 1 + .
     expect_identical(
-        .checkExplanatoryVariables(".", c("var1", "var2")),
-        NULL
-    )
-})
-
-test_that(".checkEffects", {
-    require(SummarizedExperiment)
-    se <- SummarizedExperiment(assays = list(matrix(1, 10, 20)))
-    model <- ScpModel()
-    model@scpModelFormula <- ~ 1 + var1 + var2
-    metadata(se)[["model1"]] <- model
-    ## Tested name is empty = error
-    expect_error(
-        .checkEffects(se, "model1", NULL),
-        regexp = "must be named"
-    )
-    ## All tested names are unmodelled = error
-    expect_error(
-        .checkEffects(se, "model1", c("var3", "var4")),
-        regexp = "Missing or unmodelled effects.*: var1, var2[.]"
-    )
-    ## Some tested names are unmodelled = error
-    expect_error(
-        .checkEffects(se, "model1", c("var2", "var3")),
-        regexp = "Missing or unmodelled effects.*: var1, var2[.]"
-    )
-    ## Some tested names are missing = error
-    expect_error(
-        .checkEffects(se, "model1", "var2"),
-        regexp = "Missing or unmodelled effects.*: var1, var2[.]"
-    )
-    ## All tested names are modelled and present = ok
-    expect_identical(
-        .checkEffects(se, "model1", c("var1", "var2")),
-        NULL
-    )
-    ## If residuals are not allowed = error
-    expect_error(
-        .checkEffects(se, "model1", c("var1", "var2", "residuals")),
-        regexp = "Missing or unmodelled effects.*: var1, var2[.]"
-    )
-    ## If residuals are allowed = ok
-    expect_identical(
-        .checkEffects(
-            se, "model1", c("var1", "var2", "residuals"), TRUE
-        ),
-        NULL
-    )
-    ## Test that when residuals are allowed, but some effects are
-    ## missing, "residuals" appears in the error message
-    expect_error(
-        .checkEffects(
-            se, "model1", c("var1", "residuals"), TRUE
-        ),
-        regexp = "Missing or unmodelled effects.*: var1, var2, residuals[.]"
-    )
-})
-
-test_that(".checkComponentName", {
-    require(SummarizedExperiment)
-    se <- SummarizedExperiment()
-    ## component name is "residuals" = always ok
-    expect_identical(
-        .checkComponentName(se, tested = "residuals"),
-        NULL
-    )
-    ## Unknown effect = error
-    model <- ScpModel()
-    model@scpModelFormula <- ~ 1 + var1 + var2
-    metadata(se)[["model1"]] <- model
-    expect_error(
-        .checkComponentName(se, tested = "ASCA_var3"),
-        regexp = "unknown component analysis results: ASCA_var3"
-    )
-    ## Unknown method = error
-    expect_error(
-        .checkComponentName(se, tested = "AXCA_var1"),
-        regexp = "unknown component analysis results: AXCA_var1"
-    )
-    ## Known method and effect = ok
-    for (m in scpModelComponentMethods) {
-        for (j in scpModelEffectNames(se)) {
-            expect_identical(
-                .checkComponentName(se, tested = paste0(m, "_", j)),
-                NULL
-            )
-        }
-    }
-})
-
-test_that(".removeResponseVariables", {
-    ## There is a response and no explanatory variable
-    expect_warning(
-        test <- .removeResponseVariables(
-            formula = y ~ 1,
-            data = data.frame()),
-        regexp = "The formula contains a response variable"
-    )
-    expect_identical(test, ~ 1)
-    ## There is a response and explanatory variables
-    expect_warning(
-        test <- .removeResponseVariables(
-            formula = y ~ 1 + var1 + var2,
-            data = data.frame()
-        ),
-        regexp = "The formula contains a response variable"
-    )
-    expect_identical(test, ~ 1 + var1 + var2)
-    ## There are multiple responses and explanatory variables
-    expect_warning(
-        test <- .removeResponseVariables(
-            formula = y + x ~ 1 + var1 + var2,
-            data = data.frame()
-        ),
-        regexp = "The formula contains a response variable"
-    )
-    expect_identical(test, ~ 1 + var1 + var2)
-    ## There are multiple responses and explanatory is dot
-    expect_warning(
-        test <- .removeResponseVariables(
-            formula = y + x ~ 1 + .,
-            data = data.frame(var1 = NA, var2 = NA)
-        ),
-        regexp = "The formula contains a response variable"
-    )
-    expect_identical(test, ~ 1 + .)
-    ## No response = no effect
-    expect_identical(
-        .removeResponseVariables(
-            formula = ~ 1 + var1 + var2,
-            data = data.frame()
+        .checkExplanatoryVariables(
+            f, terms(f, data = list(var1 = 1, var2 = 1)),
+            c("var1", "var2")
         ),
         ~ 1 + var1 + var2
     )
-    ## No response and no explanatory variable = no effect
-    expect_identical(
-        .removeResponseVariables(
-            formula = ~ NULL,
-            data = data.frame()
-        ),
-        ~ NULL
-    )
 })
 
-test_that(".replaceDotVariable", {
-    availableVariables <- paste0("var", 1:3)
-    scpModelVariableNames <- "var1"
-    ## No dot variable = no effect
-    expect_identical(
-        .replaceDotVariable(scpModelVariableNames, availableVariables),
-        scpModelVariableNames
-    )
-    ## scpModelVariableNames is empty = no effect
-    expect_identical(
-        .replaceDotVariable(NULL, availableVariables),
-        NULL
-    )
-    expect_identical(
-        .replaceDotVariable(character(), availableVariables),
-        character()
-    )
-    ## availabelVariables is empty = remove dot
-    scpModelVariableNames <- c(".", "var1")
-    expect_identical(
-        .replaceDotVariable(scpModelVariableNames, character()),
-        "var1"
-    )
-    ## modelVariable is only dot = becomes availableVariables
-    expect_identical(
-        .replaceDotVariable(".", availableVariables),
-        availableVariables
-    )
-    ## modelVariable contains dot + variables (with overlap) = becomes
-    ## availableVariables
-    expect_identical(
-        .replaceDotVariable(c(scpModelVariableNames, "."), availableVariables),
-        availableVariables
-    )
-    ## modelVariable contains dot and partially overlaps = union
-    scpModelVariableNames <- paste0("var", 2:5)
-    expect_identical(
-        .replaceDotVariable(c(scpModelVariableNames, "."), availableVariables),
-        union(scpModelVariableNames, availableVariables)
-    )
-    ## modelVariable contains dot and no overlap = union
-    scpModelVariableNames <- paste0("var", 4:6)
-    expect_identical(
-        .replaceDotVariable(c(scpModelVariableNames, "."), availableVariables),
-        union(scpModelVariableNames, availableVariables)
-    )
-})
-
-test_that(".indexToNumeric", {
-    require(SummarizedExperiment)
+test_that(".checkInputIndex", {
     ## Value has wrong type = error
     expect_error(
-        .indexToNumeric(NA, c("test1", "test2"), "mock"),
+        .checkInputIndex(NA, c("test1", "test2"), "mock"),
         regexp = "'mock' must be a character, numeric or logical"
     )
     expect_error(
-        .indexToNumeric(factor(1), c("test1", "test2"), "mock"),
+        .checkInputIndex(factor(1), c("test1", "test2"), "mock"),
         regexp = "'mock' must be a character, numeric or logical"
     )
     expect_error(
-        .indexToNumeric(data.frame(assay = 1), c("test1", "test2"), "mock"),
+        .checkInputIndex(data.frame(assay = 1), c("test1", "test2"), "mock"),
         regexp = "'mock' must be a character, numeric or logical"
     )
     expect_error(
-        .indexToNumeric(matrix(1), c("test1", "test2"), "mock"),
+        .checkInputIndex(matrix(1), c("test1", "test2"), "mock"),
         regexp = "'mock' must be a character, numeric or logical"
     )
     ## Value points to multiple assays = error
     expect_error(
-        .indexToNumeric(c(TRUE, TRUE), c("test1", "test2"), "mock"),
+        .checkInputIndex(c(TRUE, TRUE), c("test1", "test2"), "mock"),
         regexp = "'mock' points to multiple input assays."
     )
     expect_error(
-        .indexToNumeric(1:2, c("test1", "test2"), "mock"),
+        .checkInputIndex(1:2, c("test1", "test2"), "mock"),
         regexp = "'mock' points to multiple input assays."
     )
     expect_error(
-        .indexToNumeric(c("test1", "test2"), c("test1", "test2"), "mock"),
+        .checkInputIndex(c("test1", "test2"), c("test1", "test2"), "mock"),
         regexp = "'mock' points to multiple input assays."
     )
     ## Value points to out of bound index = error
     expect_error(
-        .indexToNumeric(c(FALSE, FALSE, TRUE), c("test1", "test2"), "mock"),
+        .checkInputIndex(c(FALSE, FALSE, TRUE), c("test1", "test2"), "mock"),
         regexp = "out of bounds"
     )
     expect_error(
-        .indexToNumeric(3, c("test1", "test2"), "mock"),
+        .checkInputIndex(3, c("test1", "test2"), "mock"),
         regexp = "out of bounds"
     )
     expect_error(
-        .indexToNumeric("test3", c("test1", "test2"), "mock"),
+        .checkInputIndex("test3", c("test1", "test2"), "mock"),
         regexp = "'test3' not found."
     )
     ## Valid numeric = no conversion
     expect_identical(
-        .indexToNumeric(1, c("test1", "test2"), "mock"),
+        .checkInputIndex(1, c("test1", "test2"), "mock"),
         1
     )
     ## Convert from character
     expect_identical(
-        .indexToNumeric("test2", c("test1", "test2"), "mock"),
+        .checkInputIndex("test2", c("test1", "test2"), "mock"),
         2L
     )
     ## Convert from logical
     expect_identical(
-        .indexToNumeric(c(FALSE, TRUE), c("test1", "test2"), "mock"),
+        .checkInputIndex(c(FALSE, TRUE), c("test1", "test2"), "mock"),
         2L
     )
 })
 
-test_that(".filterFromRowData", {
-    skip("todo")
-})
-
-test_that(".generateFilterName", {
-    skip("todo")
-})
-
-test_that(".generateComponentNames", {
+test_that(".joinScpModelOutput", {
     require(SummarizedExperiment)
     se <- SummarizedExperiment()
-    model <- ScpModel()
-    model@scpModelFormula <- ~ 1 + var1 + var2
-    ## No components = error
-    metadata(se)[["model1"]] <- model
+    ## x is empty = error
     expect_error(
-        .generateComponentNames(se),
-        regexp = "unavailable components.*none.*runComponentAnalysis()"
+        .joinScpModelOutput(c(), se),
+        "length.names.x.*not TRUE"
     )
-    ## Select unknown effects = error
-    compNames <- c(
-        "ASCA_var1", "ASCA_var2", "APCA_var1",
-        "APCA_var2", "residuals"
-    )
-    l <- List(1, 1, 1, 1, 1)
-    names(l) <- compNames
-    model@scpModelComponents <- l
-    metadata(se)[["model1"]] <- model
-    expect_error(
-        .generateComponentNames(se, effect = "var3"),
-        regexp = paste0(
-            "unavailable components.*ASCA for var1.*ASCA ",
-            "for var2.*APCA for var1.*APCA for var2.*residuals.*runComponentAnalysis()"
-        )
-    )
-    ## Select unknown methods = error
-    expect_error(
-        .generateComponentNames(se, method = "AXCA"),
-        regexp = paste0(
-            "unavailable components.*ASCA for var1.*ASCA ",
-            "for var2.*APCA for var1.*APCA for var2.*residuals.*runComponentAnalysis()"
-        )
-    )
-    ## Select unknown combination of method and effect = error
-    expect_error(
-        .generateComponentNames(se, method = "AXCA", effect = "var1"),
-        regexp = "method %in% scpModelComponentMethods. is not TRUE"
-    )
-    expect_error(
-        .generateComponentNames(se, method = "ASCA", effect = "var3"),
-        regexp = "effect %in% scpModelEffectNames.* is not TRUE"
-    )
-    ## Not specifying method or effect = select everything
-    ## with residuals
+    ## Complete case
+    se <- SummarizedExperiment(assays = matrix(1, 2, 2))
+    colnames(se) <- letters[1:2]
+    x <- list(A = c(a = 1L, b = 3L), B = c(a = 2L, b = 4L))
     expect_identical(
-        .generateComponentNames(se, residuals = TRUE),
-        compNames
+        .joinScpModelOutput(x, se),
+        matrix(1:4, 2, 2, dimnames = list(LETTERS[1:2], letters[1:2]))
     )
-    ## without residuals
+    ## With NA case
+    x <- list(A = c(a = 1, b = NA), B = c(a = NA, b = 4))
     expect_identical(
-        .generateComponentNames(se, residuals = FALSE),
-        compNames[-5]
+        .joinScpModelOutput(x, se),
+        matrix(c(1, NA, NA, 4), 2, 2, dimnames = list(LETTERS[1:2], letters[1:2]))
     )
-    ## Specifying only method = select all effects
-    ## with residuals
-    expect_identical(
-        .generateComponentNames(se, method = "ASCA", residuals = TRUE),
-        c("ASCA_var1", "ASCA_var2", "residuals")
-    )
-    ## without residuals
-    expect_identical(
-        .generateComponentNames(se, method = "ASCA", residuals = FALSE),
-        c("ASCA_var1", "ASCA_var2")
-    )
-    ## Specifying only effect = select all methods
-    ## with residuals
-    expect_identical(
-        .generateComponentNames(se, effect = "var1", residuals = TRUE),
-        c("ASCA_var1", "APCA_var1", "residuals")
-    )
-    ## without residuals
-    expect_identical(
-        .generateComponentNames(se, effect = "var1", residuals = FALSE),
-        c("ASCA_var1", "APCA_var1")
-    )
-    ## Specifying both effect and method
-    ## with residuals
-    expect_identical(
-        .generateComponentNames(se,
-                                effect = "var1", method = "ASCA", residuals = TRUE
-        ),
-        c("ASCA_var1", "residuals")
-    )
-    ## without residuals
-    expect_identical(
-        .generateComponentNames(se,
-                                effect = "var1", method = "ASCA", residuals = FALSE
-        ),
-        "ASCA_var1"
-    )
-})
-
-
-
-
-
-
-
-
-
-
-
-
-
-####---- DUMP ----#####
-
-test_that("scpModelEffectNames", {
-    require(SummarizedExperiment)
-    se <- SummarizedExperiment()
-    ## When no model formula = error
-    model <- ScpModel()
-    metadata(se)[["test1"]] <- model
-    expect_error(
-        scpModelEffectNames(se),
-        regexp = "scpModelFormula.*test1.*scpModelPrepare"
-    )
-    ## Formula with no variable
-    model@scpModelFormula <- ~ 1
-    metadata(se)[["test1"]] <- model
-    expect_identical(scpModelEffectNames(se), character())
-    ## Formula with 1 variable
-    model@scpModelFormula <- ~ 0 + var1
-    metadata(se)[["test1"]] <- model
-    expect_identical(scpModelEffectNames(se), "var1")
-    ## Formula with interecept + 1 variable
-    model@scpModelFormula <- ~ 1 + var1
-    metadata(se)[["test1"]] <- model
-    expect_identical(scpModelEffectNames(se), "var1")
-    ## Formula with interecept + 2 variables
-    model@scpModelFormula <- ~ 1 + var1 + var2
-    metadata(se)[["test1"]] <- model
-    expect_identical(scpModelEffectNames(se), c("var1", "var2"))
-    ## Formula with interecept + interaction
-    model@scpModelFormula <- ~ 1 + var1 : var2
-    metadata(se)[["test1"]] <- model
-    expect_identical(scpModelEffectNames(se), c("var1:var2"))
-    ## Formula with interecept + interaction + main effects
-    model@scpModelFormula <- ~ 1 + var1 * var2
-    metadata(se)[["test1"]] <- model
-    expect_identical(
-        scpModelEffectNames(se),
-        c("var1", "var2", "var1:var2")
-    )
-    ## Formula with .
-    se <- SummarizedExperiment(assays = List(a = matrix(1, 5, 5)))
-    metadata(se)[["test1"]] <- model
-    se$var1 <- 1
-    se$var2 <- 2
-    se$var3 <- 3
-    model@scpModelFormula <- ~ 1 + . + var1:var2
-    metadata(se)[["test1"]] <- model
-    expect_identical(
-        scpModelEffectNames(se),
-        c("var1", "var2", "var3", "var1:var2")
-    )
-})
-
-test_that("scpModelDesign", {
-    require(SummarizedExperiment)
-    se <- SummarizedExperiment()
-    ## When no model design = error
-    model <- ScpModel()
-    metadata(se)[["test1"]] <- model
-    expect_error(
-        scpModelDesign(se),
-        regexp = "scpModelDesign.*test1.*scpModelPrepare"
-    )
-    ## Retrieve model deisgn
-    model@scpModelDesign <- matrix(1, 5, 5)
-    metadata(se)[["test1"]] <- model
-    expect_identical(
-        scpModelDesign(se),
-        matrix(1, 5, 5)
-    )
-})
-
-test_that("scpModelCoefficients", {
-    require(SummarizedExperiment)
-    se <- SummarizedExperiment()
-    ## When no model coefficients = error
-    model <- ScpModel()
-    metadata(se)[["test1"]] <- model
-    expect_error(
-        scpModelCoefficients(se),
-        regexp = "scpModelCoefficients.*test1.*scpModelRun"
-    )
-    ## Retrieve model coefficients
-    model@scpModelCoefficients <- matrix(1, 5, 5)
-    metadata(se)[["test1"]] <- model
-    expect_identical(
-        scpModelCoefficients(se),
-        matrix(1, 5, 5)
-    )
-})
-
-
-test_that("scpModelSumsOfSquares", {
-    skip("deprecated")
-    require(SummarizedExperiment)
-    se <- SummarizedExperiment()
-    ## When no SS = error
-    model <- ScpModel()
-    metadata(se)[["test1"]] <- model
-    expect_error(
-        scpModelSumsOfSquares(se),
-        regexp = "scpModelSumsOfSquares.*test1.*computeSumsOfSquares"
-    )
-    ## Retrieve sums of squares
-    ss <- matrix(1:10)
-    model@scpModelSumsOfSquares <- ss
-    metadata(se)[["test1"]] <- model
-    expect_identical(
-        scpModelSumsOfSquares(se),
-        ss
-    )
-})
-
-test_that("scpModelNames", {
-    require(SummarizedExperiment)
-    ## SE metadata is empty = error
-    se <- SummarizedExperiment()
-    expect_error(
-        scpModelNames(se),
-        regexp = "No 'ScpModel' found in object."
-    )
-    ## SE metadata does not contain an ScpModel = error
-    metadata(se)$foo <- "bar"
-    expect_error(
-        scpModelNames(se),
-        regexp = "No 'ScpModel' found in object."
-    )
-    ## SE metadata contains empty model
-    se <- SummarizedExperiment()
-    model <- ScpModel()
-    metadata(se)[["model1"]] <- model
-    expect_identical(scpModelNames(se), "model1")
-    ## Additional element in SE metadata does not change output
-    metadata(se)[["foo"]] <- "bar"
-    expect_identical(scpModelNames(se), "model1")
-    ## Works with multiple models
-    metadata(se)[["model2"]] <- model
-    expect_identical(scpModelNames(se), c("model1", "model2"))
-})
-
-test_that("scpModelComponent", {
-    require(SummarizedExperiment)
-    n <- 5
-    m <- 10
-    k <- 3
-    se <- SummarizedExperiment(assays = List(a1 = matrix(1, m, n)))
-    dimnames(se) <- list(letters[1:m], letters[1:n])
-    rd <- DataFrame(rowd1 = letters[1:m], rowd2 = LETTERS[1:m])
-    cd <- DataFrame(
-        cold1 = letters[1:n], cold2 = LETTERS[1:n],
-        row.names = colnames(se)
-    )
-    colData(se) <- cd
-    rowData(se) <- rd
-    model <- ScpModel()
-    pcnames <- paste0("PC", 1:k)
-    scores <- matrix(1, n, k, dimnames = list(colnames(se), pcnames))
-    eigenvectors <- matrix(1, m, k, dimnames = list(rownames(se), pcnames))
-    percentVar <- 1:k
-    smc <- ScpModelComponent(scores, eigenvectors, 1:k, percentVar)
-    smcs <- List(
-        residuals = smc,
-        ASCA_var1 = smc,
-        ASCA_var2 = smc,
-        APCA_var1 = smc,
-        APCA_var2 = smc
-    )
-    model@scpModelComponents <- smcs
-    model@scpModelFormula <- ~ var1 + var2
-    metadata(se)[["test"]] <- model
-    ## The scpModelComponent slot is empty = error
-    metadata(se)[["empty"]] <- ScpModel()
-    expect_error(
-        scpModelComponent(se, "empty"),
-        regexp = "unavailable components.*none.*runComponentAnalysis()"
-    )
-    ## Select unknown effects = error
-    expect_error(
-        scpModelComponent(se, effect = "var3"),
-        regexp = paste0(
-            "unavailable components.*residuals.*ASCA for var1.*ASCA ",
-            "for var2.*APCA for var1.*APCA for var2.*runComponentAnalysis()"
-        )
-    )
-    ## Select unknown methods = error
-    expect_error(
-        scpModelComponent(se, method = "AXCA"),
-        regexp = paste0(
-            "unavailable components.*residuals.*ASCA for var1.*ASCA ",
-            "for var2.*APCA for var1.*APCA for var2.*runComponentAnalysis()"
-        )
-    )
-    ## Select unknown combination of method and effect = error
-    expect_error(
-        scpModelComponent(se, method = "AXCA", effect = "var1"),
-        regexp = "method %in% scpModelComponentMethods. is not TRUE"
-    )
-    expect_error(
-        scpModelComponent(se, method = "ASCA", effect = "var3"),
-        regexp = "effect %in% scpModelEffectNames.* is not TRUE"
-    )
-    ## Not specifying method or effect selects everything
-    ## In sample-space
-    target <- DataFrame(scores)
-    metadata(target)$proportionVariance <- percentVar
-    expect_identical(
-        scpModelComponent(se),
-        List(
-            ASCA_var1 = target,
-            ASCA_var2 = target,
-            APCA_var1 = target,
-            APCA_var2 = target,
-            residuals = target
-        )
-    )
-    ## In feature-space
-    target <- DataFrame(eigenvectors)
-    metadata(target)$proportionVariance <- percentVar
-    expect_identical(
-        scpModelComponent(se, bySample = FALSE),
-        List(
-            ASCA_var1 = target,
-            ASCA_var2 = target,
-            APCA_var1 = target,
-            APCA_var2 = target,
-            residuals = target
-        )
-    )
-    ## Without residuals
-    expect_identical(
-        scpModelComponent(se, bySample = FALSE, residuals = FALSE),
-        List(
-            ASCA_var1 = target,
-            ASCA_var2 = target,
-            APCA_var1 = target,
-            APCA_var2 = target
-        )
-    )
-    ## Specifying only method selects all effects
-    ## In sample-space
-    target <- DataFrame(scores)
-    metadata(target)$proportionVariance <- percentVar
-    expect_identical(
-        scpModelComponent(se, method = "ASCA"),
-        List(
-            ASCA_var1 = target,
-            ASCA_var2 = target,
-            residuals = target
-        )
-    )
-    ## In feature-space
-    target <- DataFrame(eigenvectors)
-    metadata(target)$proportionVariance <- percentVar
-    expect_identical(
-        scpModelComponent(se, method = "ASCA", bySample = FALSE),
-        List(
-            ASCA_var1 = target,
-            ASCA_var2 = target,
-            residuals = target
-        )
-    )
-    ## Without residuals
-    expect_identical(
-        scpModelComponent(se,
-                          method = "ASCA", bySample = FALSE,
-                          residuals = FALSE
-        ),
-        List(
-            ASCA_var1 = target,
-            ASCA_var2 = target
-        )
-    )
-    ## Specifying only effect selects all methods
-    ## In sample-space
-    target <- DataFrame(scores)
-    metadata(target)$proportionVariance <- percentVar
-    expect_identical(
-        scpModelComponent(se, effect = "var1"),
-        List(
-            ASCA_var1 = target,
-            APCA_var1 = target,
-            residuals = target
-        )
-    )
-    ## In feature-space
-    target <- DataFrame(eigenvectors)
-    metadata(target)$proportionVariance <- percentVar
-    expect_identical(
-        scpModelComponent(se, effect = "var1", bySample = FALSE),
-        List(
-            ASCA_var1 = target,
-            APCA_var1 = target,
-            residuals = target
-        )
-    )
-    ## Without residuals
-    expect_identical(
-        scpModelComponent(se,
-                          effect = "var1", bySample = FALSE,
-                          residuals = FALSE
-        ),
-        List(
-            ASCA_var1 = target,
-            APCA_var1 = target
-        )
-    )
-    ## Specifying both effect and method
-    ## In sample-space
-    target <- DataFrame(scores)
-    metadata(target)$proportionVariance <- percentVar
-    expect_identical(
-        scpModelComponent(se, effect = "var1", method = "ASCA"),
-        List(
-            ASCA_var1 = target,
-            residuals = target
-        )
-    )
-    ## In feature-space
-    target <- DataFrame(eigenvectors)
-    metadata(target)$proportionVariance <- percentVar
-    expect_identical(
-        scpModelComponent(se,
-                          effect = "var1", method = "ASCA",
-                          bySample = FALSE
-        ),
-        List(
-            ASCA_var1 = target,
-            residuals = target
-        )
-    )
-    ## Without residuals
-    expect_identical(
-        scpModelComponent(se,
-                          effect = "var1", method = "ASCA",
-                          bySample = FALSE, residuals = FALSE
-        ),
-        List(ASCA_var1 = target)
-    )
-    ## Testing adding annotations
-    ## In sample-space
-    target <- cbind(DataFrame(scores), colData(se))
-    metadata(target)$proportionVariance <- percentVar
-    expect_identical(
-        scpModelComponent(se, effect = "var1", withAnnotations = TRUE),
-        List(
-            ASCA_var1 = target,
-            APCA_var1 = target,
-            residuals = target
-        )
-    )
-    ## In feature-space
-    target <- cbind(DataFrame(eigenvectors), rowData(se))
-    metadata(target)$proportionVariance <- percentVar
-    expect_identical(
-        scpModelComponent(se,
-                          effect = "var1", bySample = FALSE,
-                          withAnnotations = TRUE
-        ),
-        List(
-            ASCA_var1 = target,
-            APCA_var1 = target,
-            residuals = target
-        )
-    )
-})
-
-test_that("parnames", {
-    require(SummarizedExperiment)
-    se <- SummarizedExperiment()
-    ## When no model design = error
-    model <- ScpModel()
-    metadata(se)[["test1"]] <- model
-    expect_error(
-        parnames(se),
-        regexp = "scpModelDesign.*test1.*initialiseScpModel"
-    )
-    ## Unnamed columns design
-    m <- matrix(1, 10, 2)
-    model@scpModelDesign <- m
-    metadata(se)[["test1"]] <- model
-    expect_identical(parnames(se), NULL)
-    ## 2 variables design
-    colnames(m) <- c("var1", "var2")
-    model@scpModelDesign <- m
-    metadata(se)[["test1"]] <- model
-    expect_identical(parnames(se), c("var1", "var2"))
 })

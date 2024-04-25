@@ -429,6 +429,13 @@ scpModelEffectNames <- function(object, name) {
     scpModelNames(object)[[1]]
 }
 
+## Internal function that checks whether `name` points to a valid
+## ScpModel in `object`. If `name` is not a single value or if it does
+## not point to a ScpModel object in `metadata(object)`, the function
+## throws an error.
+## @param object A SummarizedExperiment object
+## @param name A character(1) to select a model. When missing, name is
+##      assigned as the name of the default model
 .checkModelName <- function(object, name) {
     if (missing(name)) name <- .defaultModelName(object)
     stopifnot(length(name) == 1)
@@ -442,15 +449,19 @@ scpModelEffectNames <- function(object, name) {
 }
 
 ## Internal functions that checks whether the provided component is
-## empty or not. If empty, it throws a meaningfull error.
-## @param x The data component to check
-## @param ref The names in the data to expect
-## @param ref The names in the data to expect
+## empty or not. This component is expected to be extracted from one
+## of the slot of an ScpModel object contained in a
+## SummarizedExperiment. If `x` is empty, it throws a meaningful error
+## using `name`, `what` and `additionalMessage`.
+## @param x An element to check, can be atomic or a list
+## @param name The name of the model from which x is retrieved.
+## @param what The name of the slot in the model from which x is
+##     retrieved.
 ## @param additionalMessage A string that provides additional
 ##     information, typically indicating how the empty element should
-##     be filled.
-.checkModelElement <- function(x, name, what, additionalMessage) {
-    if (inherits(x, "List")) {
+##     be created.
+.checkModelElement <- function(x, name, what, additionalMessage = "") {
+    if (inherits(x, "List") || is.list(x)) {
         isEmpty <- length(x) == 0 || sum(sapply(x, length)) == 0
     } else {
         isEmpty <- length(x) == 0
@@ -465,94 +476,82 @@ scpModelEffectNames <- function(object, name) {
 }
 
 ## Internal functions that checks the formula is valid for modelling.
-## There are different cases:
-## - The formula has no variables (excluding intercept) = warning
-## - The formula contains a response variable = warning
-## - The colData is empty = error
-## - The colData is missing some variables from the formula = error
+## If a response variable is provided it is removed automatically and
+## if an intercept term is missing, it is added automatically. When the
+## formula contains `.`, it is replaced by all variables present in
+## `colData(object)`, except for variable already present in the
+## formula. The function returns the cleaned formula.
+##
 ## @param formula A formula
 ## @param object An object that inherits from SummarizedExperiment
+##
+##' @importFrom stats as.formula
 .checkScpModelFormula <- function(formula, object) {
     fterms <- terms(formula, data = colData(object))
-    if (attr(fterms, "intercept") != 1) {
-        stop("The formula must contain an intercept")
-    }
-    formula <- .removeResponseVariables(formula, colData(object))
-    .checkExplanatoryVariables(
-        all.vars(formula),
-        colnames(colData(object))
+    formula <- .replaceDotVariable(formula, fterms)
+    formula <- .removeResponseVariables(formula, fterms)
+    formula <- .checkExplanatoryVariables(
+        formula, fterms, colnames(colData(object))
     )
+    formula
+}
+
+## Internal function that removes the response variable from formula
+## terms. If the formula contains a response variable, the function
+## throws a warning
+## @param formula A formula.
+## @param fterms A terms object derived from formula.
+.removeResponseVariables <- function(formula, fterms) {
+    if (!identical(attr(fterms, "response"), 0L)) {
+        warning(
+            "The formula contains a response variable and is ignored."
+        )
+        formula <- as.formula(
+            paste("~", as.character(formula)[[3]]),
+            env = attr(fterms, ".Environment")
+        )
+    }
     formula
 }
 
 ## Internal functions that checks the variables in a formula are
 ## available from the sample annotations contained in the colData of
-## an object that inherits from SummarizedExperiment
-## @param scpModelVariableNames A vector of model variable names extracted
-##     from a formula.
+## an object that inherits from SummarizedExperiment. The function
+## returns a cleaned formula.
+## - The formula contains a no intercept = warning
+## - "Residuals" cannot be a variable name = error
+## - The formula has no variables (excluding intercept) = warning
+## - The colData is empty = error
+## - The colData is missing some variables from the formula = error
+## @param formula A formula.
+## @param fterms A terms object derived from formula.
 ## @param availableVariables A vector of available variable names. If
 ##     'scpModelVariableNames' contains a '.', it will be replaced by all
 ##     names in 'availableVariables' not present in 'scpModelVariableNames'.
-.checkExplanatoryVariables <- function(scpModelVariableNames,
+.checkExplanatoryVariables <- function(formula, fterms,
                                        availableVariables) {
-    if ("Residuals" %in% scpModelVariableNames) {
+    modelVars <- all.vars(formula)
+    if (attr(fterms, "intercept") != 1)
+        warning("No intercept in the formula. It is added automatically.")
+    if ("Residuals" %in% modelVars)
         stop("'Residuals' is reserved. Please rename that variable.")
-    }
-    if (!length(scpModelVariableNames)) {
+    if (!length(modelVars)) {
         warning("You provided a formula with no variable to model.")
     } else {
-        if (!length(availableVariables)) {
+        if (!length(availableVariables))
             stop("colData(object) is empty.")
-        }
-        scpModelVariableNames <-
-            .replaceDotVariable(scpModelVariableNames, availableVariables)
-        if (any(mis <- !scpModelVariableNames %in% availableVariables)) {
-            stop(
-                "colData(object) is missing one or more variables ",
-                "from the formula: ",
-                paste(scpModelVariableNames[mis], collapse = ", "), "."
-            )
-        }
+        modelVars <-
+            .replaceDotVariable(modelVars, availableVariables)
+        if (any(mis <- !modelVars %in% availableVariables))
+            stop("colData(object) is missing one or more variables ",
+                 "from the formula: ",
+                 paste(modelVars[mis], collapse = ", "), ".")
     }
-    NULL
+    as.formula(
+        paste(c("~ 1", modelVars), collapse = " + "),
+        env = attr(formula, ".Environment")
+    )
 }
-
-## Internal function that removes the response variable from a formula.
-## @param formula A formula
-## @param data A data.frame (or any object coercible to data.frame)
-##     from which the meaning of "." is inferred
-##' @importFrom stats as.formula
-.removeResponseVariables <- function(formula, data) {
-    fterms <- terms(formula, data = data)
-    if (!identical(attr(fterms, "response"), 0L)) {
-        warning(
-            "The formula contains a response variable and is ignored."
-        )
-        explanatoryVariables <- as.character(formula)[[3]]
-        formula <- as.formula(
-            paste("~", explanatoryVariables),
-            env = attr(formula, ".Environment")
-        )
-    }
-    formula
-}
-
-## Internal function that take model variables and replace the "."
-## shorthand with all remaining available variables.
-## @param scpModelVariableNames A vector of model variable names extracted
-##     from a formula.
-## @param availableVariables A vector of available variable names. If
-##     'scpModelVariableNames' contains a '.', it will be replaced by all
-##     names in 'availableVariables' not present in 'scpModelVariableNames'.
-.replaceDotVariable <- function(scpModelVariableNames, availableVariables) {
-    if (any(scpModelVariableNames == ".")) {
-        scpModelVariableNames <- unique(c(
-            scpModelVariableNames, availableVariables
-        ))
-    }
-    scpModelVariableNames
-}
-
 
 ## Internal function that converts and checks a provided assay or model
 ## index given a set of choices. The function return a single numeric
@@ -583,6 +582,15 @@ scpModelEffectNames <- function(object, name) {
     index
 }
 
+## Internal function that combines a list of model output elements
+## into a matrix with as many rows as fitted models and as many
+## columns a the number of samples in object. Any piece of information
+## missing for a sample in a model is filled with NA.
+## Typically, these elements are one of the following slots from
+## multiple ScpModelList objects: residuals, effect matrices.
+## @param x A list of model output to combine. Each element contains
+##     a named vector. The names should relate to names in object
+## @param object A SummarizedExperiment
 .joinScpModelOutput <- function(x, object) {
     stopifnot(length(names(x)) > 0)
     out <- matrix(NA, nrow = length(x), ncol = ncol(object),
