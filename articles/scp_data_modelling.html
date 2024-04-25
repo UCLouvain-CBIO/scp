@@ -99,7 +99,7 @@ Gatto</h4>
                                     <h4 data-toc-skip class="author">Christophe
 Vanderaa</h4>
                         
-            <h4 data-toc-skip class="date">15 April 2024</h4>
+            <h4 data-toc-skip class="date">25 April 2024</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/HEAD/vignettes/scp_data_modelling.Rmd" class="external-link"><code>vignettes/scp_data_modelling.Rmd</code></a></small>
       <div class="hidden name"><code>scp_data_modelling.Rmd</code></div>
@@ -365,17 +365,17 @@ the residual degrees of freedom for estimating the variance
 <span><span class="co">#&gt; DataFrame with 95 rows and 4 columns</span></span>
 <span><span class="co">#&gt;           feature         SS        df percentExplainedVar</span></span>
 <span><span class="co">#&gt;       &lt;character&gt;  &lt;numeric&gt; &lt;numeric&gt;           &lt;numeric&gt;</span></span>
-<span><span class="co">#&gt; 1        APNVVVTR 27.8682309        51           33.052188</span></span>
-<span><span class="co">#&gt; 2   GFQEVVTPNI...  0.1106189        27            0.392004</span></span>
-<span><span class="co">#&gt; 3       IGPLGLSPK  0.0442532        15            0.242434</span></span>
-<span><span class="co">#&gt; 4   VAETANEEEV...  0.4973533        10            2.694342</span></span>
-<span><span class="co">#&gt; 5   IDATSASVLA...  0.9271610        35            2.174504</span></span>
+<span><span class="co">#&gt; 1        APNVVVTR 27.8682309        52           33.052188</span></span>
+<span><span class="co">#&gt; 2   GFQEVVTPNI...  0.1106189        28            0.392004</span></span>
+<span><span class="co">#&gt; 3       IGPLGLSPK  0.0442532        16            0.242434</span></span>
+<span><span class="co">#&gt; 4   VAETANEEEV...  0.4973533        11            2.694342</span></span>
+<span><span class="co">#&gt; 5   IDATSASVLA...  0.9271610        36            2.174504</span></span>
 <span><span class="co">#&gt; ...           ...        ...       ...                 ...</span></span>
-<span><span class="co">#&gt; 91  SVPTSTVFYP...    1.88199        47             4.60836</span></span>
-<span><span class="co">#&gt; 92      HIVENAVQK    1.05939        18             4.80442</span></span>
-<span><span class="co">#&gt; 93  TDMDNQIVVS...    4.31709         8            24.56762</span></span>
-<span><span class="co">#&gt; 94       AILGSVER    2.51736        15            15.90057</span></span>
-<span><span class="co">#&gt; 95     LGAEVYHTLK    2.47027        14            10.14771</span></span></code></pre></div>
+<span><span class="co">#&gt; 91  SVPTSTVFYP...    1.88199        48             4.60836</span></span>
+<span><span class="co">#&gt; 92      HIVENAVQK    1.05939        19             4.80442</span></span>
+<span><span class="co">#&gt; 93  TDMDNQIVVS...    4.31709         9            24.56762</span></span>
+<span><span class="co">#&gt; 94       AILGSVER    2.51736        16            15.90057</span></span>
+<span><span class="co">#&gt; 95     LGAEVYHTLK    2.47027        15            10.14771</span></span></code></pre></div>
 <p>By default, we explore the variance for all peptides combined:</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/ScpModel-VarianceAnalysis.html">scpVariancePlot</a></span><span class="op">(</span><span class="va">vaRes</span><span class="op">)</span></span></code></pre></div>
@@ -405,17 +405,17 @@ add the peptides annotations available from the
 <span><span class="co">#&gt; DataFrame with 95 rows and 9 columns</span></span>
 <span><span class="co">#&gt;           feature         SS        df percentExplainedVar     Reverse</span></span>
 <span><span class="co">#&gt;       &lt;character&gt;  &lt;numeric&gt; &lt;numeric&gt;           &lt;numeric&gt; &lt;character&gt;</span></span>
-<span><span class="co">#&gt; 1        APNVVVTR 27.8682309        51           33.052188            </span></span>
-<span><span class="co">#&gt; 2   GFQEVVTPNI...  0.1106189        27            0.392004            </span></span>
-<span><span class="co">#&gt; 3       IGPLGLSPK  0.0442532        15            0.242434            </span></span>
-<span><span class="co">#&gt; 4   VAETANEEEV...  0.4973533        10            2.694342            </span></span>
-<span><span class="co">#&gt; 5   IDATSASVLA...  0.9271610        35            2.174504            </span></span>
+<span><span class="co">#&gt; 1        APNVVVTR 27.8682309        52           33.052188            </span></span>
+<span><span class="co">#&gt; 2   GFQEVVTPNI...  0.1106189        28            0.392004            </span></span>
+<span><span class="co">#&gt; 3       IGPLGLSPK  0.0442532        16            0.242434            </span></span>
+<span><span class="co">#&gt; 4   VAETANEEEV...  0.4973533        11            2.694342            </span></span>
+<span><span class="co">#&gt; 5   IDATSASVLA...  0.9271610        36            2.174504            </span></span>
 <span><span class="co">#&gt; ...           ...        ...       ...                 ...         ...</span></span>
-<span><span class="co">#&gt; 91  SVPTSTVFYP...    1.88199        47             4.60836            </span></span>
-<span><span class="co">#&gt; 92      HIVENAVQK    1.05939        18             4.80442            </span></span>
-<span><span class="co">#&gt; 93  TDMDNQIVVS...    4.31709         8            24.56762            </span></span>
-<span><span class="co">#&gt; 94       AILGSVER    2.51736        15            15.90057            </span></span>
-<span><span class="co">#&gt; 95     LGAEVYHTLK    2.47027        14            10.14771            </span></span>
+<span><span class="co">#&gt; 91  SVPTSTVFYP...    1.88199        48             4.60836            </span></span>
+<span><span class="co">#&gt; 92      HIVENAVQK    1.05939        19             4.80442            </span></span>
+<span><span class="co">#&gt; 93  TDMDNQIVVS...    4.31709         9            24.56762            </span></span>
+<span><span class="co">#&gt; 94       AILGSVER    2.51736        16            15.90057            </span></span>
+<span><span class="co">#&gt; 95     LGAEVYHTLK    2.47027        15            10.14771            </span></span>
 <span><span class="co">#&gt;     Potential.contaminant Leading.razor.protein.id Leading.razor.protein.symbol</span></span>
 <span><span class="co">#&gt;               &lt;character&gt;              &lt;character&gt;                  &lt;character&gt;</span></span>
 <span><span class="co">#&gt; 1                                           P52566                        GDIR2</span></span>
@@ -501,30 +501,30 @@ across all peptides.</p>
 <span><span class="co">#&gt; DataFrame with 95 rows and 7 columns</span></span>
 <span><span class="co">#&gt;           feature   Estimate        SE        Df tstatistic      pvalue</span></span>
 <span><span class="co">#&gt;       &lt;character&gt;  &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt;  &lt;numeric&gt;   &lt;numeric&gt;</span></span>
-<span><span class="co">#&gt; 1        APNVVVTR -1.2357291  0.141593        51  -8.727320 1.08036e-11</span></span>
-<span><span class="co">#&gt; 2   GFQEVVTPNI...  0.0950269  0.318729        27   0.298144 7.67876e-01</span></span>
-<span><span class="co">#&gt; 3       IGPLGLSPK  0.0721544  0.387707        15   0.186106 8.54855e-01</span></span>
-<span><span class="co">#&gt; 4   VAETANEEEV...  0.2619169  0.510036        10   0.513526 6.18738e-01</span></span>
-<span><span class="co">#&gt; 5   IDATSASVLA...  0.2573437  0.253139        35   1.016610 3.16315e-01</span></span>
+<span><span class="co">#&gt; 1        APNVVVTR -1.2357291  0.140225        52  -8.812466 6.77782e-12</span></span>
+<span><span class="co">#&gt; 2   GFQEVVTPNI...  0.0950269  0.312985        28   0.303615 7.63666e-01</span></span>
+<span><span class="co">#&gt; 3       IGPLGLSPK  0.0721544  0.375395        16   0.192209 8.49997e-01</span></span>
+<span><span class="co">#&gt; 4   VAETANEEEV...  0.2619169  0.486300        11   0.538591 6.00898e-01</span></span>
+<span><span class="co">#&gt; 5   IDATSASVLA...  0.2573437  0.249598        36   1.031031 3.09404e-01</span></span>
 <span><span class="co">#&gt; ...           ...        ...       ...       ...        ...         ...</span></span>
-<span><span class="co">#&gt; 91  SVPTSTVFYP...   0.330304  0.204954        47   1.611603    0.113744</span></span>
-<span><span class="co">#&gt; 92      HIVENAVQK  -0.338421  0.509468        18  -0.664263    0.514942</span></span>
-<span><span class="co">#&gt; 93  TDMDNQIVVS...  -0.814964  1.170811         8  -0.696068    0.506102</span></span>
-<span><span class="co">#&gt; 94       AILGSVER  -0.544206  0.380504        15  -1.430222    0.173153</span></span>
-<span><span class="co">#&gt; 95     LGAEVYHTLK  -0.547198  0.539435        14  -1.014392    0.327607</span></span>
+<span><span class="co">#&gt; 91  SVPTSTVFYP...   0.330304  0.202807        48   1.628658    0.109932</span></span>
+<span><span class="co">#&gt; 92      HIVENAVQK  -0.338421  0.495880        19  -0.682466    0.503181</span></span>
+<span><span class="co">#&gt; 93  TDMDNQIVVS...  -0.814964  1.103851         9  -0.738292    0.479146</span></span>
+<span><span class="co">#&gt; 94       AILGSVER  -0.544206  0.368422        16  -1.477127    0.159054</span></span>
+<span><span class="co">#&gt; 95     LGAEVYHTLK  -0.547198  0.521144        15  -1.049995    0.310344</span></span>
 <span><span class="co">#&gt;            padj</span></span>
 <span><span class="co">#&gt;       &lt;numeric&gt;</span></span>
-<span><span class="co">#&gt; 1   1.02635e-09</span></span>
-<span><span class="co">#&gt; 2   8.98926e-01</span></span>
-<span><span class="co">#&gt; 3   9.11797e-01</span></span>
-<span><span class="co">#&gt; 4   8.77108e-01</span></span>
-<span><span class="co">#&gt; 5   7.10426e-01</span></span>
+<span><span class="co">#&gt; 1   6.43893e-10</span></span>
+<span><span class="co">#&gt; 2   8.91820e-01</span></span>
+<span><span class="co">#&gt; 3   9.06232e-01</span></span>
+<span><span class="co">#&gt; 4   8.64161e-01</span></span>
+<span><span class="co">#&gt; 5   6.81383e-01</span></span>
 <span><span class="co">#&gt; ...         ...</span></span>
-<span><span class="co">#&gt; 91     0.548850</span></span>
-<span><span class="co">#&gt; 92     0.828720</span></span>
-<span><span class="co">#&gt; 93     0.828720</span></span>
-<span><span class="co">#&gt; 94     0.567226</span></span>
-<span><span class="co">#&gt; 95     0.710426</span></span></code></pre></div>
+<span><span class="co">#&gt; 91     0.521039</span></span>
+<span><span class="co">#&gt; 92     0.810207</span></span>
+<span><span class="co">#&gt; 93     0.789070</span></span>
+<span><span class="co">#&gt; 94     0.521039</span></span>
+<span><span class="co">#&gt; 95     0.681383</span></span></code></pre></div>
 <p>We then visualize the results using a volcano plot. The function
 below return a volcano plot for each contrast.</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
@@ -574,17 +574,17 @@ groups) if any of the peptide nulls are rejected.</p>
 <span><span class="co">#&gt; DataFrame with 86 rows and 11 columns</span></span>
 <span><span class="co">#&gt;            feature   Estimate    pvalue      padj     Reverse</span></span>
 <span><span class="co">#&gt;        &lt;character&gt;  &lt;numeric&gt; &lt;numeric&gt; &lt;numeric&gt; &lt;character&gt;</span></span>
-<span><span class="co">#&gt; ABCE1        ABCE1  0.2619169 0.6187376  0.869698            </span></span>
-<span><span class="co">#&gt; ACLY          ACLY  1.0078958 0.0663496  0.479782            </span></span>
-<span><span class="co">#&gt; ACTN4        ACTN4  0.0576889 0.8128337  0.916011            </span></span>
-<span><span class="co">#&gt; AIFM1        AIFM1 -0.4300612 0.1550238  0.566106            </span></span>
-<span><span class="co">#&gt; APMAP        APMAP -0.0683780 0.7492593  0.907553            </span></span>
+<span><span class="co">#&gt; ABCE1        ABCE1  0.2619169 0.6008984  0.856797            </span></span>
+<span><span class="co">#&gt; ACLY          ACLY  1.0078958 0.0564024  0.404217            </span></span>
+<span><span class="co">#&gt; ACTN4        ACTN4  0.0576889 0.8105808  0.910420            </span></span>
+<span><span class="co">#&gt; AIFM1        AIFM1 -0.4300612 0.1488197  0.530259            </span></span>
+<span><span class="co">#&gt; APMAP        APMAP -0.0683780 0.7445601  0.901862            </span></span>
 <span><span class="co">#&gt; ...            ...        ...       ...       ...         ...</span></span>
-<span><span class="co">#&gt; TPP2          TPP2  0.2494580 0.4825782  0.835182            </span></span>
-<span><span class="co">#&gt; TUBA1C      TUBA1C  0.6951016 0.0669463  0.479782            </span></span>
-<span><span class="co">#&gt; VAT1          VAT1  0.4073205 0.0728939  0.482221            </span></span>
-<span><span class="co">#&gt; XRCC6        XRCC6 -0.0289353 0.8852577  0.917255            </span></span>
-<span><span class="co">#&gt; YWHAG        YWHAG  0.0979855 0.6593722  0.879523            </span></span>
+<span><span class="co">#&gt; TPP2          TPP2  0.2494580 0.4703385  0.812359            </span></span>
+<span><span class="co">#&gt; TUBA1C      TUBA1C  0.6951016 0.0492061  0.384702            </span></span>
+<span><span class="co">#&gt; VAT1          VAT1  0.4073205 0.0691403  0.457390            </span></span>
+<span><span class="co">#&gt; XRCC6        XRCC6 -0.0289353 0.8832055  0.915129            </span></span>
+<span><span class="co">#&gt; YWHAG        YWHAG  0.0979855 0.6550366  0.873363            </span></span>
 <span><span class="co">#&gt;        Potential.contaminant Leading.razor.protein.id</span></span>
 <span><span class="co">#&gt;                  &lt;character&gt;              &lt;character&gt;</span></span>
 <span><span class="co">#&gt; ABCE1                                          P61221</span></span>
@@ -889,7 +889,7 @@ analysis.</p>
 <div class="section level2">
 <h2 class="unnumbered" id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
 </h2>
-<pre><code>R Under development (unstable) (2024-04-10 r86396)
+<pre><code>R version 4.4.0 RC (2024-04-16 r86441)
 Platform: x86_64-pc-linux-gnu
 Running under: Ubuntu 22.04.4 LTS
 
@@ -914,36 +914,36 @@ attached base packages:
 
 other attached packages:
  [1] scater_1.31.2               scuttle_1.13.1             
- [3] ggplot2_3.5.0               patchwork_1.2.0            
+ [3] ggplot2_3.5.1               patchwork_1.2.0            
  [5] SingleCellExperiment_1.25.1 scp_1.13.5                 
  [7] QFeatures_1.13.7            MultiAssayExperiment_1.29.1
  [9] SummarizedExperiment_1.33.3 Biobase_2.63.1             
-[11] GenomicRanges_1.55.4        GenomeInfoDb_1.39.13       
-[13] IRanges_2.37.1              S4Vectors_0.41.6           
-[15] BiocGenerics_0.49.1         MatrixGenerics_1.15.0      
+[11] GenomicRanges_1.55.4        GenomeInfoDb_1.39.14       
+[13] IRanges_2.37.1              S4Vectors_0.41.7           
+[15] BiocGenerics_0.49.1         MatrixGenerics_1.15.1      
 [17] matrixStats_1.3.0           BiocStyle_2.31.0           
 
 loaded via a namespace (and not attached):
   [1] bitops_1.0-7              gridExtra_2.3            
   [3] fdrtool_1.2.17            rlang_1.1.3              
   [5] magrittr_2.0.3            clue_0.3-65              
-  [7] compiler_4.5.0            DelayedMatrixStats_1.25.2
+  [7] compiler_4.4.0            DelayedMatrixStats_1.25.4
   [9] systemfonts_1.0.6         vctrs_0.6.5              
  [11] nipals_0.8                ProtGenerics_1.35.4      
  [13] pkgconfig_2.0.3           crayon_1.5.2             
  [15] fastmap_1.1.1             XVector_0.43.1           
  [17] labeling_0.4.3            utf8_1.2.4               
  [19] rmarkdown_2.26            ggbeeswarm_0.7.2         
- [21] UCSC.utils_0.99.5         ragg_1.3.0               
+ [21] UCSC.utils_0.99.7         ragg_1.3.0               
  [23] purrr_1.0.2               xfun_0.43                
  [25] zlibbioc_1.49.3           cachem_1.0.8             
  [27] beachmat_2.19.4           jsonlite_1.8.8           
  [29] highr_0.10                DelayedArray_0.29.9      
  [31] BiocParallel_1.37.1       irlba_2.3.5.1            
- [33] parallel_4.5.0            cluster_2.1.6            
+ [33] parallel_4.4.0            cluster_2.1.6            
  [35] R6_2.5.1                  bslib_0.7.0              
  [37] RColorBrewer_1.1-3        jquerylib_0.1.4          
- [39] Rcpp_1.0.12               bookdown_0.38            
+ [39] Rcpp_1.0.12               bookdown_0.39            
  [41] knitr_1.46                Matrix_1.7-0             
  [43] igraph_2.0.3              tidyselect_1.2.1         
  [45] viridis_0.6.5             abind_1.4-5              
@@ -954,25 +954,25 @@ loaded via a namespace (and not attached):
  [55] IHW_1.31.0                pillar_1.9.0             
  [57] BiocManager_1.30.22       lpsymphony_1.31.0        
  [59] generics_0.1.3            RCurl_1.98-1.14          
- [61] sparseMatrixStats_1.15.0  munsell_0.5.1            
+ [61] sparseMatrixStats_1.15.1  munsell_0.5.1            
  [63] scales_1.3.0              glue_1.7.0               
  [65] slam_0.1-50               metapod_1.11.1           
- [67] lazyeval_0.2.2            tools_4.5.0              
+ [67] lazyeval_0.2.2            tools_4.4.0              
  [69] BiocNeighbors_1.21.2      ScaledMatrix_1.11.1      
- [71] fs_1.6.3                  grid_4.5.0               
- [73] tidyr_1.3.1               MsCoreUtils_1.15.6       
+ [71] fs_1.6.4                  grid_4.4.0               
+ [73] tidyr_1.3.1               MsCoreUtils_1.15.7       
  [75] colorspace_2.1-0          GenomeInfoDbData_1.2.12  
  [77] beeswarm_0.4.0            BiocSingular_1.19.0      
  [79] vipor_0.4.7               rsvd_1.0.5               
  [81] cli_3.6.2                 textshaping_0.3.7        
  [83] fansi_1.0.6               viridisLite_0.4.2        
  [85] S4Arrays_1.3.7            dplyr_1.1.4              
- [87] AnnotationFilter_1.27.0   gtable_0.3.4             
+ [87] AnnotationFilter_1.27.0   gtable_0.3.5             
  [89] sass_0.4.9                digest_0.6.35            
  [91] SparseArray_1.3.5         ggrepel_0.9.5            
  [93] htmlwidgets_1.6.4         farver_2.1.1             
  [95] memoise_2.0.1             htmltools_0.5.8.1        
- [97] pkgdown_2.0.8.9000        lifecycle_1.0.4          
+ [97] pkgdown_2.0.9.9000        lifecycle_1.0.4          
  [99] httr_1.4.7                MASS_7.3-60.2            </code></pre>
 </div>
 <div class="section level2">
@@ -1011,7 +1011,7 @@ Spectrometry-Based Single-Cell Proteomics Data.”</span>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.8.9000.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
 </div>
 
       </footer>
