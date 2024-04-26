@@ -1,8 +1,13 @@
 # scp 1.13
 
-## scp 1.13.5 
+## scp 1.13.6
 
 (nothing yet)
+
+## scp 1.13.5
+
+- fix: fixed small error in degrees of freedom
+- fix: break workflow upon infinite values
 
 ## scp 1.13.4
 
