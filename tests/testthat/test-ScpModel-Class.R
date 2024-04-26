@@ -78,9 +78,8 @@ test_that("scpModelInput", {
     metadata(se)[["test1"]] <- model
     expect_error(
         scpModelInput(se),
-        regexp = "scpModelFilterThreshold.*test1.*scpModelWorkflow"
+        regexp = "No available scpModelInputIndex for model 'test1'.*scpModelWorkflow"
     )
-
     ## Retrieve model input
     l <- .createMinimalData(); se <- l$se; a <- l$a
     model@scpModelInputIndex <- 1
@@ -282,8 +281,8 @@ test_that("scpModelEffects", {
     metadata(se)[["test1"]] <- model
     expect_identical(
         scpModelEffects(se, join = TRUE, filtered = TRUE),
-        List(Var1 = eff_mat[5:nrow(se), , drop = FALSE],
-             Var2 = eff_mat[5:nrow(se), , drop = FALSE])
+        List(Var1 = eff_mat[10, , drop = FALSE],
+             Var2 = eff_mat[10, , drop = FALSE])
     )
 })
 
@@ -940,7 +939,7 @@ test_that("scpModelFormula<-", {
     )
     ## Variable in model formula are absent from colData = error
     expect_error(
-        scpModelFormula(se, "test1") <- ~ 1 + var1,
+        scpModelFormula(se, "test") <- ~ 1 + var1,
         regexp = "empty"
     )
     se$var1 <- 1
@@ -952,13 +951,13 @@ test_that("scpModelFormula<-", {
     )
     ## Variable in model is not in colData = error
     expect_error(
-        scpModelFormula(se, "test1") <- ~ 1 + var3,
+        scpModelFormula(se, "test") <- ~ 1 + var3,
         regexp = "missing.*var3"
     )
-    ## The formula has no intercept = error
-    expect_error(
-        scpModelFormula(se, "test1") <- ~ 0 + var1,
-        regexp = "The formula must contain an intercept"
+    ## The formula has no intercept = warning
+    expect_warning(
+        scpModelFormula(se, "test") <- ~ 0 + var1,
+        regexp = "No intercept in the formula. It is added automatically."
     )
     ## Replace model formula for existing empty model = add
     scpModelFormula(se) <- ~ 1 + var1
@@ -980,6 +979,17 @@ test_that("scpModelFormula<-", {
     expect_identical(
         metadata(se)[["test"]]@scpModelFormula,
         ~ 1 + var1
+    )
+    ## dot works
+    scpModelFormula(se) <-  ~ 1 + .
+    expect_identical(
+        metadata(se)[["test"]]@scpModelFormula,
+        ~ 1 + var1 + var2
+    )
+    scpModelFormula(se) <-  ~ 1 + var1 + .
+    expect_identical(
+        metadata(se)[["test"]]@scpModelFormula,
+        ~ 1 + var1 + var2
     )
 })
 
@@ -1178,7 +1188,7 @@ test_that(".checkModelName", {
     ## No model in object = error
     expect_error(
         .checkModelName(se, "foo"),
-        "Model name 'foo' not found in object. Use 'scpModelWorkflow"
+        "No 'ScpModel' found in object. Use 'scpModelWorkflow"
     )
     metadata(se)$foo <- "bar"
     metadata(se)$model1 <- ScpModel()
@@ -1313,17 +1323,15 @@ test_that(".checkModelElement", {
 test_that(".checkScpModelFormula", {
     require(SummarizedExperiment)
     se <- SummarizedExperiment(assays = List(a = matrix(1, 5, 5)))
-    ## The formula has no variables = warning
-    expect_warning(
-        test <- .checkScpModelFormula(~ NULL, se),
+    ## The formula has no variables = error
+    expect_error(
+        .checkScpModelFormula(~ NULL, se),
         regexp = "You provided a formula with no variable to model."
     )
-    expect_identical(test, ~ 1)
-    expect_warning(
-        test <- .checkScpModelFormula(~ 1, se),
+    expect_error(
+        .checkScpModelFormula(~ 1, se),
         regexp = "You provided a formula with no variable to model."
     )
-    expect_identical(test, ~ 1)
     ## The colData is empty = error
     expect_error(
         .checkScpModelFormula(~ 1 + var1, se),
@@ -1417,13 +1425,12 @@ test_that(".removeResponseVariables", {
 })
 
 test_that(".checkExplanatoryVariables", {
-    ## No model variables = warning
+    ## No model variables = error
     f <- ~ NULL
-    expect_warning(
-        test <- .checkExplanatoryVariables(f, terms(f), "var1"),
+    expect_error(
+        .checkExplanatoryVariables(f, terms(f), "var1"),
         regexp = "You provided a formula with no variable to model."
     )
-    expect_identical(test, ~1)
     ## The colData is empty = error
     f <- ~ 1 + var1
     expect_error(
@@ -1462,6 +1469,35 @@ test_that(".checkExplanatoryVariables", {
             c("var1", "var2")
         ),
         ~ 1 + var1 + var2
+    )
+})
+
+test_that(".replaceDotVariable", {
+    ## No dot = no effect
+    expect_identical(
+        .replaceDotVariable(letters[1:2], c()),
+        letters[1:2]
+    )
+    expect_identical(
+        ## .replaceDotVariable should not receive numeric but I here
+        ## tested that modelVars is "untouched"
+        .replaceDotVariable(1:2, c()),
+        1:2
+    )
+    ## only dot = returns available vars
+    expect_identical(
+        .replaceDotVariable(".", letters[1:3]),
+        letters[1:3]
+    )
+    ## dot + other non overlapping vars
+    expect_identical(
+        .replaceDotVariable(c(".", letters[1]), letters[2:3]),
+        letters[1:3]
+    )
+    ## dot + other overlapping vars
+    expect_identical(
+        .replaceDotVariable(c(".", letters[1]), letters[1:3]),
+        letters[1:3]
     )
 })
 

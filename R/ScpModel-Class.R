@@ -488,7 +488,6 @@ scpModelEffectNames <- function(object, name) {
 ##' @importFrom stats as.formula
 .checkScpModelFormula <- function(formula, object) {
     fterms <- terms(formula, data = colData(object))
-    formula <- .replaceDotVariable(formula, fterms)
     formula <- .removeResponseVariables(formula, fterms)
     formula <- .checkExplanatoryVariables(
         formula, fterms, colnames(colData(object))
@@ -520,28 +519,26 @@ scpModelEffectNames <- function(object, name) {
 ## returns a cleaned formula.
 ## - The formula contains a no intercept = warning
 ## - "Residuals" cannot be a variable name = error
-## - The formula has no variables (excluding intercept) = warning
+## - The formula has no variables (excluding intercept) = error
 ## - The colData is empty = error
 ## - The colData is missing some variables from the formula = error
 ## @param formula A formula.
 ## @param fterms A terms object derived from formula.
-## @param availableVariables A vector of available variable names. If
-##     'scpModelVariableNames' contains a '.', it will be replaced by all
-##     names in 'availableVariables' not present in 'scpModelVariableNames'.
+## @param availableVariables A vector of available variable names to
+##     model.
 .checkExplanatoryVariables <- function(formula, fterms,
                                        availableVariables) {
     modelVars <- all.vars(formula)
+    modelVars <- .replaceDotVariable(modelVars, availableVariables)
     if (attr(fterms, "intercept") != 1)
         warning("No intercept in the formula. It is added automatically.")
     if ("Residuals" %in% modelVars)
         stop("'Residuals' is reserved. Please rename that variable.")
     if (!length(modelVars)) {
-        warning("You provided a formula with no variable to model.")
+        stop("You provided a formula with no variable to model.")
     } else {
         if (!length(availableVariables))
             stop("colData(object) is empty.")
-        modelVars <-
-            .replaceDotVariable(modelVars, availableVariables)
         if (any(mis <- !modelVars %in% availableVariables))
             stop("colData(object) is missing one or more variables ",
                  "from the formula: ",
@@ -552,6 +549,24 @@ scpModelEffectNames <- function(object, name) {
         env = attr(formula, ".Environment")
     )
 }
+
+## Internal function that take model variables and replace the "."
+## shorthand with all remaining available variables.
+## @param modelVars A vector of model variable names extracted
+##     from a formula.
+## @param availableVariables A vector of available variable names. If
+##     'modelVars' contains a '.', it will be replaced by all
+##     names in 'availableVariables' not present in 'modelVars'.
+.replaceDotVariable <- function(modelVars, availableVariables) {
+    if (any(modelVars == ".")) {
+        modelVars <- unique(c(
+            modelVars, availableVariables
+        ))
+        modelVars <- modelVars[modelVars != "."]
+    }
+    modelVars
+}
+
 
 ## Internal function that converts and checks a provided assay or model
 ## index given a set of choices. The function return a single numeric

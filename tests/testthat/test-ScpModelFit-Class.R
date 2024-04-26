@@ -281,6 +281,13 @@ test_that("scpModelFitResiduals<-", {
         x@residuals,
         1:10
     )
+    ## Correct usage with empty array
+    x <- ScpModelFit(0L, 5L)
+    scpModelFitResiduals(x) <- numeric()
+    expect_identical(
+        x@residuals,
+        numeric()
+    )
 })
 
 test_that("scpModelFitEffects<-", {
@@ -301,14 +308,14 @@ test_that("scpModelFitEffects<-", {
     el2 <- c(a = 4, b = 5, d = 6)
     expect_error(
         scpModelFitEffects(x) <- List(el1, el2),
-        "all.*enames.*identical.*is not TRUE"
+        "Effect vectors do not share identical names."
     )
     ## value has elements that are inconsistent with residual names = error
     x@residuals <- c(a = 7, b = 8, d = 9)
     el2 <- c(a = 4, b = 5, c = 6)
     expect_error(
         scpModelFitEffects(x) <- List(el1, el2),
-        "identical.*residualNames.*enames.*is not TRUE"
+        "Effects and residuals do not share identical names."
     )
     ## value has wrong type = error
     x@residuals <- c(a = 7, b = 8, c = 9)
@@ -320,6 +327,12 @@ test_that("scpModelFitEffects<-", {
     expect_identical(
         scpModelFitEffects(x) <- List(el1, el2),
         List(el1, el2)
+    )
+    ## Correct usage with empty list
+    x@residuals <- numeric()
+    expect_identical(
+        scpModelFitEffects(x) <- List(),
+        List()
     )
 })
 

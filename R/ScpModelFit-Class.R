@@ -125,9 +125,15 @@ scpModelFitLevels <- function(object) {
 `scpModelFitEffects<-` <- function(object, value) {
     stopifnot(all(sapply(value, function(x) inherits(x, "numeric"))))
     enames <- lapply(value, names)
-    stopifnot(all(sapply(enames, function(x) identical(x, enames[[1]]))))
-    residualNames <- names(scpModelFitResiduals(object))
-    stopifnot(identical(residualNames, enames[[1]]))
+    if (length(enames) == 0) {
+        refNames <- c()
+    } else {
+        refNames <- enames[[1]]
+    }
+    if (!all(sapply(enames, function(x) identical(x, refNames))))
+        stop("Effect vectors do not share identical names.")
+    if (!identical(names(scpModelFitResiduals(object)), refNames))
+        stop("Effects and residuals do not share identical names.")
     object@effects <- value
     object
 }
@@ -156,7 +162,7 @@ scpModelFitLevels <- function(object) {
 
 `scpModelFitLevels<-` <- function(object, value) {
     stopifnot(all(sapply(value, function(x) inherits(x, "character"))))
-    stopifnot(identical(names(value), names(scpModelFitEffects(x))))
+    stopifnot(identical(names(value), names(scpModelFitEffects(object))))
     object@levels <- value
     object
 }
