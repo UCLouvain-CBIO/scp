@@ -1,4 +1,4 @@
-## ----Constructor ----
+## ---- Constructor ----
 
 test_that("ScpModel", {
     x <- ScpModel()
@@ -12,7 +12,7 @@ test_that("ScpModel", {
     expect_identical(x, x2)
 })
 
-## ----Test exported getters ----
+## ---- Test exported getters ----
 
 ## Internal function that creates a minimal SE object as expected by
 ## scplainer for unit testing ScpModel class methods
