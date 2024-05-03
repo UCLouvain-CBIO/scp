@@ -1,3 +1,15 @@
+## scp 1.15
+
+## scp 1.15.0
+
+- New Bioconductor 3.20 (devel) release
+
+# scp 1.14
+
+## scp 1.14.0
+
+- New Bioconductor 3.19 (stable) release
+
 # scp 1.13
 
 ## scp 1.13.6
