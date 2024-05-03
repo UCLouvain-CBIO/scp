@@ -446,19 +446,52 @@ test_that("scpModelFitUvcov<-", {
 
 test_that("scpModelFitLevels<-", {
     x <- ScpModelFit(10L, 5L)
-    ## value and elements are wrong type = error
-    expect_error(
-        scpModelFitLevels(x) <- list(rep("foo", 5), rep("foo", 5)),
-        "an object of class .list. is not valid for @.levels"
-    )
+    ## value elements have wrong type = error
     expect_error(
         scpModelFitLevels(x) <- List(rep("foo", 5), 1:5),
         "all.*value.*inherits.*character.*is not TRUE"
     )
+    ## value is not named = error
+    expect_error(
+        scpModelFitLevels(x) <- List(rep("foo", 5), rep("foo", 5)),
+        "List of levels must be named."
+    )
+    ## value has wrong type = error
+    x@effects <- List(var1 = matrix())
+    expect_error(
+        scpModelFitLevels(x) <- list(var1 = rep("foo", 5)),
+        "an object of class .list. is not valid for @.levels"
+    )
+    ## Element names are not present in effects
+    expect_error(
+        scpModelFitLevels(x) <- List(var1 = rep("foo", 5), var2 = rep("foo", 5)),
+        "Some levels are not matched to effects."
+    )
+    expect_error(
+        scpModelFitLevels(x) <- List(var2 = rep("foo", 5)),
+        "Some levels are not matched to effects."
+    )
     ## Correct usage
-    scpModelFitLevels(x) <- List(rep("foo", 5), rep("foo", 5))
+    scpModelFitLevels(x) <- List(var1 = rep("foo", 5))
     expect_identical(
         x@levels,
-        List(rep("foo", 5), rep("foo", 5))
+        List(var1 = rep("foo", 5))
+    )
+    x@effects <- List(var1 = matrix(), var2 = rep("foo", 5))
+    scpModelFitLevels(x) <- List(var1 = rep("foo", 5))
+    expect_identical(
+        x@levels,
+        List(var1 = rep("foo", 5))
+    )
+    scpModelFitLevels(x) <- List(var1 = rep("foo", 5), var2 = rep("foo", 5))
+    expect_identical(
+        x@levels,
+        List(var1 = rep("foo", 5), var2 = rep("foo", 5))
+    )
+    ## Also works when no levels = empty List
+    scpModelFitLevels(x) <- List()
+    expect_identical(
+        x@levels,
+        List()
     )
 })

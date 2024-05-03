@@ -1001,7 +1001,7 @@ test_that("scpModelInputIndex<-", {
     ))
     model <- ScpModel()
     metadata(se)[["test"]] <- model
-    ## Object has no dimension names
+    ## Object has no dimension names = error
     expect_error(
         scpModelInputIndex(se) <- NA,
         regexp = "!is.null.colnames.object.. is not TRUE"

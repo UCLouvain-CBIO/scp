@@ -143,8 +143,9 @@ scpModelWorkflow <- function(object, formula,
                              name = "model",
                              verbose = TRUE) {
     if (name %in% names(metadata(object))) {
-        warning("'", name, "' is already present in the metadata. ",
-                "The associated content will be overwritten.")
+        warning("An element called '", name, "' is already present ",
+                "in the metadata. The associated content will be ",
+                "overwritten.")
     }
     metadata(object)[[name]] <- ScpModel()
     scpModelFormula(object, name) <- formula
@@ -159,7 +160,7 @@ scpModelWorkflow <- function(object, formula,
 .fitScpModel <- function(object, name, verbose) {
     coldata <- .checkAnnotations(object, name)
     Y <- scpModelInput(object, name, filtered = FALSE)
-    pb <- txtProgressBar(max = nrow(Y), style = 3)
+    if (verbose) pb <- txtProgressBar(max = nrow(Y), style = 3)
     scpModelFits <- lapply(seq_len(nrow(Y)), function(i) {
         if (verbose) setTxtProgressBar(pb, i)
         design <- .adaptModel(
@@ -170,7 +171,7 @@ scpModelWorkflow <- function(object, formula,
         )
         out
     })
-    close(pb)
+    if (verbose) close(pb)
     names(scpModelFits) <- rownames(Y)
     as(scpModelFits, "List")
 }
@@ -184,7 +185,7 @@ scpModelWorkflow <- function(object, formula,
     if (any(sapply(coldata, function(x) any(is.na(x)))))
         stop("Sample annotations (colData) cannot contain missing values.")
     .checkExperimentalDesignRank(formula, coldata)
-    coldata <- .formatCategoricalVariables(colData(object))
+    .formatCategoricalVariables(colData(object))
 }
 
 ## Internal function that makes sure that the design matrix is not

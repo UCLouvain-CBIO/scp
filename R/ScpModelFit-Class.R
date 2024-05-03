@@ -160,9 +160,18 @@ scpModelFitLevels <- function(object) {
     object
 }
 
+## Internal function to set the ScpModelFit levels. The value must be
+## a List where each element must be a vector of character. An empty
+## List is allowed. When value is not null, the names of the values
+## must match some or all of the effect names.
 `scpModelFitLevels<-` <- function(object, value) {
     stopifnot(all(sapply(value, function(x) inherits(x, "character"))))
-    stopifnot(identical(names(value), names(scpModelFitEffects(object))))
+    if (length(value) > 0) {
+        if (is.null(names(value)))
+            stop("List of levels must be named.")
+        if (any(!names(value) %in% names(scpModelFitEffects(object))))
+            stop("Some levels are not matched to effects.")
+    }
     object@levels <- value
     object
 }
