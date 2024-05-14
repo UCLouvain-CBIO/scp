@@ -50,6 +50,7 @@ Suggests:
     scpdata,
     sva,
     testthat,
+    vdiffr,
     vsn,
     uwot
 License: Artistic-2.0
