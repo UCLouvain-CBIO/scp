@@ -214,8 +214,10 @@ scpModelWorkflow <- function(object, formula,
 ## the function returns NULL. This functions checks the design matrix
 ## for the full data set, irrespective of missing values. It  makes
 ## sure there are no obvious experimental design mistakes.
+##
 ## @param formula A formula object used to generate a design matrix.
 ## @param coldata A DataFrame object used to generate a design matrix.
+##
 ##' @importFrom stats model.matrix
 .checkExperimentalDesignRank <- function(formula, coldata) {
     X <- model.matrix(formula, data = droplevels(coldata))

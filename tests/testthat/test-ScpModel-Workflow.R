@@ -166,8 +166,29 @@ test_that("scpModelWorkflow", {
     expect_silent(tmp <- scpModelWorkflow(
         se, formula = ~ 1 + condition, name = "model3", i = 1, verbose = FALSE
     ))
-})
 
+    ## Test an intercept only model
+    se <- .createMinimalData(nr = 1, nc = 6)
+    se$condition <- as.factor(rep(1:2, each = 3))
+    ## add missing values that make condition constant and hence will
+    ## be dropped, leaving only the intercept
+    assay(se)[, 1:3] <- NA
+    se <- scpModelWorkflow(se, formula = ~ 1 + condition)
+    expect_equal(
+        scpModel(se)@scpModelFitList[[1]],
+        new(
+            "ScpModelFit", n = 3L, p = 1L,
+            coefficients = structure(1, .Names = "(Intercept)"),
+            residuals = structure(rep(0, 3), .Names = colnames(se)[4:6]),
+            effects = List(),
+            df = 2,
+            var = 0,
+            uvcov = matrix(0.3331, dimnames = list("(Intercept)", "(Intercept)")),
+            levels = List()
+        ),
+        tolerance = 1E-3
+    )
+})
 
 test_that(".runScpModel", {
     se <- .createMinimalData()

@@ -123,6 +123,7 @@ scpModelFitLevels <- function(object) {
 }
 
 `scpModelFitEffects<-` <- function(object, value) {
+    if (!length(value)) return(object)
     stopifnot(all(sapply(value, function(x) inherits(x, "numeric"))))
     enames <- lapply(value, names)
     if (length(enames) == 0) {

@@ -328,8 +328,15 @@ test_that("scpModelFitEffects<-", {
         scpModelFitEffects(x) <- List(el1, el2),
         List(el1, el2)
     )
-    ## Correct usage with empty list
+    ## Correct usage with empty list and empty residuals
     x@residuals <- numeric()
+    expect_identical(
+        scpModelFitEffects(x) <- List(),
+        List()
+    )
+    ## Correct usage with empty list and non empty residuals (eg
+    ## intercept only model)
+    x@residuals <- c(a = 7, b = 8, c = 9)
     expect_identical(
         scpModelFitEffects(x) <- List(),
         List()
