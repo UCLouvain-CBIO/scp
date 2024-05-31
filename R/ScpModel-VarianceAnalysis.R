@@ -305,7 +305,7 @@ scpVariancePlot <- function(varianceList,
     criteria <- varianceTable[[by]][isEffect]
     topIndex <- order(criteria, decreasing = decreasing)[seq_len(top)]
     topFeatures <- varianceTable$feature[topIndex]
-    varianceTable <-varianceTable[varianceTable$feature %in% topFeatures, ]
+    varianceTable <- varianceTable[varianceTable$feature %in% topFeatures, ]
     varianceTable$feature <- factor(
         varianceTable$feature,
         levels = topFeatures

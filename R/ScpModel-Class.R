@@ -97,7 +97,7 @@ setClass("ScpModel", slots = c(
 
 ## Class constructors
 ## Keep the constructor hidden from the user. It is better they
-## build this object within an S(C)E object through `scpModelPrepare()`
+## build this object within an S(C)E object through `scpModelWorkflow()`
 ScpModel <- function() {
     ans <- new("ScpModel")
     ans@scpModelFitList <- List()
