@@ -217,7 +217,7 @@ scpModelNames <- function(object) {
 ##' @rdname ScpModel-ComponentAnalysis
 ##'
 ##' @export
-scpModelComponentMethods <- c("ASCA", "APCA", "ASCA.E")
+scpModelComponentMethods <- c("APCA", "ASCA", "ASCA.E")
 
 ## ---- Internal getters ----
 
