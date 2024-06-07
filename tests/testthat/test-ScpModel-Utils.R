@@ -234,13 +234,13 @@ test_that("addReducedDims", {
         "'sce' must be a SingleCellExperiment object. Transform your data using 'as.sce, .SingleCellExperiment..'."
     )
     ## empty list = no effect
+    require("SingleCellExperiment")
+    sce <- as(se, "SingleCellExperiment")
     expect_identical(
         addReducedDims(sce, List()),
         sce
     )
     ## add one table
-    require("SingleCellExperiment")
-    sce <- as(se, "SingleCellExperiment")
     exp <- as.matrix(compRes$bySample$unmodelled[, 1:2])
     attr(exp, "proportionVariance") <- metadata(compRes$bySample$unmodelled)$proportionVariance
     expect_identical(

@@ -357,7 +357,7 @@ scpVariancePlot <- function(varianceList,
 ##     `.gatherVarianceData()` and `.filterVarianceData()`.
 ##
 .plotExplainedVarianceCombined <- function(varianceTable) {
-    varianceTable <- split(varianceTable, varianceTable$effectName)
+    varianceTable <- split(data.frame(varianceTable), varianceTable$effectName)
     varianceTable <- lapply(varianceTable, function(x) {
         data.frame(
             effectName = unique(x$effectName),

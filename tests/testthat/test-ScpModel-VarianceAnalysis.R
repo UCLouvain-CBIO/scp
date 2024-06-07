@@ -267,7 +267,7 @@ test_that("scpVariancePlot", {
     )
     ## Individual, apply filtering
     expect_doppelganger(
-        "scpVariancePlot combined change filtering",
+        "scpVariancePlot individual change filtering",
         scpVariancePlot(varRes, combined = FALSE, effect = "condition",
                         by = "SS", top = 4, decreasing = FALSE)
     )
