@@ -22,7 +22,6 @@ Depends:
     R (>= 4.3.0),
     QFeatures (>= 1.13.5)
 Imports:
-    dplyr,
     IHW,
     ggplot2,
     ggrepel,

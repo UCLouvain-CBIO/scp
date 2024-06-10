@@ -203,7 +203,7 @@ test_that("scpModelResiduals", {
     ## With filtering, with joining
     expect_identical(
         scpModelResiduals(se, join = TRUE, filtered = TRUE),
-        do.call(rbind, resids[5:nrow(se)])
+        BiocGenerics::do.call(rbind, resids[5:nrow(se)])
     )
     ## Test drop = FALSE
     model@scpModelFilterThreshold <- 10
