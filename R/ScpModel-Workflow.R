@@ -142,35 +142,59 @@ scpModelWorkflow <- function(object, formula,
                              i = 1,
                              name = "model",
                              verbose = TRUE) {
+    if (name %in% names(metadata(object))) {
+        warning("An element called '", name, "' is already present ",
+                "in the metadata. The associated content will be ",
+                "overwritten.")
+    }
     metadata(object)[[name]] <- ScpModel()
     scpModelFormula(object, name) <- formula
     scpModelInputIndex(object, name) <- i
     scpModelFilterThreshold(object, name) <- 1
-    scpModelFitList(object, name) <- .fitScpModel(object, name, verbose)
+    scpModelFitList(object, name) <- .runScpModel(object, name, verbose)
     object
 }
 
+## Internal functions that runs an ScpModel contained in an SE
+## object. Formula and input data are determined based on a
+## pre-initialised ScpModel object contained in the metadata of the
+## SE object. For each row of the input data, the function will
+## generate an scpModelFit object containing the fitting results. The
+## run process consist of 2 steps:
+## 1. adapt the model design (= generate the design matrix) based on
+## the pattern of missing values
+## 2. fit the model
+## The functions returns a list of scpModelFit objects
+## @param object A SummarizedExperiment object containing a
+##     pre-initialised ScpModel object in the metadata.
+## @param name A `character(1)` providing the name to use to retrieve
+##     the pre-initialised ScpModel object in the metadata. When
+##     missing, the name of the first model found in `object` is used.
+## @param verbose A logical(1) indicating whether to show a progress
+##     bar on the console.
 ##' @importFrom utils txtProgressBar setTxtProgressBar
 ##' @importFrom S4Vectors List
-.fitScpModel <- function(object, name, verbose) {
+.runScpModel <- function(object, name, verbose) {
     coldata <- .checkAnnotations(object, name)
     Y <- scpModelInput(object, name, filtered = FALSE)
-    pb <- txtProgressBar(max = nrow(Y), style = 3)
+    if (verbose) pb <- txtProgressBar(max = nrow(Y), style = 3)
     scpModelFits <- lapply(seq_len(nrow(Y)), function(i) {
         if (verbose) setTxtProgressBar(pb, i)
         design <- .adaptModel(
             Y[i, ], coldata, scpModelFormula(object, name)
         )
-        out <- .estimateModel(
+        out <- .fitModel(
             Y[i, ], design, scpModelEffectNames(object, name)
         )
         out
     })
-    close(pb)
+    if (verbose) close(pb)
     names(scpModelFits) <- rownames(Y)
     as(scpModelFits, "List")
 }
 
+## Internal functions that checks whether the ScpModel formula and the
+##
 ##' @importFrom SummarizedExperiment colData
 .checkAnnotations <- function(object, name) {
     formula <- scpModelFormula(object, name)
@@ -180,12 +204,20 @@ scpModelWorkflow <- function(object, formula,
     if (any(sapply(coldata, function(x) any(is.na(x)))))
         stop("Sample annotations (colData) cannot contain missing values.")
     .checkExperimentalDesignRank(formula, coldata)
-    coldata <- .formatCategoricalVariables(colData(object))
+    .formatCategoricalVariablesAsFactor(colData(object))
 }
 
 ## Internal function that makes sure that the design matrix is not
 ## singular, either because there are more coefficients than
-## observations or because of singular designs.
+## observations or because of singular designs. If the design matrix
+## does not pass the checks, an informative error is thrown. Otherwise,
+## the function returns NULL. This functions checks the design matrix
+## for the full data set, irrespective of missing values. It  makes
+## sure there are no obvious experimental design mistakes.
+##
+## @param formula A formula object used to generate a design matrix.
+## @param coldata A DataFrame object used to generate a design matrix.
+##
 ##' @importFrom stats model.matrix
 .checkExperimentalDesignRank <- function(formula, coldata) {
     X <- model.matrix(formula, data = droplevels(coldata))
@@ -201,13 +233,32 @@ scpModelWorkflow <- function(object, formula,
              "et al. 2023, Nat Comm). Solve this issue by ",
              "simplifying the model formula.")
     }
+    return(NULL)
 }
 
 ## ---- Adaptive modelling ----
 
-
 ## Internal function that generates the design matrix and adapts it to
-## the pattern of missing values
+## the pattern of missing values.
+##
+## Adaptations consists of:
+## 1. Remove rows associated to missing observations.
+## 2. Remove unused levels for variable encoded as factors.
+## 3. Remove any variable that became constant upon removal of missing
+##    values.
+## 4. Scale any numeric variable.
+##
+## If after missing value removal, the data consists of 2 observations
+## or less, an empty design matrix is returned. Otherwise, the
+## function returns the adapted design matrix with factor levels
+## stored in the attributes for later retrieval during inference.
+##
+## @param y A `numeric()` providing the response variable used for
+##     assessing which observation is missing values.
+## @param coldata A `DataFrame` object containing the sample
+##     annotations used to generate the model matrix.
+## @param formula A `formula` object used to generate the model matrix.
+##
 .adaptModel <- function(y, coldata, formula) {
     coldata <- coldata[!is.na(y), all.vars(formula), drop = FALSE]
     if (nrow(coldata) <= 2) {
@@ -216,9 +267,9 @@ scpModelWorkflow <- function(object, formula,
         return(out)
     }
     coldata <- droplevels(coldata)
-    formula <- .dropConstantVariables(coldata, formula)
+    formula <- .dropConstantVariablesFromFormula(coldata, formula)
     coldata <- coldata[, all.vars(formula), drop = FALSE]
-    coldata <- .centerNumericalVariables(coldata)
+    coldata <- .scaleNumericalVariables(coldata)
     out <- model.matrix(
         formula, data = coldata, contrasts.arg = .modelContrasts(coldata)
     )
@@ -226,9 +277,12 @@ scpModelWorkflow <- function(object, formula,
     out
 }
 
-## when the variable is already a factor, will still apply apply
-## factor() to drop unused levels.
-.formatCategoricalVariables <- function(x) {
+## Internal function that formats any categorical variables (encoded
+## as a factor, character or logical) as factors and drops unused
+## levels. The functions returns the input table with format
+## variables.
+## @param x A DataFrame.
+.formatCategoricalVariablesAsFactor <- function(x) {
     categoricalClass <- c("factor", "character", "logical")
     for (i in which(sapply(x, class) %in% categoricalClass)) {
         x[, i] <- factor(x[, i])
@@ -236,35 +290,51 @@ scpModelWorkflow <- function(object, formula,
     x
 }
 
-.centerNumericalVariables <- function(x) {
-    if (nrow(x) <= 1) return(x)
-    for (i in which(sapply(x, class) == "numeric")) {
+## Internal function that scales any numerical (numeric or integer)
+## variable in a table. The functions returns a table with scaled
+## numerical variables. When less than 2 observations, values cannot
+## be scaled and the function return the input table.
+## @param x A DataFrame.
+.scaleNumericalVariables <- function(x) {
+    if (nrow(x) < 2 || ncol(x) == 0) return(x)
+    for (i in which(sapply(x, is.numeric))) {
         x[, i] <- scale(x[, i])
     }
     x
 }
 
+## Internal function that removes variable from a formula that are
+## constant in a table. The function returns an updated formula.
+##
+## - A numerical variable is considered constant if its variance is 0.
+## - A categorical variable is considered constant if it has less than
+##   2 levels.
+##
+## @param x A DataFrame
+## @param formula A formula
+##
 ##' @importFrom stats reformulate terms var
-.dropConstantVariables <- function(x, formula) {
-    dropped <- c()
-    for (i in colnames(x)) {
-        if ((is.numeric(x[, i]) && var(x[, i]) == 0) ||
-            (is.factor(x[, i]) && nlevels(x[, i]) <= 1)) {
-            dropped <- c(dropped, i)
-        }
-    }
+.dropConstantVariablesFromFormula <- function(x, formula) {
+    isConstant <- sapply(x, function(xx) {
+        (is.numeric(xx) && var(xx) == 0) ||
+        (is.factor(xx) && nlevels(xx) < 2)
+    })
+    dropped <- colnames(x)[isConstant]
     if (!length(dropped)) return(formula)
     termLabels <- labels(terms(formula))
     droppedPattern <- paste0(dropped, collapse = "|")
     sel <- !sapply(termLabels, grepl, pattern = droppedPattern)
     termLabels <- termLabels[sel]
-    if (!length(termLabels)) return(~ 1)
     reformulate(
-        termLabels, intercept = TRUE,
+        c("1", termLabels), intercept = TRUE,
         env = attr(formula, ".Environment")
     )
 }
 
+## Internal function that returns a list of contrast specification
+## for variables encoded as factor in a table, as requested by the
+## `contrasts.arg` argument in `model.matrix()`.
+## @param x A DataFrame table.
 .modelContrasts <- function(x) {
     factors <- colnames(x)[sapply(x, class) == "factor"]
     if (length(factors) > 0) {
@@ -276,6 +346,9 @@ scpModelWorkflow <- function(object, formula,
     contrasts
 }
 
+## Internal function that returns a List of factor levels for all
+## factors in a table.
+## @param x A DataFrame table.
 .modelLevels <- function(x) {
     factors <- colnames(x)[sapply(x, class) == "factor"]
     if (!length(factors)) return(List())
@@ -287,22 +360,24 @@ scpModelWorkflow <- function(object, formula,
 
 ## ---- Model estimation ----
 
-## Note: I don't expose 'lambda' to the users because it
-## is solely implemented to avoid numerical instability issues due to
-## correlated variables. I expect tuning lambda for ridge
-## regression to be beneficial, but we then need to implement more
-## advanced functionality for fitting and selecting the best lambda.
-## The difficulty here is that the best lambda will depend on the
-## model and the input data and hence should be different for each
-## feature.
-.estimateModel <- function(y, x, effects) {
+## Internal function that fits a design matrix to a response variable.
+## The function return the estimates through a ScpModelFit object.
+##
+## @param y A numeric() containing the response variable
+## @param x A matrix() corresponding to the model matrix where each
+##     column is a parameter to fit.
+## @param effectNames A character() providing the names of the model
+##     variables associated to the . This is only used to know which
+##     effects can be computed
+##
+.fitModel <- function(y, x, effectNames) {
     model <- ScpModelFit(nrow(x), ncol(x))
     if (!ncol(x)) return(model)
     res <- .fitRidge(y[rownames(x)], x)
     scpModelFitCoefficients(model) <- res$coefficients
     scpModelFitResiduals(model) <- res$residuals
     scpModelFitEffects(model) <-
-        .computeModelEffects(res$coefficients, x, effects)
+        .computeModelEffects(res$coefficients, x, effectNames)
     scpModelFitDf(model) <- res$df
     scpModelFitVar(model) <- res$var
     scpModelFitUvcov(model) <- res$uvcov
@@ -311,30 +386,45 @@ scpModelWorkflow <- function(object, formula,
 }
 
 ## Internal function to fit a vector y to the design matrix x given a
-## ridge penalty weighted by lambda. The function returns the
+## ridge penalty given by lambda. The function returns the
 ## estimated coefficients, the residuals, the effective degrees of
 ## freedom, the residual variance and the unscaled variance-covariance
 ## matrix.
-## @param ...
+## @param y A numeric() containing the response variable
+## @param x A matrix() corresponding to the model matrix where each
+##     column is a parameter to fit.
+## @param lalmbda A numeric(1) providing the regularisation penalty
 ##
-## Watch out: the hat matrix can become huge for large number of
+## Note: when performing ridge regression, the dof are computed using
+## the hat matrix:
+##> hat <- x %*% tcrossprod(xtxInvLam, x)
+##> df <- length(y) - sum(diag(2 * hat - tcrossprod(hat)))
+## However, the hat matrix can become huge for large number of
 ## cells! Also computing the effective degrees of freedom takes most
 ## of the time... Since the lambda used is small, the effective df
-## is close to n - p - 1, so we don't compute the edf for now, but
+## is close to n - p, so we don't compute the edf for now, but
 ## this can be changed setting effectiveDf = TRUE.
 ## See refs for background:
 ## https://doi.org/10.1186/1471-2105-12-372
 ## https://stats.stackexchange.com/a/44841
-.fitRidge <- function(y, x, lambda = 1E-3, effectiveDf = FALSE) {
+##
+## Note: the degrees of freedom are often given by n - p - 1,
+## where - 1 is to account for the degree of freedom taken by the
+## estimation of the intercept. However, because intercept is in x, we
+## compute df = n - p = lenght(y) - ncol(x)
+##
+## Note: I don't expose 'lambda' to the users because it
+## is solely implemented to avoid numerical instability issues due to
+## correlated variables. I expect tuning lambda for ridge
+## regression to be beneficial, but we then need to implement more
+## advanced functionality for fitting and selecting the best lambda.
+## The difficulty here is that the best lambda will depend on the
+## model and the input data and hence should be different for each
+## feature.
+.fitRidge <- function(y, x, lambda = 1E-3) {
     xtxInvLam <- solve(crossprod(x) + lambda * diag(ncol(x)))
     beta <- xtxInvLam %*% crossprod(x, y)
-    if (effectiveDf) {
-        hat <- x %*% tcrossprod(xtxInvLam, x)
-        df <- length(y) - sum(diag(2 * hat - tcrossprod(hat)))
-    } else {
-        ## note: not - 1 because intercept is in x
-        df <- max(length(y) - ncol(x), 1)
-    }
+    df <- max(length(y) - ncol(x), 1)
     residuals <- y - x %*% beta
     list(coefficients = beta[, 1],
          residuals = residuals[, 1],
@@ -343,25 +433,52 @@ scpModelWorkflow <- function(object, formula,
          uvcov = crossprod(x %*% xtxInvLam))
 }
 
-.computeModelEffects <- function(beta, x, effects) {
-    out <- lapply(effects, function(e) {
-        .computeModelEffect(beta, x, e)
-    })
-    names(out) <- effects
-    as(out, "List")
-}
-
+## Internal function that computes an effect vector a given
+## variables. An effect vector is the fitted data by a given
+## variable, i.e. $\hat{y} = X_{sel} \beta{sel}$, where $sel$ are the
+## subset of model parameters related to a model variable. The
+## functions returns the effects vector in a named numeric vector.
+##
+## @param beta A numeric() of estimated coefficient
+## @param x The model matrix
+## @param effect A character(1) providing the name of the variable for
+##     which to compute effect matrices.
+##
+## Note: this should be adapted in case of interaction
 .computeModelEffect <- function(beta, x, effect) {
+    effect <- gsub("[(]", "\\\\(", effect)
+    effect <- gsub("[)]", "\\\\)", effect)
     sel <- grep(paste0("^", effect, "\\d*"), names(beta))
     if (!length(sel)){
-        rown <- rownames(x)
-        return(structure(rep(NA, length(rown)), names = rown))
+        return(NULL)
     }
     out <- tcrossprod(beta[sel], x[, sel, drop = FALSE])
     out[1, ]
 }
 
-## ---- ScpModel feature filtering ----
+## Internal function that computes the effect vectors for all
+## requested variables (see `computeModelEffect()`). The
+## functions returns the effects vectors in a named list.
+##
+## @param beta A numeric() of estimated coefficient
+## @param x The model matrix
+## @param effects A character() of variable names for which to compute
+##     effect matrices
+##
+## Note: this should be adapted in case of interaction, namely the
+## function should automatically detect variables containing an
+## interaction operator ("*", ":") and define effects accordingly
+## (include main effects or not?).
+.computeModelEffects <- function(beta, x, effects) {
+    out <- lapply(effects, function(e) {
+        .computeModelEffect(beta, x, e)
+    })
+    names(out) <- effects
+    out <- out[!sapply(out, is.null)]
+    as(out, "List")
+}
+
+## ---- ScpModel filter plot ----
 
 ##' @name ScpModel-Workflow
 ##'
@@ -373,36 +490,47 @@ scpModelFilterPlot <- function(object, name) {
         "To change the threshold, use:\n",
         "scpModelFilterThreshold(object, name) <- threshold"
     )
-    npr <- scpModelFilterNPRatio(object, name, FALSE)
+    npRatio <- scpModelFilterNPRatio(object, name, FALSE)
     npThreshold <- scpModelFilterThreshold(object, name)
-    .filterPlot(npr, npThreshold) +
+    .filterPlot(npRatio, npThreshold) +
         ggtitle(
             "Distribution of the n/p ratio",
-            subtitle = .filterSubtitle(npr, nrow(object), npThreshold)
+            subtitle = .filterSubtitle(npRatio, npThreshold)
         )
 }
 
-.filterSubtitle <- function(npr, m, threshold) {
+## Internal function that generates a description string for the
+## scpModelFilterPlot. This description contains the number of total
+## features in the data and the number of estimable features. If
+## threshold is greater than 1 (ie the model is not saturated), the
+## description also includes the number of feature that pass N/P ratio
+## filtering.
+##
+## @param npRatio A numeric() containing the N/P ratios for each feature
+## @param threshold A non-negative numeric(1) that provides the N/P
+##     ratio threshold used to filter features.
+##
+.filterSubtitle <- function(npRatio, threshold) {
     out <- paste(
-        "Total features:", m,
-        "\nEstimated features (n/p >= 1): ", sum(npr >= 1)
+        "Total features:", length(npRatio),
+        "\nEstimated features (n/p >= 1):", sum(npRatio >= 1)
     )
     if (threshold > 1) {
         out <- paste0(
-            out, "\nSelected features (n/p >=", threshold, "): ",
-            sum(npr >= threshold)
+            out, "\nSelected features (n/p >= ", threshold, "): ",
+            sum(npRatio >= threshold)
         )
     }
     out
 }
 
 .filterPlot <- function(npRatio, threshold) {
+    breaks <- if (threshold > 1) c(1, threshold) else 1
+    type <- cut(npRatio, breaks = c(-Inf, breaks, Inf))
     cols <- c(
         "inestimable" = "grey70", "estimated" = "grey40",
         "selected" = "dodgerblue"
     )
-    breaks <- if (threshold > 1) c(1, threshold) else 1
-    type <- cut(npRatio, breaks = c(-Inf, breaks, Inf))
     levels(type) <- names(cols)
     df <- data.frame(npRatio = npRatio, type = type)
     ggplot(df) +

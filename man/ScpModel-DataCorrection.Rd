@@ -18,7 +18,8 @@ scpRemoveBatchEffect(object, effects = NULL, intercept = TRUE, name)
 \item{effects}{A \code{character()} vector. For \code{scpKeepEffect()},
 which model variable should be used to reconstruct the data.
 For \code{scpRemoveBatchEffect()}, which model variable should be
-removed from the data.}
+removed from the data. When \code{NULL} (default), both functions
+return the model residuals.}
 
 \item{intercept}{A \code{logical(1)}. For \code{scpKeepEffect()},
 should the intercepts be included when reconstructing the

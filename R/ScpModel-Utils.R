@@ -29,7 +29,8 @@
 ##'
 ##' @param by2 A `character(1)` providing the name of the column in the
 ##'     annotation table to use to match the rows of the tables in
-##'     `tableList`. If `NULL`, it will be defined by `by`.
+##'     `tableList`. If `NULL`, it will be defined by `by`. The column
+##'     pointed by `by2` will be dropped in the output tables.
 ##'
 ##' @seealso
 ##'
@@ -45,13 +46,18 @@
 scpAnnotateResults <- function(tableList,
                                annotations, by, by2 = NULL) {
     allowedClasses <- c("DFrame", "data.frame")
-    if (!all(sapply(tableList, inherits, allowedClasses))) {
+    if (!all(sapply(tableList, inherits, allowedClasses)) | !length(tableList)) {
         stop(
             "'tableList' must be a list of '",
             paste(allowedClasses, collapse = "' or '"), "'."
         )
     }
+    if (!all(sapply(tableList, function(x) by %in% colnames(x)))) {
+        stop("'", by, "' not found in the columns of 'tableList' elements.")
+    }
     if (is.null(by2)) by2 <- by
+    if (!by2 %in% colnames(annotations))
+        stop("'", by2, "' not found in 'annotations'.")
     endoapply(tableList, function(x) {
         matchInd <- match(x[[by]], annotations[[by2]])
         selCols <- colnames(annotations) != by2
@@ -115,7 +121,8 @@ NULL
 ##' @param effects A `character()` vector. For `scpKeepEffect()`,
 ##'     which model variable should be used to reconstruct the data.
 ##'     For `scpRemoveBatchEffect()`, which model variable should be
-##'     removed from the data.
+##'     removed from the data. When `NULL` (default), both functions
+##'     return the model residuals.
 ##'
 ##' @param intercept A `logical(1)`. For `scpKeepEffect()`,
 ##'     should the intercepts be included when reconstructing the
@@ -149,7 +156,8 @@ scpKeepEffect <- function(object, effects = NULL,
     assays(object) <- List(new)
     m <- metadata(object)
     metadata(object) <- m[!names(m) %in% scpModelNames(object)]
-    reducedDims(object) <- List()
+    if (inherits(object, "SingleCellExperiment"))
+        reducedDims(object) <- List()
     object
 }
 
@@ -175,8 +183,9 @@ scpRemoveBatchEffect <- function(object, effects = NULL,
 ##'
 ##' @param sce An instance of class [SingleCellExperiment].
 ##'
-##' @param x A `List` of `DataFrames` containing principal components,
-##'     as procudes by [scpComponentAnalysis()].
+##' @param x A `List` of `DataFrames` containing principal components.
+##'     This list is typically the `bySample` element produced by
+##'     [scpComponentAnalysis()].
 ##'
 ##' @return A `SingleCellExperiment` with updated `reducedDims`.
 ##'
@@ -188,7 +197,6 @@ scpRemoveBatchEffect <- function(object, effects = NULL,
 ##'
 ##' library("scater")
 ##' data("leduc_minimal")
-##' leduc_minimal$cell <- rownames(colData(leduc_minimal))
 ##' pcs <- scpComponentAnalysis(
 ##'    leduc_minimal, method = "ASCA",
 ##'    effects = "SampleType")$bySample
@@ -201,14 +209,44 @@ scpRemoveBatchEffect <- function(object, effects = NULL,
 ##' leduc_minimal <- runTSNE(leduc_minimal, dimred = "ASCA_SampleType")
 ##' plotTSNE(leduc_minimal, colour_by = "SampleType")
 addReducedDims <- function(sce, x) {
-    .getPCs <- function(x) {
-        pcs <- x[, grep("^PC", colnames(x))]
-        res <- as.matrix(pcs)
-        attr(res, "proportionVariance") <-
-            metadata(x)$proportionVariance
-        res
-    }
+    if (!inherits(sce, "SingleCellExperiment"))
+        stop(
+            "'sce' must be a SingleCellExperiment object. Transform ",
+            "your data using 'as(sce, \"SingleCellExperiment\")'."
+        )
     pcList <- List(lapply(x, .getPCs))
     reducedDims(sce) <- c(reducedDims(sce), pcList)
     sce
+}
+
+## Internal function that extracts the principal components from a
+## table as computed by scpComponentAnalysis(). The function returns a
+## matrix with the PCs where the proportion of variance is stored as
+## an attribute.
+##
+## Expected conditions that the table must meet for .getPCs():
+## - At least one column starting with "PC"
+## - The table must be a DataFrame
+## - The table must a metadata slot names proportionVariance
+## - All PC names in the table must be present in the elements of the
+##   metadata "proportionVariance".
+##
+## Note that output from scpComponentAnalysis(...)$bySample is always
+## valid.
+##
+## @param x A data.frame with principal components stored in columns
+##     starting with "PC".
+##
+.getPCs <- function(x) {
+    pcNames <- grep("^PC", colnames(x), value = TRUE)
+    isValid <- length(pcNames) && inherits(x, "DataFrame") &&
+        "proportionVariance" %in% names(metadata(x)) &&
+        all(pcNames %in% names(metadata(x)$proportionVariance))
+    if (!isValid)
+        stop("Invalid table(s). Make sure you provided the 'bySample' ",
+             "element returned by 'scpComponentAnalysis()'.")
+    pcs <- as.matrix(x[, pcNames, drop = FALSE])
+    attr(pcs, "proportionVariance") <-
+        metadata(x)$proportionVariance[pcNames]
+    pcs
 }
