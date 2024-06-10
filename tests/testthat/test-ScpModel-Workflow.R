@@ -166,7 +166,6 @@ test_that("scpModelWorkflow", {
     expect_silent(tmp <- scpModelWorkflow(
         se, formula = ~ 1 + condition, name = "model3", i = 1, verbose = FALSE
     ))
-
     ## Test an intercept only model
     se <- .createMinimalData(nr = 1, nc = 6)
     se$condition <- as.factor(rep(1:2, each = 3))
@@ -198,7 +197,6 @@ test_that(".runScpModel", {
     assay(se)[sample(1:length(assay(se)), length(assay(se))/2)] <- NA
     se <- scpModelWorkflow(se, formula = ~ 1 + condition)
     exp <- scpModel(se)@scpModelFitList
-
     ## Test standard case
     expect_identical(
         exp,

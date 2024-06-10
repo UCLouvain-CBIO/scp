@@ -241,7 +241,7 @@ test_that("scpModelFitCoefficients<-", {
     )
     expect_error(
         scpModelFitCoefficients(x) <- matrix(1:5),
-        "an object of class .matrix. is not valid for @.coefficients"
+        "an object of class.*matrix.*is not valid for @.coefficients"
     )
     expect_error(
         scpModelFitCoefficients(x) <- list(1, 2, 3, 4, 5),
@@ -269,7 +269,7 @@ test_that("scpModelFitResiduals<-", {
     )
     expect_error(
         scpModelFitResiduals(x) <- matrix(1:10),
-        "an object of class .matrix. is not valid for @.residuals"
+        "an object of class.*matrix.*is not valid for @.residuals"
     )
     expect_error(
         scpModelFitResiduals(x) <- list(1, 2, 3, 4, 5, 6, 7, 8, 9 , 10),
@@ -357,7 +357,7 @@ test_that("scpModelFitDf<-", {
     )
     expect_error(
         scpModelFitDf(x) <- matrix(1),
-        "an object of class .matrix. is not valid for @.df"
+        "an object of class.*matrix.*is not valid for @.df"
     )
     expect_error(
         scpModelFitDf(x) <- list(1),
@@ -390,7 +390,7 @@ test_that("scpModelFitVar<-", {
     )
     expect_error(
         scpModelFitVar(x) <- matrix(1),
-        "an object of class .matrix. is not valid for @.var"
+        "an object of class.*matrix.*is not valid for @.var"
     )
     expect_error(
         scpModelFitVar(x) <- list(1),

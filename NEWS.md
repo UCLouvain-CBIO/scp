@@ -1,5 +1,10 @@
 ## scp 1.15
 
+## scp 1.15.1
+
+- test: added unit tests for scplainer: ScpModel-Class, 
+  scpModelFit-Class, ScpModel-Workflow
+
 ## scp 1.15.0
 
 - New Bioconductor 3.20 (devel) release
@@ -11,10 +16,6 @@
 - New Bioconductor 3.19 (stable) release
 
 # scp 1.13
-
-## scp 1.13.6
-
-(nothing yet)
 
 ## scp 1.13.5
 

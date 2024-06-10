@@ -417,14 +417,14 @@ test_that(".prettifyVariancePlot", {
     pl <- .plotExplainedVarianceByFeature(df)
     set.seed(123)
     expect_doppelganger(
-        ".prettifyVariancePlot .plotExplainedVarianceByFeature",
+        ".prettifyVariancePlot by feature",
         .prettifyVariancePlot(pl)
     )
     ## Prettify .plotExplainedVarianceCombined
     pl <- .plotExplainedVarianceCombined(df)
     set.seed(123)
     expect_doppelganger(
-        ".prettifyVariancePlot .plotExplainedVarianceCombined",
+        ".prettifyVariancePlot combined",
         .prettifyVariancePlot(pl)
     )
     ## Test with > 8 effects (only 8 colors available)

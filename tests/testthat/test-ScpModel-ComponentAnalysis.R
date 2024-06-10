@@ -785,31 +785,31 @@ test_that("scpComponentPlot", {
     )
     ## Default plot
     expect_doppelganger(
-        "scpComponentPlot bySample unmodelled default",
+        "scpComponentPlot bySample unmodelled",
         scpComponentPlot(caRes$bySample)[[1]]
     )
     expect_doppelganger(
-        "scpComponentPlot bySample residuals default",
+        "scpComponentPlot bySample residuals",
         scpComponentPlot(caRes$bySample)[[2]]
     )
     expect_doppelganger(
-        "scpComponentPlot bySample APCA_condition default",
+        "scpComponentPlot bySample APCA_condition",
         scpComponentPlot(caRes$bySample)[[3]]
     )
     expect_doppelganger(
-        "scpComponentPlot byFeature unmodelled default",
+        "scpComponentPlot byFeature unmodelled",
         scpComponentPlot(caRes$byFeature)[[1]]
     )
     ## Change components
     expect_doppelganger(
-        "scpComponentPlot bySample APCA_condition other components",
+        "scpComponentPlot change comp",
         scpComponentPlot(caRes$bySample, comp = 4:5)[[3]]
     )
     ## Point params
     se$cell <- colnames(se)
     caRes$bySample <- scpAnnotateResults(caRes$bySample, colData(se), by = "cell")
     expect_doppelganger(
-        "scpComponentPlot bySample APCA_condition pointParams",
+        "scpComponentPlot change pointParams",
         scpComponentPlot(caRes$bySample,
                          pointParams = list(aes(colour = condition,
                                                 size = numeric))
@@ -819,7 +819,7 @@ test_that("scpComponentPlot", {
     se$conditionMore <- factor(1:ncol(se))
     caRes$bySample <- scpAnnotateResults(caRes$bySample, colData(se), by = "cell")
     expect_doppelganger(
-        "scpComponentPlot bySample APCA_condition maxLevel",
+        "scpComponentPlot change maxLevel",
         scpComponentPlot(caRes$bySample,
                          pointParams = list(aes(colour = conditionMore,
                                                 size = numeric)),

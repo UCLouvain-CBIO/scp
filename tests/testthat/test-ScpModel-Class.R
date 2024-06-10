@@ -191,7 +191,7 @@ test_that("scpModelResiduals", {
     ## No filtering, with joining
     expect_identical(
         scpModelResiduals(se, join = TRUE, filtered = FALSE),
-        do.call(rbind, resids)
+        BiocGenerics::do.call(rbind, resids)
     )
     ## With filtering, no joining
     model@scpModelFilterThreshold <- 5

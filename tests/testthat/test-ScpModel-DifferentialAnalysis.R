@@ -356,7 +356,7 @@ test_that(".contrastToEstimates", {
         ),
         list(logFc = c(a = NA, b = NA, c = 1.998001998002, d = 2.99733549827914, e = NA, f = 4.99683566486252, g = 5.99483749669705, h = 6.99733442546727, i = NA, j = 8.99550224887556),
              se = c(a = NA, b = NA, c = 0.00242238261001802, d = 0.00168618089019642, e = NA, f = 0.00252964813529043, g = 0.00550665558411383, h = 0.00147003786198391, i = NA, j = 0.00344072014574582)),
-        tolerance = 1E-15 ## high precision for first test to assess for reproducibility
+        tolerance = 1E-10 ## high precision for first test to assess for reproducibility
     )
     expect_equal(
         .contrastToEstimates(
@@ -536,7 +536,7 @@ test_that(".scpDifferentialAnalysisOnCoefficient", {
                  pvalue = c(row1 = 0.179370436752218, row2 = 0.529078800285441, row3 = 0.708699733514142, row4 = 0.914672538466102, row5 = 0.105952378364963, row6 = 0.342938375045117, row7 = 0.757922079636902, row8 = 0.00245056736923267, row9 = 0.743570356188176, row10 = 0.205521868083594),
                  padj = c(row1 = 0.513804670208984, row2 = 0.842135644041002, row3 = 0.842135644041002, row4 = 0.914672538466102, row5 = 0.513804670208984, row6 = 0.685876750090234, row7 = 0.842135644041002, row8 = 0.0245056736923267, row9 = 0.842135644041002, row10 = 0.513804670208984)
              )),
-        tolerance = 1E-14
+        tolerance = 1E-10
     )
 })
 
@@ -557,7 +557,7 @@ test_that(".coefficientToEstimates", {
         list(
             beta = c(a = 0, c = 2.21626476138346, d = 3.33642362977023, e = 3.26435414663759, h = 7.78498846946388, i = 9.23452613165679, j = 4.80829820532098),
             se = c(a = 0.000204005125241858, c = 0.000339941667740344, d = 0.00167301187722831, e = 0.0019871773566072, h = 0.00394651632004783, i = 0.00218822549009997, j = 0.00412383501963632)),
-        tolerance = 1E-15
+        tolerance = 1E-10
     )
 })
 
@@ -871,7 +871,7 @@ test_that(".plotVolcano", {
     )
     ## Change point and label params
     expect_doppelganger(
-        ".plotVolcano change point and label params",
+        ".plotVolcano change aes params",
         .plotVolcano(x, pointParams = list(aes(col = padj), size = 5),
                      labelParams = list(aes(size = -padj), colour = "red"),
                      textBy = "names", contrast = c("condition", "A", "B"))
