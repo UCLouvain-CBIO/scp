@@ -1,111 +1,39 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>/404.html</loc>
-  </url>
-  <url>
-    <loc>/NOTES.html</loc>
-  </url>
-  <url>
-    <loc>/articles/QFeatures_nutshell.html</loc>
-  </url>
-  <url>
-    <loc>/articles/advanced.html</loc>
-  </url>
-  <url>
-    <loc>/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>/articles/read_scp.html</loc>
-  </url>
-  <url>
-    <loc>/articles/reporting_missing_values.html</loc>
-  </url>
-  <url>
-    <loc>/articles/scp.html</loc>
-  </url>
-  <url>
-    <loc>/articles/scp_data_modelling.html</loc>
-  </url>
-  <url>
-    <loc>/authors.html</loc>
-  </url>
-  <url>
-    <loc>/index.html</loc>
-  </url>
-  <url>
-    <loc>/news/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ScpModel-ComponentAnalysis.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ScpModel-DataCorrection.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ScpModel-DifferentialAnalysis.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ScpModel-VarianceAnalysis.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ScpModel-Workflow.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ScpModel-class.html</loc>
-  </url>
-  <url>
-    <loc>/reference/ScpModelFit-class.html</loc>
-  </url>
-  <url>
-    <loc>/reference/addReducedDims.html</loc>
-  </url>
-  <url>
-    <loc>/reference/aggregateFeaturesOverAssays.html</loc>
-  </url>
-  <url>
-    <loc>/reference/computeSCR.html</loc>
-  </url>
-  <url>
-    <loc>/reference/cumulativeSensitivityCurve.html</loc>
-  </url>
-  <url>
-    <loc>/reference/divideByReference.html</loc>
-  </url>
-  <url>
-    <loc>/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/jaccardIndex.html</loc>
-  </url>
-  <url>
-    <loc>/reference/leduc_minimal.html</loc>
-  </url>
-  <url>
-    <loc>/reference/medianCVperCell.html</loc>
-  </url>
-  <url>
-    <loc>/reference/mqScpData.html</loc>
-  </url>
-  <url>
-    <loc>/reference/normalizeSCP.html</loc>
-  </url>
-  <url>
-    <loc>/reference/pep2qvalue.html</loc>
-  </url>
-  <url>
-    <loc>/reference/readSCP.html</loc>
-  </url>
-  <url>
-    <loc>/reference/reportMissingValues.html</loc>
-  </url>
-  <url>
-    <loc>/reference/sampleAnnotation.html</loc>
-  </url>
-  <url>
-    <loc>/reference/scp1.html</loc>
-  </url>
-  <url>
-    <loc>/reference/scpAnnotateResults.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/NOTES.html</loc></url>
+<url><loc>/articles/QFeatures_nutshell.html</loc></url>
+<url><loc>/articles/advanced.html</loc></url>
+<url><loc>/articles/index.html</loc></url>
+<url><loc>/articles/read_scp.html</loc></url>
+<url><loc>/articles/reporting_missing_values.html</loc></url>
+<url><loc>/articles/scp.html</loc></url>
+<url><loc>/articles/scp_data_modelling.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/news/index.html</loc></url>
+<url><loc>/reference/ScpModel-ComponentAnalysis.html</loc></url>
+<url><loc>/reference/ScpModel-DataCorrection.html</loc></url>
+<url><loc>/reference/ScpModel-DifferentialAnalysis.html</loc></url>
+<url><loc>/reference/ScpModel-VarianceAnalysis.html</loc></url>
+<url><loc>/reference/ScpModel-Workflow.html</loc></url>
+<url><loc>/reference/ScpModel-class.html</loc></url>
+<url><loc>/reference/ScpModelFit-class.html</loc></url>
+<url><loc>/reference/addReducedDims.html</loc></url>
+<url><loc>/reference/aggregateFeaturesOverAssays.html</loc></url>
+<url><loc>/reference/computeSCR.html</loc></url>
+<url><loc>/reference/cumulativeSensitivityCurve.html</loc></url>
+<url><loc>/reference/divideByReference.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/jaccardIndex.html</loc></url>
+<url><loc>/reference/leduc_minimal.html</loc></url>
+<url><loc>/reference/medianCVperCell.html</loc></url>
+<url><loc>/reference/mqScpData.html</loc></url>
+<url><loc>/reference/normalizeSCP.html</loc></url>
+<url><loc>/reference/pep2qvalue.html</loc></url>
+<url><loc>/reference/readSCP.html</loc></url>
+<url><loc>/reference/reportMissingValues.html</loc></url>
+<url><loc>/reference/sampleAnnotation.html</loc></url>
+<url><loc>/reference/scp1.html</loc></url>
+<url><loc>/reference/scpAnnotateResults.html</loc></url>
 </urlset>
+

@@ -25,7 +25,7 @@ erased in this new object."><!-- mathjax --><script src="https://cdnjs.cloudflar
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -39,7 +39,7 @@ erased in this new object."><!-- mathjax --><script src="https://cdnjs.cloudflar
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.1</span>
       </span>
     </div>
 
@@ -53,7 +53,7 @@ erased in this new object."><!-- mathjax --><script src="https://cdnjs.cloudflar
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
-     
+
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
@@ -78,20 +78,20 @@ erased in this new object."><!-- mathjax --><script src="https://cdnjs.cloudflar
       </ul><ul class="nav navbar-nav navbar-right"><li>
   <a href="https://github.com/UCLouvain-CBIO/scp/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
-     
+
   </a>
 </li>
       </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Correct single-cell proteomics data</h1>
-    <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/HEAD/R/ScpModel-Utils.R" class="external-link"><code>R/ScpModel-Utils.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/master/R/ScpModel-Utils.R" class="external-link"><code>R/ScpModel-Utils.R</code></a></small>
     <div class="hidden name"><code>ScpModel-DataCorrection.Rd</code></div>
     </div>
 
@@ -126,20 +126,23 @@ erased in this new object.</p>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>object</dt>
+
+
+<dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>An object that inherits from the
 <code>SingleCellExperiment</code> class. It must contain an estimated
 <code>ScpModel</code> in its metadata</p></dd>
 
 
-<dt>effects</dt>
+<dt id="arg-effects">effects<a class="anchor" aria-label="anchor" href="#arg-effects"></a></dt>
 <dd><p>A <code><a href="https://rdrr.io/r/base/character.html" class="external-link">character()</a></code> vector. For <code>scpKeepEffect()</code>,
 which model variable should be used to reconstruct the data.
 For <code>scpRemoveBatchEffect()</code>, which model variable should be
-removed from the data.</p></dd>
+removed from the data. When <code>NULL</code> (default), both functions
+return the model residuals.</p></dd>
 
 
-<dt>intercept</dt>
+<dt id="arg-intercept">intercept<a class="anchor" aria-label="anchor" href="#arg-intercept"></a></dt>
 <dd><p>A <code>logical(1)</code>. For <code>scpKeepEffect()</code>,
 should the intercepts be included when reconstructing the
 data? Defaults to <code>FALSE</code>, hence the intercepts are not
@@ -148,7 +151,7 @@ be removed from the data? Defaults to <code>TRUE</code>, hence the
 intercepts are removed from the data.</p></dd>
 
 
-<dt>name</dt>
+<dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
 <dd><p>A <code>character(1)</code> providing the name to use to retrieve
 the model results. When retrieving a model and <code>name</code> is
 missing, the name of the first model found in <code>object</code> is used.</p></dd>
@@ -195,15 +198,15 @@ batch correction.</p></li>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.9000.</p>
 </div>
 
       </footer></div>
 
-  
 
 
-  
+
+
 
   </body></html>
 
