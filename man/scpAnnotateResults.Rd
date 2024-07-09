@@ -22,7 +22,8 @@ annotation table.}
 
 \item{by2}{A \code{character(1)} providing the name of the column in the
 annotation table to use to match the rows of the tables in
-\code{tableList}. If \code{NULL}, it will be defined by \code{by}.}
+\code{tableList}. If \code{NULL}, it will be defined by \code{by}. The column
+pointed by \code{by2} will be dropped in the output tables.}
 }
 \description{
 The function takes as input a list of \code{DFrame} and a table with

@@ -18,7 +18,7 @@ scpModelComponentMethods
 
 scpComponentAnalysis(
   object,
-  method = "ASCA",
+  method = NULL,
   effects = NULL,
   pcaFUN = "auto",
   residuals = TRUE,
@@ -55,15 +55,15 @@ scpComponentBiplot(
 
 \item{method}{A \code{character()} indicating which approach(es) to use
 for principal component analysis (PCA). Are allowed:
-\code{"ASCA"}, \code{"APCA"} and/or \code{"ASCA.E"} (multiple values are
-allowed). \code{"ASCA"}, \code{"APCA"}, \code{"ASCA.E"} are iterated through
-all effects found in the model.}
+\code{"APCA"} (default), \code{"ASCA"} and/or \code{"ASCA.E"} (multiple
+values are allowed). \code{"ASCA"}, \code{"APCA"}, \code{"ASCA.E"} are
+iterated through each desired effects.}
 
 \item{effects}{A \code{character()} indicating on which model variables
 the component analysis should be performed. Default to all
 modelled variables.}
 
-\item{pcaFUN}{A \code{character} indicating which function to use to
+\item{pcaFUN}{A \code{character(1)} indicating which function to use to
 perform PCA. "nipals" will use \code{\link[nipals:nipals]{nipals::nipals()}} while "svd"
 will use \code{\link[base:svd]{base::svd()}}. If "auto", the function uses "nipals"
 if the data contain missing values and "svd" otherwise.}
@@ -119,12 +119,16 @@ is typically the \code{byFeature} element in the list returned by
 \item{arrowParams}{A \code{list} where each element is an argument that
 is provided to \code{\link[ggplot2:geom_segment]{ggplot2::geom_segment()}}. This is useful to
 change arrow head style, line width, transparency, or assign
-colour based on an annotation (see \code{\link[ggplot2:aes]{ggplot2::aes()}}).}
+colour based on an annotation (see \code{\link[ggplot2:aes]{ggplot2::aes()}}). Note
+that changing the 'x', 'y', 'xend', and 'yend' aesthetics is
+not allowed.}
 
 \item{labelParams}{A \code{list} where each element is an argument that
 is provided to \code{\link[ggrepel:geom_text_repel]{ggrepel::geom_label_repel()}}. This is useful
 to change  label size, transparency, or assign
-colour based on an annotation (see \code{\link[ggplot2:aes]{ggplot2::aes()}}).}
+colour based on an annotation (see \code{\link[ggplot2:aes]{ggplot2::aes()}}). Note
+that changing the 'x', 'y', 'xend', and 'yend' aesthetics is
+not allowed.}
 
 \item{textBy}{A \code{character(1)} indicating the name of the column
 to use to label arrow heads.}

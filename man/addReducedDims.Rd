@@ -9,8 +9,9 @@ addReducedDims(sce, x)
 \arguments{
 \item{sce}{An instance of class \link{SingleCellExperiment}.}
 
-\item{x}{A \code{List} of \code{DataFrames} containing principal components,
-as procudes by \code{\link[=scpComponentAnalysis]{scpComponentAnalysis()}}.}
+\item{x}{A \code{List} of \code{DataFrames} containing principal components.
+This list is typically the \code{bySample} element produced by
+\code{\link[=scpComponentAnalysis]{scpComponentAnalysis()}}.}
 }
 \value{
 A \code{SingleCellExperiment} with updated \code{reducedDims}.
@@ -25,7 +26,6 @@ such as \code{\link[scater:plotReducedDim]{scater::plotReducedDim()}}, \code{\li
 
 library("scater")
 data("leduc_minimal")
-leduc_minimal$cell <- rownames(colData(leduc_minimal))
 pcs <- scpComponentAnalysis(
    leduc_minimal, method = "ASCA",
    effects = "SampleType")$bySample

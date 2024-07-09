@@ -22,7 +22,6 @@ Depends:
     R (>= 4.3.0),
     QFeatures (>= 1.13.5)
 Imports:
-    dplyr,
     IHW,
     ggplot2,
     ggrepel,
@@ -40,6 +39,7 @@ Imports:
     utils
 Suggests:
     BiocStyle,
+    BiocGenerics,
     MsDataHub (>= 1.3.3),
     impute,
     knitr,
@@ -50,6 +50,7 @@ Suggests:
     scpdata,
     sva,
     testthat,
+    vdiffr,
     vsn,
     uwot
 License: Artistic-2.0
