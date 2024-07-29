@@ -1,7 +1,34 @@
-citHeader("To cite the scp package in publications use:")
-
+citHeader("To cite the scp package in publications, please use at least one of the relevant citations below.\n")
 
 citEntry(entry = "article",
+         header = "1. Software for SCP data processing:",
+         title  = "Replication of Single-Cell Proteomics Data Reveals Important Computational Challenges",
+         author = personList(
+           person(given = "Christophe", family = "Vanderaa"),
+           person(given = "Laurent", family = "Gatto")),
+         journal = "Expert Review of Proteomics",
+         year = "2021",
+         pages = "1-9",
+         textVersion = paste("Vanderaa Christophe and Laurent Gatto.",
+                             "Replication of Single-Cell Proteomics Data Reveals Important Computational Challenges.",
+                             "Expert Review of Proteomics, 1–9 (2021).")
+         )
+
+citEntry(entry = "article",
+         header = "2. Modelling of SCP data:",
+         title  = "scplainer: using linear models to understand mass spectrometry-based single-cell proteomics data",
+         author = personList(
+           person(given = "Christophe", family = "Vanderaa"),
+           person(given = "Laurent", family = "Gatto")),
+         journal = "bioRxiv",
+         year = "2024",
+         textVersion = paste("Vanderaa Christophe and Laurent Gatto.",
+                             "scplainer: using linear models to understand mass spectrometry-based single-cell proteomics data.",
+                             "bioRxiv 2023.12.14.571792; doi: https://doi.org/10.1101/2023.12.14.571792")
+         )
+
+citEntry(entry = "article",
+         header = "3. Management and reporting of missing values in SCP data:",
          title  = "Revisiting the thorny issue of missing values in single-cell proteomics",
          author = personList(
            person(given = "Christophe", family = "Vanderaa"),
@@ -20,6 +47,7 @@ citEntry(entry = "article",
          )
 
 citEntry(entry = "article",
+         header = "4. Reproduction of SCP data processing workflows:",
          title  = "The current state of single-cell proteomics data analysis",
          author = personList(
            person(given = "Christophe", family = "Vanderaa"),
@@ -32,28 +60,18 @@ citEntry(entry = "article",
                              "Current Protocols 3 (1): e658.; doi: https://doi.org/10.1002/cpz1.658 (2023).")
          )
 
-citEntry(entry = "article",
-         title  = "Replication of Single-Cell Proteomics Data Reveals Important Computational Challenges",
+citEntry(entry = "book",
+         header = "5. Standardized workflow for SCP data processing:",
+         title  = "Mass Spectrometry Based Single Cell Proteomics",
          author = personList(
+           person(given = "Samuel", family = "Grégoire"),
            person(given = "Christophe", family = "Vanderaa"),
+           person(given = "Ruys Pyr Dit", family = "Sébastien"),
+           person(given = "Gabriel", family = "Mazzucchelli"),
+           person(given = "Christopher", family = "Kune"),
+           person(given = "Didier", family = "Vertommen"),
            person(given = "Laurent", family = "Gatto")),
-         journal = "Expert Review of Proteomics",
-         year = "2021",
-         pages = "1-9",
-         textVersion = paste("Vanderaa Christophe and Laurent Gatto.",
-                             "Replication of Single-Cell Proteomics Data Reveals Important Computational Challenges.",
-                             "Expert Review of Proteomics, 1–9 (2021).")
-         )
-
-
-citEntry(entry = "article",
-         title  = "scplainer: using linear models to understand mass spectrometry-based single-cell proteomics data",
-         author = personList(
-           person(given = "Christophe", family = "Vanderaa"),
-           person(given = "Laurent", family = "Gatto")),
-         journal = "bioRxiv",
-         year = "2024",
-         textVersion = paste("Vanderaa Christophe and Laurent Gatto.",
-                             "scplainer: using linear models to understand mass spectrometry-based single-cell proteomics data.",
-                             "bioRxiv 2023.12.14.571792; doi: https://doi.org/10.1101/2023.12.14.571792")
-         )
+         publisher = "Springer US",
+         year = "2023",
+         textVersion = "Grégoire, S. et al. Mass Spectrometry Based Single Cell Proteomics. (Springer US, 2023)."
+)
