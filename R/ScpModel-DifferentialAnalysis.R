@@ -594,11 +594,33 @@ scpVolcanoPlot <- function(differentialList,
         ylab("-log10(Adjusted p-value)") +
         theme_minimal()
     if (!is.null(contrast)) {
-        pl <- pl + xlab(paste(
-            contrast[[3]], " <-   log2(Fold change)   -> ",
-            contrast[[2]]
-        ))
+        pl <- pl + .annotateDirection(df$Estimate, contrast)
     }
     pl
 }
 
+## Internal function that generates an intuitively annotates the log
+## fold change axis. This is performed by highlighting the direction
+## of change for the two groups in the contrast. Note however that the
+## annotation is adapted in case that the changes are unidirectional.
+## Then, only the contrast group where intensities are estimated to be
+## higher is shown.
+##
+## The function returns an object of class "labels" that can be used
+## as the x axis for a ggplot fig.
+##
+## @param logFoldChange A numeric() containing estimated log fold
+##   changes.
+## @param contrast A `character(3)` with the following elements: 1.
+##   The name of a categorical variable to test; 2. The name of the
+##   reference group: 3. The name of the second group to contrast
+##   against the reference group. `coefficients` and `contrasts`
+##   cannot be both NULL.
+.annotateDirection <- function(logFoldChange, contrast) {
+    xAnnotation <- "log2(Fold change)"
+    if (any(logFoldChange > 0))
+        xAnnotation <- paste(xAnnotation, "  ->", contrast[[3]])
+    if (any(logFoldChange < 0))
+        xAnnotation <- paste(contrast[[2]], "<-  ", xAnnotation)
+    xlab(xAnnotation)
+}
