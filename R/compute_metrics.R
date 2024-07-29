@@ -75,6 +75,81 @@ featureCV <- function(x, group, na.rm = TRUE, norm = "none", nobs = 2, ...) {
            na.rm = na.rm)
 }
 
+.getDetectionMatrix <- function(object, i) {
+    i <- QFeatures:::.normIndex(object, i)
+    if (length(i) > 1) stop("Invalid 'i'. You selected multiple assays.")
+    x <- zeroIsNA(object[[i]])
+    !is.na(assay(x))
+}
+
+## Internal function that computes missing value metrics given an
+## identification matrix. 
+## @param x A matrix of logicals were TRUE indicates the feature i is 
+##     found in sample j. 
+.computeMissingValueMetrics <- function(x) {
+    c(
+        LocalSensitivityMean = mean(colSums(x != 0)),
+        LocalSensitivitySd = sd(colSums(x != 0)),
+        TotalSensitivity = sum(rowSums(x) != 0),
+        Completeness = mean(x != 0),
+        NumberCells = ncol(x)
+    )
+}
+
+## Internal function that computes the Jaccard index between each pair
+## of columns in a given identification matrix. Note that the Jaccard
+## matrix is a symmetric matrix, so we only return the upper triangle.
+## WARNING: for large number of cells, eg n > 10,000, this may become
+## inefficient. When the time comes this problem is relevant, 
+## implement sub-sampling.
+## @param x A matrix of logicals were TRUE indicates the feature i is 
+##     found in sample j. 
+.computeJaccardIndex <- function(x) {
+    vectorSizes <- colSums(x)
+    pwVectorSizes <- sapply(vectorSizes, function(xx) vectorSizes + xx)
+    unionSize <- crossprod(x)
+    jacc <- unionSize / (pwVectorSizes - unionSize)
+    jacc[upper.tri(jacc)]
+}
+
+.getSteps <- function(maxn, nsteps) {
+    steps <- seq(1, maxn, length.out = min(maxn, nsteps))
+    round(steps)
+}
+
+.sampledSensitivity <- function(x, n, i) {
+    sel <- sample(1:ncol(x), n)
+    s <- sum(rowSums(x[, sel, drop = FALSE]) != 0)
+    data.frame(i = i, SampleSize = n, Sensitivity = s)
+}
+
+## Internal function that computes the cumulative sensitivity curve
+## given an identification matrix. The function will sample an 
+## increasing number of cells (depending on nsteps). Each sampling is
+## repeated niters time. Optionally, if 'batch' is provided, the 
+## function will aggregate columns within each batch. This is usefull
+## when dealing with mulitplexed data were detection depends on the 
+## batch. 
+## @param x A matrix of logicals were TRUE indicates the feature i is 
+##     found in sample j. 
+.computeCumulativeSensitivityCurve <- function(x,
+                                               batch = NULL,
+                                               niters = 10, 
+                                               nsteps = 30) {
+    out <- list()
+    if (!is.null(batch)) {
+        x <- sapply(unique(batch), function(i) {
+            ifelse(rowSums(x[, batch == i, drop = FALSE]) == 0, FALSE, TRUE)
+        })
+    }
+    for (n in .getSteps(ncol(x), nsteps)) {
+        for (i in 1:niters) {
+            out <- c(out, list(.sampledSensitivity(x, n, i)))
+        }
+    }
+    do.call(rbind, out)
+}
+
 ####---- Exported functions ----####
 
 
@@ -435,7 +510,8 @@ medianCVperCell <- function(object, i, groupBy, nobs = 5, na.rm = TRUE,
 ##' @param i The index of the assay in `object`. The assay must 
 ##'     contain an identification matrix, that is a matrix where an
 ##'     entry is `TRUE` if the value is observed and `FALSE` is the
-##'     value is missing (see examples).
+##'     value is missing (see examples). `i` may be numeric, character
+##'     or logical, but it must select only one assay.
 ##' @param by A vector of length equal to the number of columns in 
 ##'     assay `i` that defines groups for which the metrics should be
 ##'     computed separately. If missing, the metrics are computed for
@@ -460,7 +536,7 @@ medianCVperCell <- function(object, i, groupBy, nobs = 5, na.rm = TRUE,
 ##' 
 ##' ## Define the identification matrix
 ##' peps <- scp1[["peptides"]]
-##' assay(peps) <- ifelse(is.na(assay(peps)), FALSE, TRUE)
+##' assay(peps) <- !is.na(assay(peps))
 ##' scp1 <- addAssay(scp1, peps, "id")
 ##' 
 ##' ## Report metrics 
@@ -471,27 +547,13 @@ medianCVperCell <- function(object, i, groupBy, nobs = 5, na.rm = TRUE,
 ##' data
 ##' 
 reportMissingValues <- function(object, i, by = NULL) {
-    i <- QFeatures:::.normIndex(object, i)
-    stopifnot(mode(assay(object[[i]])) == "logical")
-    if (is.null(by)) {
-        out <- .computeMissingValueMetrics(assay(object[[i]]))
-    } else {
-        stopifnot(length(by) == ncol(object[[i]]))
-        out <- sapply(unique(by), function(byi) {
-            .computeMissingValueMetrics(assay(object[[i]][, by == byi]))
-        })
-    }
-    as.data.frame(t(out))
-}
-
-.computeMissingValueMetrics <- function(x) {
-    c(
-        LocalSensitivityMean = mean(colSums(x != 0)),
-        LocalSensitivitySd = sd(colSums(x != 0)),
-        TotalSensitivity = sum(rowSums(x) != 0),
-        Completeness = mean(x != 0),
-        NumberCells = ncol(x)
-    )
+    x <- .getDetectionMatrix(object, i)
+    if (is.null(by)) by <- rep("all", ncol(x))
+    stopifnot(length(by) == ncol(x))
+    out <- sapply(unique(by), function(byi) {
+        .computeMissingValueMetrics(x[, by == byi])
+    })
+    data.frame(t(out))
 }
 
 ##' Compute the pairwise Jaccard index
@@ -533,28 +595,14 @@ reportMissingValues <- function(object, i, by = NULL) {
 ##'
 ##'
 jaccardIndex <- function(object, i, by = NULL) {
-    i <- QFeatures:::.normIndex(object, i)
-    stopifnot(mode(assay(object[[i]])) == "logical")
-    if (is.null(by)) {
-        data.frame(jaccard = .computeJaccardIndex(assay(object[[i]])))
-    } else {
-        stopifnot(length(by) == ncol(object[[i]]))
-        out <- lapply(unique(by), function(byi) {
-            ji <- .computeJaccardIndex(assay(object[[i]][, by == byi]))
-            ji <- data.frame(jaccard = ji)
-            ji$by <- byi
-            ji
-        })
-        do.call(rbind, out)
-    }
-}
-
-.computeJaccardIndex <- function(x) {
-    vectorSizes <- colSums(x)
-    pwVectorSizes <- sapply(vectorSizes, function(xx) vectorSizes + xx)
-    unionSize <- crossprod(x)
-    jacc <- unionSize / (pwVectorSizes - unionSize)
-    jacc[upper.tri(jacc)] ## jacc is a symmetric matrix
+    x <- .getDetectionMatrix(object, i)
+    if (is.null(by)) by <- rep("all", ncol(x))
+    stopifnot(length(by) == ncol(x))
+    out <- lapply(unique(by), function(byi) {
+        ji <- .computeJaccardIndex(assay(x[, by == byi]))
+        data.frame(jaccard = ji, by = byi)
+    })
+    do.call(rbind, out)
 }
 
 ##' Cumulative sensitivity curve
@@ -670,53 +718,19 @@ jaccardIndex <- function(object, i, by = NULL) {
 cumulativeSensitivityCurve <- function(object, i,  by = NULL,
                                        batch = NULL, nsteps = 30, 
                                        niters = 10) {
-    i <- QFeatures:::.normIndex(object, i)
-    stopifnot(mode(assay(object[[i]])) == "logical")
-    x <- assay(object[[i]])
-    if (is.null(by)) {
-        .computeCumulativeSensitivityCurve(
-            x, batch, niters, nsteps
+    x <- .getDetectionMatrix(object, i)
+    if (is.null(by)) by <- rep("all", ncol(x))
+    stopifnot(length(by) == ncol(x))
+    csc <- lapply(unique(by), function(byi) {
+        out <- .computeCumulativeSensitivityCurve(
+            x[, by == byi, drop = FALSE], 
+            batch[by == byi], 
+            niters, nsteps
         )
-    } else {
-        csc <- lapply(unique(by), function(byi) {
-            out <- .computeCumulativeSensitivityCurve(
-                x[, by == byi, drop = FALSE], batch[by == byi], 
-                niters, nsteps
-            )
-            out$by <- byi
-            out
-        })
-        do.call(rbind, csc)
-    }
-}
-
-.computeCumulativeSensitivityCurve <- function(x,
-                                               batch = NULL,
-                                               niters = 10, 
-                                               nsteps = 30) {
-    out <- list()
-    if (!is.null(batch)) {
-        x <- sapply(unique(batch), function(i) {
-            ifelse(rowSums(x[, batch == i, drop = FALSE]) == 0, FALSE, TRUE)
-        })
-    }
-    for (n in .getSteps(ncol(x), nsteps)) {
-        for (i in 1:niters) {
-            out <- c(out, list(.sampledSensitivity(x, n, i)))
-        }
-    }
-    do.call(rbind, out)
-}
-
-.getSteps <- function(maxn, nsteps) {
-    steps <- seq(1, maxn, length.out = min(maxn, nsteps))
-    round(steps)
-}
-
-.sampledSensitivity <- function(x, n, i) {
-    sel <- sample(1:ncol(x), n)
-    s <- sum(rowSums(x[, sel, drop = FALSE]) != 0)
-    data.frame(i = i, SampleSize = n, Sensitivity = s)
+        out$by <- byi
+        out
+    })
+    do.call(rbind, csc)
 }
 
 ##' @param df The output from `cumulativeSensitivityCurve()`.

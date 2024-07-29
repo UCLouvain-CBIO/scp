@@ -182,11 +182,22 @@ jobs:
           key: ${{ env.cache-version }}-${{ runner.os }}-biocdocker-biocbranch-${{ needs.define-docker-info.outputs.biocversion }}-r-${{ steps.findrversion.outputs.rversion }}-bioc-${{ steps.findrversion.outputs.biocversionnum }}-${{ hashFiles('.github/depends.Rds') }}
           restore-keys: ${{ env.cache-version }}-${{ runner.os }}-biocdocker-biocbranch-${{ needs.define-docker-info.outputs.biocversion }}-r-${{ steps.findrversion.outputs.rversion }}-bioc-${{ steps.findrversion.outputs.biocversionnum }}-
 
-      - name: Manually install affy and svn (currently unavailable for devel)
+      # - name: Manually install affy and svn (currently unavailable for devel)
+      #   run: |
+      #     BiocManager::install("Bioconductor/affy")
+      #     remotes::install_git("https://git.bioconductor.org/packages/vsn")
+      #   shell: Rscript {0}
+
+      - name: Manually install genefilter
         run: |
-          BiocManager::install("Bioconductor/affy")
-          remotes::install_git("https://git.bioconductor.org/packages/vsn")
+          remotes::install_git("https://git.bioconductor.org/packages/genefilter")
         shell: Rscript {0}
+
+      # - name: Manually install sva
+      #   run: |
+      #     BiocManager::install("sva")
+      #   shell: Rscript {0}
+
       - name: Install dependencies
         run: |
           ## Try installing the package dependencies in steps. First the local
@@ -201,7 +212,7 @@ jobs:
           local_deps <- remotes::local_package_deps(dependencies = TRUE)
           deps <- remotes::dev_package_deps(dependencies = TRUE, repos = BiocManager::repositories())
           BiocManager::install(local_deps[local_deps %in% deps$package[deps$diff != 0]])
-          
+
           ## Pass #2 at installing dependencies
           message(paste('****', Sys.time(), 'pass number 2 at installing dependencies: any remaining dependencies ****'))
           deps <- remotes::dev_package_deps(dependencies = TRUE, repos = BiocManager::repositories())
@@ -213,13 +224,14 @@ jobs:
           BiocManager::install("BiocCheck")
         shell: Rscript {0}
 
-      ## See https://github.com/Bioconductor/bioconductor_docker/issues/22
-      - name: Manually install preprocessCore
-        run: |
-          git clone https://github.com/bmbolstad/preprocessCore.git
-          cd preprocessCore
-          R CMD INSTALL --configure-args="--disable-threading"  .
-      - name: Manually install latest QFeatures
+      # ## See https://github.com/Bioconductor/bioconductor_docker/issues/22
+      # - name: Manually install preprocessCore
+      #   run: |
+      #     git clone https://github.com/bmbolstad/preprocessCore.git
+      #     cd preprocessCore
+      #     R CMD INSTALL --configure-args="--disable-threading"  .
+
+      - name: Manually install latest RforMassSpectrometry/QFeatures
         run: |
           BiocManager::install("RforMassSpectrometry/QFeatures")
         shell: Rscript {0}
@@ -238,7 +250,7 @@ jobs:
           rcmdcheck::rcmdcheck(
               args = c("--no-build-vignettes", "--no-manual", "--timings"),
               build_args = c("--no-manual", "--no-resave-data"),
-              error_on = "warning",
+              error_on = "error", ## "warning"
               check_dir = "check"
           )
         shell: Rscript {0}
@@ -308,4 +320,3 @@ jobs:
         with:
           name: ${{ runner.os }}-biocdocker-biocbranch-${{ needs.define-docker-info.outputs.biocversion }}-r-${{ steps.findrversion.outputs.rversion }}-bioc-${{ steps.findrversion.outputs.biocversionnum }}-results
           path: check
-

@@ -2,26 +2,26 @@
 ## ---- ScpModel class definition ----
 
 ##' @rdname ScpModel-class
-##' 
-##' @title Class to store the results of single-cell proteomics 
+##'
+##' @title Class to store the results of single-cell proteomics
 ##' modelling
-##' 
+##'
 ##' @description
-##' 
+##'
 ##' An `ScpModel` object must be always stored in the `metadata()` of
 ##' an object that inherits from the `SingleCellExperiment` class. The
-##' `ScpModel` object should **never be accessed directly** by the 
+##' `ScpModel` object should **never be accessed directly** by the
 ##' user. Instead, we provide several setter function to retrieve
 ##' information that may be useful to the user.The `ScpModel` class
 ##' contains several slots:
 ##'
-##' - `scpModelFormula`: a `formula` object controlling which 
+##' - `scpModelFormula`: a `formula` object controlling which
 ##'   variables are to be modelled.
 ##' - `scpModelInputIndex`: a `numeric(1)`, selecting the assay to use
 ##'   in the `SingleCellExperiment` object as input matrix. Note that
-##'   this slot serves as a pointer, meaning that the quantitative 
+##'   this slot serves as a pointer, meaning that the quantitative
 ##'   data is not duplicated. Any change to the assay in the
-##'   `SingleCellExperiment` will impact the estimation of the 
+##'   `SingleCellExperiment` will impact the estimation of the
 ##'   `ScpModel` object.
 ##' - `scpModelFilterThreshold`: A `numeric(1)` indicating the minimal
 ##'   n/p ratio required for a feature to be included in further model
@@ -29,19 +29,19 @@
 ##'   divided by the number of coefficients to estimate. n/p cannot be
 ##'   smaller than 1 because this would lead to over-specified models.
 ##' - `scpModelFitList`: A `List` that contains the model results for
-##'   each feature. Each element is a `ScpModelFit` object (see 
+##'   each feature. Each element is a `ScpModelFit` object (see
 ##'   [`ScpModelFit-class`])
-##'   
+##'
 ##' @section Getters:
 ##'
 ##' Each slot has a getter function associated:
 ##'
-##' - `scpModelNames()`: returns a vector of names of `ScpModel` 
+##' - `scpModelNames()`: returns a vector of names of `ScpModel`
 ##'   objects stored in the `SingleCellExperiment` object.
 ##' - `scpModelFormula()`: returns the `formula` slot of the `ScpModel`
 ##'   within an object that inherits from the `SummarizedExperiment`
 ##'   class.
-##' - `scpModelFilterThreshold()`: returns the n/p ration threshold 
+##' - `scpModelFilterThreshold()`: returns the n/p ration threshold
 ##'   used for feature filtering.
 ##' - `scpModelInput()`: returns a `matrix` with the quantitative
 ##'   values used as input of the model. Hence, the matrix contains
@@ -53,38 +53,38 @@
 ##'   the n/p of the features that satisfy the n/p ratio threshold.
 ##' - `scpModelResiduals()`: when `join = FALSE`, the function returns
 ##'   a list where each element corresponds to a feature and contains
-##'   the estimated residuals. When `join = TRUE` (default), the function 
-##'   combines the list into a matrix with features in rows and cells 
+##'   the estimated residuals. When `join = TRUE` (default), the function
+##'   combines the list into a matrix with features in rows and cells
 ##'   in columns, and filling the gaps with `NA`. If `filtered = TRUE`,
-##'   the feature of the matrix are restricted to the features that 
+##'   the feature of the matrix are restricted to the features that
 ##'   satisfy the n/p ratio threshold.
 ##' - `scpModelEffects()`: when `join = FALSE`, the function return a
-##'   list where each element of the list corresponds to a feature. 
-##'   Each element contains another list with as many elements as 
+##'   list where each element of the list corresponds to a feature.
+##'   Each element contains another list with as many elements as
 ##'   variable in the model and each element contains the data  effect vector
 ##'   for that vector. When `join = TRUE` (default), each element of the list is
 ##'   a matrix with features in rows and cells in columns where gaps
 ##'   are filled with `NA`. If `filtered = TRUE`, the feature of the
-##'   matrix are restricted to the features that satisfy the n/p 
+##'   matrix are restricted to the features that satisfy the n/p
 ##'   ratio threshold.
 ##'
 ##' Setter:
 ##'
-##' - `scpModelFilterThreshold<-()`: the function changes the n/p 
-##'   ratio threshold used for filtering features. 
-##' 
+##' - `scpModelFilterThreshold<-()`: the function changes the n/p
+##'   ratio threshold used for filtering features.
+##'
 ##' @seealso
-##' - [ScpModelFit-class] for a description of the class that store 
-##'   modelling results 
+##' - [ScpModelFit-class] for a description of the class that store
+##'   modelling results
 ##' - [ScpModel-Workflow] that uses the class to store the estimated
 ##'   model.
-##' 
+##'
 ##' @author Christophe Vanderaa, Laurent Gatto
-##' 
+##'
 ##' @example inst/examples/examples_ScpModel-Class.R
-##' 
+##'
 ##' @importFrom methods new
-##' 
+##'
 ##' @name ScpModel
 ##' @aliases ScpModel ScpModel-class class:ScpModel
 ##' @exportClass ScpModel
@@ -97,7 +97,7 @@ setClass("ScpModel", slots = c(
 
 ## Class constructors
 ## Keep the constructor hidden from the user. It is better they
-## build this object within an S(C)E object through `scpModelPrepare()`
+## build this object within an S(C)E object through `scpModelWorkflow()`
 ScpModel <- function() {
     ans <- new("ScpModel")
     ans@scpModelFitList <- List()
@@ -112,20 +112,20 @@ ScpModel <- function() {
 scpModelFormula <- function(object, name) {
     out <- scpModel(object, name)@scpModelFormula
     .checkModelElement(
-        out, "scpModelFormula", .preparationMessage,
+        out, "scpModelFormula", .runWorkflowMessage,
         name = .checkModelName(object, name)
     )
     out
 }
 
 ##' @rdname ScpModel-class
-##' 
+##'
 ##' @param filtered A `logical(1)` indicating whether the output
-##'     should return all features (`FALSE`) or the features that 
+##'     should return all features (`FALSE`) or the features that
 ##'     comply to the n/p ratio threshold (`TRUE`).
-##' 
+##'
 ##' @importFrom SummarizedExperiment assay
-##' 
+##'
 ##' @export
 scpModelInput <- function(object, name, filtered = TRUE) {
     out <- assay(object, scpModelInputIndex(object, name))
@@ -139,14 +139,19 @@ scpModelInput <- function(object, name, filtered = TRUE) {
 ##'
 ##' @export
 scpModelFilterThreshold <- function(object, name) {
-    scpModel(object, name)@scpModelFilterThreshold
+    out <- scpModel(object, name)@scpModelFilterThreshold
+    .checkModelElement(
+        out, "scpModelFilterThreshold", .runWorkflowMessage,
+        name = .checkModelName(object, name)
+    )
+    out
 }
 
 ##' @rdname ScpModel-class
 ##'
 ##' @export
 scpModelFilterNPRatio <- function(object, name, filtered = TRUE) {
-    out <- scpModelN(object, name, filtered) / 
+    out <- scpModelN(object, name, filtered) /
         scpModelP(object, name, filtered)
     ## when all missing or no params
     out[is.na(out) | is.infinite(out)] <- 0
@@ -157,13 +162,13 @@ scpModelFilterNPRatio <- function(object, name, filtered = TRUE) {
 ##'
 ##' @param join A `logical(1)` indicating whether the output should be
 ##'     combined in a single matrix (`TRUE`) or it should be returned
-##'     as a list with one element for each feature (`FALSE`). When 
+##'     as a list with one element for each feature (`FALSE`). When
 ##'     `TRUE`, any gaps across features will be filled with NA's.
 ##' @export
-scpModelResiduals <- function(object, name, join = TRUE, 
+scpModelResiduals <- function(object, name, join = TRUE,
                               filtered = TRUE) {
     out <- scpModelFitElement(
-        object, name, "Residuals", filtered, .estimationMessage
+        object, name, "Residuals", filtered, .runWorkflowMessage
     )
     if (join) out <- .joinScpModelOutput(out, object)
     out
@@ -172,10 +177,10 @@ scpModelResiduals <- function(object, name, join = TRUE,
 ##' @rdname ScpModel-class
 ##'
 ##' @export
-scpModelEffects <- function(object, name, join = TRUE, 
+scpModelEffects <- function(object, name, join = TRUE,
                             filtered = TRUE) {
     out <- scpModelFitElement(
-        object, name, "Effects", filtered, .estimationMessage
+        object, name, "Effects", filtered, .runWorkflowMessage
     )
     if (join) {
         out <- lapply(scpModelEffectNames(object, name), function(e) {
@@ -193,8 +198,7 @@ scpModelEffects <- function(object, name, join = TRUE,
 ##' @export
 scpModelNames <- function(object) {
     errorMessage <- paste0(
-        "No 'ScpModel' found in object. ",
-        .preparationMessage
+        "No 'ScpModel' found in object. ", .runWorkflowMessage
     )
     if (!length(metadata(object))) {
         stop(errorMessage)
@@ -213,7 +217,7 @@ scpModelNames <- function(object) {
 ##' @rdname ScpModel-ComponentAnalysis
 ##'
 ##' @export
-scpModelComponentMethods <- c("ASCA", "APCA", "ASCA.E")
+scpModelComponentMethods <- c("APCA", "ASCA", "ASCA.E")
 
 ## ---- Internal getters ----
 
@@ -230,7 +234,7 @@ scpModel <- function(object, name) {
 scpModelInputIndex <- function(object, name) {
     out <- scpModel(object, name)@scpModelInputIndex
     .checkModelElement(
-        out, "scpModelInputIndex", .preparationMessage,
+        out, "scpModelInputIndex", .runWorkflowMessage,
         name = .checkModelName(object, name)
     )
     out
@@ -240,20 +244,34 @@ scpModelInputIndex <- function(object, name) {
 scpModelFitList <- function(object, name, filtered = FALSE) {
     out <- scpModel(object, name)@scpModelFitList
     .checkModelElement(
-        out, "scpModelFitList", .preparationMessage,
+        out, "scpModelFitList", .runWorkflowMessage,
         name = .checkModelName(object, name)
     )
     if (filtered) out <- out[scpModelFeatureNames(object, name)]
     out
 }
 
-scpModelFitElement <- function(object, name, what, filtered, 
+## Internal function that extracts a specific element from a
+## scpModelFitList in an ScpModel object.
+## @param object Object that inherits from SummarizedExperiment class
+## @param name A `character(1)` providing the name to use to store or
+##     retrieve the modelling results.
+## @param what A `character(1)` providing the name of the element in
+##     the ScpModelFit object to retrieve.
+## @param filtered A `logical(1)` indicating whether the output should
+##     be filtered based on the NP ratio.
+## @param helpMessage A `character(1)` that provides additional
+##     information in case the retrieved elements are empty in the
+##     object.
+scpModelFitElement <- function(object, name, what, filtered,
                                helpMessage = "") {
     out <- scpModelFitList(object, name)
-    scpModelFitSlot <- get(paste0("scpModelFit", what))
+    scpModelFitSlot <- try(get(paste0("scpModelFit", what)), TRUE)
+    if (inherits(scpModelFitSlot, "try-error"))
+        stop("'", what, "' is not a slot of an ScpModelFit object.")
     out <- endoapply(out, scpModelFitSlot)
     .checkModelElement(
-        out, paste(what, "(in scpModelFit)"), helpMessage,
+        out, paste(what, "(in ScpModelFit)"), helpMessage,
         name = .checkModelName(object, name)
     )
     if (filtered) out <- out[scpModelFeatureNames(object, name)]
@@ -262,47 +280,47 @@ scpModelFitElement <- function(object, name, what, filtered,
 
 scpModelN <- function(object, name, filtered = TRUE) {
     out <- scpModelFitElement(
-        object, name, "N", filtered, .estimationMessage
+        object, name, "N", filtered, .runWorkflowMessage
     )
     unlist(out)
 }
 
 scpModelP <- function(object, name, filtered = TRUE) {
     out <- scpModelFitElement(
-        object, name, "P", filtered, .estimationMessage
+        object, name, "P", filtered, .runWorkflowMessage
     )
     unlist(out)
 }
 
 scpModelCoefficients <- function(object, name, filtered = TRUE) {
     scpModelFitElement(
-        object, name, "Coefficients", filtered, .estimationMessage
+        object, name, "Coefficients", filtered, .runWorkflowMessage
     )
 }
 
 scpModelDf <- function(object, name, filtered = TRUE) {
     out <- scpModelFitElement(
-        object, name, "Df", filtered, .estimationMessage
+        object, name, "Df", filtered, .runWorkflowMessage
     )
     unlist(out)
 }
 
 scpModelVar <- function(object, name, filtered = TRUE) {
     out <- scpModelFitElement(
-        object, name, "Var", filtered, .estimationMessage
+        object, name, "Var", filtered, .runWorkflowMessage
     )
     unlist(out)
 }
 
 scpModelUvcov <- function(object, name, filtered = TRUE) {
     scpModelFitElement(
-        object, name, "Uvcov", filtered, .estimationMessage
+        object, name, "Uvcov", filtered, .runWorkflowMessage
     )
 }
 
 scpModelVcov <- function(object, name, filtered = TRUE) {
     scpModelFitElement(
-        object, name, "Vcov", filtered, .estimationMessage
+        object, name, "Vcov", filtered, .runWorkflowMessage
     )
 }
 
@@ -334,18 +352,18 @@ scpModelEffectNames <- function(object, name) {
 ## ---- Exported setters ----
 
 ##' @rdname ScpModel-class
-##' 
-##' @param object An object that inherits from the 
+##'
+##' @param object An object that inherits from the
 ##'     `SingleCellExperiment` class.
-##' 
-##' @param value An `numeric(1)`, the new value for the n/p ratio 
+##'
+##' @param value An `numeric(1)`, the new value for the n/p ratio
 ##'     threshold
-##' 
+##'
 ##' @param name A `character(1)` providing the name to use to store or
 ##'     retrieve the modelling results. When retrieving a model and
-##'     `name` is missing, the name of the first model found in 
+##'     `name` is missing, the name of the first model found in
 ##'     `object` is used.
-##' 
+##'
 ##' @export
 `scpModelFilterThreshold<-` <- function(object, name, value) {
     stopifnot(length(value) == 1)
@@ -358,8 +376,8 @@ scpModelEffectNames <- function(object, name) {
 
 ## All setters are internal function and hence not visible to the
 ## user, otherwise it may lead to corrupt model results.
-## We implement setters instead of initializing the slots when 
-## constructing the object because the validity depends on the SE 
+## We implement setters instead of initializing the slots when
+## constructing the object because the validity depends on the SE
 ## object that is outside of the ScpModel object.
 
 `scpModel<-` <- function(object, name, value) {
@@ -380,7 +398,10 @@ scpModelEffectNames <- function(object, name) {
 `scpModelInputIndex<-` <- function(object, name, value) {
     stopifnot(!is.null(colnames(object)))
     stopifnot(!is.null(rownames(object)))
-    value <- .indexToNumeric(value, assayNames(object), "i")
+    value <- .checkInputIndex(value, assayNames(object), "i")
+    x <- assay(object, value)
+    if (any(is.infinite(x)))
+        stop("The selected assay ('assay(object, i)') contains infinite values.")
     scpModel(object, name)@scpModelInputIndex <- value
     object
 }
@@ -395,28 +416,9 @@ scpModelEffectNames <- function(object, name) {
 
 ## ---- Internal utility functions ----
 
-## A string suggesting how to initialize the model
-.preparationMessage <-
-    "Use 'scpModelPrepare()' to prepare the object for modelling."
-## A string suggesting how to initialize the model
-# .filteringMessage <-
-#     paste0(
-#         "Use 'scpModelFilter()' to apply a filter on the features ",
-#         "before modelling."
-#     )
-## A string suggesting how to estimate the model
-.estimationMessage <-
-    paste0(
-        "Use 'scpModelEstimate()' to estimate coefficients, residuals, ",
-        "and unscaled covariance for each selected feature."
-    )
-## A string suggesting how to perform component analysis
-.runComponentAnalysisMessage <-
-    paste0(
-        "Use runComponentAnalysis() to perform component analysis ",
-        "with the desired method (one of ",
-        paste(scpModelComponentMethods, collapse = ", "), ")."
-    )
+## A string suggesting how to run the scplainer workflow the model
+.runWorkflowMessage <-
+    "Use 'scpModelWorkflow()' to run the scplainer modelling workflow."
 
 ## Internal function that returns the name of the default model.
 ## The default model is the first ScpModel object in the metadata
@@ -427,35 +429,46 @@ scpModelEffectNames <- function(object, name) {
     scpModelNames(object)[[1]]
 }
 
+## Internal function that checks whether `name` points to a valid
+## ScpModel in `object`. If `name` is not a single value or if it does
+## not point to a ScpModel object in `metadata(object)`, the function
+## throws an error.
+## @param object A SummarizedExperiment object
+## @param name A character(1) to select a model. When missing, name is
+##      assigned as the name of the default model
 .checkModelName <- function(object, name) {
     if (missing(name)) name <- .defaultModelName(object)
     stopifnot(length(name) == 1)
     if (!name %in% scpModelNames(object)) {
         stop(
             "Model name '", name, "' not found in object. ",
-            .preparationMessage
+            .runWorkflowMessage
         )
     }
     name
 }
 
 ## Internal functions that checks whether the provided component is
-## empty or not. If empty, it throws a meaningfull error.
-## @param x The data component to check
-## @param ref The names in the data to expect
-## @param ref The names in the data to expect
+## empty or not. This component is expected to be extracted from one
+## of the slot of an ScpModel object contained in a
+## SummarizedExperiment. If `x` is empty, it throws a meaningful error
+## using `name`, `what` and `additionalMessage`.
+## @param x An element to check, can be atomic or a list
+## @param name The name of the model from which x is retrieved.
+## @param what The name of the slot in the model from which x is
+##     retrieved.
 ## @param additionalMessage A string that provides additional
 ##     information, typically indicating how the empty element should
-##     be filled.
-.checkModelElement <- function(x, name, what, additionalMessage) {
-    if (inherits(x, "List")) {
+##     be created.
+.checkModelElement <- function(x, name, what, additionalMessage = "") {
+    if (inherits(x, "List") || is.list(x)) {
         isEmpty <- length(x) == 0 || sum(sapply(x, length)) == 0
     } else {
         isEmpty <- length(x) == 0
     }
     if (isEmpty) {
         stop(
-            "No available '", what, "' for model '", name, "'. ",
+            "No available ", what, " for model '", name, "'. ",
             additionalMessage
         )
     }
@@ -463,92 +476,95 @@ scpModelEffectNames <- function(object, name) {
 }
 
 ## Internal functions that checks the formula is valid for modelling.
-## There are different cases:
-## - The formula has no variables (excluding intercept) = warning
-## - The formula contains a response variable = warning
-## - The colData is empty = error
-## - The colData is missing some variables from the formula = error
+## If a response variable is provided it is removed automatically and
+## if an intercept term is missing, it is added automatically. When the
+## formula contains `.`, it is replaced by all variables present in
+## `colData(object)`, except for variable already present in the
+## formula. The function returns the cleaned formula.
+##
 ## @param formula A formula
 ## @param object An object that inherits from SummarizedExperiment
+##
+##' @importFrom stats as.formula
 .checkScpModelFormula <- function(formula, object) {
     fterms <- terms(formula, data = colData(object))
-    if (attr(fterms, "intercept") != 1) {
-        stop("The formula must contain an intercept")
-    }
-    formula <- .removeResponseVariables(formula, colData(object))
-    .checkExplanatoryVariables(
-        all.vars(formula),
-        colnames(colData(object))
+    formula <- .removeResponseVariables(formula, fterms)
+    formula <- .checkExplanatoryVariables(
+        formula, fterms, colnames(colData(object))
     )
+    formula
+}
+
+## Internal function that removes the response variable from formula
+## terms. If the formula contains a response variable, the function
+## throws a warning
+## @param formula A formula.
+## @param fterms A terms object derived from formula.
+.removeResponseVariables <- function(formula, fterms) {
+    if (!identical(attr(fterms, "response"), 0L)) {
+        warning(
+            "The formula contains a response variable and is ignored."
+        )
+        formula <- as.formula(
+            paste("~", as.character(formula)[[3]]),
+            env = attr(fterms, ".Environment")
+        )
+    }
     formula
 }
 
 ## Internal functions that checks the variables in a formula are
 ## available from the sample annotations contained in the colData of
-## an object that inherits from SummarizedExperiment
-## @param scpModelVariableNames A vector of model variable names extracted
-##     from a formula.
-## @param availableVariables A vector of available variable names. If
-##     'scpModelVariableNames' contains a '.', it will be replaced by all
-##     names in 'availableVariables' not present in 'scpModelVariableNames'.
-.checkExplanatoryVariables <- function(scpModelVariableNames,
+## an object that inherits from SummarizedExperiment. The function
+## returns a cleaned formula.
+## - The formula contains a no intercept = warning
+## - "Residuals" cannot be a variable name = error
+## - The formula has no variables (excluding intercept) = error
+## - The colData is empty = error
+## - The colData is missing some variables from the formula = error
+## @param formula A formula.
+## @param fterms A terms object derived from formula.
+## @param availableVariables A vector of available variable names to
+##     model.
+.checkExplanatoryVariables <- function(formula, fterms,
                                        availableVariables) {
-    if ("Residuals" %in% scpModelVariableNames) {
+    modelVars <- all.vars(formula)
+    modelVars <- .replaceDotVariable(modelVars, availableVariables)
+    if (attr(fterms, "intercept") != 1)
+        warning("No intercept in the formula. It is added automatically.")
+    if ("Residuals" %in% modelVars)
         stop("'Residuals' is reserved. Please rename that variable.")
-    }
-    if (!length(scpModelVariableNames)) {
-        warning("You provided a formula with no variable to model.")
+    if (!length(modelVars)) {
+        stop("You provided a formula with no variable to model.")
     } else {
-        if (!length(availableVariables)) {
+        if (!length(availableVariables))
             stop("colData(object) is empty.")
-        }
-        scpModelVariableNames <-
-            .replaceDotVariable(scpModelVariableNames, availableVariables)
-        if (any(mis <- !scpModelVariableNames %in% availableVariables)) {
-            stop(
-                "colData(object) is missing one or more variables ",
-                "from the formula: ",
-                paste(scpModelVariableNames[mis], collapse = ", "), "."
-            )
-        }
+        if (any(mis <- !modelVars %in% availableVariables))
+            stop("colData(object) is missing one or more variables ",
+                 "from the formula: ",
+                 paste(modelVars[mis], collapse = ", "), ".")
     }
-    NULL
-}
-
-## Internal function that removes the response variable from a formula.
-## @param formula A formula
-## @param data A data.frame (or any object coercible to data.frame)
-##     from which the meaning of "." is inferred
-##' @importFrom stats as.formula
-.removeResponseVariables <- function(formula, data) {
-    fterms <- terms(formula, data = data)
-    if (!identical(attr(fterms, "response"), 0L)) {
-        warning(
-            "The formula contains a response variable and is ignored."
-        )
-        explanatoryVariables <- as.character(formula)[[3]]
-        formula <- as.formula(
-            paste("~", explanatoryVariables),
-            env = attr(formula, ".Environment")
-        )
-    }
-    formula
+    as.formula(
+        paste(c("~ 1", modelVars), collapse = " + "),
+        env = attr(formula, ".Environment")
+    )
 }
 
 ## Internal function that take model variables and replace the "."
 ## shorthand with all remaining available variables.
-## @param scpModelVariableNames A vector of model variable names extracted
+## @param modelVars A vector of model variable names extracted
 ##     from a formula.
 ## @param availableVariables A vector of available variable names. If
-##     'scpModelVariableNames' contains a '.', it will be replaced by all
-##     names in 'availableVariables' not present in 'scpModelVariableNames'.
-.replaceDotVariable <- function(scpModelVariableNames, availableVariables) {
-    if (any(scpModelVariableNames == ".")) {
-        scpModelVariableNames <- unique(c(
-            scpModelVariableNames, availableVariables
+##     'modelVars' contains a '.', it will be replaced by all
+##     names in 'availableVariables' not present in 'modelVars'.
+.replaceDotVariable <- function(modelVars, availableVariables) {
+    if (any(modelVars == ".")) {
+        modelVars <- unique(c(
+            modelVars, availableVariables
         ))
+        modelVars <- modelVars[modelVars != "."]
     }
-    scpModelVariableNames
+    modelVars
 }
 
 
@@ -561,7 +577,7 @@ scpModelEffectNames <- function(object, name) {
 ##     is pointing to.
 ## @param what A character string that indicates the name of the
 ##     index. It is used to provide meaningful error messages.
-.indexToNumeric <- function(index, choices, what = "name") {
+.checkInputIndex <- function(index, choices, what = "name") {
     if (is.logical(index) && !identical(index, NA)) {
         index <- which(index)
     }
@@ -581,6 +597,15 @@ scpModelEffectNames <- function(object, name) {
     index
 }
 
+## Internal function that combines a list of model output elements
+## into a matrix with as many rows as fitted models and as many
+## columns a the number of samples in object. Any piece of information
+## missing for a sample in a model is filled with NA.
+## Typically, these elements are one of the following slots from
+## multiple ScpModelList objects: residuals, effect matrices.
+## @param x A list of model output to combine. Each element contains
+##     a named vector. The names should relate to names in object
+## @param object A SummarizedExperiment
 .joinScpModelOutput <- function(x, object) {
     stopifnot(length(names(x)) > 0)
     out <- matrix(NA, nrow = length(x), ncol = ncol(object),

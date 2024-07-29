@@ -1,4 +1,56 @@
-# scp 1.11
+# scp 1.15
+
+## scp 1.15.1
+
+- test: added unit tests for scplainer: ScpModel-Class, 
+  scpModelFit-Class, ScpModel-Workflow
+
+## scp 1.15.0
+
+- New Bioconductor 3.20 (devel) release
+
+# scp 1.14
+
+## scp 1.14.0
+
+- New Bioconductor 3.19 (stable) release
+
+# scp 1.13
+
+## scp 1.13.5
+
+- fix: fixed small error in degrees of freedom
+- fix: break workflow upon infinite values
+
+## scp 1.13.4
+
+- fix: first drop variable before centering numerical variables (see #54)
+
+## scp 1.13.3
+
+- Refactor `readSCP()` and `readSCPFromDIANN()` to use new QFeatures
+  implementations.
+
+## scp 1.13.2
+
+- New *scplainer* workflow and citation
+- Add `addReducedDims()` (see #52)
+- fix: logFC and associated SE are now correctly computed
+
+## scp 1.13.1
+
+- docs: fixed vignette about reporting missing values
+- docs: add a QFeatures figure to the nutshell vignette
+
+## scp 1.13.0
+
+- New Bioconductor 3.18 (devel) release
+
+# scp 1.12
+
+## scp 1.12.0
+
+- New Bioconductor 3.18 (stable) release
 
 ## scp 1.11.3
 

@@ -1,40 +1,34 @@
 
-@ARTICLE{Gregoire2023-no,
-  title         = "Standardised workflow for mass spectrometry-based
-                   single-cell proteomics data processing and analysis using
-                   the scp package",
-  author        = "Gr{\'e}goire, Samuel and Vanderaa, Christophe and Ruys,
-                   S{\'e}bastien Pyr Dit and Mazzucchelli, Gabriel and Kune,
-                   Christopher and Vertommen, Didier and Gatto, Laurent",
-  abstract      = "Mass spectrometry (MS) based single-cell proteomics (SCP)
-                   explores cellular heterogeneity by focusing on the
-                   functional effectors of the cells - proteins. However,
-                   extracting meaningful biological information from MS data is
-                   far from trivial, especially with single cells. Currently,
-                   data analysis workflows are substantially different from one
-                   research team to another. Moreover,it is difficult to
-                   evaluate pipelines as ground truths are missing. Our team
-                   has developed the R/Bioconductor package called scp to
-                   provide a standardised framework for SCP data analysis. It
-                   relies on the widely used QFeatures and SingleCellExperiment
-                   data structures. In addition, we used a design containing
-                   cell lines mixed in known proportions to generate controlled
-                   variability for data analysis benchmarking. In this work, we
-                   provide a flexible data analysis protocol for SCP data using
-                   the scp package together with comprehensive explanations at
-                   each step of the processing. Our main steps are quality
-                   control on the feature and cell level, aggregation of the
-                   raw data into peptides and proteins, normalisation and batch
-                   correction. We validate our workflow using our ground truth
-                   data set. We illustrate how to use this modular,
-                   standardised framework and highlight some crucial steps.",
-  month         =  oct,
-  year          =  2023,
-  archivePrefix = "arXiv",
-  primaryClass  = "q-bio.QM",
-  eprint        = "2310.13598"
+@BOOK{Gregoire2023-no,
+  title     = "Mass Spectrometry Based Single Cell Proteomics",
+  author    = "Grégoire, Samuel and Vanderaa, Christophe and Ruys, Sébastien Pyr
+               Dit and Mazzucchelli, Gabriel and Kune, Christopher and
+               Vertommen, Didier and Gatto, Laurent",
+  publisher = "Springer US",
+  abstract  = "Mass spectrometry (MS) based single-cell proteomics (SCP)
+               explores cellular heterogeneity by focusing on the functional
+               effectors of the cells - proteins. However, extracting meaningful
+               biological information from MS data is far from trivial,
+               especially with single cells. Currently, data analysis workflows
+               are substantially different from one research team to another.
+               Moreover,it is difficult to evaluate pipelines as ground truths
+               are missing. Our team has developed the R/Bioconductor package
+               called scp to provide a standardised framework for SCP data
+               analysis. It relies on the widely used QFeatures and
+               SingleCellExperiment data structures. In addition, we used a
+               design containing cell lines mixed in known proportions to
+               generate controlled variability for data analysis benchmarking.
+               In this work, we provide a flexible data analysis protocol for
+               SCP data using the scp package together with comprehensive
+               explanations at each step of the processing. Our main steps are
+               quality control on the feature and cell level, aggregation of the
+               raw data into peptides and proteins, normalisation and batch
+               correction. We validate our workflow using our ground truth data
+               set. We illustrate how to use this modular, standardised
+               framework and highlight some crucial steps.",
+  month     =  oct,
+  year      =  2023
 }
-
 
 @ARTICLE{Vanderaa2023-gu,
   title         = "Revisiting the thorny issue of missing values in single-cell
@@ -226,13 +220,16 @@
   language = "en"
 }
 
-@MISC{Gatto2020-ry,
-  title  = "{QFeatures}: Quantitative features for mass spectrometry data",
-  author = "Gatto, Laurent",
-  year   =  2020
+@MISC{Gatto2023-ry,
+  title = {QFeatures: Quantitative features for mass spectrometry data},
+    author = {Laurent Gatto and Christophe Vanderaa},
+    year = {2023},
+    note = {R package version 1.12.0},
+    url = {https://bioconductor.org/packages/QFeatures},
+    doi = {10.18129/B9.bioc.QFeatures},
 }
 
-@ARTICLE{Amezquita2020-bf,
+@ARTICLE{Amezquita2019-bf,
   title     = "Orchestrating single-cell analysis with Bioconductor",
   author    = "Amezquita, Robert A and Lun, Aaron T L and Becht, Etienne and
                Carey, Vince J and Carpp, Lindsay N and Geistlinger, Ludwig and
@@ -359,4 +356,62 @@
   month    =  jan,
   year     =  2021,
   language = "en"
+}
+
+@article{Vanderaa2021-ue,
+   author = {Christophe Vanderaa and Laurent Gatto},
+   title = {Replication of single-cell proteomics data reveals
+                  important computational challenges},
+   journal = {Expert Review of Proteomics},
+   volume = {18},
+   number = {10},
+   pages = {835-843},
+   year = {2021},
+   publisher = {Taylor & Francis},
+   doi = {10.1080/14789450.2021.1988571},
+   note ={PMID: 34602016},
+   URL = {https://doi.org/10.1080/14789450.2021.1988571},
+   eprint = {https://doi.org/10.1080/14789450.2021.1988571}
+}
+
+@article{Vanderaa2023-scplainer,
+        author = {Christophe Vanderaa and Laurent Gatto},
+        title = {{scplainer}: using linear models to understand mass
+                  spectrometry-based single-cell proteomics data},
+        elocation-id = {2023.12.14.571792},
+        year = {2024},
+        doi = {10.1101/2023.12.14.571792},
+        publisher = {Cold Spring Harbor Laboratory},
+        abstract = {Analysing mass spectrometry (MS)-based single-cell
+                  proteomics (SCP) data is challenging. The data
+                  analysis must address numerous problems that are
+                  inherent to both MS-based proteomics technologies
+                  and single-cell experiments. This has led to the
+                  development of complex and divergent data processing
+                  workflows within the field. In this work, we present
+                  scplainer, a principled and standardised approach
+                  for extracting meaningful insights from SCP
+                  data. The approach relies on minimal data processing
+                  combined with linear modelling. The approach is a
+                  simple yet powerful approach for exploring and
+                  interpreting various types of SCP data. scplainer
+                  performs variance analysis, differential abundance
+                  analysis and component analysis while streamlining
+                  the visualization of the results. This thorough
+                  exploration enhances our capacity to gain a deeper
+                  understanding of the biological processes hidden in
+                  the data. Finally, we demonstrate that scplainer
+                  corrects for technical variability, and even enables
+                  the integration of data sets from different SCP
+                  experiments. The approach effectively generates
+                  high-quality data that are amenable to perform
+                  downstream analyses. In conclusion, this work
+                  reshapes the analysis of SCP data by moving efforts
+                  from dealing with the technical aspects of data
+                  analysis to focusing on answering biologically
+                  relevant questions.Competing Interest StatementThe
+                  authors have declared no competing interest.},
+        URL = {https://www.biorxiv.org/content/early/2024/01/10/2023.12.14.571792},
+        eprint = {https://www.biorxiv.org/content/early/2024/01/10/2023.12.14.571792.full.pdf},
+        journal = {bioRxiv}
 }
