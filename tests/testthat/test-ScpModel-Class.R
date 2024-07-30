@@ -34,7 +34,7 @@ test_that("ScpModel", {
 ##     which to create mock ScpModelFit objects
 .addScpModelFitList <- function(model, features) {
     fitList <- as(lapply(1L:length(features), function(i) {
-        ScpModelFit(n = i * i, p = i)
+        ScpModelFit(n = i * i)
     }), "List")
     names(fitList) <- features
     model@scpModelFitList <- fitList
@@ -1090,7 +1090,7 @@ test_that("scpModelFitList<-", {
     dimnames(se) <- list(LETTERS[1:2], letters[1:2])
     model <- ScpModel()
     metadata(se)[["test"]] <- model
-    smFit <- ScpModelFit(n = 2L, p = 1L)
+    smFit <- ScpModelFit(n = 2L)
     ## Value has wrong type = is not a List = error
     expect_error(
         scpModelFitList(se) <- smFit,
@@ -1156,7 +1156,7 @@ test_that("scpModelFitList<-", {
         List(A = smFit, B = smFit)
     )
     ## Replace input assay for non-empty model = replace
-    smFit2 <- ScpModelFit(n = 2L, p = 2L)
+    smFit2 <- ScpModelFit(n = 2L)
     scpModelFitList(se) <- List(A = smFit, B = smFit2)
     expect_identical(
         metadata(se)[["test"]]@scpModelFitList,

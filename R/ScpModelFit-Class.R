@@ -16,7 +16,6 @@
 ##' feature:
 ##'
 ##' - `n`: an `integer`, the number of observations for the feature
-##' - `p`: an `integer`, the number of coefficient to estimate
 ##' - `coefficients`: a `numeric` vector with the estimated
 ##'   coefficients
 ##' - `residuals`: a `numeric` vector with the estimated residuals
@@ -44,7 +43,6 @@
 ##' @exportClass ScpModelFit
 setClass("ScpModelFit", slots = c(
     n = "integer",
-    p = "integer",
     coefficients = "numeric",
     residuals = "numeric",
     effects = "List",
@@ -55,36 +53,34 @@ setClass("ScpModelFit", slots = c(
 ))
 
 ## Class constructors
-ScpModelFit <- function(n, p) {
+ScpModelFit <- function(n) {
     stopifnot(n >= 0)
-    stopifnot(p >= 0)
     stopifnot(length(n) == 1)
-    stopifnot(length(p) == 1)
     new(
-        "ScpModelFit", n = n, p = p, effects = List(),
+        "ScpModelFit", n = n, effects = List(),
         levels = List()
     )
 }
 
 ## ---- Getters ----
 
-scpModelFitN <- function(object) {
+scpModelFitN <- function(object) { # to change
     object@n
 }
 
-scpModelFitP <- function(object) {
-    object@p
+scpModelFitP <- function(object) { # to change
+    sum(is.finite(object@coefficients))
 }
 
 scpModelFitCoefficients <- function(object) {
     object@coefficients
 }
 
-scpModelFitResiduals <- function(object) {
+scpModelFitResiduals <- function(object) { # to change
     object@residuals
 }
 
-scpModelFitEffects <- function(object) {
+scpModelFitEffects <- function(object) {# to change
     object@effects
 }
 
@@ -104,7 +100,7 @@ scpModelFitVcov <- function(object) {
     scpModelFitVar(object) * scpModelFitUvcov(object)
 }
 
-scpModelFitLevels <- function(object) {
+scpModelFitLevels <- function(object) {# To change
     object@levels
 }
 

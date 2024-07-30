@@ -165,7 +165,7 @@ scpModelFilterNPRatio <- function(object, name, filtered = TRUE) {
 ##'     as a list with one element for each feature (`FALSE`). When
 ##'     `TRUE`, any gaps across features will be filled with NA's.
 ##' @export
-scpModelResiduals <- function(object, name, join = TRUE,
+scpModelResiduals <- function(object, name, join = TRUE, 
                               filtered = TRUE) {
     out <- scpModelFitElement(
         object, name, "Residuals", filtered, .runWorkflowMessage

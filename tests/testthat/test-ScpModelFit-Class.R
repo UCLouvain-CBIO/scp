@@ -3,80 +3,44 @@
 test_that("ScpModelFit", {
     ## n slot is required
     expect_error(
-        ScpModelFit(p = 10L),
+        ScpModelFit(),
         "argument \"n\" is missing, with no default"
     )
     ## n must be integer
     expect_error(
-        ScpModelFit(n = 10, p = 10L),
+        ScpModelFit(n = 10),
         "should be or extend class \"integer\""
     )
     expect_error(
-        ScpModelFit(n = "foo", p = 10L),
+        ScpModelFit(n = "foo"),
         "should be or extend class \"integer\""
     )
     expect_error(
-        ScpModelFit(n = list(1L), p = 10L),
+        ScpModelFit(n = list(1L)),
         "should be or extend class \"integer\""
     )
     expect_error(
-        ScpModelFit(n = matrix(1), p = 10L),
+        ScpModelFit(n = matrix(1)),
         "should be or extend class \"integer\""
     )
     ## n must be positive
     expect_error(
-        ScpModelFit(n = -1L, p = 10L),
+        ScpModelFit(n = -1L),
         "n >= 0 is not TRUE"
     )
     ## n must have length 1
     expect_error(
-        ScpModelFit(n = integer(), p = 10L),
+        ScpModelFit(n = integer()),
         "length\\(n\\) == 1 is not TRUE"
     )
     expect_error(
-        ScpModelFit(n = 1:2, p = 10L),
+        ScpModelFit(n = 1:2),
         "length\\(n\\) == 1 is not TRUE"
     )
-    ## p slot is required
-    expect_error(
-        ScpModelFit(n = 10L),
-        "argument \"p\" is missing, with no default"
-    )
-    ## p must be integer
-    expect_error(
-        ScpModelFit(p = 10, n = 10L),
-        "should be or extend class \"integer\""
-    )
-    expect_error(
-        ScpModelFit(p = "foo", n = 10L),
-        "should be or extend class \"integer\""
-    )
-    expect_error(
-        ScpModelFit(p = list(1L), n = 10L),
-        "should be or extend class \"integer\""
-    )
-    expect_error(
-        ScpModelFit(p = matrix(1), n = 10L),
-        "should be or extend class \"integer\""
-    )
-    ## n must be positive
-    expect_error(
-        ScpModelFit(p = -1L, n = 10L),
-        "p >= 0 is not TRUE"
-    )
-    ## n must have length 1
-    expect_error(
-        ScpModelFit(p = integer(), n = 10L),
-        "length\\(p\\) == 1 is not TRUE"
-    )
-    expect_error(
-        ScpModelFit(p = 1:2, n = 10L),
-        "length\\(p\\) == 1 is not TRUE"
-    )
+
     ## Check slots are correctly inialized
-    x <- ScpModelFit(10L, 10L)
+    x <- ScpModelFit(10L)
     expect_identical(x@n, 10L)
-    expect_identical(x@p, 10L)
     expect_identical(x@coefficients, numeric())
     expect_identical(x@residuals, numeric())
     expect_identical(x@effects, List())
@@ -89,7 +53,7 @@ test_that("ScpModelFit", {
 ## ---- Getters ----
 
 test_that("scpModelFitN", {
-    x <- ScpModelFit(10L, 5L)
+    x <- ScpModelFit(10L)
     expect_identical(
         scpModelFitN(x),
         10L
@@ -97,15 +61,15 @@ test_that("scpModelFitN", {
 })
 
 test_that("scpModelFitP", {
-    x <- ScpModelFit(10L, 5L)
+    x <- ScpModelFit(10L)
     expect_identical(
         scpModelFitP(x),
-        5L
+        0L
     )
 })
 
 test_that("scpModelFitCoefficients", {
-    x <- ScpModelFit(10L, 5L)
+    x <- ScpModelFit(10L)
     ## default
     expect_identical(
         scpModelFitCoefficients(x),
@@ -120,7 +84,7 @@ test_that("scpModelFitCoefficients", {
 })
 
 test_that("scpModelFitResiduals", {
-    x <- ScpModelFit(10L, 5L)
+    x <- ScpModelFit(10L)
     ## default
     expect_identical(
         scpModelFitResiduals(x),
@@ -135,7 +99,7 @@ test_that("scpModelFitResiduals", {
 })
 
 test_that("scpModelFitEffects", {
-    x <- ScpModelFit(10L, 5L)
+    x <- ScpModelFit(10L)
     ## default
     expect_identical(
         scpModelFitEffects(x),
@@ -150,7 +114,7 @@ test_that("scpModelFitEffects", {
 })
 
 test_that("scpModelFitDf", {
-    x <- ScpModelFit(10L, 5L)
+    x <- ScpModelFit(10L)
     ## default
     expect_identical(
         scpModelFitDf(x),
@@ -165,7 +129,7 @@ test_that("scpModelFitDf", {
 })
 
 test_that("scpModelFitVar", {
-    x <- ScpModelFit(10L, 5L)
+    x <- ScpModelFit(10L)
     ## default
     expect_identical(
         scpModelFitVar(x),
@@ -180,7 +144,7 @@ test_that("scpModelFitVar", {
 })
 
 test_that("scpModelFitUvcov", {
-    x <- ScpModelFit(10L, 5L)
+    x <- ScpModelFit(10L)
     ## default
     expect_identical(
         scpModelFitUvcov(x),
@@ -195,7 +159,7 @@ test_that("scpModelFitUvcov", {
 })
 
 test_that("scpModelFitVcov", {
-    x <- ScpModelFit(10L, 5L)
+    x <- ScpModelFit(10L)
     ## default
     expect_identical(
         scpModelFitVcov(x),
@@ -211,7 +175,7 @@ test_that("scpModelFitVcov", {
 })
 
 test_that("scpModelFitLevels", {
-    x <- ScpModelFit(10L, 5L)
+    x <- ScpModelFit(10L)
     ## default
     expect_identical(
         scpModelFitLevels(x),
@@ -228,7 +192,7 @@ test_that("scpModelFitLevels", {
 ## ---- Setters ----
 
 test_that("scpModelFitCoefficients<-", {
-    x <- ScpModelFit(10L, 5L)
+    x <- ScpModelFit(10L)
     ## value has wrong length = length is not p = error
     expect_error(
         scpModelFitCoefficients(x) <- 1:4,
@@ -256,7 +220,7 @@ test_that("scpModelFitCoefficients<-", {
 })
 
 test_that("scpModelFitResiduals<-", {
-    x <- ScpModelFit(10L, 5L)
+    x <- ScpModelFit(10L)
     ## value has wrong length = length is not p = error
     expect_error(
         scpModelFitResiduals(x) <- 1:4,
@@ -282,7 +246,7 @@ test_that("scpModelFitResiduals<-", {
         1:10
     )
     ## Correct usage with empty array
-    x <- ScpModelFit(0L, 5L)
+    x <- ScpModelFit(0L)
     scpModelFitResiduals(x) <- numeric()
     expect_identical(
         x@residuals,
@@ -291,7 +255,7 @@ test_that("scpModelFitResiduals<-", {
 })
 
 test_that("scpModelFitEffects<-", {
-    x <- ScpModelFit(10L, 5L)
+    x <- ScpModelFit(10L)
     ## value has elements that are not a numeric vector = error
     el1 <- c(a = 1, b = 2, c = 3)
     el2 <- matrix(1:3)
@@ -344,7 +308,7 @@ test_that("scpModelFitEffects<-", {
 })
 
 test_that("scpModelFitDf<-", {
-    x <- ScpModelFit(10L, 5L)
+    x <- ScpModelFit(10L)
     ## value has not length 1 = error
     expect_error(
         scpModelFitDf(x) <- 1:4,
@@ -377,7 +341,7 @@ test_that("scpModelFitDf<-", {
 })
 
 test_that("scpModelFitVar<-", {
-    x <- ScpModelFit(10L, 5L)
+    x <- ScpModelFit(10L)
     ## value has not length 1 = error
     expect_error(
         scpModelFitVar(x) <- 1:4,
@@ -410,7 +374,7 @@ test_that("scpModelFitVar<-", {
 })
 
 test_that("scpModelFitUvcov<-", {
-    x <- ScpModelFit(10L, 5L)
+    x <- ScpModelFit(10L)
     x@coefficients <- c(a = 1, b = 2, c = 3)
     ## value has no rownames  = error
     uvcov <- matrix(9, 3, 3, dimnames = list(NULL, letters[1:3]))
@@ -452,7 +416,7 @@ test_that("scpModelFitUvcov<-", {
 })
 
 test_that("scpModelFitLevels<-", {
-    x <- ScpModelFit(10L, 5L)
+    x <- ScpModelFit(10L)
     ## value elements have wrong type = error
     expect_error(
         scpModelFitLevels(x) <- List(rep("foo", 5), 1:5),
