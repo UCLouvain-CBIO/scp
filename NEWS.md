@@ -1,5 +1,10 @@
 # scp 1.15
 
+## scp 1.15.2
+
+- fix: solved bug in DA when missing contrast level in modelled 
+  feature (issue #65).
+
 ## scp 1.15.1
 
 - test: added unit tests for scplainer: ScpModel-Class, 

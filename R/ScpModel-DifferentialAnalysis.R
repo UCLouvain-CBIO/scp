@@ -249,32 +249,37 @@ scpDifferentialAnalysis <- function(object,
 
 ## Internal function that takes a contrast and retrieves the estimated
 ## log fold change and associated standard error between the two
-## defined groups. The inference is performed on the model coefficients
-## and the variance covariance matrix that are automatically retrieved
-## from the SummarizedExperimeent object. The log fold change and the
-## standard error are returned for all features in a list.
+## defined groups. The inference is performed on the model
+## coefficients and the variance covariance matrix that are
+## automatically retrieved from the SummarizedExperimeent object. The
+## log fold change and the standard error are returned for all
+## features in a list.
+##
+## Note that the function may return NA estimates for features where
+## missing data leads to loss of one or two levels of interest
+## supplied by `contrast`.
 ##
 ## @param object An object that inherits from the
-##     `SummarizedExperiment` class. It must contain an estimated
-##     `ScpModel` in its metadata.
-## @param contrast A `character(3)` with the following elements: 1. The
-##     name of a categorical variable to test; 2. The name of the
-##     reference group: 3. The name of the second group to contrast
-##     against the reference group. `coefficients` and `contrasts`
-##     cannot be both NULL.
+##   `SummarizedExperiment` class. It must contain an estimated
+##   `ScpModel` in its metadata.
+## @param contrast A `character(3)` with the following elements: 1.
+##   The name of a categorical variable to test; 2. The name of the
+##   reference group: 3. The name of the second group to contrast
+##   against the reference group. `coefficients` and `contrasts`
+##   cannot be both NULL.
 ## @param name A `character(1)` providing the name to use to retrieve
-##     the model results. When retrieving a model and `name` is
-##     missing, the name of the first model found in `object` is used.
+##   the model results. When retrieving a model and `name` is missing,
+##   the name of the first model found in `object` is used.
 ##
-## cf https://stats.stackexchange.com/a/446699
+##   cf https://stats.stackexchange.com/a/446699
 .contrastToEstimates <- function(object, contrast, name) {
     fits <- scpModelFitList(object, name, filtered = TRUE)
     out <- sapply(fits, function(fit) {
         coef <- scpModelFitCoefficients(fit)
         vcov <- scpModelFitVcov(fit)
         levs <- scpModelFitLevels(fit)[[contrast[[1]]]]
-        if (length(levs) <= 1) return(c(logFc = NA, se = NA))
         contrastMat <- .levelsToContrastMatrix(contrast, levs)
+        if (is.null(contrastMat)) return(c(logFc = NA, se = NA))
         sel <- grepl(contrast[[1]], names(coef))
         logFc <- contrastMat %*% coef[sel]
         se <- sqrt(contrastMat %*% vcov[sel, sel] %*% t(contrastMat))
@@ -289,20 +294,22 @@ scpDifferentialAnalysis <- function(object,
 ## the quantification of the log fold change between the 2 groups of
 ## interest.
 ##
-## If one of the levels is absent in contrast (happens when a level
-## has been dropped during modelling), the function return NA.
+## If `levels` contains only a single level or if one of the levels
+## requested in `contrast` is absent (happens when a level has been
+## dropped during modelling), the function return NULL since no
+## contrast matrix can be computed.
 ##
-## @param contrasts A `character(3)` with the following elements: 1. The
-##     name of a categorical variable to test; 2. The name of the
-##     reference group: 3. The name of the second group to contrast
-##     against the reference group. `coefficients` and `contrasts`
-##     cannot be both NULL.
+## @param contrasts A `character(3)` with the following elements: 1.
+##   The name of a categorical variable to test; 2. The name of the
+##   reference group: 3. The name of the second group to contrast
+##   against the reference group. `coefficients` and `contrasts`
+##   cannot be both NULL.
 ## @param levels A `character()` containing all possible levels
-##     contained by the model variable identified by contrast[[1]].
+##   contained by the model variable identified by contrast[[1]].
 ##
 .levelsToContrastMatrix <- function(contrast, levels) {
-    if (any(!contrast[2:3] %in% levels))
-        return(structure(NA, .Names = contrast[[1]]))
+    if (length(levels) <= 1 || any(!contrast[2:3] %in% levels))
+        return(NULL)
     df <- data.frame(group = factor(levels, levels = levels))
     mm <- model.matrix(
         ~ 1 + group, data = df,
