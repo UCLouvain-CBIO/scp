@@ -783,24 +783,24 @@ test_that("scpVolcanoPlot", {
     )
     ## default plot
     set.seed(124) ## ggrepel is stochastic
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpVolcanoPlot default",
         scpVolcanoPlot(daRes)
 
     )
     ## change FDR line
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpVolcanoPlot change fdrLine",
         scpVolcanoPlot(daRes, fdrLine = 1E-5)
 
     )
     ## change number of labels
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpVolcanoPlot change top",
         scpVolcanoPlot(daRes, top = 30, labelParams = list(max.overlaps = 100))
 
     )
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpVolcanoPlot change top is zero",
         scpVolcanoPlot(daRes, top = 0)
     )
@@ -810,12 +810,12 @@ test_that("scpVolcanoPlot", {
         scpVolcanoPlot(daRes, by = "foo"),
         "'foo' not found in differentialList tables."
     )
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpVolcanoPlot change by",
         scpVolcanoPlot(daRes, by = "Estimate")
     )
     ## change ordering direction
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpVolcanoPlot decreasing",
         scpVolcanoPlot(daRes, by = "Estimate", decreasing = TRUE)
     )
@@ -825,21 +825,21 @@ test_that("scpVolcanoPlot", {
         scpVolcanoPlot(daRes, textBy = "foo"),
         "'foo' not found in results. Use scpAnnotateResults.. to add custom annotations."
     )
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpVolcanoPlot textBy",
         scpVolcanoPlot(daRes, textBy = "Df")
     )
     ## change point params
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpVolcanoPlot pointParams",
         scpVolcanoPlot(daRes, pointParams = list(aes(size = Df)))
     )
     ## change label params
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpVolcanoPlot labelParams",
         scpVolcanoPlot(daRes, labelParams = list(aes(colour = Df)))
     )
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpVolcanoPlot labelParams change label",
         scpVolcanoPlot(daRes, labelParams = list(aes(label = Df)))
     )
@@ -887,33 +887,33 @@ test_that(".filterDifferentialData", {
     )
 })
 
-test_that(".plotVolcano", {
+test_that(".plotVolcano", { # fail UT while nothing change
     x <- data.frame(
         Estimate = -10:10,
-        padj = runif(21)/10,
+        padj = runif(21)/10, # set.seed ?
         names = paste("feat", 1:21)
     )
     set.seed(124) ## ggrepel is stochastic
     ## Default
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         ".plotVolcano default",
         .plotVolcano(x, pointParams = list(), labelParams = list(),
                      textBy = "names")
     )
     ## Change FDR line
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         ".plotVolcano change fdr",
         .plotVolcano(x, pointParams = list(), labelParams = list(),
                      textBy = "names", fdrLine = 0.01)
     )
     ## Change contrast
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         ".plotVolcano change contrast",
         .plotVolcano(x, pointParams = list(), labelParams = list(),
                      textBy = "names", contrast = c("condition", "A", "B"))
     )
     ## Change point and label params
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         ".plotVolcano change aes params",
         .plotVolcano(x, pointParams = list(aes(col = padj), size = 5),
                      labelParams = list(aes(size = -padj), colour = "red"),

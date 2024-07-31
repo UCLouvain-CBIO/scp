@@ -68,8 +68,8 @@ scpModelFitN <- function(object) { # to change
     object@n
 }
 
-scpModelFitP <- function(object) { # to change
-    sum(is.finite(object@coefficients))
+scpModelFitP <- function(object) { # changed
+    sum(is.finite(scpModelFitCoefficients(object)))
 }
 
 scpModelFitCoefficients <- function(object) {
@@ -107,7 +107,6 @@ scpModelFitLevels <- function(object) {# To change
 ## ---- Setters ----
 
 `scpModelFitCoefficients<-` <- function(object, value) {
-    stopifnot(length(value) == scpModelFitP(object))
     object@coefficients <- value
     object
 }

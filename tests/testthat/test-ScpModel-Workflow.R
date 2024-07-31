@@ -140,7 +140,7 @@ test_that("scpModelWorkflow", {
     for (i in rownames(se)[!rownames(se) %in% estimable]) {
         expect_identical(
             scpModelFitList(se)[[i]],
-            ScpModelFit(as.integer(sum(!is.na(assay(se)[i, ]))), 0L)
+            ScpModelFit(as.integer(sum(!is.na(assay(se)[i, ]))))
         )
     }
 
@@ -176,7 +176,7 @@ test_that("scpModelWorkflow", {
     expect_equal(
         scpModel(se)@scpModelFitList[[1]],
         new(
-            "ScpModelFit", n = 3L, p = 1L,
+            "ScpModelFit", n = 3L,
             coefficients = structure(1, .Names = "(Intercept)"),
             residuals = structure(rep(0, 3), .Names = colnames(se)[4:6]),
             effects = List(),
@@ -557,7 +557,7 @@ test_that(".fitModel", {
     ## Empty design matrix = empty ScpModelFit object
     expect_identical(
         .fitModel(1:10, matrix(nrow = 10, ncol = 0), "foo"),
-        ScpModelFit(10L, 0L)
+        ScpModelFit(10L)
     )
     ## Test estimation
     y <- structure(rep(1, 10), .Names = letters[1:10])
@@ -570,7 +570,7 @@ test_that(".fitModel", {
         10L
     )
     expect_identical(
-        test@p,
+        scpModelFitP(test),
         2L
     )
     expect_equal(
@@ -762,7 +762,7 @@ test_that("scpModelFilterPlot", {
         pl <- scpModelFilterPlot(object = se),
         "To change the threshold, use:\nscpModelFilterThreshold"
     )
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpModelFilterPlot for model1",
         pl
     )
@@ -772,7 +772,7 @@ test_that("scpModelFilterPlot", {
         pl <- scpModelFilterPlot(object = se),
         "To change the threshold, use:\nscpModelFilterThreshold"
     )
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpModelFilterPlot after adding threshold",
         pl
     )
@@ -782,7 +782,7 @@ test_that("scpModelFilterPlot", {
         pl <- scpModelFilterPlot(object = se, name = "model2"),
         "To change the threshold, use:\nscpModelFilterThreshold"
     )
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpModelFilterPlot for model2",
         pl
     )
@@ -803,12 +803,12 @@ test_that(".filterSubtitle", {
 
 test_that(".filterPlot", {
     ## Default filter threshold
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         ".filterPlot with default filter threshold",
         .filterPlot(npRatio = 0:10, threshold = 0)
     )
     ## Filter removes about half the features threshold
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         ".filterPlot with filtering out half of the features",
         .filterPlot(npRatio = 0:10, threshold = 5)
     )

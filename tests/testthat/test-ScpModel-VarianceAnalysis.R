@@ -242,12 +242,12 @@ test_that("scpVariancePlot", {
         x
     })
     ## Combined default
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpVariancePlot default",
         scpVariancePlot(varRes)
     )
     ## Combined, apply filtering
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpVariancePlot combined change filtering",
         scpVariancePlot(varRes, effect = "batch", by = "SS", top = 2,
                         decreasing = FALSE)
@@ -261,24 +261,24 @@ test_that("scpVariancePlot", {
         tolerance = 1E-10
     )
     ## Individual default
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpVariancePlot individual default",
         scpVariancePlot(varRes, combined = FALSE)
     )
     ## Individual, apply filtering
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpVariancePlot individual change filtering",
         scpVariancePlot(varRes, combined = FALSE, effect = "condition",
                         by = "SS", top = 4, decreasing = FALSE)
     )
     ## Individual, apply filtering and fcol
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpVariancePlot combined with fcol",
         scpVariancePlot(varRes, combined = FALSE, effect = "condition",
                         by = "SS", top = 4, decreasing = FALSE, fcol = "prot")
     )
     ## Change colour seed
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpVariancePlot colour seed",
         scpVariancePlot(varRes, colourSeed = 1)
     )
@@ -376,12 +376,12 @@ test_that(".plotExplainedVarianceByFeature", {
     df <- .gatherVarianceData(varRes)
     df$prot <- rep(c("b", "b", "b", "a", "a"), 3)
     ## Without fcol
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         ".plotExplainedVarianceByFeature without fcol",
         .plotExplainedVarianceByFeature(varianceTable = df)
     )
     ## With fcol
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         ".plotExplainedVarianceByFeature with fcol",
         .plotExplainedVarianceByFeature(df, fcol = "prot")
     )
@@ -397,7 +397,7 @@ test_that(".plotExplainedVarianceCombined", {
     se <- scpModelWorkflow(se, formula = ~ 1 + condition + batch)
     varRes <- scpVarianceAnalysis(se)
     df <- .gatherVarianceData(varRes)
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         ".plotExplainedVarianceCombined",
         .plotExplainedVarianceCombined(df)
     )
@@ -416,14 +416,14 @@ test_that(".prettifyVariancePlot", {
     ## Prettify .plotExplainedVarianceByFeature
     pl <- .plotExplainedVarianceByFeature(df)
     set.seed(123)
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         ".prettifyVariancePlot by feature",
         .prettifyVariancePlot(pl)
     )
     ## Prettify .plotExplainedVarianceCombined
     pl <- .plotExplainedVarianceCombined(df)
     set.seed(123)
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         ".prettifyVariancePlot combined",
         .prettifyVariancePlot(pl)
     )
@@ -443,7 +443,7 @@ test_that(".prettifyVariancePlot", {
     df <- .gatherVarianceData(varRes)
     pl <- .plotExplainedVarianceCombined(df)
     set.seed(123)
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         ".prettifyVariancePlot with 9 colors",
         .prettifyVariancePlot(pl)
     )
