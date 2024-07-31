@@ -409,25 +409,68 @@ test_that(".contrastToEstimates", {
         ),
         tolerance = 1E-2
     )
+    ## Test when a level of interest is dropped for a 2-level variable
+    se <- .createMinimalData(nr = 2, nc = 10)
+    se$condition1 <- as.factor(rep(1:2, length.out = ncol(se)))
+    se$condition2 <- as.factor(rep(1:2, each = 5))
+    assay(se)[, se$condition1 == 2] <- 10 * assay(se)[, se$condition1 == 2]
+    ## Drop one level of condition2 for first row, second row is
+    ## positive control.
+    assay(se)[1, se$condition2 == 2] <- NA
+    se <- scpModelWorkflow(se, formula = ~ 1 + condition1 + condition2)
+    expect_equal(
+        .contrastToEstimates(
+            se, contrast = c("condition2", "1", "2"), name = "model"
+        ),
+        list(logFc = c(a = NA, b = 0.0001874609),
+             se = c(a = NA, b  = 0.0005527098)),
+        tolerance = 1E-6
+    )
+    ## Test when a level of interest is dropped for a 3-level variable
+    se <- .createMinimalData(nr = 2, nc = 12)
+    se$condition1 <- as.factor(rep(1:2, length.out = ncol(se)))
+    se$condition2 <- as.factor(rep(1:3, each = 4))
+    assay(se)[, se$condition1 == 2] <- 10 * assay(se)[, se$condition1 == 2]
+    ## Drop one level of condition2 for first row, second row is
+    ## positive control.
+    assay(se)[1, se$condition2 == 2] <- NA
+    se <- scpModelWorkflow(se, formula = ~ 1 + condition1 + condition2)
+    expect_equal(
+        .contrastToEstimates(
+            se, contrast = c("condition2", "1", "2"), name = "model"
+        ),
+        list(logFc = c(a = NA, b = 0),
+             se = c(a = NA, b  = 0.0005126847)),
+        tolerance = 1E-6
+    )
+    ## Make sure the contrast for remaining levels is still estimated
+    expect_equal(
+        .contrastToEstimates(
+            se, contrast = c("condition2", "1", "3"), name = "model"
+        ),
+        list(logFc = c(a = 0, b = 0),
+             se = c(a = 0.0007943138, b = 0.0005127487 )),
+        tolerance = 1E-6
+    )
 })
 
 test_that(".levelsToContrastMatrix", {
-    ## 1 level or less = NA
-    expect_error(
+    ## 1 level or less = NULL
+    expect_identical(
         .levelsToContrastMatrix(contrast = c("condition", "A", "B"),
                                 levels = "A"),
-        NA
+        NULL
     )
-    expect_error(
+    expect_identical(
         .levelsToContrastMatrix(contrast = c("condition", "A", "B"),
                                 levels = character()),
-        NA
+        NULL
     )
     ## 1 level to test is not in available levels = NA
-    expect_error(
+    expect_identical(
         .levelsToContrastMatrix(contrast = c("condition", "A", "foo"),
                                 levels = c("A", "B")),
-        NA
+        NULL
     )
     ## 2-level variable
     expect_identical(
