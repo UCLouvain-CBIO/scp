@@ -773,7 +773,7 @@ test_that("scpVolcanoPlot", {
                                            paste0("col", 1:100)))
     ))
     se$condition <- as.factor(rep(1:2, length.out = ncol(se)))
-    assay(se)[, se$condition == 2] <- rnorm(nrow(se)) + assay(se)[, se$condition == 2]
+    assay(se)[, se$condition == 2] <- 1:nrow(se) - nrow(se) / 2 + assay(se)[, se$condition == 2]
     set.seed(124)
     assay(se) <- assay(se) + rnorm(length(assay(se)))
     assay(se)[sample(1:length(assay(se)), length(assay(se))/2)] <- NA
@@ -918,5 +918,34 @@ test_that(".plotVolcano", {
         .plotVolcano(x, pointParams = list(aes(col = padj), size = 5),
                      labelParams = list(aes(size = -padj), colour = "red"),
                      textBy = "names", contrast = c("condition", "A", "B"))
+    )
+})
+
+test_that(".annotateDirection", {
+    ## Annotate axis with 2 directions, that is logFoldChange contains
+    ## positive and negative values
+    expect_identical(
+        .annotateDirection(-10:10, c("Group", "foo", "bar")),
+        xlab("foo <-   log2(Fold change)   -> bar")
+    )
+    ## Reverse direction
+    expect_identical(
+        .annotateDirection(-10:10, c("Group", "bar", "foo")),
+        xlab("bar <-   log2(Fold change)   -> foo")
+    )
+    ## Only positive direction = right annotation
+    expect_identical(
+        .annotateDirection(10:0, c("Group", "foo", "bar")),
+        xlab("log2(Fold change)   -> bar")
+    )
+    ## Only negative direction = left annotation
+    expect_identical(
+        .annotateDirection(-10:0, c("Group", "foo", "bar")),
+        xlab("foo <-   log2(Fold change)")
+    )
+    ## Only zero = no direction annotation
+    expect_identical(
+        .annotateDirection(0, c("Group", "foo", "bar")),
+        xlab("log2(Fold change)")
     )
 })
