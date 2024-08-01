@@ -15,7 +15,6 @@
 ##' class contains several slots that contain the model output for a
 ##' feature:
 ##'
-##' - `n`: an `integer`, the number of observations for the feature
 ##' - `coefficients`: a `numeric` vector with the estimated
 ##'   coefficients
 ##' - `residuals`: a `numeric` vector with the estimated residuals

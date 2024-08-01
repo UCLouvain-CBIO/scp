@@ -1,6 +1,6 @@
 
 library("testthat")
 library("vdiffr")
-library("scpMsqrob")
+library("scp")
 
-test_check("scpMsqrob")
+test_check("scp")

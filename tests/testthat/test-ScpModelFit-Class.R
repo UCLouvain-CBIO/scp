@@ -21,6 +21,12 @@ test_that("scpModelFitP", {
         scpModelFitP(x),
         0L
     )
+
+    x@coefficients <- 1:10
+    expect_identical(
+        scpModelFitP(x),
+        10L
+    )
 })
 
 test_that("scpModelFitCoefficients", {

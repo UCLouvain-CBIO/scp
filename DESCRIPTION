@@ -1,4 +1,4 @@
-Package: scpMsqrob
+Package: scp
 Title: Mass Spectrometry-Based Single-Cell Proteomics Data Analysis
 Version: 1.15.1
 Authors@R:

@@ -887,10 +887,10 @@ test_that(".filterDifferentialData", {
     )
 })
 
-test_that(".plotVolcano", { # fail UT while nothing change
+test_that(".plotVolcano", {
     x <- data.frame(
         Estimate = -10:10,
-        padj = runif(21)/10, # set.seed ?
+        padj = runif(21)/10,
         names = paste("feat", 1:21)
     )
     set.seed(124) ## ggrepel is stochastic

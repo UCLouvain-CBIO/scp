@@ -280,15 +280,14 @@ scpModelFitElement <- function(object, name, what, filtered,
 }
 
 scpModelN <- function(object, name, filtered = TRUE) {
-    stopifnot(inherits(object, "SummarizedExperiment"))
+    assay_matrix <- scpModelInput(object, name, filtered)
     if (nrow(object) == 0) {
         stop(
             "No available n for model '", .checkModelName(object, name), "'. ",
             .runWorkflowMessage
         )
     }
-    out <- apply(assay(object), 1, function(x) as.integer(sum(!is.na(x))))
-    if (filtered) out <- out[scpModelFeatureNames(object, name)]
+    out <- rowSums(!is.na(assay_matrix))
     unlist(out)
 }
 
