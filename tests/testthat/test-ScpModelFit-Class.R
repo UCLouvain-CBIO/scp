@@ -171,11 +171,6 @@ test_that("scpModelFitCoefficients<-", {
 
 test_that("scpModelFitResiduals<-", {
     x <- ScpModelFit()
-    ## value has wrong length = length is not p = error
-    expect_error(
-        scpModelFitResiduals(x) <- 1:4,
-        "length\\(value\\) == scpModelFitN\\(object\\) is not TRUE"
-    )
     ## value is wrong type = error
     expect_error(
         scpModelFitResiduals(x) <- rep("foo", 10),

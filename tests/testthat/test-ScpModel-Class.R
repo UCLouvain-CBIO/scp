@@ -548,7 +548,7 @@ test_that("scpModelCoefficients", {
     )
     ## Retrieve coefficients
     coefs <- lapply(seq_len(nrow(se)), function(x) {
-        structure(rep(0, 3), .Names = paste0("param", 1:3)) # To change (3 to x)
+        structure(rep(0, x), .Names = paste0("param", 1:x))
     })
     names(coefs) <- rownames(se)
     coefs <- as(coefs, "List")
@@ -567,7 +567,7 @@ test_that("scpModelCoefficients", {
     metadata(se)[["test1"]] <- model
     expect_identical(
         scpModelCoefficients(se, filtered = TRUE),
-        coefs[4:nrow(se)] # 5 to 4 since in this in case we cannot fix the p
+        coefs[5:nrow(se)]
     )
 })
 
@@ -752,8 +752,14 @@ test_that("scpModelIntercept", {
     )
     ## Retrieve coefficients
     coefs <- lapply(seq_len(nrow(se)), function(x) {
-        structure(c(1, 0, 0), .Names = c("(Intercept)", paste0("param", 2:3)))
+        names <- if(x > 1) {
+            c("(Intercept)", paste0("param", seq_len(x - 1)))
+            } else c("(Intercept)")
+        structure(
+            c(1, rep(0, x - 1)),
+            .Names = names)
     })
+
     names(coefs) <- rownames(se)
     coefs <- as(coefs, "List")
     model@scpModelFitList <- mendoapply(function(fl, coef) {
@@ -772,7 +778,7 @@ test_that("scpModelIntercept", {
     metadata(se)[["test1"]] <- model
     expect_identical(
         scpModelIntercept(se, filtered = TRUE),
-        exp[4:nrow(se)] # 5 to 4 since in this in case we cannot fix the p
+        exp[5:nrow(se)]
     )
 })
 

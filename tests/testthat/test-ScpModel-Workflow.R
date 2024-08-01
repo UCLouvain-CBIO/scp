@@ -140,7 +140,7 @@ test_that("scpModelWorkflow", {
     for (i in rownames(se)[!rownames(se) %in% estimable]) {
         expect_identical(
             scpModelFitList(se)[[i]],
-            ScpModelFit(as.integer(sum(!is.na(assay(se)[i, ]))))
+            ScpModelFit()
         )
     }
 
@@ -176,7 +176,7 @@ test_that("scpModelWorkflow", {
     expect_equal(
         scpModel(se)@scpModelFitList[[1]],
         new(
-            "ScpModelFit", n = 3L,
+            "ScpModelFit",
             coefficients = structure(1, .Names = "(Intercept)"),
             residuals = structure(rep(0, 3), .Names = colnames(se)[4:6]),
             effects = List(),
@@ -565,10 +565,7 @@ test_that(".fitModel", {
                 dimnames = list(letters[1:10], c("(Intercept)", "foo")))
     attr(x, "levels") <- List(foo = c("A", "B"))
     test <- .fitModel(y, x, "foo")
-    expect_identical(
-        test@n,
-        10L
-    )
+
     expect_identical(
         scpModelFitP(test),
         2L

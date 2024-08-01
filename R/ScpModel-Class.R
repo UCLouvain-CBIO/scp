@@ -287,7 +287,7 @@ scpModelN <- function(object, name, filtered = TRUE) {
             .runWorkflowMessage
         )
     }
-    out <- apply(assay(object), 1, function(x) sum(!is.na(x)))
+    out <- apply(assay(object), 1, function(x) as.integer(sum(!is.na(x))))
     if (filtered) out <- out[scpModelFeatureNames(object, name)]
     unlist(out)
 }
