@@ -17,16 +17,18 @@ test_that("ScpModel", {
 ## Internal function that creates a minimal SE object as expected by
 ## scplainer for unit testing ScpModel class methods
 ## @param nr Number of rows
-## @param nc Number of columns
-.createMinimalData <- function(nr = 10, nc = 5) {
+.createMinimalData <- function(nr = 10) {
     require("SummarizedExperiment")
-    a <- matrix(1, nr, nc)
-    rownames(a) <- letters[1:nr]
-    colnames(a) <- LETTERS[1:nc]
+    nc <- nr * nr  # Set the number of columns to be sufficient for the largest row
+    a <- matrix(NA, nr, nc)
+    for (i in 1:nr) {
+        a[i, 1:(i * i)] <- 1:(i * i)
+    }
+    rownames(a) <- paste0("row", 1:nr)
+    colnames(a) <- paste0("col", 1:nc)
     se <- SummarizedExperiment(assays = List(assay = a))
     list(se = se, a = a)
 }
-
 ## Internal function that creates a mock List of ScpModelFit objects
 ## for unit testing ScpModel class methods
 ## @param model An ScpModel object
@@ -36,7 +38,7 @@ test_that("ScpModel", {
 ## the purpose of having a p for test
 .addScpModelFitList <- function(model, features, coef_p = FALSE) {
     fitList <- as(lapply(1L:length(features), function(i) {
-        smf <- ScpModelFit(n = i * i)
+        smf <- ScpModelFit()
         if (coef_p) scpModelFitCoefficients(smf) <- rep(0, i)
         smf
     }), "List")
@@ -480,12 +482,13 @@ test_that("scpModelN", {
     se <- SummarizedExperiment()
     model <- ScpModel()
     metadata(se)[["test1"]] <- model
-    ## no model = error
+    ## Test changed :
+    ## Changed the error message because n
+    ## is no longer a slot of ScpModelFitList
     expect_error(
         scpModelN(se),
-        regexp = "scpModelFitList.*test1.*scpModelWorkflow"
+        regexp = "n.*test1.*scpModelWorkflow"
     )
-    ## note the 'n' slot can never be missing, so no error possible
     ## Retrieve N
     l <- .createMinimalData(); se <- l$se; a <- l$a
     model <- .addScpModelFitList(model, rownames(se), coef_p = TRUE)
@@ -545,7 +548,7 @@ test_that("scpModelCoefficients", {
     )
     ## Retrieve coefficients
     coefs <- lapply(seq_len(nrow(se)), function(x) {
-        structure(rep(0, 3), .Names = paste0("param", 1:3))
+        structure(rep(0, 3), .Names = paste0("param", 1:3)) # To change (3 to x)
     })
     names(coefs) <- rownames(se)
     coefs <- as(coefs, "List")
@@ -1096,7 +1099,7 @@ test_that("scpModelFitList<-", {
     dimnames(se) <- list(LETTERS[1:2], letters[1:2])
     model <- ScpModel()
     metadata(se)[["test"]] <- model
-    smFit <- ScpModelFit(n = 2L)
+    smFit <- ScpModelFit()
     ## Value has wrong type = is not a List = error
     expect_error(
         scpModelFitList(se) <- smFit,
@@ -1162,7 +1165,7 @@ test_that("scpModelFitList<-", {
         List(A = smFit, B = smFit)
     )
     ## Replace input assay for non-empty model = replace
-    smFit2 <- ScpModelFit(n = 2L)
+    smFit2 <- ScpModelFit()
     scpModelFitList(se) <- List(A = smFit, B = smFit2)
     expect_identical(
         metadata(se)[["test"]]@scpModelFitList,

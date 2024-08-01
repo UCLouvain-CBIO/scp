@@ -151,8 +151,9 @@ scpModelFilterThreshold <- function(object, name) {
 ##'
 ##' @export
 scpModelFilterNPRatio <- function(object, name, filtered = TRUE) {
-    out <- scpModelN(object, name, filtered) /
-        scpModelP(object, name, filtered)
+    p <- scpModelP(object, name, filtered)
+    n <- scpModelN(object, name, filtered)
+    out <- n / p
     ## when all missing or no params
     out[is.na(out) | is.infinite(out)] <- 0
     out
@@ -279,9 +280,15 @@ scpModelFitElement <- function(object, name, what, filtered,
 }
 
 scpModelN <- function(object, name, filtered = TRUE) {
-    out <- scpModelFitElement(
-        object, name, "N", filtered, .runWorkflowMessage
-    )
+    stopifnot(inherits(object, "SummarizedExperiment"))
+    if (nrow(object) == 0) {
+        stop(
+            "No available n for model '", .checkModelName(object, name), "'. ",
+            .runWorkflowMessage
+        )
+    }
+    out <- apply(assay(object), 1, function(x) sum(!is.na(x)))
+    if (filtered) out <- out[scpModelFeatureNames(object, name)]
     unlist(out)
 }
 

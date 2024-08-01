@@ -557,7 +557,7 @@ test_that(".fitModel", {
     ## Empty design matrix = empty ScpModelFit object
     expect_identical(
         .fitModel(1:10, matrix(nrow = 10, ncol = 0), "foo"),
-        ScpModelFit(10L)
+        ScpModelFit()
     )
     ## Test estimation
     y <- structure(rep(1, 10), .Names = letters[1:10])

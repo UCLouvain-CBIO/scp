@@ -42,7 +42,6 @@
 ##' @aliases ScpModelFit ScpModelFit-class class:ScpModelFit
 ##' @exportClass ScpModelFit
 setClass("ScpModelFit", slots = c(
-    n = "integer",
     coefficients = "numeric",
     residuals = "numeric",
     effects = "List",
@@ -53,22 +52,19 @@ setClass("ScpModelFit", slots = c(
 ))
 
 ## Class constructors
-ScpModelFit <- function(n) {
-    stopifnot(n >= 0)
-    stopifnot(length(n) == 1)
+ScpModelFit <- function() {
     new(
-        "ScpModelFit", n = n, effects = List(),
+        "ScpModelFit", effects = List(),
         levels = List()
     )
 }
 
 ## ---- Getters ----
 
-scpModelFitN <- function(object) { # to change
-    object@n
-}
 
 scpModelFitP <- function(object) { # changed
+    ## Should this throw an error if there are no coefficients?
+    ## For now it returns "integer(0)"
     sum(is.finite(scpModelFitCoefficients(object)))
 }
 
@@ -112,7 +108,6 @@ scpModelFitLevels <- function(object) {# To change
 }
 
 `scpModelFitResiduals<-` <- function(object, value) {
-    stopifnot(length(value) == scpModelFitN(object))
     object@residuals <- value
     object
 }
