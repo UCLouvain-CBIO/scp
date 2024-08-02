@@ -60,13 +60,6 @@ ScpModelFit <- function() {
 
 ## ---- Getters ----
 
-
-scpModelFitP <- function(object) { # changed
-    ## Should this throw an error if there are no coefficients?
-    ## For now it returns "integer(0)"
-    sum(is.finite(scpModelFitCoefficients(object)))
-}
-
 scpModelFitCoefficients <- function(object) {
     object@coefficients
 }

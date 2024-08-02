@@ -15,20 +15,6 @@ test_that("ScpModelFit", {
 
 ## ---- Getters ----
 
-test_that("scpModelFitP", {
-    x <- ScpModelFit()
-    expect_identical(
-        scpModelFitP(x),
-        0L
-    )
-
-    x@coefficients <- 1:10
-    expect_identical(
-        scpModelFitP(x),
-        10L
-    )
-})
-
 test_that("scpModelFitCoefficients", {
     x <- ScpModelFit()
     ## default

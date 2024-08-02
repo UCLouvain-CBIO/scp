@@ -166,7 +166,7 @@ scpModelFilterNPRatio <- function(object, name, filtered = TRUE) {
 ##'     as a list with one element for each feature (`FALSE`). When
 ##'     `TRUE`, any gaps across features will be filled with NA's.
 ##' @export
-scpModelResiduals <- function(object, name, join = TRUE, 
+scpModelResiduals <- function(object, name, join = TRUE,
                               filtered = TRUE) {
     out <- scpModelFitElement(
         object, name, "Residuals", filtered, .runWorkflowMessage
@@ -288,13 +288,13 @@ scpModelN <- function(object, name, filtered = TRUE) {
         )
     }
     out <- rowSums(!is.na(assay_matrix))
+
     unlist(out)
 }
 
 scpModelP <- function(object, name, filtered = TRUE) {
-    out <- scpModelFitElement(
-        object, name, "P", filtered, .runWorkflowMessage
-    )
+    out <- scpModelN(object, name, filtered) - scpModelDf(object, name, filtered)
+    out[is.na(out)] <- 0
     unlist(out)
 }
 
@@ -308,6 +308,7 @@ scpModelDf <- function(object, name, filtered = TRUE) {
     out <- scpModelFitElement(
         object, name, "Df", filtered, .runWorkflowMessage
     )
+    out <- lapply(out, function(x) if (length(x) == 0) NA else x)
     unlist(out)
 }
 

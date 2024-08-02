@@ -566,10 +566,6 @@ test_that(".fitModel", {
     attr(x, "levels") <- List(foo = c("A", "B"))
     test <- .fitModel(y, x, "foo")
 
-    expect_identical(
-        scpModelFitP(test),
-        2L
-    )
     expect_equal(
         test@coefficients,
         structure(c(1, 0), .Names = c("(Intercept)", "foo")),
