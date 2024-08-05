@@ -280,14 +280,14 @@ scpModelFitElement <- function(object, name, what, filtered,
 }
 
 scpModelN <- function(object, name, filtered = TRUE) {
-    assay_matrix <- scpModelInput(object, name, filtered)
+    assayMatrix <- scpModelInput(object, name, filtered)
     if (nrow(object) == 0) {
         stop(
             "No available n for model '", .checkModelName(object, name), "'. ",
             .runWorkflowMessage
         )
     }
-    out <- rowSums(!is.na(assay_matrix))
+    out <- rowSums(!is.na(assayMatrix))
 
     unlist(out)
 }
