@@ -17,24 +17,30 @@ test_that("ScpModel", {
 ## Internal function that creates a minimal SE object as expected by
 ## scplainer for unit testing ScpModel class methods
 ## @param nr Number of rows
-## @param nc Number of columns
-.createMinimalData <- function(nr = 10, nc = 5) {
+.createMinimalData <- function(nr = 10) {
     require("SummarizedExperiment")
-    a <- matrix(1, nr, nc)
-    rownames(a) <- letters[1:nr]
-    colnames(a) <- LETTERS[1:nc]
+    nc <- nr * nr  # Set the number of columns to be sufficient for the largest row
+    a <- matrix(NA, nr, nc)
+    for (i in 1:nr) {
+        a[i, 1:(i * i)] <- 1:(i * i)
+    }
+    rownames(a) <- paste0("row", 1:nr)
+    colnames(a) <- paste0("col", 1:nc)
     se <- SummarizedExperiment(assays = List(assay = a))
     list(se = se, a = a)
 }
-
 ## Internal function that creates a mock List of ScpModelFit objects
 ## for unit testing ScpModel class methods
 ## @param model An ScpModel object
 ## @param features A character() with the names of the features for
 ##     which to create mock ScpModelFit objects
-.addScpModelFitList <- function(model, features) {
+## @param dfP A logical indicating whether to create coefficients for
+## the purpose of having a p for test
+.addScpModelFitList <- function(model, features, dfP = FALSE) {
     fitList <- as(lapply(1L:length(features), function(i) {
-        ScpModelFit(n = i * i, p = i)
+        smf <- ScpModelFit()
+        if (dfP) smf@df <- i*(i-1)
+        smf
     }), "List")
     names(fitList) <- features
     model@scpModelFitList <- fitList
@@ -86,7 +92,8 @@ test_that("scpModelInput", {
     metadata(se)[["test1"]] <- model
     expect_identical(scpModelInput(se, filtered = FALSE), a)
     ## Test the 'filtered' argument
-    model <- .addScpModelFitList(model, rownames(se))
+    model <- .addScpModelFitList(model, rownames(se), dfP = TRUE)
+    ## dfP = TRUE to be able to retrieve p to compute NP ratio
     ## Filter = 5 => remove half of the featutres
     model@scpModelFilterThreshold <- 5
     metadata(se)[["test1"]] <- model
@@ -131,22 +138,24 @@ test_that("scpModelFilterNPRatio", {
     ## When no fit object = error
     expect_error(
         scpModelFilterNPRatio(se),
-        regexp = "scpModelFitList.*test1.*scpModelWorkflow"
+        regexp = "scpModelInputIndex.*test1.*scpModelWorkflow"
     )
     ## Retrieve NP ratio
     l <- .createMinimalData(); se <- l$se; a <- l$a
-    model <- .addScpModelFitList(model, rownames(se))
+    model <- .addScpModelFitList(model, rownames(se), dfP = TRUE)
     exp <- as.numeric(1:nrow(a))
     names(exp) <- rownames(a)
     ## No filtering (threshold = 0), filtered = FALSE
     model@scpModelFilterThreshold <- 0
     metadata(se)[["test1"]] <- model
+    scpModelInputIndex(se) <- 1
     expect_identical(scpModelFilterNPRatio(se, filtered = FALSE), exp)
     ## No filtering (threshold = 0), filtered = TRUE
     expect_identical(scpModelFilterNPRatio(se, filtered = TRUE),  exp)
     ## With filtering, filtered = TRUE
     model@scpModelFilterThreshold <- 5
     metadata(se)[["test1"]] <- model
+    scpModelInputIndex(se) <- 1
     expect_identical(scpModelFilterNPRatio(se, filtered = TRUE),
                      exp[5:nrow(a)])
     ## With filtering, filtered = FALSE
@@ -165,7 +174,7 @@ test_that("scpModelResiduals", {
     )
     ## No residuals = error
     l <- .createMinimalData(); se <- l$se; a <- l$a
-    model <- .addScpModelFitList(model, rownames(se))
+    model <- .addScpModelFitList(model, rownames(se), dfP = TRUE)
     metadata(se)[["test1"]] <- model
     expect_error(
         scpModelResiduals(se),
@@ -196,6 +205,7 @@ test_that("scpModelResiduals", {
     ## With filtering, no joining
     model@scpModelFilterThreshold <- 5
     metadata(se)[["test1"]] <- model
+    scpModelInputIndex(se) <- 1
     expect_identical(
         scpModelResiduals(se, join = FALSE, filtered = TRUE),
         resids[5:nrow(se)]
@@ -208,6 +218,7 @@ test_that("scpModelResiduals", {
     ## Test drop = FALSE
     model@scpModelFilterThreshold <- 10
     metadata(se)[["test1"]] <- model
+    scpModelInputIndex(se) <- 1
     exp <- t(resids[[10]])
     rownames(exp) <- rownames(se)[10]
     expect_identical(
@@ -228,7 +239,7 @@ test_that("scpModelEffects", {
     )
     ## No effects in model assays = error
     l <- .createMinimalData(); se <- l$se; a <- l$a
-    model <- .addScpModelFitList(model, rownames(se))
+    model <- .addScpModelFitList(model, rownames(se), dfP = TRUE)
     metadata(se)[["test1"]] <- model
     expect_error(
         scpModelEffects(se),
@@ -267,6 +278,7 @@ test_that("scpModelEffects", {
     ## With filtering, no joining
     model@scpModelFilterThreshold <- 5
     metadata(se)[["test1"]] <- model
+    scpModelInputIndex(se) <- 1
     expect_identical(
         scpModelEffects(se, join = FALSE, filtered = TRUE),
         effects[5:nrow(se)]
@@ -279,6 +291,7 @@ test_that("scpModelEffects", {
     ## Test drop = FALSE
     model@scpModelFilterThreshold <- 10
     metadata(se)[["test1"]] <- model
+    scpModelInputIndex(se) <- 1
     expect_identical(
         scpModelEffects(se, join = TRUE, filtered = TRUE),
         List(Var1 = eff_mat[10, , drop = FALSE],
@@ -395,7 +408,7 @@ test_that("scpModelFitList", {
     ## Retrieve scpModelFitList
     ## No filtering
     l <- .createMinimalData(); se <- l$se; a <- l$a
-    model <- .addScpModelFitList(model, rownames(se))
+    model <- .addScpModelFitList(model, rownames(se), dfP = TRUE)
     fl <- model@scpModelFitList
     metadata(se)[["test1"]] <- model
     expect_identical(
@@ -405,6 +418,7 @@ test_that("scpModelFitList", {
     ## With filtering
     model@scpModelFilterThreshold <- 5
     metadata(se)[["test1"]] <- model
+    scpModelInputIndex(se) <- 1
     expect_identical(
         scpModelFitList(se, filtered = TRUE),
         fl[(5:nrow(se))]
@@ -428,7 +442,7 @@ test_that("scpModelFitElement", {
     )
     ## Unknown element = error
     l <- .createMinimalData(); se <- l$se; a <- l$a
-    model <- .addScpModelFitList(model, rownames(se))
+    model <- .addScpModelFitList(model, rownames(se), dfP = TRUE)
     metadata(se)[["test1"]] <- model
     expect_error(
         scpModelFitElement(se, what = "foo"),
@@ -464,6 +478,7 @@ test_that("scpModelFitElement", {
     ## With filtering
     model@scpModelFilterThreshold <- 5
     metadata(se)[["test1"]] <- model
+    scpModelInputIndex(se) <- 1
     expect_identical(
         scpModelFitElement(se, what = "Residuals", filtered = TRUE),
         resids[5:nrow(se)]
@@ -475,23 +490,24 @@ test_that("scpModelN", {
     se <- SummarizedExperiment()
     model <- ScpModel()
     metadata(se)[["test1"]] <- model
-    ## no model = error
+
     expect_error(
         scpModelN(se),
-        regexp = "scpModelFitList.*test1.*scpModelWorkflow"
+        regexp = "n.*test1.*scpModelWorkflow"
     )
-    ## note the 'n' slot can never be missing, so no error possible
     ## Retrieve N
     l <- .createMinimalData(); se <- l$se; a <- l$a
-    model <- .addScpModelFitList(model, rownames(se))
+    model <- .addScpModelFitList(model, rownames(se), dfP = TRUE)
     metadata(se)[["test1"]] <- model
-    n <- as.integer(seq_len(nrow(se))^2)
+    scpModelInputIndex(se) <- 1
+    n <- seq_len(nrow(se))^2
     names(n) <- rownames(se)
     ## No filtering
     expect_identical(scpModelN(se, filtered = FALSE), n)
     ## With filtering, no joining
     model@scpModelFilterThreshold <- 5
     metadata(se)[["test1"]] <- model
+    scpModelInputIndex(se) <- 1
     expect_identical(scpModelN(se, filtered = TRUE), n[5:nrow(se)])
 })
 
@@ -502,21 +518,29 @@ test_that("scpModelP", {
     metadata(se)[["test1"]] <- model
     ## no model = error
     expect_error(
-        scpModelP(se),
-        regexp = "scpModelFitList.*test1.*scpModelWorkflow"
+        scpModelP(se, filtered = FALSE),
+        regexp = "scpModelInputIndex.*test1.*scpModelWorkflow"
     )
-    ## note the 'n' slot can never be missing, so no error possible
     ## Retrieve N
     l <- .createMinimalData(); se <- l$se; a <- l$a
     model <- .addScpModelFitList(model, rownames(se))
     metadata(se)[["test1"]] <- model
-    p <- as.integer(seq_len(nrow(se)))
+    scpModelInputIndex(se) <- 1
+    expect_error(
+        scpModelP(se, filtered = FALSE),
+        regexp = "Df.*test1.*scpModelWorkflow"
+    )
+    model <- .addScpModelFitList(model, rownames(se), dfP = TRUE)
+    metadata(se)[["test1"]] <- model
+    scpModelInputIndex(se) <- 1
+    p <- as.numeric(seq_len(nrow(se)))
     names(p) <- rownames(se)
     ## No filtering
     expect_identical(scpModelP(se, filtered = FALSE), p)
     ## With filtering, no joining
     model@scpModelFilterThreshold <- 5
     metadata(se)[["test1"]] <- model
+    scpModelInputIndex(se) <- 1
     expect_identical(scpModelP(se, filtered = TRUE), p[5:nrow(se)])
 })
 
@@ -532,7 +556,7 @@ test_that("scpModelCoefficients", {
     )
     ## No coefficients = error
     l <- .createMinimalData(); se <- l$se; a <- l$a
-    model <- .addScpModelFitList(model, rownames(se))
+    model <- .addScpModelFitList(model, rownames(se), dfP = TRUE)
     metadata(se)[["test1"]] <- model
     expect_error(
         scpModelCoefficients(se),
@@ -540,7 +564,7 @@ test_that("scpModelCoefficients", {
     )
     ## Retrieve coefficients
     coefs <- lapply(seq_len(nrow(se)), function(x) {
-        structure(rep(0, 3), .Names = paste0("param", 1:3))
+        structure(rep(0, x), .Names = paste0("param", 1:x))
     })
     names(coefs) <- rownames(se)
     coefs <- as(coefs, "List")
@@ -557,6 +581,7 @@ test_that("scpModelCoefficients", {
     ## With filtering
     model@scpModelFilterThreshold <- 5
     metadata(se)[["test1"]] <- model
+    scpModelInputIndex(se) <- 1
     expect_identical(
         scpModelCoefficients(se, filtered = TRUE),
         coefs[5:nrow(se)]
@@ -583,15 +608,18 @@ test_that("scpModelDf", {
     )
     ## Retrieve df
     for (i in seq_len(nrow(se))) {
-        model@scpModelFitList[[i]]@df <- i
+        model@scpModelFitList[[i]]@df <- i * (i-1)
     }
-    df <- structure(1:nrow(se), .Names = rownames(se))
+    df <- structure(sapply(
+        seq_len(nrow(se)), function(i) i * (i - 1)
+        ), .Names = rownames(se))
     ## No filtering
     metadata(se)[["test1"]] <- model
     expect_identical(scpModelDf(se, filtered = FALSE), df)
     ## With filtering
     model@scpModelFilterThreshold <- 5
     metadata(se)[["test1"]] <- model
+    scpModelInputIndex(se) <- 1
     expect_identical(scpModelDf(se, filtered = TRUE), df[5:nrow(se)])
 })
 
@@ -607,7 +635,7 @@ test_that("scpModelVar", {
     )
     ## No var = error
     l <- .createMinimalData(); se <- l$se; a <- l$a
-    model <- .addScpModelFitList(model, rownames(se))
+    model <- .addScpModelFitList(model, rownames(se), dfP = TRUE)
     metadata(se)[["test1"]] <- model
     expect_error(
         scpModelVar(se),
@@ -626,6 +654,7 @@ test_that("scpModelVar", {
     ## With filtering
     model@scpModelFilterThreshold <- 5
     metadata(se)[["test1"]] <- model
+    scpModelInputIndex(se) <- 1
     expect_identical(
         scpModelVar(se, filtered = TRUE),
         structure(1:nrow(se), .Names = rownames(se))[5:nrow(se)]
@@ -644,7 +673,7 @@ test_that("scpModelUvcov", {
     )
     ## No Uvcov = error
     l <- .createMinimalData(); se <- l$se; a <- l$a
-    model <- .addScpModelFitList(model, rownames(se))
+    model <- .addScpModelFitList(model, rownames(se), dfP = TRUE)
     metadata(se)[["test1"]] <- model
     expect_error(
         scpModelUvcov(se),
@@ -670,6 +699,7 @@ test_that("scpModelUvcov", {
     ## With filtering
     model@scpModelFilterThreshold <- 5
     metadata(se)[["test1"]] <- model
+    scpModelInputIndex(se) <- 1
     expect_identical(
         scpModelUvcov(se, filtered = TRUE),
         uvcov[5:nrow(se)]
@@ -688,7 +718,7 @@ test_that("scpModelVcov", {
     )
     ## No Uvcov = error
     l <- .createMinimalData(); se <- l$se; a <- l$a
-    model <- .addScpModelFitList(model, rownames(se))
+    model <- .addScpModelFitList(model, rownames(se), dfP = TRUE)
     metadata(se)[["test1"]] <- model
     expect_error(
         scpModelVcov(se),
@@ -718,6 +748,7 @@ test_that("scpModelVcov", {
     ## With filtering
     model@scpModelFilterThreshold <- 5
     metadata(se)[["test1"]] <- model
+    scpModelInputIndex(se) <- 1
     expect_identical(
         scpModelVcov(se, filtered = TRUE),
         endoapply(uvcov[5:10], function(x) x * var)
@@ -736,7 +767,7 @@ test_that("scpModelIntercept", {
     )
     ## No coefficients = error
     l <- .createMinimalData(); se <- l$se; a <- l$a
-    model <- .addScpModelFitList(model, rownames(se))
+    model <- .addScpModelFitList(model, rownames(se), dfP = TRUE)
     metadata(se)[["test1"]] <- model
     expect_error(
         scpModelIntercept(se),
@@ -744,8 +775,14 @@ test_that("scpModelIntercept", {
     )
     ## Retrieve coefficients
     coefs <- lapply(seq_len(nrow(se)), function(x) {
-        structure(c(1, 0, 0), .Names = c("(Intercept)", paste0("param", 2:3)))
+        names <- if(x > 1) {
+            c("(Intercept)", paste0("param", seq_len(x - 1)))
+            } else c("(Intercept)")
+        structure(
+            c(1, rep(0, x - 1)),
+            .Names = names)
     })
+
     names(coefs) <- rownames(se)
     coefs <- as(coefs, "List")
     model@scpModelFitList <- mendoapply(function(fl, coef) {
@@ -762,6 +799,7 @@ test_that("scpModelIntercept", {
     ## With filtering
     model@scpModelFilterThreshold <- 5
     metadata(se)[["test1"]] <- model
+    scpModelInputIndex(se) <- 1
     expect_identical(
         scpModelIntercept(se, filtered = TRUE),
         exp[5:nrow(se)]
@@ -780,15 +818,17 @@ test_that("scpModelFeatureNames", {
     )
     ## Retrieve feature names
     l <- .createMinimalData(); se <- l$se; a <- l$a
-    model <- .addScpModelFitList(model, rownames(se))
+    model <- .addScpModelFitList(model, rownames(se), dfP = TRUE)
     model@scpModelFilterThreshold <- 0
     metadata(se)[["test1"]] <- model
+    scpModelInputIndex(se) <- 1
     expect_identical(
         scpModelFeatureNames(se),
         rownames(se)
     )
     model@scpModelFilterThreshold <- 5
     metadata(se)[["test1"]] <- model
+    scpModelInputIndex(se) <- 1
     expect_identical(
         scpModelFeatureNames(se),
         rownames(se)[5:10]
@@ -1090,7 +1130,7 @@ test_that("scpModelFitList<-", {
     dimnames(se) <- list(LETTERS[1:2], letters[1:2])
     model <- ScpModel()
     metadata(se)[["test"]] <- model
-    smFit <- ScpModelFit(n = 2L, p = 1L)
+    smFit <- ScpModelFit()
     ## Value has wrong type = is not a List = error
     expect_error(
         scpModelFitList(se) <- smFit,
@@ -1156,7 +1196,7 @@ test_that("scpModelFitList<-", {
         List(A = smFit, B = smFit)
     )
     ## Replace input assay for non-empty model = replace
-    smFit2 <- ScpModelFit(n = 2L, p = 2L)
+    smFit2 <- ScpModelFit()
     scpModelFitList(se) <- List(A = smFit, B = smFit2)
     expect_identical(
         metadata(se)[["test"]]@scpModelFitList,

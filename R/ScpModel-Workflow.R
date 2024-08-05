@@ -371,8 +371,8 @@ scpModelWorkflow <- function(object, formula,
 ##     effects can be computed
 ##
 .fitModel <- function(y, x, effectNames) {
-    model <- ScpModelFit(nrow(x), ncol(x))
-    if (!ncol(x)) return(model)
+    model <- ScpModelFit()
+    if (!ncol(x) || !nrow(x) || nrow(x) < ncol(x)) return(model)
     res <- .fitRidge(y[rownames(x)], x)
     scpModelFitCoefficients(model) <- res$coefficients
     scpModelFitResiduals(model) <- res$residuals

@@ -784,31 +784,31 @@ test_that("scpComponentPlot", {
         "'comp' is out of bounds."
     )
     ## Default plot
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpComponentPlot bySample unmodelled",
         scpComponentPlot(caRes$bySample)[[1]]
     )
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpComponentPlot bySample residuals",
         scpComponentPlot(caRes$bySample)[[2]]
     )
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpComponentPlot bySample APCA_condition",
         scpComponentPlot(caRes$bySample)[[3]]
     )
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpComponentPlot byFeature unmodelled",
         scpComponentPlot(caRes$byFeature)[[1]]
     )
     ## Change components
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpComponentPlot change comp",
         scpComponentPlot(caRes$bySample, comp = 4:5)[[3]]
     )
     ## Point params
     se$cell <- colnames(se)
     caRes$bySample <- scpAnnotateResults(caRes$bySample, colData(se), by = "cell")
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpComponentPlot change pointParams",
         scpComponentPlot(caRes$bySample,
                          pointParams = list(aes(colour = condition,
@@ -818,7 +818,7 @@ test_that("scpComponentPlot", {
     ## maxLevel
     se$conditionMore <- factor(1:ncol(se))
     caRes$bySample <- scpAnnotateResults(caRes$bySample, colData(se), by = "cell")
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpComponentPlot change maxLevel",
         scpComponentPlot(caRes$bySample,
                          pointParams = list(aes(colour = conditionMore,
@@ -844,24 +844,24 @@ test_that(".plotPCA", {
                      colourVar = factor(rep(1:3, 5)),
                      sizeVar = 1:15)
     ## Initial test
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         ".plotPCA initial config",
         .plotPCA(pcs, comp = 1:2, proportionVariance = c(0.5, 0.25),
                  pointParams = list())
     )
     ## Other components
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         ".plotPCA change components",
         .plotPCA(pcs, c(1, 3), c(0.15, 0.35), list())
     )
     ## Proportio variance is NA = no percentage displayed on axis
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         ".plotPCA pVar is NA",
         .plotPCA(pcs, comp = 1:2, proportionVariance = c(NA, NA),
                  pointParams = list())
     )
     ## Change pointParams
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         ".plotPCA change pointParams",
         .plotPCA(pcs, comp = 1:2, proportionVariance = c(0.5, 0.25),
                  pointParams = list(aes(colour = colourVar, size = sizeVar),
@@ -927,7 +927,7 @@ test_that(".trimPlotLevels", {
         pl
     )
     ## trim levels
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         ".trimPlotLevels",
         .trimPlotLevels(pl, 3)
     )
@@ -955,32 +955,32 @@ test_that("scpComponentBiplot", {
                                     annot = 1:10),
         by = "feature")
     ## Test default params
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpComponentBiplot unmodelled default",
         scpComponentBiplot(
             scoreList = caRes$bySample, eigenvectorList = caRes$byFeature
         )[["unmodelled"]]
     )
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpComponentBiplot residuals default",
         scpComponentBiplot(
             scoreList = caRes$bySample, eigenvectorList = caRes$byFeature
         )[["residuals"]]
     )
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpComponentBiplot APCA_condition default",
         scpComponentBiplot(
             scoreList = caRes$bySample, eigenvectorList = caRes$byFeature
         )[["APCA_condition"]]
     )
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpComponentBiplot APCA_numeric default",
         scpComponentBiplot(
             scoreList = caRes$bySample, eigenvectorList = caRes$byFeature
         )[["APCA_numeric"]]
     )
     ## Change comp
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpComponentBiplot change comp",
         scpComponentBiplot(
             scoreList = caRes$bySample, eigenvectorList = caRes$byFeature,
@@ -988,7 +988,7 @@ test_that("scpComponentBiplot", {
         )[["unmodelled"]]
     )
     ## Change pointParams
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpComponentBiplot change pointParams",
         scpComponentBiplot(
             scoreList = caRes$bySample, eigenvectorList = caRes$byFeature,
@@ -996,7 +996,7 @@ test_that("scpComponentBiplot", {
         )[["unmodelled"]]
     )
     ## Change arrowParams
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpComponentBiplot change arrowParams",
         scpComponentBiplot(
             scoreList = caRes$bySample, eigenvectorList = caRes$byFeature,
@@ -1004,7 +1004,7 @@ test_that("scpComponentBiplot", {
         )[["unmodelled"]]
     )
     ## Change labelParams
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpComponentBiplot change labelParams",
         scpComponentBiplot(
             scoreList = caRes$bySample, eigenvectorList = caRes$byFeature,
@@ -1012,7 +1012,7 @@ test_that("scpComponentBiplot", {
         )[["unmodelled"]]
     )
     ## Change textBy
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpComponentBiplot change textBy",
         scpComponentBiplot(
             scoreList = caRes$bySample, eigenvectorList = caRes$byFeature,
@@ -1020,7 +1020,7 @@ test_that("scpComponentBiplot", {
         )[["unmodelled"]]
     )
     ## Change top
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpComponentBiplot change top",
         scpComponentBiplot(
             scoreList = caRes$bySample, eigenvectorList = caRes$byFeature,
@@ -1028,7 +1028,7 @@ test_that("scpComponentBiplot", {
         )[["unmodelled"]]
     )
     ## Change maxLevels
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         "scpComponentBiplot change maxLevels",
         scpComponentBiplot(
             scoreList = caRes$bySample, eigenvectorList = caRes$byFeature,
@@ -1072,47 +1072,47 @@ test_that(".addEigenArrows", {
     )
     pl <- ggplot(df) + aes(x = x, y = y) + geom_point()
     ## Standard usage
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         ".addEigenArrows standard case",
         .addEigenArrows(pl = pl, eigenvectors = eigenvectors,
                         comp = 1:2, textBy = "name", top = 10,
                         arrowParams = list(), labelParams = list())
     )
     ## Change comp
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         ".addEigenArrows change comp",
         .addEigenArrows(pl = pl, eigenvectors = eigenvectors,
                         comp = c(1, 3), textBy = "name", top = 10,
                         arrowParams = list(), labelParams = list())
     )
     ## Change textBy
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         ".addEigenArrows change textBy",
         .addEigenArrows(pl = pl, eigenvectors = eigenvectors,
                         comp = c(1, 3), textBy = "name2", top = 10,
                         arrowParams = list(), labelParams = list())
     )
     ## Change top
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         ".addEigenArrows change top",
         .addEigenArrows(pl = pl, eigenvectors = eigenvectors,
                         comp = c(1, 3), textBy = "name", top = 5,
                         arrowParams = list(), labelParams = list())
     )
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         ".addEigenArrows top is zero",
         .addEigenArrows(pl = pl, eigenvectors = eigenvectors,
                         comp = c(1, 3), textBy = "name", top = 0,
                         arrowParams = list(), labelParams = list())
     )
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         ".addEigenArrows top is max",
         .addEigenArrows(pl = pl, eigenvectors = eigenvectors,
                         comp = c(1, 3), textBy = "name", top = 100,
                         arrowParams = list(), labelParams = list())
     )
     ## Change arrowParams
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         ".addEigenArrows change arrowParams",
         .addEigenArrows(pl = pl, eigenvectors = eigenvectors,
                         comp = c(1, 3), textBy = "name2", top = 10,
@@ -1120,7 +1120,7 @@ test_that(".addEigenArrows", {
                         labelParams = list())
     )
     ## Change labelParams
-    expect_doppelganger(
+    vdiffr::expect_doppelganger(
         ".addEigenArrows change labelParams",
         .addEigenArrows(pl = pl, eigenvectors = eigenvectors,
                         comp = c(1, 3), textBy = "name", top = 10,
