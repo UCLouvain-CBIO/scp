@@ -5,7 +5,6 @@ test_that("ScpModelFit", {
     ## Check slots are correctly inialized
     x <- ScpModelFit()
     expect_identical(x@coefficients, numeric())
-    expect_identical(x@residuals, numeric())
     expect_identical(x@effects, List())
     expect_identical(x@df, numeric())
     expect_identical(x@var, numeric())
@@ -26,21 +25,6 @@ test_that("scpModelFitCoefficients", {
     x@coefficients <- 1:10
     expect_identical(
         scpModelFitCoefficients(x),
-        1:10
-    )
-})
-
-test_that("scpModelFitResiduals", {
-    x <- ScpModelFit()
-    ## default
-    expect_identical(
-        scpModelFitResiduals(x),
-        numeric()
-    )
-    ## after assignment
-    x@residuals <- 1:10
-    expect_identical(
-        scpModelFitResiduals(x),
         1:10
     )
 })
@@ -161,36 +145,6 @@ test_that("scpModelFitCoefficients<-", {
     )
 })
 
-test_that("scpModelFitResiduals<-", {
-    x <- ScpModelFit()
-    ## value is wrong type = error
-    expect_error(
-        scpModelFitResiduals(x) <- rep("foo", 10),
-        "an object of class .character. is not valid for @.residuals"
-    )
-    expect_error(
-        scpModelFitResiduals(x) <- matrix(1:10),
-        "an object of class.*matrix.*is not valid for @.residuals"
-    )
-    expect_error(
-        scpModelFitResiduals(x) <- list(1, 2, 3, 4, 5, 6, 7, 8, 9 , 10),
-        "an object of class .list. is not valid for @.residuals"
-    )
-    ## Correct usage
-    scpModelFitResiduals(x) <- 1:10
-    expect_identical(
-        x@residuals,
-        1:10
-    )
-    ## Correct usage with empty array
-    x <- ScpModelFit()
-    scpModelFitResiduals(x) <- numeric()
-    expect_identical(
-        x@residuals,
-        numeric()
-    )
-})
-
 test_that("scpModelFitEffects<-", {
     x <- ScpModelFit()
     ## value has elements that are not a numeric vector = error
@@ -212,14 +166,8 @@ test_that("scpModelFitEffects<-", {
         "Effect vectors do not share identical names."
     )
     ## value has elements that are inconsistent with residual names = error
-    x@residuals <- c(a = 7, b = 8, d = 9)
     el2 <- c(a = 4, b = 5, c = 6)
-    expect_error(
-        scpModelFitEffects(x) <- List(el1, el2),
-        "Effects and residuals do not share identical names."
-    )
     ## value has wrong type = error
-    x@residuals <- c(a = 7, b = 8, c = 9)
     expect_error(
         scpModelFitEffects(x) <- list(el1, el2),
         "list. is not valid for @.effects"
@@ -228,19 +176,6 @@ test_that("scpModelFitEffects<-", {
     expect_identical(
         scpModelFitEffects(x) <- List(el1, el2),
         List(el1, el2)
-    )
-    ## Correct usage with empty list and empty residuals
-    x@residuals <- numeric()
-    expect_identical(
-        scpModelFitEffects(x) <- List(),
-        List()
-    )
-    ## Correct usage with empty list and non empty residuals (eg
-    ## intercept only model)
-    x@residuals <- c(a = 7, b = 8, c = 9)
-    expect_identical(
-        scpModelFitEffects(x) <- List(),
-        List()
     )
 })
 

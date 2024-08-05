@@ -178,7 +178,6 @@ test_that("scpModelWorkflow", {
         new(
             "ScpModelFit",
             coefficients = structure(1, .Names = "(Intercept)"),
-            residuals = structure(rep(0, 3), .Names = colnames(se)[4:6]),
             effects = List(),
             df = 2,
             var = 0,
@@ -571,11 +570,7 @@ test_that(".fitModel", {
         structure(c(1, 0), .Names = c("(Intercept)", "foo")),
         tolerance = 1E-3
     )
-    expect_equal(
-        test@residuals,
-        structure(rep(0, 10), .Names = letters[1:10]),
-        tolerance = 1E-3
-    )
+
     expect_equal(
         test@effects,
         List(foo = structure(rep(0, 10), .Names = letters[1:10])),

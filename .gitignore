@@ -4,3 +4,5 @@
 .Ruserdata
 *.Rproj
 tests/testthat/_snaps/
+
+.vscode/

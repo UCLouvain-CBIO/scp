@@ -17,7 +17,6 @@
 ##'
 ##' - `coefficients`: a `numeric` vector with the estimated
 ##'   coefficients
-##' - `residuals`: a `numeric` vector with the estimated residuals
 ##' - `effects`: a `List` with the
 ##' - `df`: an `integer` providing the number of degrees of freedom
 ##'   of the model estimation
@@ -42,7 +41,6 @@
 ##' @exportClass ScpModelFit
 setClass("ScpModelFit", slots = c(
     coefficients = "numeric",
-    residuals = "numeric",
     effects = "List",
     df = "numeric",
     var = "numeric",
@@ -59,13 +57,8 @@ ScpModelFit <- function() {
 }
 
 ## ---- Getters ----
-
 scpModelFitCoefficients <- function(object) {
     object@coefficients
-}
-
-scpModelFitResiduals <- function(object) { # to change
-    object@residuals
 }
 
 scpModelFitEffects <- function(object) {# to change
@@ -99,11 +92,6 @@ scpModelFitLevels <- function(object) {# To change
     object
 }
 
-`scpModelFitResiduals<-` <- function(object, value) {
-    object@residuals <- value
-    object
-}
-
 `scpModelFitEffects<-` <- function(object, value) {
     if (!length(value)) return(object)
     stopifnot(all(sapply(value, function(x) inherits(x, "numeric"))))
@@ -115,8 +103,6 @@ scpModelFitLevels <- function(object) {# To change
     }
     if (!all(sapply(enames, function(x) identical(x, refNames))))
         stop("Effect vectors do not share identical names.")
-    if (!identical(names(scpModelFitResiduals(object)), refNames))
-        stop("Effects and residuals do not share identical names.")
     object@effects <- value
     object
 }

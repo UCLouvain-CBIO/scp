@@ -168,10 +168,26 @@ scpModelFilterNPRatio <- function(object, name, filtered = TRUE) {
 ##' @export
 scpModelResiduals <- function(object, name, join = TRUE,
                               filtered = TRUE) {
-    out <- scpModelFitElement(
-        object, name, "Residuals", filtered, .runWorkflowMessage
-    )
+    Y <- scpModelInput(object, name, filtered)
+    coldata <- .checkAnnotations(object, name)
+    coef <- scpModelCoefficients(object, name, filtered)
+    name <- .checkModelName(object, name) # .checkModelName not working when calling inside a loop
+    out <- lapply(seq_len(nrow(Y)), function(i) {
+        design <- .adaptModel(
+            Y[i, ],
+            coldata,
+            scpModelFormula(object, name)
+        )
+        res <- Y[i,!is.na(Y[i, ])] - design %*% coef[[i]]
+        names <- rownames(res)
+        res <- as.numeric(res)
+        names(res) <- names
+        res
+    })
+    names(out) <- rownames(scpModelInput(object, name, filtered))
+    if (filtered) out <- out[scpModelFeatureNames(object, name)]
     if (join) out <- .joinScpModelOutput(out, object)
+
     out
 }
 
