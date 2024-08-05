@@ -375,8 +375,6 @@ scpModelWorkflow <- function(object, formula,
     if (!ncol(x) || !nrow(x) || nrow(x) < ncol(x)) return(model)
     res <- .fitRidge(y[rownames(x)], x)
     scpModelFitCoefficients(model) <- res$coefficients
-    scpModelFitEffects(model) <-
-        .computeModelEffects(res$coefficients, x, effectNames)
     scpModelFitDf(model) <- res$df
     scpModelFitVar(model) <- res$var
     scpModelFitUvcov(model) <- res$uvcov

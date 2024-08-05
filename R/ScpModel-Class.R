@@ -196,9 +196,19 @@ scpModelResiduals <- function(object, name, join = TRUE,
 ##' @export
 scpModelEffects <- function(object, name, join = TRUE,
                             filtered = TRUE) {
-    out <- scpModelFitElement(
-        object, name, "Effects", filtered, .runWorkflowMessage
-    )
+    Y <- scpModelInput(object, name, filtered)
+    coldata <- .checkAnnotations(object, name)
+    coef <- scpModelCoefficients(object, name, filtered)
+    out <- lapply(seq_len(nrow(Y)), function(i) {
+        design <- .adaptModel(
+            Y[i, ],
+            coldata,
+            scpModelFormula(object, name)
+        )
+        effectsNames <- all.vars(scpModelFormula(object, name))
+        .computeModelEffects(design, coef[[i]], effectsNames)
+    })
+
     if (join) {
         out <- lapply(scpModelEffectNames(object, name), function(e) {
             effect <- endoapply(out, "[[", e)

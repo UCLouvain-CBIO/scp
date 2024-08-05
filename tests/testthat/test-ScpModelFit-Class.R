@@ -5,7 +5,6 @@ test_that("ScpModelFit", {
     ## Check slots are correctly inialized
     x <- ScpModelFit()
     expect_identical(x@coefficients, numeric())
-    expect_identical(x@effects, List())
     expect_identical(x@df, numeric())
     expect_identical(x@var, numeric())
     expect_identical(x@uvcov, matrix(numeric(), 0, 0))
@@ -26,21 +25,6 @@ test_that("scpModelFitCoefficients", {
     expect_identical(
         scpModelFitCoefficients(x),
         1:10
-    )
-})
-
-test_that("scpModelFitEffects", {
-    x <- ScpModelFit()
-    ## default
-    expect_identical(
-        scpModelFitEffects(x),
-        List()
-    )
-    ## after assignment
-    x@effects <- List(effect = 1:10)
-    expect_identical(
-        scpModelFitEffects(x),
-        List(effect = 1:10)
     )
 })
 
@@ -142,40 +126,6 @@ test_that("scpModelFitCoefficients<-", {
     expect_identical(
         x@coefficients,
         1:5
-    )
-})
-
-test_that("scpModelFitEffects<-", {
-    x <- ScpModelFit()
-    ## value has elements that are not a numeric vector = error
-    el1 <- c(a = 1, b = 2, c = 3)
-    el2 <- matrix(1:3)
-    expect_error(
-        scpModelFitEffects(x) <- List(el1, el2),
-        "all.*value.*inherits.*numeric.*is not TRUE"
-    )
-    el2 <- list(1:3)
-    expect_error(
-        scpModelFitEffects(x) <- List(el1, el2),
-        "all.*value.*inherits.*numeric.*is not TRUE"
-    )
-    ## value has elements with inconsistent names = error
-    el2 <- c(a = 4, b = 5, d = 6)
-    expect_error(
-        scpModelFitEffects(x) <- List(el1, el2),
-        "Effect vectors do not share identical names."
-    )
-    ## value has elements that are inconsistent with residual names = error
-    el2 <- c(a = 4, b = 5, c = 6)
-    ## value has wrong type = error
-    expect_error(
-        scpModelFitEffects(x) <- list(el1, el2),
-        "list. is not valid for @.effects"
-    )
-    ## Correct usage
-    expect_identical(
-        scpModelFitEffects(x) <- List(el1, el2),
-        List(el1, el2)
     )
 })
 
