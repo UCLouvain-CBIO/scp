@@ -3,7 +3,6 @@
 ## scp 1.15.2
 
 - fix: fixed x-axis direction annotation for volcano plot on contrast
-
 - fix: solved bug in DA when missing contrast level in modelled 
   feature (issue #65).
 

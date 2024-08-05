@@ -317,7 +317,7 @@ scpModelWorkflow <- function(object, formula,
 .dropConstantVariablesFromFormula <- function(x, formula) {
     isConstant <- sapply(x, function(xx) {
         (is.numeric(xx) && var(xx) == 0) ||
-        (is.factor(xx) && nlevels(xx) < 2)
+            (is.factor(xx) && nlevels(xx) < 2)
     })
     dropped <- colnames(x)[isConstant]
     if (!length(dropped)) return(formula)
