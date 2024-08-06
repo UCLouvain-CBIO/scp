@@ -171,14 +171,14 @@ scpModelResiduals <- function(object, name, join = TRUE,
     Y <- scpModelInput(object, name, filtered)
     coldata <- .checkAnnotations(object, name)
     coef <- scpModelCoefficients(object, name, filtered)
-    name <- .checkModelName(object, name) # .checkModelName not working when calling inside a loop
+    name <- .checkModelName(object, name)
     out <- lapply(seq_len(nrow(Y)), function(i) {
         design <- .adaptModel(
             Y[i, ],
             coldata,
             scpModelFormula(object, name)
         )
-        res <- Y[i,!is.na(Y[i, ])] - design %*% coef[[i]]
+        res <- Y[i, !is.na(Y[i, ])] - design %*% coef[[i]]
         names <- rownames(res)
         res <- as.numeric(res)
         names(res) <- names
@@ -196,17 +196,19 @@ scpModelResiduals <- function(object, name, join = TRUE,
 ##' @export
 scpModelEffects <- function(object, name, join = TRUE,
                             filtered = TRUE) {
+    # when running the workflow on scp1 only provide 1 effect (SampleType)
     Y <- scpModelInput(object, name, filtered)
     coldata <- .checkAnnotations(object, name)
     coef <- scpModelCoefficients(object, name, filtered)
+    name <- .checkModelName(object, name)
     out <- lapply(seq_len(nrow(Y)), function(i) {
         design <- .adaptModel(
             Y[i, ],
             coldata,
             scpModelFormula(object, name)
         )
-        effectsNames <- all.vars(scpModelFormula(object, name))
-        .computeModelEffects(design, coef[[i]], effectsNames)
+        effectsNames <- scpModelEffectNames(object, name)
+        .computeModelEffects(coef[[i]], design, effectsNames)
     })
 
     if (join) {
@@ -217,7 +219,8 @@ scpModelEffects <- function(object, name, join = TRUE,
         names(out) <- scpModelEffectNames(object, name)
         out <- as(out, "List")
     }
-    out
+    names(out) <- rownames(Y)
+    as(out, "List")
 }
 
 ##' @rdname ScpModel-class

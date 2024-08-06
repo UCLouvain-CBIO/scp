@@ -178,7 +178,6 @@ test_that("scpModelWorkflow", {
         new(
             "ScpModelFit",
             coefficients = structure(1, .Names = "(Intercept)"),
-            effects = List(),
             df = 2,
             var = 0,
             uvcov = matrix(0.3331, dimnames = list("(Intercept)", "(Intercept)")),
@@ -571,11 +570,6 @@ test_that(".fitModel", {
         tolerance = 1E-3
     )
 
-    expect_equal(
-        test@effects,
-        List(foo = structure(rep(0, 10), .Names = letters[1:10])),
-        tolerance = 1E-3
-    )
     expect_identical(
         test@df,
         8
