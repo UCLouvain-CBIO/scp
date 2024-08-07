@@ -41,7 +41,7 @@ test_that("ScpModel", {
         smf <- ScpModelFit()
         if (dfP) smf@df <- i*(i-1)
         if (coefR) {
-            smf@coefficients <- c(0, 0)
+            smf@coefficients <- c(1, 0)
             names(smf@coefficients) <- c("(Intercept)", "B")
         }
         smf
@@ -182,48 +182,56 @@ test_that("scpModelResiduals", {
         regexp = "scpModelFormula.*test1.*scpModelWorkflow"
     )
     ## Retrieve residuals
-    resids <- lapply(seq_len(nrow(se)), function(x) {
-         structure(rep(0, ncol(se)), .Names = colnames(se))
-     })
-    names(resids) <- rownames(se)
+    resids <- assay(se) - 1
+    resids <- lapply(1:nrow(resids), function(i) {
+        setNames(resids[i, ], colnames(resids))
+    })
+    for (i in seq_along(resids)) {
+        if (sum(is.finite(resids[[i]])) <= 1) {
+            resids[[i]][is.finite(resids[[i]])] <- NA
+        }
+    }
     resids <- as(resids, "List")
-
     ## No filtering, no joining
     metadata(se)[["test1"]] <- model
     scpModelFormula(se) <- ~ 1 + condition
     scpModelInputIndex(se) <- 1
-    # expect_identical(
-    #     scpModelResiduals(se, join = FALSE, filtered = FALSE),
-    #     resids
-    # )
-    ## No filtering, with joining
-    # expect_identical(
-    #     scpModelResiduals(se, join = TRUE, filtered = FALSE),
-    #     BiocGenerics::do.call(rbind, resids)
-    # )
-    ## With filtering, no joining
+    expect_identical(
+        scpModelResiduals(se, join = FALSE, filtered = FALSE),
+        resids
+    )
+    # No filtering, with joining
+    joined_resids <- BiocGenerics::do.call(rbind, resids)
+    rownames(joined_resids) <- rownames(se)
+    expect_identical(
+        scpModelResiduals(se, join = TRUE, filtered = FALSE),
+        joined_resids
+    )
+    # With filtering, no joining
     model@scpModelFilterThreshold <- 5
     metadata(se)[["test1"]] <- model
     scpModelInputIndex(se) <- 1
-    # expect_identical(
-    #     scpModelResiduals(se, join = FALSE, filtered = TRUE),
-    #     resids[5:nrow(se)]
-    # )
+    scpModelFormula(se) <- ~ 1 + condition
+    expect_identical(
+        scpModelResiduals(se, join = FALSE, filtered = TRUE),
+        resids[5:nrow(se)]
+    )
     ## With filtering, with joining
-    # expect_identical(
-    #     scpModelResiduals(se, join = TRUE, filtered = TRUE),
-    #     BiocGenerics::do.call(rbind, resids[5:nrow(se)])
-    # )
+    expect_identical(
+        scpModelResiduals(se, join = TRUE, filtered = TRUE),
+        joined_resids[5:nrow(se),]
+    )
     ## Test drop = FALSE
     model@scpModelFilterThreshold <- 10
     metadata(se)[["test1"]] <- model
     scpModelInputIndex(se) <- 1
+    scpModelFormula(se) <- ~ 1 + condition
     exp <- t(resids[[10]])
     rownames(exp) <- rownames(se)[10]
-    # expect_identical(
-    #     scpModelResiduals(se, join = TRUE, filtered = TRUE),
-    #     exp
-    # )
+    expect_identical(
+        scpModelResiduals(se, join = TRUE, filtered = TRUE),
+        exp
+    )
 })
 
 test_that("scpModelEffects", {

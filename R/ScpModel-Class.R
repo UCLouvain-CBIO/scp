@@ -168,29 +168,44 @@ scpModelFilterNPRatio <- function(object, name, filtered = TRUE) {
 ##' @export
 scpModelResiduals <- function(object, name, join = TRUE,
                               filtered = TRUE) {
-    Y <- scpModelInput(object, name, filtered)
+    Y <- scpModelInput(object, name, filtered = FALSE)
     coldata <- .checkAnnotations(object, name)
-    coef <- scpModelCoefficients(object, name, filtered)
+    coef <- scpModelCoefficients(object, name, filtered = FALSE)
     name <- .checkModelName(object, name)
-    out <- lapply(seq_len(nrow(Y)), function(i) {
+    residualsOut <- matrix(NA, nrow = nrow(Y), ncol = ncol(Y))
+    rownames(residualsOut) <- rownames(Y)
+    colnames(residualsOut) <- colnames(Y)
+
+    for (i in seq_len(nrow(Y))) {
         design <- .adaptModel(
             Y[i, ],
             coldata,
             scpModelFormula(object, name)
         )
-        res <- Y[i, !is.na(Y[i, ])] - design %*% coef[[i]]
-        names <- rownames(res)
-        res <- as.numeric(res)
-        names(res) <- names
-        res
-    })
-    names(out) <- rownames(scpModelInput(object, name, filtered))
-    if (filtered) out <- out[scpModelFeatureNames(object, name)]
-    if (join) out <- .joinScpModelOutput(out, object)
+        if (is.null(coef[[i]]) ||
+            identical(coef[[i]], numeric(0)) ||
+            ncol(design) == 0) next
 
-    out
+        coefNames <- names(coef[[i]])
+        relevantCoef <- sapply(coefNames, function(coefName) {
+            coefName %in% colnames(design) ||
+            coefName %in% unlist(levels(design)) ||
+            coefName == "(Intercept)" })
+        coefI <- coef[[i]][relevantCoef]
+        res <- Y[i, !is.na(Y[i, ])] - design %*% coefI
+        if (length(res) > 0) {
+            residualsOut[i, !is.na(Y[i, ])] <- as.numeric(res)
+        }
+    }
+    if (filtered) {
+        features <- scpModelFeatureNames(object, name)
+        residualsOut <- residualsOut[features, , drop = FALSE]
+    }
+
+    if (!join) residualsOut <- .unjoinScpModelOutput(residualsOut)
+
+    residualsOut
 }
-
 ##' @rdname ScpModel-class
 ##'
 ##' @export
@@ -648,4 +663,16 @@ scpModelEffectNames <- function(object, name) {
         out[i, cols] <- x[[i]]
     }
     out
+}
+
+## Internal function that converts a matrix with features in rows and samples
+## in columns into a `List` of named numeric. Each element of the `List`
+## corresponds to a feature. Each element is a named numeric vector where the
+## names are the colnames of the input matrix.
+## @param x A matrix with features in rows and samples in columns.
+.unjoinScpModelOutput <- function(x){
+    rowsList <- lapply(1:nrow(x), function(i) {
+        setNames(x[i, ], colnames(x))
+    })
+    as(rowsList, "List")
 }
