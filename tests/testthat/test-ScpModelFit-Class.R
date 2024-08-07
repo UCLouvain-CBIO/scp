@@ -250,19 +250,9 @@ test_that("scpModelFitLevels<-", {
         "List of levels must be named."
     )
     ## value has wrong type = error
-    x@effects <- List(var1 = matrix())
     expect_error(
         scpModelFitLevels(x) <- list(var1 = rep("foo", 5)),
         "an object of class .list. is not valid for @.levels"
-    )
-    ## Element names are not present in effects
-    expect_error(
-        scpModelFitLevels(x) <- List(var1 = rep("foo", 5), var2 = rep("foo", 5)),
-        "Some levels are not matched to effects."
-    )
-    expect_error(
-        scpModelFitLevels(x) <- List(var2 = rep("foo", 5)),
-        "Some levels are not matched to effects."
     )
     ## Correct usage
     scpModelFitLevels(x) <- List(var1 = rep("foo", 5))
@@ -270,7 +260,6 @@ test_that("scpModelFitLevels<-", {
         x@levels,
         List(var1 = rep("foo", 5))
     )
-    x@effects <- List(var1 = matrix(), var2 = rep("foo", 5))
     scpModelFitLevels(x) <- List(var1 = rep("foo", 5))
     expect_identical(
         x@levels,

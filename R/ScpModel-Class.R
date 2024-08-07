@@ -196,7 +196,6 @@ scpModelResiduals <- function(object, name, join = TRUE,
 ##' @export
 scpModelEffects <- function(object, name, join = TRUE,
                             filtered = TRUE) {
-    # when running the workflow on scp1 only provide 1 effect (SampleType)
     Y <- scpModelInput(object, name, filtered)
     coldata <- .checkAnnotations(object, name)
     coef <- scpModelCoefficients(object, name, filtered)
@@ -210,16 +209,14 @@ scpModelEffects <- function(object, name, join = TRUE,
         effectsNames <- scpModelEffectNames(object, name)
         .computeModelEffects(coef[[i]], design, effectsNames)
     })
-
+    names(out) <- rownames(Y)
     if (join) {
         out <- lapply(scpModelEffectNames(object, name), function(e) {
             effect <- endoapply(out, "[[", e)
             .joinScpModelOutput(effect, object)
         })
         names(out) <- scpModelEffectNames(object, name)
-        out <- as(out, "List")
     }
-    names(out) <- rownames(Y)
     as(out, "List")
 }
 
