@@ -73,7 +73,7 @@ NULL
 ##'     missing, the name of the first model found in `object` is used.
 ##'
 ##' @export
-scpVarianceAnalysis <- function(object, name) {
+scpVarianceAnalysis <- function(object, name = NULL) {
     ss <- .computeSumsOfSquares(object, name)
     denom <- .explainedVarianceDenominator(ss)
     df <- scpModelDf(object, name)
@@ -100,8 +100,7 @@ scpVarianceAnalysis <- function(object, name) {
 ##     the ScpModel object in the metadata. When missing, the name of
 ##     the first model found in `object` is used.
 .computeSumsOfSquares <- function(object,
-                                  name) {
-    name <- .checkModelName(object, name)
+                                  name = NULL) {
     SStotal <- .computeTotalSS(object, name)
     SSresiduals <- .computeResidualSS(object, name)
     SSmodel <- .computeEffectSS(object, name)
@@ -117,7 +116,7 @@ scpVarianceAnalysis <- function(object, name) {
 ## @param name A `character(1)` providing the name to use to retrieve
 ##     the ScpModel object in the metadata. When missing, the name of
 ##     the first model found in `object` is used.
-.computeTotalSS <- function(object, name) {
+.computeTotalSS <- function(object, name = NULL) {
     Y <- scpModelInput(object, name)
     intercept <- scpModelIntercept(object, name)
     Y <- sweep(Y, STATS = intercept, MARGIN = 1, FUN = "-")
@@ -133,7 +132,7 @@ scpVarianceAnalysis <- function(object, name) {
 ## @param name A `character(1)` providing the name to use to retrieve
 ##     the ScpModel object in the metadata. When missing, the name of
 ##     the first model found in `object` is used.
-.computeResidualSS <- function(object, name) {
+.computeResidualSS <- function(object, name = NULL) {
     R <- scpModelResiduals(object, name, join = TRUE)
     rowSums(R^2, na.rm = TRUE)
 }
@@ -147,7 +146,7 @@ scpVarianceAnalysis <- function(object, name) {
 ## @param name A `character(1)` providing the name to use to retrieve
 ##     the ScpModel object in the metadata. When missing, the name of
 ##     the first model found in `object` is used.
-.computeEffectSS <- function(object, name) {
+.computeEffectSS <- function(object, name = NULL) {
     sapply(scpModelEffects(object, name), function(x){
         rowSums(x^2, na.rm = TRUE)
     })

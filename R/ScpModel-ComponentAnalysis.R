@@ -188,7 +188,7 @@ scpComponentAnalysis <- function(object,
                                  pcaFUN = "auto",
                                  residuals = TRUE,
                                  unmodelled = TRUE,
-                                 name, ...) {
+                                 name = NULL, ...) {
     if (is.null(effects)) effects <- scpModelEffectNames(object, name)
     if (any(mis <- !effects %in% scpModelEffectNames(object, name)))
         stop("'", paste0(effects[mis], collapse = "', '"),

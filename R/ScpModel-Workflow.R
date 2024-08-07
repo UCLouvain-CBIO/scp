@@ -196,7 +196,7 @@ scpModelWorkflow <- function(object, formula,
 ## Internal functions that checks whether the ScpModel formula and the
 ##
 ##' @importFrom SummarizedExperiment colData
-.checkAnnotations <- function(object, name) {
+.checkAnnotations <- function(object, name = NULL) {
     formula <- scpModelFormula(object, name)
     coldata <- colData(object)[, all.vars(formula), drop = FALSE]
     if (is.null(rownames(coldata)))
@@ -482,7 +482,7 @@ scpModelWorkflow <- function(object, formula,
 ##' @import ggplot2
 ##'
 ##' @export
-scpModelFilterPlot <- function(object, name) {
+scpModelFilterPlot <- function(object, name = NULL) {
     message(
         "To change the threshold, use:\n",
         "scpModelFilterThreshold(object, name) <- threshold"

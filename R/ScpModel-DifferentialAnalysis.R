@@ -123,11 +123,11 @@ NULL
 scpDifferentialAnalysis <- function(object,
                                     coefficients = NULL,
                                     contrasts = NULL,
-                                    name) {
+                                    name = NULL) {
     if (is.null(contrasts) & is.null(coefficients)) {
         stop("'contrasts' and 'coefficients' cannot be both NULL.")
     }
-    if (missing(name)) name <- .defaultModelName(object)
+    if (is.null(name)) name <- .defaultModelName(object)
     out <- List()
     if (!is.null(contrasts)) {
         out <- c(out, .scpDifferentialAnalysisOnContrast(
