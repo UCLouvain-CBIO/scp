@@ -188,6 +188,8 @@ scpModelResiduals <- function(object, name = NULL, join = TRUE,
         coefNames <- names(coef[[i]])
         relevantCoef <- sapply(coefNames, function(coefName) {
             coefName %in% colnames(design) ||
+            coefName %in% paste0(names(unlist(levels(design))),
+                                 unlist(levels(design))) ||
             coefName %in% unlist(levels(design)) ||
             coefName == "(Intercept)" })
         coefI <- coef[[i]][relevantCoef]

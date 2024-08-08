@@ -36,13 +36,14 @@ test_that("ScpModel", {
 ##     which to create mock ScpModelFit objects
 ## @param dfP A logical indicating whether to create coefficients for
 ## the purpose of having a p for test
+## @param coefR A logical indicating whether to create coefficients
 .addScpModelFitList <- function(model, features, dfP = FALSE, coefR = FALSE) {
     fitList <- as(lapply(1L:length(features), function(i) {
         smf <- ScpModelFit()
         if (dfP) smf@df <- i*(i-1)
         if (coefR) {
             smf@coefficients <- c(1, 0)
-            names(smf@coefficients) <- c("(Intercept)", "B")
+            names(smf@coefficients) <- c("(Intercept)", "conditionB")
         }
         smf
     }), "List")
@@ -237,32 +238,28 @@ test_that("scpModelResiduals", {
 test_that("scpModelEffects", {
     require(SummarizedExperiment)
     model <- ScpModel()
-    ## No effects in model assays = error
     l <- .createMinimalData(); se <- l$se; a <- l$a
     colData(se)$condition <- factor(rep(c("A", "B"), each = nrow(se)/2))
-    model <- .addScpModelFitList(model, rownames(se), dfP = TRUE)
+    model <- .addScpModelFitList(model, rownames(se), dfP = TRUE, coefR = TRUE)
     metadata(se)[["test1"]] <- model
     scpModelInputIndex(se) <- 1
     expect_error(
         scpModelEffects(se, filtered = FALSE),
         regexp = "Formula.*test1.*scpModelWorkflow"
     )
+    scpModelFormula(se) <- ~ 1 + condition
     ## Retrieve effects
     effects <- lapply(seq_len(nrow(se)), function(i) {
-        out <- lapply(c("Var1", "Var2"), function(j) {
-            structure(rep(0, ncol(se)), .Names = colnames(se))
-        })
-        names(out) <- c("Var1", "Var2")
+        out <- list( "condition" = structure(c(rep(0, i*i), rep(NA, 100 - i*i)),
+                                             .Names = colnames(se)))
+        out$condition <- out$condition[!is.na(out$condition)]
         as(out, "List")
     })
     names(effects) <- rownames(se)
     effects <- as(effects, "List")
-    # model@scpModelFitList <- mendoapply(function(fl, eff) {
-    #     fl@effects <- eff
-    #     fl
-    # }, model@scpModelFitList, effects)
-    ## No filtering, no joining
-    # metadata(se)[["test1"]] <- model
+    effects[[1]] <- numeric(0)
+    effects[[2]] <- numeric(0)
+    # No filtering, no joining
     # expect_identical(
     #     scpModelEffects(se, join = FALSE, filtered = FALSE),
     #     effects
