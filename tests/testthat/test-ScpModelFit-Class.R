@@ -5,8 +5,6 @@ test_that("ScpModelFit", {
     ## Check slots are correctly inialized
     x <- ScpModelFit()
     expect_identical(x@coefficients, numeric())
-    expect_identical(x@residuals, numeric())
-    expect_identical(x@effects, List())
     expect_identical(x@df, numeric())
     expect_identical(x@var, numeric())
     expect_identical(x@uvcov, matrix(numeric(), 0, 0))
@@ -27,36 +25,6 @@ test_that("scpModelFitCoefficients", {
     expect_identical(
         scpModelFitCoefficients(x),
         1:10
-    )
-})
-
-test_that("scpModelFitResiduals", {
-    x <- ScpModelFit()
-    ## default
-    expect_identical(
-        scpModelFitResiduals(x),
-        numeric()
-    )
-    ## after assignment
-    x@residuals <- 1:10
-    expect_identical(
-        scpModelFitResiduals(x),
-        1:10
-    )
-})
-
-test_that("scpModelFitEffects", {
-    x <- ScpModelFit()
-    ## default
-    expect_identical(
-        scpModelFitEffects(x),
-        List()
-    )
-    ## after assignment
-    x@effects <- List(effect = 1:10)
-    expect_identical(
-        scpModelFitEffects(x),
-        List(effect = 1:10)
     )
 })
 
@@ -158,89 +126,6 @@ test_that("scpModelFitCoefficients<-", {
     expect_identical(
         x@coefficients,
         1:5
-    )
-})
-
-test_that("scpModelFitResiduals<-", {
-    x <- ScpModelFit()
-    ## value is wrong type = error
-    expect_error(
-        scpModelFitResiduals(x) <- rep("foo", 10),
-        "an object of class .character. is not valid for @.residuals"
-    )
-    expect_error(
-        scpModelFitResiduals(x) <- matrix(1:10),
-        "an object of class.*matrix.*is not valid for @.residuals"
-    )
-    expect_error(
-        scpModelFitResiduals(x) <- list(1, 2, 3, 4, 5, 6, 7, 8, 9 , 10),
-        "an object of class .list. is not valid for @.residuals"
-    )
-    ## Correct usage
-    scpModelFitResiduals(x) <- 1:10
-    expect_identical(
-        x@residuals,
-        1:10
-    )
-    ## Correct usage with empty array
-    x <- ScpModelFit()
-    scpModelFitResiduals(x) <- numeric()
-    expect_identical(
-        x@residuals,
-        numeric()
-    )
-})
-
-test_that("scpModelFitEffects<-", {
-    x <- ScpModelFit()
-    ## value has elements that are not a numeric vector = error
-    el1 <- c(a = 1, b = 2, c = 3)
-    el2 <- matrix(1:3)
-    expect_error(
-        scpModelFitEffects(x) <- List(el1, el2),
-        "all.*value.*inherits.*numeric.*is not TRUE"
-    )
-    el2 <- list(1:3)
-    expect_error(
-        scpModelFitEffects(x) <- List(el1, el2),
-        "all.*value.*inherits.*numeric.*is not TRUE"
-    )
-    ## value has elements with inconsistent names = error
-    el2 <- c(a = 4, b = 5, d = 6)
-    expect_error(
-        scpModelFitEffects(x) <- List(el1, el2),
-        "Effect vectors do not share identical names."
-    )
-    ## value has elements that are inconsistent with residual names = error
-    x@residuals <- c(a = 7, b = 8, d = 9)
-    el2 <- c(a = 4, b = 5, c = 6)
-    expect_error(
-        scpModelFitEffects(x) <- List(el1, el2),
-        "Effects and residuals do not share identical names."
-    )
-    ## value has wrong type = error
-    x@residuals <- c(a = 7, b = 8, c = 9)
-    expect_error(
-        scpModelFitEffects(x) <- list(el1, el2),
-        "list. is not valid for @.effects"
-    )
-    ## Correct usage
-    expect_identical(
-        scpModelFitEffects(x) <- List(el1, el2),
-        List(el1, el2)
-    )
-    ## Correct usage with empty list and empty residuals
-    x@residuals <- numeric()
-    expect_identical(
-        scpModelFitEffects(x) <- List(),
-        List()
-    )
-    ## Correct usage with empty list and non empty residuals (eg
-    ## intercept only model)
-    x@residuals <- c(a = 7, b = 8, c = 9)
-    expect_identical(
-        scpModelFitEffects(x) <- List(),
-        List()
     )
 })
 
@@ -365,19 +250,9 @@ test_that("scpModelFitLevels<-", {
         "List of levels must be named."
     )
     ## value has wrong type = error
-    x@effects <- List(var1 = matrix())
     expect_error(
         scpModelFitLevels(x) <- list(var1 = rep("foo", 5)),
         "an object of class .list. is not valid for @.levels"
-    )
-    ## Element names are not present in effects
-    expect_error(
-        scpModelFitLevels(x) <- List(var1 = rep("foo", 5), var2 = rep("foo", 5)),
-        "Some levels are not matched to effects."
-    )
-    expect_error(
-        scpModelFitLevels(x) <- List(var2 = rep("foo", 5)),
-        "Some levels are not matched to effects."
     )
     ## Correct usage
     scpModelFitLevels(x) <- List(var1 = rep("foo", 5))
@@ -385,7 +260,6 @@ test_that("scpModelFitLevels<-", {
         x@levels,
         List(var1 = rep("foo", 5))
     )
-    x@effects <- List(var1 = matrix(), var2 = rep("foo", 5))
     scpModelFitLevels(x) <- List(var1 = rep("foo", 5))
     expect_identical(
         x@levels,

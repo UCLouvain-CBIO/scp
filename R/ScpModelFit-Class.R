@@ -17,8 +17,6 @@
 ##'
 ##' - `coefficients`: a `numeric` vector with the estimated
 ##'   coefficients
-##' - `residuals`: a `numeric` vector with the estimated residuals
-##' - `effects`: a `List` with the
 ##' - `df`: an `integer` providing the number of degrees of freedom
 ##'   of the model estimation
 ##' - `var`: a `numeric` vector with the residual variance of the
@@ -42,8 +40,6 @@
 ##' @exportClass ScpModelFit
 setClass("ScpModelFit", slots = c(
     coefficients = "numeric",
-    residuals = "numeric",
-    effects = "List",
     df = "numeric",
     var = "numeric",
     uvcov = "matrix",
@@ -53,23 +49,14 @@ setClass("ScpModelFit", slots = c(
 ## Class constructors
 ScpModelFit <- function() {
     new(
-        "ScpModelFit", effects = List(),
+        "ScpModelFit",
         levels = List()
     )
 }
 
 ## ---- Getters ----
-
 scpModelFitCoefficients <- function(object) {
     object@coefficients
-}
-
-scpModelFitResiduals <- function(object) { # to change
-    object@residuals
-}
-
-scpModelFitEffects <- function(object) {# to change
-    object@effects
 }
 
 scpModelFitDf <- function(object) {
@@ -96,28 +83,6 @@ scpModelFitLevels <- function(object) {# To change
 
 `scpModelFitCoefficients<-` <- function(object, value) {
     object@coefficients <- value
-    object
-}
-
-`scpModelFitResiduals<-` <- function(object, value) {
-    object@residuals <- value
-    object
-}
-
-`scpModelFitEffects<-` <- function(object, value) {
-    if (!length(value)) return(object)
-    stopifnot(all(sapply(value, function(x) inherits(x, "numeric"))))
-    enames <- lapply(value, names)
-    if (length(enames) == 0) {
-        refNames <- c()
-    } else {
-        refNames <- enames[[1]]
-    }
-    if (!all(sapply(enames, function(x) identical(x, refNames))))
-        stop("Effect vectors do not share identical names.")
-    if (!identical(names(scpModelFitResiduals(object)), refNames))
-        stop("Effects and residuals do not share identical names.")
-    object@effects <- value
     object
 }
 
@@ -152,8 +117,6 @@ scpModelFitLevels <- function(object) {# To change
     if (length(value) > 0) {
         if (is.null(names(value)))
             stop("List of levels must be named.")
-        if (any(!names(value) %in% names(scpModelFitEffects(object))))
-            stop("Some levels are not matched to effects.")
     }
     object@levels <- value
     object

@@ -140,7 +140,7 @@ NULL
 ##'
 ##' @export
 scpKeepEffect <- function(object, effects = NULL,
-                          intercept = FALSE, name) {
+                          intercept = FALSE, name = NULL) {
     new <- scpModelResiduals(object, name)
     if (!is.null(effects)) {
         stopifnot(effects %in% scpModelEffectNames(object, name))
@@ -165,7 +165,7 @@ scpKeepEffect <- function(object, effects = NULL,
 ##'
 ##' @export
 scpRemoveBatchEffect <- function(object, effects = NULL,
-                                 intercept = TRUE, name) {
+                                 intercept = TRUE, name = NULL) {
     stopifnot(effects %in% scpModelEffectNames(object, name))
     if (!is.null(effects)) {
         allEffects <- scpModelEffectNames(object, name)

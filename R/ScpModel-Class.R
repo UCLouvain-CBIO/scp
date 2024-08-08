@@ -109,7 +109,7 @@ ScpModel <- function() {
 ##' @rdname ScpModel-class
 ##'
 ##' @export
-scpModelFormula <- function(object, name) {
+scpModelFormula <- function(object, name = NULL) {
     out <- scpModel(object, name)@scpModelFormula
     .checkModelElement(
         out, "scpModelFormula", .runWorkflowMessage,
@@ -127,7 +127,7 @@ scpModelFormula <- function(object, name) {
 ##' @importFrom SummarizedExperiment assay
 ##'
 ##' @export
-scpModelInput <- function(object, name, filtered = TRUE) {
+scpModelInput <- function(object, name = NULL, filtered = TRUE) {
     out <- assay(object, scpModelInputIndex(object, name))
     if (filtered) {
         out <- out[scpModelFeatureNames(object, name), , drop = FALSE]
@@ -138,7 +138,7 @@ scpModelInput <- function(object, name, filtered = TRUE) {
 ##' @rdname ScpModel-class
 ##'
 ##' @export
-scpModelFilterThreshold <- function(object, name) {
+scpModelFilterThreshold <- function(object, name = NULL) {
     out <- scpModel(object, name)@scpModelFilterThreshold
     .checkModelElement(
         out, "scpModelFilterThreshold", .runWorkflowMessage,
@@ -150,7 +150,7 @@ scpModelFilterThreshold <- function(object, name) {
 ##' @rdname ScpModel-class
 ##'
 ##' @export
-scpModelFilterNPRatio <- function(object, name, filtered = TRUE) {
+scpModelFilterNPRatio <- function(object, name = NULL, filtered = TRUE) {
     p <- scpModelP(object, name, filtered)
     n <- scpModelN(object, name, filtered)
     out <- n / p
@@ -166,32 +166,73 @@ scpModelFilterNPRatio <- function(object, name, filtered = TRUE) {
 ##'     as a list with one element for each feature (`FALSE`). When
 ##'     `TRUE`, any gaps across features will be filled with NA's.
 ##' @export
-scpModelResiduals <- function(object, name, join = TRUE,
+scpModelResiduals <- function(object, name = NULL, join = TRUE,
                               filtered = TRUE) {
-    out <- scpModelFitElement(
-        object, name, "Residuals", filtered, .runWorkflowMessage
-    )
-    if (join) out <- .joinScpModelOutput(out, object)
-    out
-}
+    Y <- scpModelInput(object, name, filtered = FALSE)
+    coldata <- .checkAnnotations(object, name)
+    coef <- scpModelCoefficients(object, name, filtered = FALSE)
+    residualsOut <- matrix(NA, nrow = nrow(Y), ncol = ncol(Y))
+    rownames(residualsOut) <- rownames(Y)
+    colnames(residualsOut) <- colnames(Y)
 
+    for (i in seq_len(nrow(Y))) {
+        design <- .adaptModel(
+            Y[i, ],
+            coldata,
+            scpModelFormula(object, name)
+        )
+        if (is.null(coef[[i]]) ||
+            identical(coef[[i]], numeric(0)) ||
+            ncol(design) == 0) next
+
+        coefNames <- names(coef[[i]])
+        relevantCoef <- sapply(coefNames, function(coefName) {
+            coefName %in% colnames(design) ||
+            coefName %in% paste0(names(unlist(levels(design))),
+                                 unlist(levels(design))) ||
+            coefName %in% unlist(levels(design)) ||
+            coefName == "(Intercept)" })
+        coefI <- coef[[i]][relevantCoef]
+        res <- Y[i, !is.na(Y[i, ])] - design %*% coefI
+        if (length(res) > 0) {
+            residualsOut[i, !is.na(Y[i, ])] <- as.numeric(res)
+        }
+    }
+    if (filtered) {
+        features <- scpModelFeatureNames(object, name)
+        residualsOut <- residualsOut[features, , drop = FALSE]
+    }
+
+    if (!join) residualsOut <- .unjoinScpModelOutput(residualsOut)
+
+    residualsOut
+}
 ##' @rdname ScpModel-class
 ##'
 ##' @export
-scpModelEffects <- function(object, name, join = TRUE,
+scpModelEffects <- function(object, name = NULL, join = TRUE,
                             filtered = TRUE) {
-    out <- scpModelFitElement(
-        object, name, "Effects", filtered, .runWorkflowMessage
-    )
+    Y <- scpModelInput(object, name, filtered)
+    coldata <- .checkAnnotations(object, name)
+    coef <- scpModelCoefficients(object, name, filtered)
+    out <- lapply(seq_len(nrow(Y)), function(i) {
+        design <- .adaptModel(
+            Y[i, ],
+            coldata,
+            scpModelFormula(object, name)
+        )
+        effectsNames <- scpModelEffectNames(object, name)
+        .computeModelEffects(coef[[i]], design, effectsNames)
+    })
+    names(out) <- rownames(Y)
     if (join) {
         out <- lapply(scpModelEffectNames(object, name), function(e) {
             effect <- endoapply(out, "[[", e)
             .joinScpModelOutput(effect, object)
         })
         names(out) <- scpModelEffectNames(object, name)
-        out <- as(out, "List")
     }
-    out
+    as(out, "List")
 }
 
 ##' @rdname ScpModel-class
@@ -225,14 +266,14 @@ scpModelComponentMethods <- c("APCA", "ASCA", "ASCA.E")
 ## Internal functions to get an ScpModel object or its assays from an
 ## SE object. This is not exported because there is no good reason for
 ## the users to extract an ScpModel from its container SE.
-scpModel <- function(object, name) {
+scpModel <- function(object, name = NULL) {
     stopifnot(inherits(object, "SummarizedExperiment"))
     name <- .checkModelName(object, name)
     metadata(object)[[name]]
 }
 
 ## Internal function that retrieves the scpModelInputIndex slot.
-scpModelInputIndex <- function(object, name) {
+scpModelInputIndex <- function(object, name = NULL) {
     out <- scpModel(object, name)@scpModelInputIndex
     .checkModelElement(
         out, "scpModelInputIndex", .runWorkflowMessage,
@@ -242,7 +283,7 @@ scpModelInputIndex <- function(object, name) {
 }
 
 ## Internal function that retrieves the scpModelFitList slot.
-scpModelFitList <- function(object, name, filtered = FALSE) {
+scpModelFitList <- function(object, name = NULL, filtered = FALSE) {
     out <- scpModel(object, name)@scpModelFitList
     .checkModelElement(
         out, "scpModelFitList", .runWorkflowMessage,
@@ -264,7 +305,7 @@ scpModelFitList <- function(object, name, filtered = FALSE) {
 ## @param helpMessage A `character(1)` that provides additional
 ##     information in case the retrieved elements are empty in the
 ##     object.
-scpModelFitElement <- function(object, name, what, filtered,
+scpModelFitElement <- function(object, name = NULL, what, filtered,
                                helpMessage = "") {
     out <- scpModelFitList(object, name)
     scpModelFitSlot <- try(get(paste0("scpModelFit", what)), TRUE)
@@ -279,7 +320,7 @@ scpModelFitElement <- function(object, name, what, filtered,
     out
 }
 
-scpModelN <- function(object, name, filtered = TRUE) {
+scpModelN <- function(object, name = NULL, filtered = TRUE) {
     assayMatrix <- scpModelInput(object, name, filtered)
     if (nrow(object) == 0) {
         stop(
@@ -292,19 +333,19 @@ scpModelN <- function(object, name, filtered = TRUE) {
     unlist(out)
 }
 
-scpModelP <- function(object, name, filtered = TRUE) {
+scpModelP <- function(object, name = NULL, filtered = TRUE) {
     out <- scpModelN(object, name, filtered) - scpModelDf(object, name, filtered)
     out[is.na(out)] <- 0
     unlist(out)
 }
 
-scpModelCoefficients <- function(object, name, filtered = TRUE) {
+scpModelCoefficients <- function(object, name = NULL, filtered = TRUE) {
     scpModelFitElement(
         object, name, "Coefficients", filtered, .runWorkflowMessage
     )
 }
 
-scpModelDf <- function(object, name, filtered = TRUE) {
+scpModelDf <- function(object, name = NULL, filtered = TRUE) {
     out <- scpModelFitElement(
         object, name, "Df", filtered, .runWorkflowMessage
     )
@@ -312,26 +353,26 @@ scpModelDf <- function(object, name, filtered = TRUE) {
     unlist(out)
 }
 
-scpModelVar <- function(object, name, filtered = TRUE) {
+scpModelVar <- function(object, name = NULL, filtered = TRUE) {
     out <- scpModelFitElement(
         object, name, "Var", filtered, .runWorkflowMessage
     )
     unlist(out)
 }
 
-scpModelUvcov <- function(object, name, filtered = TRUE) {
+scpModelUvcov <- function(object, name = NULL, filtered = TRUE) {
     scpModelFitElement(
         object, name, "Uvcov", filtered, .runWorkflowMessage
     )
 }
 
-scpModelVcov <- function(object, name, filtered = TRUE) {
+scpModelVcov <- function(object, name = NULL, filtered = TRUE) {
     scpModelFitElement(
         object, name, "Vcov", filtered, .runWorkflowMessage
     )
 }
 
-scpModelIntercept <- function(object, name, filtered = TRUE) {
+scpModelIntercept <- function(object, name = NULL, filtered = TRUE) {
     coefs <- scpModelCoefficients(object, name, filtered)
     sapply(coefs, function(x) x[["(Intercept)"]])
 }
@@ -339,7 +380,7 @@ scpModelIntercept <- function(object, name, filtered = TRUE) {
 ## Internal function that returns a vector of strings with the feature
 ## names (= row names) that have been kept for modelling. If no filter
 ## is found, it returns all feature names.
-scpModelFeatureNames <- function(object, name) {
+scpModelFeatureNames <- function(object, name = NULL) {
     threshold <- scpModelFilterThreshold(object, name)
     if (!length(threshold)) {
         return(rownames(object))
@@ -349,7 +390,7 @@ scpModelFeatureNames <- function(object, name) {
 }
 
 ## Internal function that returns the effect names in the model
-scpModelEffectNames <- function(object, name) {
+scpModelEffectNames <- function(object, name = NULL) {
     labels(terms(
         scpModelFormula(object, name),
         data = colData(object)
@@ -372,7 +413,7 @@ scpModelEffectNames <- function(object, name) {
 ##'     `object` is used.
 ##'
 ##' @export
-`scpModelFilterThreshold<-` <- function(object, name, value) {
+`scpModelFilterThreshold<-` <- function(object, name = NULL, value) {
     stopifnot(length(value) == 1)
     stopifnot(value >= 1)
     scpModel(object, name)@scpModelFilterThreshold <- value
@@ -387,14 +428,14 @@ scpModelEffectNames <- function(object, name) {
 ## constructing the object because the validity depends on the SE
 ## object that is outside of the ScpModel object.
 
-`scpModel<-` <- function(object, name, value) {
+`scpModel<-` <- function(object, name = NULL, value) {
     stopifnot(inherits(value, "ScpModel") | is.null(value))
-    if (missing(name)) name <- .defaultModelName(object)
+    if (is.null(name)) name <- .defaultModelName(object)
     metadata(object)[[name]] <- value
     object
 }
 
-`scpModelFormula<-` <- function(object, name, value) {
+`scpModelFormula<-` <- function(object, name = NULL, value) {
     stopifnot(inherits(value, "formula"))
     value <- .checkScpModelFormula(value, object)
     scpModel(object, name)@scpModelFormula <- value
@@ -402,7 +443,7 @@ scpModelEffectNames <- function(object, name) {
 }
 
 ##' @importFrom SummarizedExperiment assayNames
-`scpModelInputIndex<-` <- function(object, name, value) {
+`scpModelInputIndex<-` <- function(object, name = NULL, value) {
     stopifnot(!is.null(colnames(object)))
     stopifnot(!is.null(rownames(object)))
     value <- .checkInputIndex(value, assayNames(object), "i")
@@ -413,7 +454,7 @@ scpModelEffectNames <- function(object, name) {
     object
 }
 
-`scpModelFitList<-` <- function(object, name, value) {
+`scpModelFitList<-` <- function(object, name = NULL, value) {
     stopifnot(inherits(value, "List"))
     stopifnot(all(sapply(value, inherits, "ScpModelFit")))
     stopifnot(identical(rownames(object), names(value)))
@@ -443,8 +484,8 @@ scpModelEffectNames <- function(object, name) {
 ## @param object A SummarizedExperiment object
 ## @param name A character(1) to select a model. When missing, name is
 ##      assigned as the name of the default model
-.checkModelName <- function(object, name) {
-    if (missing(name)) name <- .defaultModelName(object)
+.checkModelName <- function(object, name = NULL) {
+    if (is.null(name)) name <- .defaultModelName(object)
     stopifnot(length(name) == 1)
     if (!name %in% scpModelNames(object)) {
         stop(
@@ -622,4 +663,16 @@ scpModelEffectNames <- function(object, name) {
         out[i, cols] <- x[[i]]
     }
     out
+}
+
+## Internal function that converts a matrix with features in rows and samples
+## in columns into a `List` of named numeric. Each element of the `List`
+## corresponds to a feature. Each element is a named numeric vector where the
+## names are the colnames of the input matrix.
+## @param x A matrix with features in rows and samples in columns.
+.unjoinScpModelOutput <- function(x){
+    rowsList <- lapply(1:nrow(x), function(i) {
+        setNames(x[i, ], colnames(x))
+    })
+    as(rowsList, "List")
 }
