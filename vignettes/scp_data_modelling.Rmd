@@ -94,6 +94,9 @@ set consists of 200 peptides and 73 cells. Peptide annotations can be
 retrieved from the `rowData` and cell annotations can be retrieved
 from the `colData`. The cell annotation will be used during modelling.
 
+A full reanalysis of Leduc's nPOP dataset is also available
+[here](https://uclouvain-cbio.github.io/SCP.replication/articles/scplainer_leduc2022.html).
+
 # Data modelling
 
 The core of the approach relies on statistical modelling of the data
