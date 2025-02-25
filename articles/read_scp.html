@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.17.1</span>
       </span>
     </div>
 
@@ -100,7 +100,7 @@ Gatto</h4>
                                     <h4 data-toc-skip class="author">Christophe
 Vanderaa</h4>
                         
-            <h4 data-toc-skip class="date">3 October 2024</h4>
+            <h4 data-toc-skip class="date">25 February 2025</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/master/vignettes/read_scp.Rmd" class="external-link"><code>vignettes/read_scp.Rmd</code></a></small>
       <div class="hidden name"><code>read_scp.Rmd</code></div>
@@ -134,7 +134,7 @@ across different sets are stored to facilitate manipulation and
 visualization of of PSM, peptide and protein data. This is conceptually
 shown below.</p>
 <div class="figure" style="text-align: center">
-<img src="figures%2FSCP_framework.png" alt="The `scp` framework relies on `SingleCellExperiment` and `QFeatures` objects" width="100%"><p class="caption">
+<img src="figures/SCP_framework.png" alt="The `scp` framework relies on `SingleCellExperiment` and `QFeatures` objects" width="100%"><p class="caption">
 The <code>scp</code> framework relies on
 <code>SingleCellExperiment</code> and <code>QFeatures</code> objects
 </p>
@@ -171,7 +171,7 @@ name</li>
 protein name</li>
 </ul>
 <div class="figure" style="text-align: center">
-<img src="figures%2FreadSCP_inputTable.png" alt="Conceptual representation of the `assayData` input table" width="450px"><p class="caption">
+<img src="figures/readSCP_inputTable.png" alt="Conceptual representation of the `assayData` input table" width="450px"><p class="caption">
 Conceptual representation of the <code>assayData</code> input table
 </p>
 </div>
@@ -319,7 +319,7 @@ corresponding sample.</li>
 <p>These two columns allow <code>scp</code> to correctly split and match
 data that were acquired across multiple acquisition runs.</p>
 <div class="figure" style="text-align: center">
-<img src="figures%2FreadSCP_sampleTable.png" alt="Conceptual representation of the sample table" width="450px"><p class="caption">
+<img src="figures/readSCP_sampleTable.png" alt="Conceptual representation of the sample table" width="450px"><p class="caption">
 Conceptual representation of the sample table
 </p>
 </div>
@@ -376,7 +376,7 @@ automatically detects and removes columns containing only
 <span><span class="co">#&gt; Splitting data in runs.</span></span>
 <span><span class="co">#&gt; Formatting sample annotations (colData).</span></span>
 <span><span class="co">#&gt; Formatting data as a 'QFeatures' object.</span></span>
-<span><span class="co">#&gt; An instance of class QFeatures containing 4 assays:</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures containing 4 set(s):</span></span>
 <span><span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 395 rows and 11 columns </span></span>
 <span><span class="co">#&gt;  [2] 190321S_LCA10_X_FP97_blank_01: SingleCellExperiment with 109 rows and 11 columns </span></span>
 <span><span class="co">#&gt;  [3] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 487 rows and 11 columns </span></span>
@@ -526,7 +526,7 @@ provided by the <code>quantCols</code> field in the annotation table
 (<code>colData</code> argument).</li>
 </ol>
 <div class="figure" style="text-align: center">
-<img src="figures%2FreadSCP_step1.png" alt="Step1: Convert the input table to a `SingleCellExperiment` object" width="450px"><p class="caption">
+<img src="figures/readSCP_step1.png" alt="Step1: Convert the input table to a `SingleCellExperiment` object" width="450px"><p class="caption">
 Step1: Convert the input table to a <code>SingleCellExperiment</code>
 object
 </p>
@@ -542,7 +542,7 @@ acquisition runs that was used by MaxQuant to retrieve the raw data
 files.</li>
 </ol>
 <div class="figure" style="text-align: center">
-<img src="figures%2FreadSCP_step2.png" alt="Step2: Split by acquisition run" width="500px"><p class="caption">
+<img src="figures/readSCP_step2.png" alt="Step2: Split by acquisition run" width="500px"><p class="caption">
 Step2: Split by acquisition run
 </p>
 </div>
@@ -555,7 +555,7 @@ column with run names and a <code>quantCols</code> column with the names
 of the quantitative columns in <code>assayData</code>.</li>
 </ol>
 <div class="figure" style="text-align: center">
-<img src="figures%2FreadSCP_step3.png" alt="Step3: Adding and matching the sample annotations" width="700px"><p class="caption">
+<img src="figures/readSCP_step3.png" alt="Step3: Adding and matching the sample annotations" width="700px"><p class="caption">
 Step3: Adding and matching the sample annotations
 </p>
 </div>
@@ -565,7 +565,7 @@ Step3: Adding and matching the sample annotations
 object.</li>
 </ol>
 <div class="figure" style="text-align: center">
-<img src="figures%2FreadSCP_step4.png" alt="Step4: Converting to a `QFeatures`" width="600px"><p class="caption">
+<img src="figures/readSCP_step4.png" alt="Step4: Converting to a `QFeatures`" width="600px"><p class="caption">
 Step4: Converting to a <code>QFeatures</code>
 </p>
 </div>
@@ -616,13 +616,13 @@ function or the documentation are also warmly welcome.</p>
 <div class="section level2">
 <h2 class="unnumbered" id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
 </h2>
-<pre><code>R version 4.4.1 (2024-06-14)
+<pre><code>R Under development (unstable) (2025-02-15 r87726)
 Platform: x86_64-pc-linux-gnu
-Running under: Ubuntu 22.04.5 LTS
+Running under: Ubuntu 24.04.2 LTS
 
 Matrix products: default
 BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
-LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.20.so;  LAPACK version 3.10.0
+LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
 
 locale:
  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
@@ -640,58 +640,54 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] scp_1.15.2                  QFeatures_1.15.3           
- [3] MultiAssayExperiment_1.31.5 SummarizedExperiment_1.35.3
- [5] Biobase_2.65.1              GenomicRanges_1.57.1       
- [7] GenomeInfoDb_1.41.2         IRanges_2.39.2             
- [9] S4Vectors_0.43.2            BiocGenerics_0.51.3        
-[11] MatrixGenerics_1.17.0       matrixStats_1.4.1          
-[13] BiocStyle_2.33.1           
+ [1] scp_1.17.1                  QFeatures_1.17.3           
+ [3] MultiAssayExperiment_1.33.9 SummarizedExperiment_1.37.0
+ [5] Biobase_2.67.0              GenomicRanges_1.59.1       
+ [7] GenomeInfoDb_1.43.4         IRanges_2.41.3             
+ [9] S4Vectors_0.45.4            BiocGenerics_0.53.6        
+[11] generics_0.1.3              MatrixGenerics_1.19.1      
+[13] matrixStats_1.5.0           BiocStyle_2.35.0           
 
 loaded via a namespace (and not attached):
  [1] tidyselect_1.2.1            dplyr_1.1.4                
- [3] bitops_1.0-8                fastmap_1.2.0              
- [5] SingleCellExperiment_1.27.2 lazyeval_0.2.2             
- [7] RCurl_1.98-1.16             nipals_0.8                 
- [9] digest_0.6.37               lifecycle_1.0.4            
-[11] cluster_2.1.6               ProtGenerics_1.37.1        
-[13] magrittr_2.0.3              compiler_4.4.1             
-[15] rlang_1.1.4                 sass_0.4.9                 
-[17] tools_4.4.1                 igraph_2.0.3               
-[19] utf8_1.2.4                  yaml_2.3.10                
-[21] knitr_1.48                  S4Arrays_1.5.10            
-[23] htmlwidgets_1.6.4           DelayedArray_0.31.13       
-[25] plyr_1.8.9                  RColorBrewer_1.1-3         
-[27] abind_1.4-8                 purrr_1.0.2                
-[29] desc_1.4.3                  grid_4.4.1                 
-[31] fansi_1.0.6                 colorspace_2.1-1           
-[33] ggplot2_3.5.1               scales_1.3.0               
-[35] MASS_7.3-61                 cli_3.6.3                  
-[37] rmarkdown_2.28              crayon_1.5.3               
-[39] ragg_1.3.3                  generics_0.1.3             
-[41] metapod_1.13.0              httr_1.4.7                 
-[43] reshape2_1.4.4              BiocBaseUtils_1.7.3        
-[45] cachem_1.1.0                stringr_1.5.1              
-[47] zlibbioc_1.51.1             AnnotationFilter_1.29.0    
-[49] BiocManager_1.30.25         XVector_0.45.0             
-[51] vctrs_0.6.5                 Matrix_1.7-0               
-[53] slam_0.1-53                 jsonlite_1.8.9             
-[55] bookdown_0.40               IHW_1.33.0                 
-[57] ggrepel_0.9.6               clue_0.3-65                
-[59] systemfonts_1.1.0           jquerylib_0.1.4            
-[61] tidyr_1.3.1                 glue_1.8.0                 
-[63] pkgdown_2.1.1.9000          stringi_1.8.4              
-[65] gtable_0.3.5                UCSC.utils_1.1.0           
-[67] munsell_0.5.1               lpsymphony_1.33.1          
-[69] tibble_3.2.1                pillar_1.9.0               
-[71] htmltools_0.5.8.1           GenomeInfoDbData_1.2.13    
-[73] R6_2.5.1                    textshaping_0.4.0          
-[75] evaluate_1.0.0              lattice_0.22-6             
-[77] highr_0.11                  bslib_0.8.0                
-[79] fdrtool_1.2.18              Rcpp_1.0.13                
-[81] SparseArray_1.5.41          xfun_0.47                  
-[83] MsCoreUtils_1.17.2          fs_1.6.4                   
-[85] pkgconfig_2.0.3            </code></pre>
+ [3] fastmap_1.2.0               SingleCellExperiment_1.29.1
+ [5] lazyeval_0.2.2              nipals_1.0                 
+ [7] digest_0.6.37               lifecycle_1.0.4            
+ [9] cluster_2.1.8               ProtGenerics_1.39.2        
+[11] magrittr_2.0.3              compiler_4.5.0             
+[13] rlang_1.1.5                 sass_0.4.9                 
+[15] tools_4.5.0                 igraph_2.1.4               
+[17] yaml_2.3.10                 knitr_1.49                 
+[19] S4Arrays_1.7.3              htmlwidgets_1.6.4          
+[21] DelayedArray_0.33.6         plyr_1.8.9                 
+[23] RColorBrewer_1.1-3          abind_1.4-8                
+[25] purrr_1.0.4                 desc_1.4.3                 
+[27] grid_4.5.0                  colorspace_2.1-1           
+[29] ggplot2_3.5.1               scales_1.3.0               
+[31] MASS_7.3-64                 cli_3.6.4                  
+[33] rmarkdown_2.29              crayon_1.5.3               
+[35] ragg_1.3.3                  metapod_1.15.0             
+[37] httr_1.4.7                  reshape2_1.4.4             
+[39] BiocBaseUtils_1.9.0         cachem_1.1.0               
+[41] stringr_1.5.1               AnnotationFilter_1.31.0    
+[43] BiocManager_1.30.25         XVector_0.47.2             
+[45] vctrs_0.6.5                 Matrix_1.7-2               
+[47] jsonlite_1.9.0              slam_0.1-55                
+[49] bookdown_0.42               IHW_1.35.0                 
+[51] ggrepel_0.9.6               clue_0.3-66                
+[53] systemfonts_1.2.1           tidyr_1.3.1                
+[55] jquerylib_0.1.4             glue_1.8.0                 
+[57] pkgdown_2.1.1.9000          stringi_1.8.4              
+[59] gtable_0.3.6                UCSC.utils_1.3.1           
+[61] munsell_0.5.1               lpsymphony_1.35.0          
+[63] tibble_3.2.1                pillar_1.10.1              
+[65] htmltools_0.5.8.1           GenomeInfoDbData_1.2.13    
+[67] R6_2.6.1                    textshaping_1.0.0          
+[69] evaluate_1.0.3              lattice_0.22-6             
+[71] bslib_0.9.0                 Rcpp_1.0.14                
+[73] fdrtool_1.2.18              SparseArray_1.7.6          
+[75] xfun_0.51                   MsCoreUtils_1.19.0         
+[77] fs_1.6.5                    pkgconfig_2.0.3            </code></pre>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
