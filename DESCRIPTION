@@ -29,7 +29,6 @@ Imports:
     metapod,
     methods,
     MsCoreUtils,
-    BiocBaseUtils,
     MultiAssayExperiment,
     nipals,
     RColorBrewer,

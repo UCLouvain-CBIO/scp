@@ -37,7 +37,6 @@
 ##' @importFrom methods new
 ##' @importFrom S4Vectors metadata
 ##' @importFrom MultiAssayExperiment experiments
-##' @importFrom BiocBaseUtils lifeCycle
 ##'
 ##' @seealso [QFeatures::aggregateFeatures]
 ##' @aliases aggregateFeaturesOverAssays
@@ -53,12 +52,7 @@
 ##' scp1
 ##'
 aggregateFeaturesOverAssays <- function(object, i, fcol, name, fun, ...) {
-    lifeCycle(
-        newfun = "aggregateFeatures",
-        package = "QFeatures",
-        title = "aggregateFeaturesOverAssays",
-        cycle = "deprecated"
-    )
+    .Deprecated("aggregateFeatures", package = "QFeatures")
     if (length(i) != length(name)) stop("'i' and 'name' must have same length")
     if (length(fcol) == 1) fcol <- rep(fcol, length(i))
     if (length(i) != length(fcol)) stop("'i' and 'fcol' must have same length")
