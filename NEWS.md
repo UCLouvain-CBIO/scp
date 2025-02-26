@@ -2,8 +2,8 @@
 
 ## scp 1.17.1
 
-- Deprecate `aggregateFeaturesOverAssays`, use 
-`QFeatures::aggregateFeatures` instead.
+- Deprecate `aggregateFeaturesOverAssays`, use
+  `QFeatures::aggregateFeatures` instead.
 
 ## scp 1.17.0
 
