@@ -99,7 +99,7 @@ Gatto</h4>
                                     <h4 data-toc-skip class="author">Christophe
 Vanderaa</h4>
                         
-            <h4 data-toc-skip class="date">25 February 2025</h4>
+            <h4 data-toc-skip class="date">26 February 2025</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/master/vignettes/scp.Rmd" class="external-link"><code>vignettes/scp.Rmd</code></a></small>
       <div class="hidden name"><code>scp.Rmd</code></div>
@@ -571,10 +571,9 @@ using the annotation contained in the <code>colData</code>.</p>
 <h2 id="aggregate-psm-data-to-peptide-data">Aggregate PSM data to peptide data<a class="anchor" aria-label="anchor" href="#aggregate-psm-data-to-peptide-data"></a>
 </h2>
 <p>Now that the PSM assays are processed, we can aggregate them to
-peptides. This is performed using the
-<code>aggregateFeaturesOverAssays</code> function. For each assay, the
-function aggregates several PSMs into a unique peptide. This is best
-illustrated by the figure below.</p>
+peptides. This is performed using the <code>aggregateFeatures</code>
+function. For each assay, the function aggregates several PSMs into a
+unique peptide. This is best illustrated by the figure below.</p>
 <div class="figure" style="text-align: center">
 <img src="figures/feature_aggregation.png" alt="Conceptual illustration of feature aggregation." width="100%"><p class="caption">
 Conceptual illustration of feature aggregation.
@@ -594,17 +593,17 @@ aggregating function that will tell how to combine the quantitative data
 of the PSMs to aggregate. We here aggregate the PSM data using the
 median value per sample thanks to the
 <code>matrixStats:colMedians()</code> function. Other functions can be
-used and we refer to <code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">?aggregateFeatures</a></code> for more
-information about available aggregation functions. The
-<code><a href="../reference/aggregateFeaturesOverAssays.html">aggregateFeaturesOverAssays()</a></code> function will create a new
-assay for each aggregated assay. We name the aggregated assays using the
-original names and appending <code>peptides_</code> at the start.</p>
+used and we refer to the documentation <code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">?aggregateFeatures</a></code>
+for more information about available aggregation functions. The
+<code><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">aggregateFeatures()</a></code> function will create a new assay for
+each aggregated assay. We name the aggregated assays using the original
+names and appending <code>peptides_</code> at the start.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/aggregateFeaturesOverAssays.html">aggregateFeaturesOverAssays</a></span><span class="op">(</span><span class="va">scp</span>,</span>
-<span>                                   i <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,</span>
-<span>                                   fcol <span class="op">=</span> <span class="st">"Modified.sequence"</span>,</span>
-<span>                                   name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"peptides_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">scp</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>                                   fun <span class="op">=</span> <span class="fu">matrixStats</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/matrixStats/man/rowMedians.html" class="external-link">colMedians</a></span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">aggregateFeatures</a></span><span class="op">(</span><span class="va">scp</span>,</span>
+<span>                         i <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,</span>
+<span>                         fcol <span class="op">=</span> <span class="st">"Modified.sequence"</span>,</span>
+<span>                         name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"peptides_"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">scp</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                         fun <span class="op">=</span> <span class="fu">matrixStats</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/matrixStats/man/rowMedians.html" class="external-link">colMedians</a></span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>Notice that 3 new assays were created in the <code>scp</code> object.
 Those new assays contain the aggregated features while the three first
 assays are unchanged. This allows to keep track of the data
@@ -867,11 +866,6 @@ function.</p>
 <span><span class="co">#&gt; Your quantitative and row data contain missing values. Please read the</span></span>
 <span><span class="co">#&gt; relevant section(s) in the aggregateFeatures manual page regarding the</span></span>
 <span><span class="co">#&gt; effects of missing values on data aggregation.</span></span></code></pre></div>
-<p>The only difference between <code>aggregateFeatures</code> and
-<code>aggregateFeaturesOverAssays</code> is that the second function can
-aggregate several assay at once whereas the former only takes one assay
-to aggregate. Hence, only a single assay, <code>proteins</code>, was
-created in the <code>scp</code> object.</p>
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">scp</span></span>
 <span><span class="co">#&gt; An instance of class QFeatures containing 11 set(s):</span></span>
@@ -965,8 +959,7 @@ for batch correcting SCP data and other batch correcting methods could
 be used using the same procedure.</p>
 <p>We first extract the assay to process.</p>
 <div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sce</span> <span class="op">&lt;-</span> <span class="fu">getWithColData</span><span class="op">(</span><span class="va">scp</span>, <span class="st">"proteins_imptd"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: 'experiments' dropped; see 'drops()'</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">sce</span> <span class="op">&lt;-</span> <span class="fu">getWithColData</span><span class="op">(</span><span class="va">scp</span>, <span class="st">"proteins_imptd"</span><span class="op">)</span></span></code></pre></div>
 <p>Next, we need to provide a design matrix and the batch annotation to
 <code>Combat</code>. The design matrix allows to protect variables of
 interest, in our case <code>SampleType</code>.</p>
@@ -1149,7 +1142,7 @@ other attached packages:
  [5] BiocParallel_1.41.2         genefilter_1.89.0          
  [7] mgcv_1.9-1                  nlme_3.1-167               
  [9] dplyr_1.1.4                 ggplot2_3.5.1              
-[11] scp_1.17.1                  QFeatures_1.17.3           
+[11] scp_1.17.1                  QFeatures_1.17.4           
 [13] MultiAssayExperiment_1.33.9 SummarizedExperiment_1.37.0
 [15] Biobase_2.67.0              GenomicRanges_1.59.1       
 [17] GenomeInfoDb_1.43.4         IRanges_2.41.3             
