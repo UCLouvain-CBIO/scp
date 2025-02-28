@@ -1,6 +1,6 @@
 Package: scp
 Title: Mass Spectrometry-Based Single-Cell Proteomics Data Analysis
-Version: 1.17.0
+Version: 1.17.1
 Authors@R:
     c(person("Christophe", "Vanderaa",
               email = "christophe.vanderaa@ugent.be",
@@ -66,4 +66,4 @@ biocViews:
 BugReports: https://github.com/UCLouvain-CBIO/scp/issues
 URL: https://UCLouvain-CBIO.github.io/scp
 Roxygen: list(markdown=TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2

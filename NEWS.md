@@ -1,3 +1,20 @@
+# scp 1.17
+
+## scp 1.17.1
+
+- Deprecate `aggregateFeaturesOverAssays`, use
+  `QFeatures::aggregateFeatures` instead.
+
+## scp 1.17.0
+
+- New Bioconductor 3.21 devel
+
+# scp 1.16
+
+## scp 1.16.0
+
+- New Bioconductor 3.20 release
+
 # scp 1.15
 
 ## scp 1.15.2
