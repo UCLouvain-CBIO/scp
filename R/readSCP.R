@@ -68,11 +68,7 @@
 ##'         colData = sampleAnnotation,
 ##'         runCol = "Raw.file")
 readSCP <- function(...) {
-    ans <- readQFeatures(...)
-    el <- ExperimentList(lapply(experiments(ans),
-                                as, "SingleCellExperiment"))
-    experiments(ans) <- el
-    ans
+    readQFeatures(...)
 }
 
 
@@ -80,11 +76,7 @@ readSCP <- function(...) {
 ##'
 ##' @rdname readSCP
 readSCPfromDIANN <- function(...) {
-    ans <- readQFeaturesFromDIANN(...)
-    el <- ExperimentList(lapply(experiments(ans),
-                                as, "SingleCellExperiment"))
-    experiments(ans) <- el
-    ans
+    readQFeaturesFromDIANN(...)
 }
 
 ##' @export

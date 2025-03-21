@@ -191,6 +191,8 @@ scpRemoveBatchEffect <- function(object, effects = NULL,
 ##'
 ##' @author Laurent Gatto and Christophe Vanderaa
 ##'
+##' @importFrom methods as
+##' @import SingleCellExperiment
 ##' @export
 ##'
 ##' @examples
@@ -210,10 +212,7 @@ scpRemoveBatchEffect <- function(object, effects = NULL,
 ##' plotTSNE(leduc_minimal, colour_by = "SampleType")
 addReducedDims <- function(sce, x) {
     if (!inherits(sce, "SingleCellExperiment"))
-        stop(
-            "'sce' must be a SingleCellExperiment object. Transform ",
-            "your data using 'as(sce, \"SingleCellExperiment\")'."
-        )
+        sce <- as(sce, "SingleCellExperiment")
     pcList <- List(lapply(x, .getPCs))
     reducedDims(sce) <- c(reducedDims(sce), pcList)
     sce

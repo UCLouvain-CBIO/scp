@@ -12,7 +12,7 @@ scpModelFilterPlot(object, name)
 }
 \arguments{
 \item{object}{An object that inherits from the
-\code{SingleCellExperiment} class.}
+\code{SummarizedExperiment} class.}
 
 \item{formula}{A \code{formula} object controlling which variables are
 to be modelled.}

@@ -120,7 +120,7 @@ NULL
 ##' @name ScpModel-Workflow
 ##'
 ##' @param object An object that inherits from the
-##'     `SingleCellExperiment` class.
+##'     `SummarizedExperiment` class.
 ##'
 ##' @param formula A `formula` object controlling which variables are
 ##'     to be modelled.

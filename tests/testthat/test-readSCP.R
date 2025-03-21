@@ -8,14 +8,14 @@ test_that("readSCP", {
                    sampleAnnotation,
                    runCol = "Raw.file",
                    quantCols = quantCols)
-    expect_true(all(sapply(experiments(scp), inherits, "SingleCellExperiment")))
+    expect_true(all(sapply(experiments(scp), inherits, "SummarizedExperiment")))
 })
 
 test_that("readSCPfromDIANN", {
     diannData <- read.delim(MsDataHub::Report.Derks2022.plexDIA.tsv())
     diannData$FileFile.Name <- diannData$Run
     scp <- readSCPfromDIANN(diannData, multiplexing = "mTRAQ")
-    expect_true(all(sapply(experiments(scp), inherits, "SingleCellExperiment")))
+    expect_true(all(sapply(experiments(scp), inherits, "SummarizedExperiment")))
 })
 
 test_that("readSingleCellExperiment", {
