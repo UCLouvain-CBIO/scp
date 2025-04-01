@@ -42,8 +42,8 @@ test_that(".rowCV", {
 })
 
 test_that("featureCV", {
-    ## Create a SingleCellExperiment
-    sce <- SingleCellExperiment(m, rowData = DataFrame(group = group))
+    ## Create a SummarizedExperiment
+    sce <- SummarizedExperiment(m, rowData = DataFrame(group = group))
     ## No normalization
     expect_identical(.rowCV(m, group = group, reorder = TRUE,
                             na.rm = TRUE),
