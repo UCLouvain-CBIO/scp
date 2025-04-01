@@ -36,8 +36,10 @@ specific data structure that wraps
 [`QFeatures`](https://rformassspectrometry.github.io/QFeatures/)
 objects (@Gatto2023-ry) around
 [`SingleCellExperiment`](http://bioconductor.org/packages/release/bioc/html/SingleCellExperiment.html)
-objects (@Amezquita2019-bf). This data structure could be seen as
-Matryoshka dolls were the `SingleCellExperiment` objects are small
+(@Amezquita2019-bf) or 
+[`SummarizedExperiment`](http://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html)
+objects. This data structure could be seen as
+Matryoshka dolls were the `SingleCellExperiment` or `SummarizedExperiment` objects are small
 dolls contained in the bigger `QFeatures` doll.
 
 The `SingleCellExperiment` class provides a dedicated framework for
