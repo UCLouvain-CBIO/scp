@@ -14,27 +14,25 @@ scp1 <- specht2019v3()
 
 ## Randomly sample 1 SCoPE2 set from each possible combination of batch variables
 set.seed(1000)
-scp1[, , 1:177] |>
-    colData |>
-    data.frame |>
-    filter(lcbatch %in% c("LCA9", "LCA10", "LCB3")) |>
-    group_by(lcbatch) |>
-    sample_n(1) |>
-    pull(Set) ->
-    sampledRuns
+sampledRuns <- scp1[, , 1:177] %>%
+    colData %>%
+    data.frame %>%
+    filter(lcbatch %in% c("LCA9", "LCA10", "LCB3")) %>%
+    group_by(lcbatch) %>%
+    sample_n(1) %>%
+    pull(Set)
 scp1 <- scp1[, , sampledRuns]
 
 ## Sample 100 proteins from each run
 set.seed(1000)
-rbindRowData(scp1, seq_along(scp1)) |>
-    data.frame |> 
-    select(rowname, peptide, protein, assay) |> 
-    group_by(peptide) |>
-    mutate(nprots = length(unique(protein))) |>
-    filter(nprots == 1) |>
-    group_by(assay) |>
-    filter(protein %in% sample(unique(protein), 100)) ->
-    l
+l <- rbindRowData(scp1, seq_along(scp1)) %>%
+    data.frame %>%
+    select(rowname, peptide, protein, assay) %>%
+    group_by(peptide) %>%
+    mutate(nprots = length(unique(protein))) %>%
+    filter(nprots == 1) %>%
+    group_by(assay) %>%
+    filter(protein %in% sample(unique(protein), 100))
 l <- split(l$rowname, f = l$assay)
 scp1 <- scp1[l, ]
 
@@ -63,6 +61,10 @@ rd <- lapply(rd, function(x) {
     x
 })
 rowData(scp1) <- rd
+
+el <- ExperimentList(lapply(experiments(scp1),
+                                as, "SummarizedExperiment"))
+experiments(scp1) <- el
 
 ## Save the data 
 format(object.size(scp1), units = "MB", digits = 2)

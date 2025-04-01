@@ -211,8 +211,10 @@ scpRemoveBatchEffect <- function(object, effects = NULL,
 ##' leduc_minimal <- runTSNE(leduc_minimal, dimred = "ASCA_SampleType")
 ##' plotTSNE(leduc_minimal, colour_by = "SampleType")
 addReducedDims <- function(sce, x) {
-    if (!inherits(sce, "SingleCellExperiment"))
+    if (!inherits(sce, "SingleCellExperiment")) {
         sce <- as(sce, "SingleCellExperiment")
+        message("Convert object to SingleCellExperiment")
+    }
     pcList <- List(lapply(x, .getPCs))
     reducedDims(sce) <- c(reducedDims(sce), pcList)
     sce

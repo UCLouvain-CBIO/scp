@@ -2,7 +2,19 @@
 
 ## scp 1.17.1
 
-- Nothing yet
+- Recommend the use of `SummarizedExperiment` instead of
+`SingleCellExperiment` for performance reasons.
+- All functions are now compatible with `SummarizedExperiment`.
+- `data("scp1")` now contains `SummarizedExperiment` objects.
+- By default, `readSCP` and `readSCPfromDIANN` now create
+QFeatures objects that contain `SummarizedExperiment` objects.
+- `readSCP` and `readSCPfromDIANN` have a new parameter:
+`experimentsAsSce` that indicate if the QFeatures should 
+contain `SingleCellExperiment`, default is `FALSE`.
+- `readSCP` and `readSCPfromDIANN` now return a QFeatures of type
+"scp".
+- `scpModelWorkflow` now automatically convert a `SummarizedExperiment`
+to a `SingleCellExperiment`.
 
 ## scp 1.17.0
 
