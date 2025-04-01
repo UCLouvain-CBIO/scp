@@ -884,8 +884,8 @@ plot(scp)
 
 # Dimension reduction
 
-Because each assay contains `SingelCellExperiment` objects, we can
-easily apply methods developed in the scRNA-Seq field. A useful
+Because each assay contains `SingelCellExperiment` or `SummarizedExperiment` objects,
+we can easily apply methods developed in the scRNA-Seq field. A useful
 package for dimension reduction on single-cell data is the `scater`.
 
 ```{r load_scater}
@@ -894,6 +894,14 @@ library(scater)
 
 This package provides streamline functions to computes various
 dimension reduction such as PCA, UMAP, t-SNE, NMF, MDS, ....
+
+In the case where you have `SummarizedExperiment` objects, you can first 
+convert it with `as` like so.
+
+```{r}
+scp[["proteins_batchC"]] <- as(scp[["proteins_batchC"]], "SingleCellExperiment")
+```
+
 
 ## PCA
 

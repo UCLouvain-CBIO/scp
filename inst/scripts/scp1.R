@@ -36,12 +36,12 @@ l <- rbindRowData(scp1, seq_along(scp1)) %>%
 l <- split(l$rowname, f = l$assay)
 scp1 <- scp1[l, ]
 
-## Aggregate to peptides
+# Aggregate to peptides
 scp1 <- aggregateFeaturesOverAssays(scp1, i = names(scp1), fcol = "peptide",
                                     name = paste0("pep_", names(scp1)),
                                     fun = colMeans, na.rm = TRUE)
 
-## Join peptides 
+## Join peptides
 scp1 <- joinAssays(scp1, i = grep("pep_", names(scp1)), name = "peptides")
 
 ## Aggregate to proteins
@@ -50,7 +50,7 @@ scp1 <- aggregateFeatures(scp1, i = "peptides", fcol = "protein",
 
 ## Keep only the PSM, joined peptide and protein data
 scp1 <- scp1[, , !grepl("pep_", names(scp1))]
-scp1 <- addAssayLink(scp1, from = 1:3, to = 4, 
+scp1 <- addAssayLink(scp1, from = 1:3, to = 4,
                      varFrom = rep("peptide", 3), varTo = "peptide")
 
 ## Rename the rowData to standard names 
@@ -63,10 +63,12 @@ rd <- lapply(rd, function(x) {
 rowData(scp1) <- rd
 
 el <- ExperimentList(lapply(experiments(scp1),
-                                as, "SummarizedExperiment"))
+                                 as, "RangedSummarizedExperiment"))
+el <- ExperimentList(lapply(el,
+                                 as, "SummarizedExperiment"))
 experiments(scp1) <- el
 
-## Save the data 
+## Save the data
 format(object.size(scp1), units = "MB", digits = 2)
 save(scp1, file = file.path("data/scp1.rda"), 
      compress = "xz", compression_level = 9)
