@@ -14,7 +14,7 @@
 ##' @section Input data:
 ##'
 ##' The main input is `object` that inherits from the
-##' `SingleCellExperiment` class. The quantitative data will be
+##' `SummarizedExperiment` class. The quantitative data will be
 ##' retrieve using `assay(object)`. If `object` contains multiple
 ##' assays, you can specify which assay to take as input thanks to the
 ##' argument `i`, the function will then assume `assay(object, i)` as

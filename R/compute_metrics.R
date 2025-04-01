@@ -683,14 +683,14 @@ jaccardIndex <- function(object, i, by = NULL) {
 ##'
 ##' ## Simulate data
 ##' ## 1000 features in 100 cells
-##' library(SingleCellExperiment)
+##' library(SummarizedExperiment)
 ##' id <- matrix(FALSE, 1000, 1000)
 ##' id[sample(1:length(id), 5000)] <- TRUE
 ##' dimnames(id) <- list(
 ##'     paste0("feat", 1:1000),
 ##'     paste0("cell", 1:1000)
 ##' )
-##' sce <- SingleCellExperiment(assays = List(id))
+##' sce <- SummarizedExperiment(assays = List(id))
 ##' sim <- QFeatures(experiments = List(id = sce))
 ##' sim$batch <- rep(1:100, each = 10)
 ##' sim$SampleType <- rep(c("A", "B"), each = 500)

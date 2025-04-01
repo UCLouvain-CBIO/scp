@@ -76,7 +76,7 @@ scpAnnotateResults <- function(tableList,
 ##'
 ##' The function uses the data modelling output to generate corrected
 ##' data that can be used for downstream analysis. The input
-##' is expected to be a `SingleCellExperiment` object that contains an
+##' is expected to be a `SummarizedExperiment` object that contains an
 ##' estimated `ScpModel`. There are two approaches:
 ##'
 ##' - `scpKeepEffect()`: keep the effects of interests. The
@@ -95,7 +95,7 @@ scpAnnotateResults <- function(tableList,
 ##' reconstruct the data are the ones that are not removed when
 ##' performing batch correction (see examples).
 ##'
-##' The function returns a new `SingleCellExperiment` that contains an
+##' The function returns a new `SummarizedExperiment` that contains an
 ##' assay with the batch corrected data. Note that the 'ScpModel` is
 ##' erased in this new object.
 ##'
@@ -115,7 +115,7 @@ NULL
 ##' @name ScpModel-DataCorrection
 ##'
 ##' @param object An object that inherits from the
-##'     `SingleCellExperiment` class. It must contain an estimated
+##'     `SummarizedExperiment` class. It must contain an estimated
 ##'     `ScpModel` in its metadata
 ##'
 ##' @param effects A `character()` vector. For `scpKeepEffect()`,

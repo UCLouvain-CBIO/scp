@@ -12,6 +12,7 @@ spectrometry-based single cell proteomics data.  It relies on the
 [`QFeatures`](https://rformassspectrometry.github.io/QFeatures/)
 package to manage and process
 [`SingleCellExperiment`](http://bioconductor.org/packages/release/bioc/html/SingleCellExperiment.html)
+or [`SummarizedExperiment`](http://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html)
 objects.
 
 <img

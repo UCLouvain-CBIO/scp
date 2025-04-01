@@ -34,7 +34,7 @@ scpModelFilterThreshold(object, name) <- value
 }
 \arguments{
 \item{object}{An object that inherits from the
-\code{SingleCellExperiment} class.}
+\code{SummarizedExperiment} class.}
 
 \item{name}{A \code{character(1)} providing the name to use to store or
 retrieve the modelling results. When retrieving a model and
@@ -55,7 +55,7 @@ threshold}
 }
 \description{
 An \code{ScpModel} object must be always stored in the \code{metadata()} of
-an object that inherits from the \code{SingleCellExperiment} class. The
+an object that inherits from the \code{SummarizedExperiment} class. The
 \code{ScpModel} object should \strong{never be accessed directly} by the
 user. Instead, we provide several setter function to retrieve
 information that may be useful to the user.The \code{ScpModel} class
@@ -64,10 +64,10 @@ contains several slots:
 \item \code{scpModelFormula}: a \code{formula} object controlling which
 variables are to be modelled.
 \item \code{scpModelInputIndex}: a \code{numeric(1)}, selecting the assay to use
-in the \code{SingleCellExperiment} object as input matrix. Note that
+in the \code{SummarizedExperiment} object as input matrix. Note that
 this slot serves as a pointer, meaning that the quantitative
 data is not duplicated. Any change to the assay in the
-\code{SingleCellExperiment} will impact the estimation of the
+\code{SummarizedExperiment} will impact the estimation of the
 \code{ScpModel} object.
 \item \code{scpModelFilterThreshold}: A \code{numeric(1)} indicating the minimal
 n/p ratio required for a feature to be included in further model
@@ -85,7 +85,7 @@ each feature. Each element is a \code{ScpModelFit} object (see
 Each slot has a getter function associated:
 \itemize{
 \item \code{scpModelNames()}: returns a vector of names of \code{ScpModel}
-objects stored in the \code{SingleCellExperiment} object.
+objects stored in the \code{SummarizedExperiment} object.
 \item \code{scpModelFormula()}: returns the \code{formula} slot of the \code{ScpModel}
 within an object that inherits from the \code{SummarizedExperiment}
 class.
