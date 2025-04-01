@@ -1,6 +1,15 @@
 # scp 1.17
 
+## scp 1.17.0
+
+- New Bioconductor 3.21 devel
+
 ## scp 1.17.1
+
+- Deprecate `aggregateFeaturesOverAssays`, use
+  `QFeatures::aggregateFeatures` instead.
+
+## scp 1.17.2
 
 - Recommend the use of `SummarizedExperiment` instead of
 `SingleCellExperiment` for performance reasons.
@@ -15,10 +24,6 @@ contain `SingleCellExperiment`, default is `FALSE`.
 "scp".
 - `scpModelWorkflow` now automatically convert a `SummarizedExperiment`
 to a `SingleCellExperiment`.
-
-## scp 1.17.0
-
-- New Bioconductor 3.21 devel
 
 # scp 1.16
 

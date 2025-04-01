@@ -454,7 +454,7 @@ scp <- divideByReference(scp,
 # Aggregate PSM data to peptide data
 
 Now that the PSM assays are processed, we can aggregate them to
-peptides. This is performed using the `aggregateFeaturesOverAssays`
+peptides. This is performed using the `aggregateFeatures`
 function. For each assay, the function aggregates several PSMs into a
 unique peptide. This is best illustrated by the figure below.
 
@@ -473,18 +473,18 @@ modified peptide sequence. We also need to supply an aggregating
 function that will tell how to combine the quantitative data of the
 PSMs to aggregate. We here aggregate the PSM data using the median
 value per sample thanks to the `matrixStats:colMedians()`
-function. Other functions can be used and we refer to
+function. Other functions can be used and we refer to the documentation
 `?aggregateFeatures` for more information about available aggregation
-functions. The `aggregateFeaturesOverAssays()` function will create a
+functions. The `aggregateFeatures()` function will create a
 new assay for each aggregated assay. We name the aggregated assays
 using the original names and appending `peptides_` at the start.
 
 ```{r aggregate_peptides, message = FALSE}
-scp <- aggregateFeaturesOverAssays(scp,
-                                   i = 1:3,
-                                   fcol = "Modified.sequence",
-                                   name = paste0("peptides_", names(scp)),
-                                   fun = matrixStats::colMedians, na.rm = TRUE)
+scp <- aggregateFeatures(scp,
+                         i = 1:3,
+                         fcol = "Modified.sequence",
+                         name = paste0("peptides_", names(scp)),
+                         fun = matrixStats::colMedians, na.rm = TRUE)
 ```
 
 Notice that 3 new assays were created in the `scp` object. Those new
@@ -745,12 +745,6 @@ scp <- aggregateFeatures(scp,
                          fcol = "Leading.razor.protein",
                          fun = matrixStats::colMedians, na.rm = TRUE)
 ```
-
-The only difference between `aggregateFeatures` and
-`aggregateFeaturesOverAssays` is that the second function can
-aggregate several assay at once whereas the former only takes one
-assay to aggregate. Hence, only a single assay, `proteins`, was
-created in the `scp` object.
 
 ```{r show_agg_proteins}
 scp
