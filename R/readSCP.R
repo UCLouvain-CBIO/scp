@@ -10,8 +10,15 @@
 ##'     [readQFeatures()] or [readQFeaturesFromDIANN()]. See these
 ##'     respective manual pages for details.
 ##'
+##' @param experimentsAsSce A `logical(1)` indicating whether the
+##'     `QFeatures` object should be composed of `SingleCellExperiment`
+##'     objects. By default: `FALSE`, the `QFeatures` object will be composed
+##'     of `SummarizedExperiment` objects. Note that using
+##'     `SingleCellExperiment` can impact the performance.
+##'
 ##' @return An instance of class `SingleCellExperiment` or a
-##'     `QFeatures`, composed of `SingleCellExperiment` objects.
+##'     `QFeatures`, composed of `SingleCellExperiment` or
+##'     `SummarizedExperiment` objects.
 ##'
 ##' @note The `SingleCellExperiment` class is built on top of the
 ##'     `RangedSummarizedExperiment` class. This means that some column names
@@ -67,24 +74,28 @@
 ##' readSCP(assayData = mqScpData,
 ##'         colData = sampleAnnotation,
 ##'         runCol = "Raw.file")
-readSCP <- function(...) {
+readSCP <- function(..., experimentsAsSce = FALSE) {
     ans <- readQFeatures(...)
-    el <- ExperimentList(lapply(experiments(ans),
+    if (experimentsAsSce) {
+        el <- ExperimentList(lapply(experiments(ans),
                                 as, "SingleCellExperiment"))
-    experiments(ans) <- el
-    ans
+        experiments(ans) <- el
+    }
+    setQFeaturesType(ans, "scp")
 }
 
 
 ##' @export
 ##'
 ##' @rdname readSCP
-readSCPfromDIANN <- function(...) {
+readSCPfromDIANN <- function(..., experimentsAsSce = FALSE) {
     ans <- readQFeaturesFromDIANN(...)
-    el <- ExperimentList(lapply(experiments(ans),
+    if (experimentsAsSce) {
+        el <- ExperimentList(lapply(experiments(ans),
                                 as, "SingleCellExperiment"))
-    experiments(ans) <- el
-    ans
+        experiments(ans) <- el
+    }
+    setQFeaturesType(ans, "scp")
 }
 
 ##' @export
@@ -93,6 +104,5 @@ readSCPfromDIANN <- function(...) {
 readSingleCellExperiment <- function(...) {
     ## Read data as SummarizedExperiment
     sce <- readSummarizedExperiment(...)
-    sce <- as(sce, "SingleCellExperiment")
-    return(sce)
+    as(sce, "SingleCellExperiment")
 }

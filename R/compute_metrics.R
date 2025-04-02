@@ -48,7 +48,7 @@
     (cumsum(x[order(x)]) / seq_along(x))[order(order(x))]
 }
 
-## @param x A `SingleCellExperiment` object
+## @param x A `SummarizedExperiment` object
 ##     
 ## @param group A `factor()` that indicates how features (rows) should
 ##    be grouped. The CVs are computed for each group separately. 
@@ -56,8 +56,8 @@
 ## @rdname medianCVperCell
 featureCV <- function(x, group, na.rm = TRUE, norm = "none", nobs = 2, ...) {
     ## Check object
-    if (!inherits(x, "SingleCellExperiment"))
-        stop("'x' must inherit from a 'SingleCellExperiment'")
+    if (!inherits(x, "SummarizedExperiment"))
+        stop("'x' must inherit from a 'SummarizedExperiment'")
     ## Optional normalization(s)   
     if (identical(norm, "SCoPE2")) {
         xnorm <- .normalizeSCP(x, method = "div.median")
@@ -683,14 +683,14 @@ jaccardIndex <- function(object, i, by = NULL) {
 ##'
 ##' ## Simulate data
 ##' ## 1000 features in 100 cells
-##' library(SingleCellExperiment)
+##' library(SummarizedExperiment)
 ##' id <- matrix(FALSE, 1000, 1000)
 ##' id[sample(1:length(id), 5000)] <- TRUE
 ##' dimnames(id) <- list(
 ##'     paste0("feat", 1:1000),
 ##'     paste0("cell", 1:1000)
 ##' )
-##' sce <- SingleCellExperiment(assays = List(id))
+##' sce <- SummarizedExperiment(assays = List(id))
 ##' sim <- QFeatures(experiments = List(id = sce))
 ##' sim$batch <- rep(1:100, each = 10)
 ##' sim$SampleType <- rep(c("A", "B"), each = 500)

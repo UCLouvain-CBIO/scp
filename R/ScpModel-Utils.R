@@ -76,7 +76,7 @@ scpAnnotateResults <- function(tableList,
 ##'
 ##' The function uses the data modelling output to generate corrected
 ##' data that can be used for downstream analysis. The input
-##' is expected to be a `SingleCellExperiment` object that contains an
+##' is expected to be a `SummarizedExperiment` object that contains an
 ##' estimated `ScpModel`. There are two approaches:
 ##'
 ##' - `scpKeepEffect()`: keep the effects of interests. The
@@ -95,7 +95,7 @@ scpAnnotateResults <- function(tableList,
 ##' reconstruct the data are the ones that are not removed when
 ##' performing batch correction (see examples).
 ##'
-##' The function returns a new `SingleCellExperiment` that contains an
+##' The function returns a new `SummarizedExperiment` that contains an
 ##' assay with the batch corrected data. Note that the 'ScpModel` is
 ##' erased in this new object.
 ##'
@@ -115,7 +115,7 @@ NULL
 ##' @name ScpModel-DataCorrection
 ##'
 ##' @param object An object that inherits from the
-##'     `SingleCellExperiment` class. It must contain an estimated
+##'     `SummarizedExperiment` class. It must contain an estimated
 ##'     `ScpModel` in its metadata
 ##'
 ##' @param effects A `character()` vector. For `scpKeepEffect()`,
@@ -191,6 +191,8 @@ scpRemoveBatchEffect <- function(object, effects = NULL,
 ##'
 ##' @author Laurent Gatto and Christophe Vanderaa
 ##'
+##' @importFrom methods as
+##' @import SingleCellExperiment
 ##' @export
 ##'
 ##' @examples
@@ -209,11 +211,10 @@ scpRemoveBatchEffect <- function(object, effects = NULL,
 ##' leduc_minimal <- runTSNE(leduc_minimal, dimred = "ASCA_SampleType")
 ##' plotTSNE(leduc_minimal, colour_by = "SampleType")
 addReducedDims <- function(sce, x) {
-    if (!inherits(sce, "SingleCellExperiment"))
-        stop(
-            "'sce' must be a SingleCellExperiment object. Transform ",
-            "your data using 'as(sce, \"SingleCellExperiment\")'."
-        )
+    if (!inherits(sce, "SingleCellExperiment")) {
+        sce <- as(sce, "SingleCellExperiment")
+        message("Convert object to SingleCellExperiment")
+    }
     pcList <- List(lapply(x, .getPCs))
     reducedDims(sce) <- c(reducedDims(sce), pcList)
     sce

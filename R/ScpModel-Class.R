@@ -9,7 +9,7 @@
 ##' @description
 ##'
 ##' An `ScpModel` object must be always stored in the `metadata()` of
-##' an object that inherits from the `SingleCellExperiment` class. The
+##' an object that inherits from the `SummarizedExperiment` class. The
 ##' `ScpModel` object should **never be accessed directly** by the
 ##' user. Instead, we provide several setter function to retrieve
 ##' information that may be useful to the user.The `ScpModel` class
@@ -18,10 +18,10 @@
 ##' - `scpModelFormula`: a `formula` object controlling which
 ##'   variables are to be modelled.
 ##' - `scpModelInputIndex`: a `numeric(1)`, selecting the assay to use
-##'   in the `SingleCellExperiment` object as input matrix. Note that
+##'   in the `SummarizedExperiment` object as input matrix. Note that
 ##'   this slot serves as a pointer, meaning that the quantitative
 ##'   data is not duplicated. Any change to the assay in the
-##'   `SingleCellExperiment` will impact the estimation of the
+##'   `SummarizedExperiment` will impact the estimation of the
 ##'   `ScpModel` object.
 ##' - `scpModelFilterThreshold`: A `numeric(1)` indicating the minimal
 ##'   n/p ratio required for a feature to be included in further model
@@ -37,7 +37,7 @@
 ##' Each slot has a getter function associated:
 ##'
 ##' - `scpModelNames()`: returns a vector of names of `ScpModel`
-##'   objects stored in the `SingleCellExperiment` object.
+##'   objects stored in the `SummarizedExperiment` object.
 ##' - `scpModelFormula()`: returns the `formula` slot of the `ScpModel`
 ##'   within an object that inherits from the `SummarizedExperiment`
 ##'   class.
@@ -354,7 +354,7 @@ scpModelEffectNames <- function(object, name) {
 ##' @rdname ScpModel-class
 ##'
 ##' @param object An object that inherits from the
-##'     `SingleCellExperiment` class.
+##'     `SummarizedExperiment` class.
 ##'
 ##' @param value An `numeric(1)`, the new value for the n/p ratio
 ##'     threshold

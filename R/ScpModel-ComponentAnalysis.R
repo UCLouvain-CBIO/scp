@@ -149,7 +149,7 @@ NULL
 ##' @name ScpModel-ComponentAnalysis
 ##'
 ##' @param object An object that inherits from the
-##'     `SingleCellExperiment` class. It must contain an estimated
+##'     `SummarizedExperiment` class. It must contain an estimated
 ##'     `ScpModel` in its metadata.
 ##'
 ##' @param method A `character()` indicating which approach(es) to use
@@ -234,7 +234,7 @@ scpComponentAnalysis <- function(object,
 ##     will use [base::svd()]. If "auto", the function uses "nipals"
 ##     if the data contain missing values and "svd" otherwise.
 ## @param object An object that inherits from the
-##     `SingleCellExperiment` class. It must contain an estimated
+##     `SummarizedExperiment` class. It must contain an estimated
 ##     `ScpModel` in its metadata. Ignored when pcaFun != "auto".
 ## @param name A `character(1)` providing the name to use to retrieve
 ##     the model results. When retrieving a model and `name` is

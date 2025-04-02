@@ -50,7 +50,7 @@ scpComponentBiplot(
 }
 \arguments{
 \item{object}{An object that inherits from the
-\code{SingleCellExperiment} class. It must contain an estimated
+\code{SummarizedExperiment} class. It must contain an estimated
 \code{ScpModel} in its metadata.}
 
 \item{method}{A \code{character()} indicating which approach(es) to use

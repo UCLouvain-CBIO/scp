@@ -36,8 +36,10 @@ specific data structure that wraps
 [`QFeatures`](https://rformassspectrometry.github.io/QFeatures/)
 objects (@Gatto2023-ry) around
 [`SingleCellExperiment`](http://bioconductor.org/packages/release/bioc/html/SingleCellExperiment.html)
-objects (@Amezquita2019-bf). This data structure could be seen as
-Matryoshka dolls were the `SingleCellExperiment` objects are small
+(@Amezquita2019-bf) or 
+[`SummarizedExperiment`](http://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html)
+objects. This data structure could be seen as
+Matryoshka dolls were the `SingleCellExperiment` or `SummarizedExperiment` objects are small
 dolls contained in the bigger `QFeatures` doll.
 
 The `SingleCellExperiment` class provides a dedicated framework for
@@ -882,8 +884,8 @@ plot(scp)
 
 # Dimension reduction
 
-Because each assay contains `SingelCellExperiment` objects, we can
-easily apply methods developed in the scRNA-Seq field. A useful
+Because each assay contains `SingelCellExperiment` or `SummarizedExperiment` objects,
+we can easily apply methods developed in the scRNA-Seq field. A useful
 package for dimension reduction on single-cell data is the `scater`.
 
 ```{r load_scater}
@@ -892,6 +894,14 @@ library(scater)
 
 This package provides streamline functions to computes various
 dimension reduction such as PCA, UMAP, t-SNE, NMF, MDS, ....
+
+In the case where you have `SummarizedExperiment` objects, you can first 
+convert it with `as` like so.
+
+```{r}
+scp[["proteins_batchC"]] <- as(scp[["proteins_batchC"]], "SingleCellExperiment")
+```
+
 
 ## PCA
 

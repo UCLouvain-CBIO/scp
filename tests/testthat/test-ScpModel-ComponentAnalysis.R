@@ -1,3 +1,4 @@
+library("vdiffr")
 ## Internal function that creates a minimal SE object as expected by
 ## scplainer for unit testing ScpModel class methods
 ## @param nr Number of rows
