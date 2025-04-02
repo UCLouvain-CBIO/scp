@@ -183,9 +183,11 @@ SCoPE2.” Genome Biology 22 (1): 50.</p>
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"scp1"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">scp1</span> <span class="op">&lt;-</span> <span class="fu">filterFeatures</span><span class="op">(</span><span class="va">scp1</span>, <span class="op">~</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">Proteins</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> 'Proteins' found in 4 out of 5 assay(s)</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> No filter applied to the following assay(s) because one or more filtering variables are missing in the rowData: proteins.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> You can control whether to remove or keep the features using the 'keep' argument (see '?filterFeature').</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> 'Proteins' found in 4 out of 5 assay(s).</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> No filter applied to the following assay(s) because one or more</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> filtering variables are missing in the rowData: proteins. You can</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> control whether to remove or keep the features using the 'keep'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> argument (see '?filterFeature').</span>
 <span class="r-in"><span><span class="va">scp1</span> <span class="op">&lt;-</span> <span class="fu">medianCVperCell</span><span class="op">(</span><span class="va">scp1</span>, </span></span>
 <span class="r-in"><span>                        i <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,</span></span>
 <span class="r-in"><span>                        groupBy <span class="op">=</span> <span class="st">"Proteins"</span>,</span></span>

@@ -99,7 +99,7 @@ Gatto</h4>
                                     <h4 data-toc-skip class="author">Christophe
 Vanderaa</h4>
                         
-            <h4 data-toc-skip class="date">26 February 2025</h4>
+            <h4 data-toc-skip class="date">2 April 2025</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/master/vignettes/scp.Rmd" class="external-link"><code>vignettes/scp.Rmd</code></a></small>
       <div class="hidden name"><code>scp.Rmd</code></div>
@@ -344,9 +344,7 @@ database).</p>
 <span>                      <span class="op">~</span> <span class="va">Reverse</span> <span class="op">!=</span> <span class="st">"+"</span> <span class="op">&amp;</span></span>
 <span>                          <span class="va">Potential.contaminant</span> <span class="op">!=</span> <span class="st">"+"</span> <span class="op">&amp;</span></span>
 <span>                          <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">PIF</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">PIF</span> <span class="op">&gt;</span> <span class="fl">0.8</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 'Reverse' found in 4 out of 4 assay(s)</span></span>
-<span><span class="co">#&gt; 'Potential.contaminant' found in 4 out of 4 assay(s)</span></span>
-<span><span class="co">#&gt; 'PIF' found in 4 out of 4 assay(s)</span></span></code></pre></div>
+<span><span class="co">#&gt; 'Reverse' found in 4 out of 4 assay(s).'Potential.contaminant' found in 4 out of 4 assay(s).'PIF' found in 4 out of 4 assay(s).</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="filter-assays-based-on-detected-features">Filter assays based on detected features<a class="anchor" aria-label="anchor" href="#filter-assays-based-on-detected-features"></a>
@@ -500,7 +498,7 @@ performed using the <code>filterFeatures</code> functions.</p>
 <code class="sourceCode R"><span><span class="va">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/filterFeatures.html" class="external-link">filterFeatures</a></span><span class="op">(</span><span class="va">scp</span>,</span>
 <span>                      <span class="op">~</span> <span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">MeanSCR</span><span class="op">)</span> <span class="op">&amp;</span></span>
 <span>                          <span class="va">MeanSCR</span> <span class="op">&lt;</span> <span class="fl">0.1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 'MeanSCR' found in 3 out of 3 assay(s)</span></span></code></pre></div>
+<span><span class="co">#&gt; 'MeanSCR' found in 3 out of 3 assay(s).</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="filter-features-to-control-for-fdr">Filter features to control for FDR<a class="anchor" aria-label="anchor" href="#filter-features-to-control-for-fdr"></a>
@@ -540,7 +538,7 @@ q-values were stored in the <code>rowData</code>.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/filterFeatures.html" class="external-link">filterFeatures</a></span><span class="op">(</span><span class="va">scp</span>,</span>
 <span>                      <span class="op">~</span> <span class="va">qvalue_proteins</span> <span class="op">&lt;</span> <span class="fl">0.01</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 'qvalue_proteins' found in 3 out of 3 assay(s)</span></span></code></pre></div>
+<span><span class="co">#&gt; 'qvalue_proteins' found in 3 out of 3 assay(s).</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -1113,7 +1111,7 @@ that describes more in details how to visualize and explore data in a
 <div class="section level2">
 <h2 class="unnumbered" id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
 </h2>
-<pre><code>R Under development (unstable) (2025-02-15 r87726)
+<pre><code>R Under development (unstable) (2025-03-08 r87910)
 Platform: x86_64-pc-linux-gnu
 Running under: Ubuntu 24.04.2 LTS
 
@@ -1137,12 +1135,12 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] scater_1.35.1               scuttle_1.17.0             
- [3] SingleCellExperiment_1.29.1 sva_3.55.0                 
- [5] BiocParallel_1.41.2         genefilter_1.89.0          
- [7] mgcv_1.9-1                  nlme_3.1-167               
+ [1] scater_1.35.4               scuttle_1.17.0             
+ [3] SingleCellExperiment_1.29.2 sva_3.55.0                 
+ [5] BiocParallel_1.41.4         genefilter_1.89.0          
+ [7] mgcv_1.9-1                  nlme_3.1-168               
  [9] dplyr_1.1.4                 ggplot2_3.5.1              
-[11] scp_1.17.1                  QFeatures_1.17.4           
+[11] scp_1.17.1                  QFeatures_1.17.5           
 [13] MultiAssayExperiment_1.33.9 SummarizedExperiment_1.37.0
 [15] Biobase_2.67.0              GenomicRanges_1.59.1       
 [17] GenomeInfoDb_1.43.4         IRanges_2.41.3             
@@ -1151,37 +1149,37 @@ other attached packages:
 [23] matrixStats_1.5.0           BiocStyle_2.35.0           
 
 loaded via a namespace (and not attached):
-  [1] RColorBrewer_1.1-3      jsonlite_1.9.0          magrittr_2.0.3         
+  [1] RColorBrewer_1.1-3      jsonlite_2.0.0          magrittr_2.0.3         
   [4] ggbeeswarm_0.7.2        farver_2.1.2            rmarkdown_2.29         
   [7] fs_1.6.5                ragg_1.3.3              vctrs_0.6.5            
  [10] memoise_2.0.1           htmltools_0.5.8.1       S4Arrays_1.7.3         
- [13] BiocBaseUtils_1.9.0     BiocNeighbors_2.1.2     SparseArray_1.7.6      
+ [13] BiocBaseUtils_1.9.0     BiocNeighbors_2.1.3     SparseArray_1.7.7      
  [16] sass_0.4.9              bslib_0.9.0             htmlwidgets_1.6.4      
  [19] desc_1.4.3              plyr_1.8.9              impute_1.81.0          
  [22] cachem_1.1.0            igraph_2.1.4            lifecycle_1.0.4        
- [25] pkgconfig_2.0.3         rsvd_1.0.5              Matrix_1.7-2           
- [28] R6_2.6.1                fastmap_1.2.0           GenomeInfoDbData_1.2.13
+ [25] pkgconfig_2.0.3         rsvd_1.0.5              Matrix_1.7-3           
+ [28] R6_2.6.1                fastmap_1.2.0           GenomeInfoDbData_1.2.14
  [31] clue_0.3-66             digest_0.6.37           fdrtool_1.2.18         
  [34] colorspace_2.1-1        AnnotationDbi_1.69.0    irlba_2.3.5.1          
  [37] textshaping_1.0.0       lpsymphony_1.35.0       RSQLite_2.3.9          
- [40] beachmat_2.23.6         labeling_0.4.3          httr_1.4.7             
+ [40] beachmat_2.23.7         labeling_0.4.3          httr_1.4.7             
  [43] abind_1.4-8             compiler_4.5.0          bit64_4.6.0-1          
  [46] withr_3.0.2             viridis_0.6.5           DBI_1.2.3              
- [49] MASS_7.3-64             DelayedArray_0.33.6     tools_4.5.0            
+ [49] MASS_7.3-65             DelayedArray_0.33.6     tools_4.5.0            
  [52] vipor_0.4.7             beeswarm_0.4.0          glue_1.8.0             
- [55] grid_4.5.0              cluster_2.1.8           reshape2_1.4.4         
+ [55] grid_4.5.0              cluster_2.1.8.1         reshape2_1.4.4         
  [58] gtable_0.3.6            tidyr_1.3.1             BiocSingular_1.23.0    
  [61] ScaledMatrix_1.15.0     metapod_1.15.0          XVector_0.47.2         
  [64] ggrepel_0.9.6           pillar_1.10.1           stringr_1.5.1          
- [67] limma_3.63.5            splines_4.5.0           lattice_0.22-6         
- [70] FNN_1.1.4.1             survival_3.8-3          bit_4.5.0.1            
- [73] annotate_1.85.0         tidyselect_1.2.1        locfit_1.5-9.11        
- [76] Biostrings_2.75.4       knitr_1.49              gridExtra_2.3          
- [79] bookdown_0.42           ProtGenerics_1.39.2     edgeR_4.5.2            
+ [67] limma_3.63.11           splines_4.5.0           lattice_0.22-6         
+ [70] FNN_1.1.4.1             survival_3.8-3          bit_4.6.0              
+ [73] annotate_1.85.0         tidyselect_1.2.1        locfit_1.5-9.12        
+ [76] Biostrings_2.75.4       knitr_1.50              gridExtra_2.3          
+ [79] bookdown_0.42           ProtGenerics_1.39.2     edgeR_4.5.10           
  [82] IHW_1.35.0              xfun_0.51               statmod_1.5.0          
- [85] stringi_1.8.4           UCSC.utils_1.3.1        lazyeval_0.2.2         
+ [85] stringi_1.8.7           UCSC.utils_1.3.1        lazyeval_0.2.2         
  [88] yaml_2.3.10             evaluate_1.0.3          codetools_0.2-20       
- [91] nipals_1.0              MsCoreUtils_1.19.0      tibble_3.2.1           
+ [91] nipals_1.0              MsCoreUtils_1.19.2      tibble_3.2.1           
  [94] BiocManager_1.30.25     cli_3.6.4               uwot_0.2.3             
  [97] xtable_1.8-4            systemfonts_1.2.1       munsell_0.5.1          
 [100] jquerylib_0.1.4         Rcpp_1.0.14             png_0.1-8              
