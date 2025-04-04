@@ -234,7 +234,7 @@ jobs:
 
       - name: Manually install from a branch
         run: |
-          remotes::install_git("RforMassSpectrometry/QFeatures", ref = "typeMetadata")
+          remotes::install_github("RforMassSpectrometry/QFeatures", ref = "typeMetadata")
         shell: Rscript {0}
 
       - name: Session info
