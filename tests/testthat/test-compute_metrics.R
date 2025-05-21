@@ -75,20 +75,20 @@ test_that("featureCV", {
 
 test_that(".getDetectionMatrix", {
     data("scp1")
-    expect_error(.getDetectionMatrix(scp1, "peptide"), 
+    expect_error(.getDetectionMatrix(scp1, "peptide"),
                  regexp = "assay.*is/are not found.*peptide$")
-    expect_error(.getDetectionMatrix(scp1, c("peptides", "proteins")), 
+    expect_error(.getDetectionMatrix(scp1, c("peptides", "proteins")),
                  regexp = "You selected multiple assays")
-    expect_error(.getDetectionMatrix(scp1, 1:2), 
+    expect_error(.getDetectionMatrix(scp1, 1:2),
                  regexp = "You selected multiple assays")
-    expect_error(.getDetectionMatrix(scp1, rep(TRUE, length(scp1))), 
+    expect_error(.getDetectionMatrix(scp1, rep(TRUE, length(scp1))),
                  regexp = "You selected multiple assays")
     x <- .getDetectionMatrix(scp1, "peptides")
     expect_identical(dim(scp1[["peptides"]]), dim(x))
     expect_identical(dimnames(scp1[["peptides"]]), dimnames(x))
     expect_identical(class(x), c("matrix", "array"))
     expect_identical(mode(x), "logical")
-    
+
     assay(scp1[["peptides"]])[is.na(assay(scp1[["peptides"]]))] <- 0
     x2 <- .getDetectionMatrix(scp1, "peptides")
     expect_identical(x, x2)
@@ -99,11 +99,11 @@ test_that(".computeMissingValueMetrics", {
         "LocalSensitivityMean", "LocalSensitivitySd", "TotalSensitivity",
         "Completeness", "NumberCells"
     )
-    
+
     x <- matrix()
     exp <- structure(c(rep(NA, 4), 1), names = expNames)
     expect_identical(.computeMissingValueMetrics(x), exp)
-    
+
     set.seed(1)
     x <- matrix(TRUE, 10, 10)
     x[sample(1:100, 10)] <- FALSE
@@ -171,13 +171,56 @@ test_that("computeSCR", {
                             samplePattern = "Reference", carrierPattern = "Carrier|Blank"),
                  regexp = "invalid names")
     ## Error: sample pattern not found
-    expect_error(computeSCR(scp1, i = 1:2, colvar = "SampleType",
-                            samplePattern = "foo", carrierPattern = "Carrier"),
-                 regexp = "No match.*samplePattern")
+    data(scp1)
+    expect_error(
+        computeSCR(
+            scp1, i = 1:3, colvar = "SampleType",
+            samplePattern = "foo", carrierPattern = "Carrier"
+        ),
+        regexp = "No match.*samplePattern.*foo.*for the following set.*190321S_LCA10_X_FP97AG, 190222S_LCA9_X_FP94BM, 190914S_LCB3_X_16plex_Set_21\n$"
+    )
+    ## Error: sample pattern found in 1 set, but not others
+    data(scp1)
+    scp1$SampleType[2:3] <- "foo"
+    expect_error(
+        computeSCR(
+            scp1, i = 1:3, colvar = "SampleType",
+            samplePattern = "foo", carrierPattern = "Carrier"
+        ),
+        regexp = "No match.*samplePattern.*foo.*for the following set.*190321S_LCA10_X_FP97AG, 190914S_LCB3_X_16plex_Set_21\n$"
+    )
     ## Error: carrier pattern not found
-    expect_error(computeSCR(scp1, i = 1:2, colvar = "SampleType",
-                            samplePattern = "Ref", carrierPattern = "foo"),
-                 regexp = "No match.*carrierPattern")
+    data(scp1)
+    expect_error(
+        computeSCR(
+            scp1, i = 1:3, colvar = "SampleType",
+            samplePattern = "Ref", carrierPattern = "foo"),
+        regexp = "No match.*carrierPattern.*foo.*for the following set.*190321S_LCA10_X_FP97AG, 190222S_LCA9_X_FP94BM, 190914S_LCB3_X_16plex_Set_21\n$"
+
+    )
+    ## Error: carrier pattern found in 1 set, but not others
+    data(scp1)
+    scp1$SampleType[1] <- "foo"
+    expect_error(
+        computeSCR(
+            scp1, i = 1:3, colvar = "SampleType",
+            samplePattern = "Ref", carrierPattern = "foo"
+        ),
+        regexp = "No match.*carrierPattern.*foo.*for the following set.*190321S_LCA10_X_FP97AG, 190914S_LCB3_X_16plex_Set_21\n$"
+    )
+    ## Error: sample and carrier pattern found in 1 set, but not others
+    data(scp1)
+    scp1$SampleType[1:3] <- "foo"
+    expect_error(
+        computeSCR(
+            scp1, i = 1:3, colvar = "SampleType",
+            samplePattern = "foo", carrierPattern = "foo"
+        ),
+        regexp = paste0(
+            "No match.*samplePattern.*foo.*for the following set.*190321S_LCA10_X_FP97AG, 190914S_LCB3_X_16plex_Set_21\n",
+            "No match.*carrierPattern.*foo.*for the following set.*190321S_LCA10_X_FP97AG, 190914S_LCB3_X_16plex_Set_21\n$"
+        )
+    )
     ## Error: the new rowData variable already exists
     expect_error(computeSCR(scp1, i = 1:2, colvar = "SampleType",
                             samplePattern = "Reference", carrierPattern = "Carrier",
@@ -249,7 +292,7 @@ test_that("medianCVperCell", {
     ## Error: the assays contain duplicated samples
     expect_error(medianCVperCell(scp1, i = 1:5, groupBy = "Proteins"),
                  regexp = "Duplicated samples")
-    
+
 })
 
 test_that("reportMissingValues", {
@@ -258,9 +301,9 @@ test_that("reportMissingValues", {
         "LocalSensitivityMean", "LocalSensitivitySd", "TotalSensitivity",
         "Completeness", "NumberCells"
     )
-    expect_error(reportMissingValues(scp1, "peptides", 1), 
+    expect_error(reportMissingValues(scp1, "peptides", 1),
                  regexp = "length.by.*ncol.*is not TRUE")
-    
+
     test1 <- reportMissingValues(scp1, "peptides")
     expect_identical(class(test1), "data.frame")
     expect_identical(dimnames(test1), list("all", expNames))
@@ -280,7 +323,7 @@ test_that("jaccardIndex", {
     expn2 <- (expn2^2 - expn2) / 2
     expect_identical(nrow(test2), as.integer(sum(expn2)))
     expect_identical(
-        test2$by, 
+        test2$by,
         unlist(lapply(unique(scp1$SampleType), function(n) rep(n, expn2[[n]])))
     )
 })
