@@ -1,3 +1,25 @@
+# scp 1.19
+
+## scp 1.19.2
+
+(nothing yet)
+
+## scp 1.19.1
+
+- fix: moved from the deprecated `longFormat()` to `longForm()`
+- doc: fixed readSingleCellExperiment example (see #94)
+- doc: minor documentation recompilation
+
+## scp 1.19.0
+
+- New Bioconductor 3.22 release
+
+# scp 1.18
+
+## scp 1.18.0
+
+- New Bioconductor 3.21 release
+
 # scp 1.17
 
 ## scp 1.17.1

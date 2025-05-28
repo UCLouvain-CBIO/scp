@@ -50,8 +50,8 @@
 ##' data("mqScpData")
 ##'
 ##' ## Create the QFeatures object
-##' sce <- readSingleCellExperiment(mqScpData,
-##'                                 quantCols = grep("RI", colnames(mqScpData)))
+##' quantCols <- grep("Reporter.intensity.\\d", colnames(mqScpData))
+##' sce <- readSingleCellExperiment(mqScpData, quantCols)
 ##' sce
 ##'
 ##' ######################################################
