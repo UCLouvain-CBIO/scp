@@ -1,5 +1,9 @@
 # scp 1.19
 
+## scp 1.19.2
+
+(nothing yet)
+
 ## scp 1.19.1
 
 - fix: moved from the deprecated `longFormat()` to `longForm()`
