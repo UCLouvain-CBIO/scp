@@ -343,16 +343,15 @@ ggplot(data.frame(rd)) +
 
 Combining the metadata and the quantitative data is more challenging
 since the risk of data mismatch is increased. The `QFeatures` package
-therefore provides th `longFormat` function to transform a `QFeatures`
+therefore provides th `longForm` function to transform a `QFeatures`
 object in a long `DFrame` table. For instance, we plot the
 quantitative data distribution for the first assay according to the
 acquisition channel index and colour with respect to the sample type.
 Both pieces of information are taken from the `colData`, so we provide
 them as `colvars`.
 
-```{r longFormat}
-lf <- longFormat(scp1[, , 1],
-                 colvars = c("SampleType", "Channel"))
+```{r longForm}
+lf <- longForm(scp1[, , 1], colvars = c("SampleType", "Channel"))
 ggplot(data.frame(lf)) +
     aes(x = Channel,
         y = value,
