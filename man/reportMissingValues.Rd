@@ -46,7 +46,7 @@ peps <- scp1[["peptides"]]
 assay(peps) <- !is.na(assay(peps))
 scp1 <- addAssay(scp1, peps, "id")
 
-## Report metrics 
+## Report metrics
 reportMissingValues(scp1, "id")
 ## Report metrics by sample type
 reportMissingValues(scp1, "id", scp1$SampleType)
