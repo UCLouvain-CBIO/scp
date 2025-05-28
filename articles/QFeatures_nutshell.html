@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.17.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.19.0</span>
       </span>
     </div>
 
@@ -98,7 +98,7 @@ Gatto</h4>
                                     <h4 data-toc-skip class="author">Christophe
 Vanderaa</h4>
                         
-            <h4 data-toc-skip class="date">2 April 2025</h4>
+            <h4 data-toc-skip class="date">28 May 2025</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/master/vignettes/QFeatures_nutshell.Rmd" class="external-link"><code>vignettes/QFeatures_nutshell.Rmd</code></a></small>
       <div class="hidden name"><code>QFeatures_nutshell.Rmd</code></div>
@@ -404,7 +404,8 @@ simply:</p>
 <span><span class="co">#&gt; harmonizing input:</span></span>
 <span><span class="co">#&gt;   removing 103 sampleMap rows not in names(experiments)</span></span>
 <span><span class="co">#&gt;   removing 27 colData rownames not in sampleMap 'primary'</span></span>
-<span><span class="co">#&gt; An instance of class QFeatures containing 1 set(s):</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures (type: scp) with 1 set:</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 11 columns</span></span></code></pre></div>
 <p>An alternative that results in exactly the same output is using the
 <code>subsetByAssay</code> method.</p>
@@ -413,7 +414,8 @@ simply:</p>
 <span><span class="co">#&gt; harmonizing input:</span></span>
 <span><span class="co">#&gt;   removing 103 sampleMap rows not in names(experiments)</span></span>
 <span><span class="co">#&gt;   removing 27 colData rownames not in sampleMap 'primary'</span></span>
-<span><span class="co">#&gt; An instance of class QFeatures containing 1 set(s):</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures (type: scp) with 1 set:</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 11 columns</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -426,7 +428,8 @@ different samples are either technical controls or single-cells
 macrophages, we can subset the data as follows:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">scp1</span><span class="op">[</span>, <span class="va">scp1</span><span class="op">$</span><span class="va">SampleType</span> <span class="op">==</span> <span class="st">"Macrophage"</span>, <span class="op">]</span></span>
-<span><span class="co">#&gt; An instance of class QFeatures containing 5 set(s):</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures (type: scp) with 5 sets:</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 7 columns </span></span>
 <span><span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 176 rows and 5 columns </span></span>
 <span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 215 rows and 8 columns </span></span>
@@ -436,7 +439,8 @@ macrophages, we can subset the data as follows:</p>
 <code>subsetByColData</code> method.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">subsetByColData</span><span class="op">(</span><span class="va">scp1</span>, <span class="va">scp1</span><span class="op">$</span><span class="va">SampleType</span> <span class="op">==</span> <span class="st">"Macrophage"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; An instance of class QFeatures containing 5 set(s):</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures (type: scp) with 5 sets:</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 7 columns </span></span>
 <span><span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 176 rows and 5 columns </span></span>
 <span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 215 rows and 8 columns </span></span>
@@ -452,7 +456,8 @@ that feature. Here is an example, suppose we are interested in the
 <code>Q02878</code> protein.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">scp1</span><span class="op">[</span><span class="st">"Q02878"</span>, , <span class="op">]</span></span>
-<span><span class="co">#&gt; An instance of class QFeatures containing 5 set(s):</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures (type: scp) with 5 sets:</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 9 rows and 11 columns </span></span>
 <span><span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 10 rows and 11 columns </span></span>
 <span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 0 rows and 16 columns </span></span>
@@ -466,7 +471,8 @@ different MS runs.</p>
 <code>subsetByColData</code> method.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-subsetBy.html" class="external-link">subsetByFeature</a></span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"Q02878"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; An instance of class QFeatures containing 5 set(s):</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures (type: scp) with 5 sets:</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 9 rows and 11 columns </span></span>
 <span><span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 10 rows and 11 columns </span></span>
 <span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 0 rows and 16 columns </span></span>
@@ -482,7 +488,8 @@ remove features that are associated to reverse sequence hits.</p>
 <span><span class="co">#&gt; filtering variables are missing in the rowData: proteins. You can</span></span>
 <span><span class="co">#&gt; control whether to remove or keep the features using the 'keep'</span></span>
 <span><span class="co">#&gt; argument (see '?filterFeature').</span></span>
-<span><span class="co">#&gt; An instance of class QFeatures containing 5 set(s):</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures (type: scp) with 5 sets:</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 126 rows and 11 columns </span></span>
 <span><span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 132 rows and 11 columns </span></span>
 <span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 176 rows and 16 columns </span></span>
@@ -496,7 +503,8 @@ features for that assay are removed.</p>
 than 70 % missing data.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/ProtGenerics/man/protgenerics.html" class="external-link">filterNA</a></span><span class="op">(</span><span class="va">scp1</span>, i <span class="op">=</span> <span class="st">"proteins"</span>, pNA <span class="op">=</span> <span class="fl">0.7</span><span class="op">)</span></span>
-<span><span class="co">#&gt; An instance of class QFeatures containing 5 set(s):</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures (type: scp) with 5 sets:</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 11 columns </span></span>
 <span><span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 176 rows and 11 columns </span></span>
 <span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 215 rows and 16 columns </span></span>
@@ -557,7 +565,9 @@ function.</p>
 <span><span class="co">#&gt; of missing values on data aggregation.</span></span>
 <span><span class="co">#&gt; Warning in rlm.default(X, expression, ...): 'rlm' failed to converge in 20</span></span>
 <span><span class="co">#&gt; steps</span></span>
-<span><span class="co">#&gt; An instance of class QFeatures containing 6 set(s):</span></span>
+<span><span class="co">#&gt; Aggregated: 1/1</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures (type: scp) with 6 sets:</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 11 columns </span></span>
 <span><span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 176 rows and 11 columns </span></span>
 <span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 215 rows and 16 columns </span></span>
@@ -582,7 +592,8 @@ they are mean centered.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/normalize.html" class="external-link">normalize</a></span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"proteins"</span>, method <span class="op">=</span> <span class="st">"center.mean"</span>,</span>
 <span>          name <span class="op">=</span> <span class="st">"proteins_mcenter"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; An instance of class QFeatures containing 6 set(s):</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures (type: scp) with 6 sets:</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 11 columns </span></span>
 <span><span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 176 rows and 11 columns </span></span>
 <span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 215 rows and 16 columns </span></span>
@@ -599,7 +610,8 @@ scaled size factor.</p>
 <span>      MARGIN <span class="op">=</span> <span class="fl">2</span>, <span class="co">## 1 = by feature; 2 = by sample</span></span>
 <span>      STATS <span class="op">=</span> <span class="va">sf</span>, FUN <span class="op">=</span> <span class="st">"/"</span>,</span>
 <span>      name <span class="op">=</span> <span class="st">"proteins_sf"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; An instance of class QFeatures containing 6 set(s):</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures (type: scp) with 6 sets:</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 11 columns </span></span>
 <span><span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 176 rows and 11 columns </span></span>
 <span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 215 rows and 16 columns </span></span>
@@ -617,7 +629,8 @@ protein data using a base 2 logarithm with a pseudo-count of one.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-processing.html" class="external-link">logTransform</a></span><span class="op">(</span><span class="va">scp1</span>, i <span class="op">=</span> <span class="st">"proteins"</span>, base <span class="op">=</span> <span class="fl">2</span>, pc <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>             name <span class="op">=</span> <span class="st">"proteins_log"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; An instance of class QFeatures containing 6 set(s):</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures (type: scp) with 6 sets:</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 11 columns </span></span>
 <span><span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 176 rows and 11 columns </span></span>
 <span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 215 rows and 16 columns </span></span>
@@ -669,7 +682,7 @@ spectral purity) for each of the three MS batches.</p>
 <p><img src="QFeatures_nutshell_files/figure-html/vis1-1.png" width="624"></p>
 <p>Combining the metadata and the quantitative data is more challenging
 since the risk of data mismatch is increased. The <code>QFeatures</code>
-package therefore provides th <code>longFormat</code> function to
+package therefore provides th <code>longForm</code> function to
 transform a <code>QFeatures</code> object in a long <code>DFrame</code>
 table. For instance, we plot the quantitative data distribution for the
 first assay according to the acquisition channel index and colour with
@@ -677,20 +690,16 @@ respect to the sample type. Both pieces of information are taken from
 the <code>colData</code>, so we provide them as
 <code>colvars</code>.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">lf</span> <span class="op">&lt;-</span> <span class="fu">longFormat</span><span class="op">(</span><span class="va">scp1</span><span class="op">[</span>, , <span class="fl">1</span><span class="op">]</span>,</span>
-<span>                 colvars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SampleType"</span>, <span class="st">"Channel"</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">lf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/longForm.html" class="external-link">longForm</a></span><span class="op">(</span><span class="va">scp1</span><span class="op">[</span>, , <span class="fl">1</span><span class="op">]</span>, colvars <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SampleType"</span>, <span class="st">"Channel"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; harmonizing input:</span></span>
 <span><span class="co">#&gt;   removing 141 sampleMap rows not in names(experiments)</span></span>
 <span><span class="co">#&gt;   removing 27 colData rownames not in sampleMap 'primary'</span></span>
-<span><span class="co">#&gt; Warning in lifeCycle("longForm", package = "MultiAssayExperiment", title = "longFormat"): 'longFormat' is deprecated.</span></span>
-<span><span class="co">#&gt;   Use 'longForm' instead.</span></span>
-<span><span class="co">#&gt;   See help('longFormat-deprecated').</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">lf</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Channel</span>,</span>
 <span>        y <span class="op">=</span> <span class="va">value</span>,</span>
 <span>        colour <span class="op">=</span> <span class="va">SampleType</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html" class="external-link">geom_boxplot</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="QFeatures_nutshell_files/figure-html/longFormat-1.png" width="700"></p>
+<p><img src="QFeatures_nutshell_files/figure-html/longForm-1.png" width="700"></p>
 <p>A more in-depth tutorial about data visualization from a
 <code>QFeatures</code> object is provided in the <code>QFeautres</code>
 visualization <a href="https://rformassspectrometry.github.io/QFeatures/articles/Visualization.html" class="external-link">vignette</a>.</p>
@@ -698,7 +707,7 @@ visualization <a href="https://rformassspectrometry.github.io/QFeatures/articles
 <div class="section level2">
 <h2 class="unnumbered" id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
 </h2>
-<pre><code>R Under development (unstable) (2025-03-08 r87910)
+<pre><code>R version 4.5.0 (2025-04-11)
 Platform: x86_64-pc-linux-gnu
 Running under: Ubuntu 24.04.2 LTS
 
@@ -722,57 +731,55 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] ggplot2_3.5.1               scp_1.17.1                 
- [3] QFeatures_1.17.5            MultiAssayExperiment_1.33.9
- [5] SummarizedExperiment_1.37.0 Biobase_2.67.0             
- [7] GenomicRanges_1.59.1        GenomeInfoDb_1.43.4        
- [9] IRanges_2.41.3              S4Vectors_0.45.4           
-[11] BiocGenerics_0.53.6         generics_0.1.3             
-[13] MatrixGenerics_1.19.1       matrixStats_1.5.0          
-[15] BiocStyle_2.35.0           
+ [1] ggplot2_3.5.2               scp_1.19.0                 
+ [3] QFeatures_1.19.3            MultiAssayExperiment_1.35.3
+ [5] SummarizedExperiment_1.39.0 Biobase_2.69.0             
+ [7] GenomicRanges_1.61.0        GenomeInfoDb_1.45.3        
+ [9] IRanges_2.43.0              S4Vectors_0.47.0           
+[11] BiocGenerics_0.55.0         generics_0.1.4             
+[13] MatrixGenerics_1.21.0       matrixStats_1.5.0          
+[15] BiocStyle_2.37.0           
 
 loaded via a namespace (and not attached):
- [1] tidyselect_1.2.1            farver_2.1.2               
- [3] dplyr_1.1.4                 fastmap_1.2.0              
- [5] SingleCellExperiment_1.29.2 lazyeval_0.2.2             
+ [1] tidyselect_1.2.1            dplyr_1.1.4                
+ [3] farver_2.1.2                fastmap_1.2.0              
+ [5] SingleCellExperiment_1.31.0 lazyeval_0.2.2             
  [7] nipals_1.0                  digest_0.6.37              
  [9] lifecycle_1.0.4             cluster_2.1.8.1            
-[11] ProtGenerics_1.39.2         magrittr_2.0.3             
-[13] compiler_4.5.0              rlang_1.1.5                
-[15] sass_0.4.9                  tools_4.5.0                
+[11] ProtGenerics_1.41.0         magrittr_2.0.3             
+[13] compiler_4.5.0              rlang_1.1.6                
+[15] sass_0.4.10                 tools_4.5.0                
 [17] igraph_2.1.4                yaml_2.3.10                
 [19] knitr_1.50                  labeling_0.4.3             
-[21] S4Arrays_1.7.3              htmlwidgets_1.6.4          
-[23] DelayedArray_0.33.6         plyr_1.8.9                 
+[21] S4Arrays_1.9.0              htmlwidgets_1.6.4          
+[23] DelayedArray_0.35.1         plyr_1.8.9                 
 [25] RColorBrewer_1.1-3          abind_1.4-8                
 [27] withr_3.0.2                 purrr_1.0.4                
 [29] desc_1.4.3                  grid_4.5.0                 
-[31] colorspace_2.1-1            scales_1.3.0               
-[33] MASS_7.3-65                 cli_3.6.4                  
-[35] rmarkdown_2.29              crayon_1.5.3               
-[37] ragg_1.3.3                  metapod_1.15.0             
-[39] httr_1.4.7                  reshape2_1.4.4             
-[41] BiocBaseUtils_1.9.0         cachem_1.1.0               
-[43] stringr_1.5.1               impute_1.81.0              
-[45] AnnotationFilter_1.31.0     BiocManager_1.30.25        
-[47] XVector_0.47.2              vctrs_0.6.5                
-[49] Matrix_1.7-3                jsonlite_2.0.0             
-[51] slam_0.1-55                 bookdown_0.42              
-[53] IHW_1.35.0                  ggrepel_0.9.6              
-[55] clue_0.3-66                 systemfonts_1.2.1          
-[57] tidyr_1.3.1                 jquerylib_0.1.4            
-[59] glue_1.8.0                  pkgdown_2.1.1.9000         
-[61] stringi_1.8.7               gtable_0.3.6               
-[63] UCSC.utils_1.3.1            munsell_0.5.1              
-[65] lpsymphony_1.35.0           tibble_3.2.1               
-[67] pillar_1.10.1               htmltools_0.5.8.1          
-[69] GenomeInfoDbData_1.2.14     R6_2.6.1                   
-[71] textshaping_1.0.0           evaluate_1.0.3             
-[73] lattice_0.22-6              bslib_0.9.0                
-[75] Rcpp_1.0.14                 fdrtool_1.2.18             
-[77] SparseArray_1.7.7           xfun_0.51                  
-[79] MsCoreUtils_1.19.2          fs_1.6.5                   
-[81] pkgconfig_2.0.3            </code></pre>
+[31] scales_1.4.0                MASS_7.3-65                
+[33] cli_3.6.5                   rmarkdown_2.29             
+[35] crayon_1.5.3                ragg_1.4.0                 
+[37] metapod_1.17.0              httr_1.4.7                 
+[39] reshape2_1.4.4              BiocBaseUtils_1.11.0       
+[41] cachem_1.1.0                stringr_1.5.1              
+[43] impute_1.83.0               AnnotationFilter_1.33.0    
+[45] BiocManager_1.30.25         XVector_0.49.0             
+[47] vctrs_0.6.5                 Matrix_1.7-3               
+[49] jsonlite_2.0.0              slam_0.1-55                
+[51] bookdown_0.43               IHW_1.37.0                 
+[53] ggrepel_0.9.6               clue_0.3-66                
+[55] systemfonts_1.2.3           tidyr_1.3.1                
+[57] jquerylib_0.1.4             glue_1.8.0                 
+[59] pkgdown_2.1.3.9000          stringi_1.8.7              
+[61] gtable_0.3.6                UCSC.utils_1.5.0           
+[63] lpsymphony_1.37.0           tibble_3.2.1               
+[65] pillar_1.10.2               htmltools_0.5.8.1          
+[67] R6_2.6.1                    textshaping_1.0.1          
+[69] evaluate_1.0.3              lattice_0.22-7             
+[71] bslib_0.9.0                 Rcpp_1.0.14                
+[73] fdrtool_1.2.18              SparseArray_1.9.0          
+[75] xfun_0.52                   MsCoreUtils_1.21.0         
+[77] fs_1.6.6                    pkgconfig_2.0.3            </code></pre>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
@@ -807,7 +814,7 @@ Quantitative Features for Mass Spectrometry Data.”</span> <a href="https://doi
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.9000.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.9000.</p>
 </div>
 
       </footer>

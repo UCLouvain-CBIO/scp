@@ -19,7 +19,7 @@ object."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mat
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.17.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.19.0</span>
       </span>
     </div>
 
@@ -136,16 +136,17 @@ for details and an example on how to read label-free and plexDIA
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"mqScpData"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Create the QFeatures object</span></span></span>
-<span class="r-in"><span><span class="va">sce</span> <span class="op">&lt;-</span> <span class="fu">readSingleCellExperiment</span><span class="op">(</span><span class="va">mqScpData</span>,</span></span>
-<span class="r-in"><span>                                quantCols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">"RI"</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">mqScpData</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">quantCols</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grep</a></span><span class="op">(</span><span class="st">"Reporter.intensity.\\d"</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">mqScpData</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sce</span> <span class="op">&lt;-</span> <span class="fu">readSingleCellExperiment</span><span class="op">(</span><span class="va">mqScpData</span>, <span class="va">quantCols</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">sce</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> class: SingleCellExperiment </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 1361 0 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> dim: 1361 16 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> metadata(0):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> assays(1): ''</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> rownames(1361): 1 2 ... 1360 1361</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(0):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> colnames: NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> rowData names(133): uid Sequence ... residual participated</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> colnames(16): Reporter.intensity.1 Reporter.intensity.2 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Reporter.intensity.15 Reporter.intensity.16</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> colData names(0):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> reducedDimNames(0):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> mainExpName: NULL</span>
@@ -169,7 +170,8 @@ for details and an example on how to read label-free and plexDIA
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Splitting data in runs.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Formatting sample annotations (colData).</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Formatting data as a 'QFeatures' object.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> An instance of class QFeatures containing 4 set(s):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> An instance of class QFeatures (type: bulk) with 4 sets:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 395 rows and 16 columns </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [2] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 487 rows and 16 columns </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [3] 190321S_LCA10_X_FP97_blank_01: SingleCellExperiment with 109 rows and 16 columns </span>
@@ -188,7 +190,7 @@ for details and an example on how to read label-free and plexDIA
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.9000.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.9000.</p>
 </div>
 
       </footer></div>

@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.17.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.19.0</span>
       </span>
     </div>
 
@@ -99,7 +99,7 @@ Gatto</h4>
                                     <h4 data-toc-skip class="author">Christophe
 Vanderaa</h4>
                         
-            <h4 data-toc-skip class="date">2 April 2025</h4>
+            <h4 data-toc-skip class="date">28 May 2025</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/master/vignettes/advanced.Rmd" class="external-link"><code>vignettes/advanced.Rmd</code></a></small>
       <div class="hidden name"><code>advanced.Rmd</code></div>
@@ -143,7 +143,8 @@ valid.</li>
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://UCLouvain-CBIO.github.io/scp" class="external-link">scp</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"scp1"</span><span class="op">)</span></span>
 <span><span class="va">scp1</span></span>
-<span><span class="co">#&gt; An instance of class QFeatures containing 5 set(s):</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures (type: scp) with 5 sets:</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 11 columns </span></span>
 <span><span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 176 rows and 11 columns </span></span>
 <span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 215 rows and 16 columns </span></span>
@@ -222,7 +223,8 @@ in the <code>rowData</code>.</p>
 <code class="sourceCode R"><span><span class="va">scp1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-class.html" class="external-link">addAssay</a></span><span class="op">(</span><span class="va">scp1</span>, <span class="va">sce</span>, name <span class="op">=</span> <span class="st">"proteinsNorm"</span><span class="op">)</span></span>
 <span><span class="va">scp1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/AssayLinks.html" class="external-link">addAssayLinkOneToOne</a></span><span class="op">(</span><span class="va">scp1</span>, from <span class="op">=</span> <span class="st">"proteins"</span>, to <span class="op">=</span> <span class="st">"proteinsNorm"</span><span class="op">)</span></span>
 <span><span class="va">scp1</span></span>
-<span><span class="co">#&gt; An instance of class QFeatures containing 6 set(s):</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures (type: scp) with 6 sets:</span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 11 columns </span></span>
 <span><span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 176 rows and 11 columns </span></span>
 <span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 215 rows and 16 columns </span></span>
@@ -453,7 +455,7 @@ request</a>.</p>
 <div class="section level2">
 <h2 class="unnumbered" id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
 </h2>
-<pre><code>R Under development (unstable) (2025-03-08 r87910)
+<pre><code>R version 4.5.0 (2025-04-11)
 Platform: x86_64-pc-linux-gnu
 Running under: Ubuntu 24.04.2 LTS
 
@@ -477,56 +479,55 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] ggplot2_3.5.1               scp_1.17.1                 
- [3] QFeatures_1.17.5            MultiAssayExperiment_1.33.9
- [5] SummarizedExperiment_1.37.0 Biobase_2.67.0             
- [7] GenomicRanges_1.59.1        GenomeInfoDb_1.43.4        
- [9] IRanges_2.41.3              S4Vectors_0.45.4           
-[11] BiocGenerics_0.53.6         generics_0.1.3             
-[13] MatrixGenerics_1.19.1       matrixStats_1.5.0          
-[15] BiocStyle_2.35.0           
+ [1] ggplot2_3.5.2               scp_1.19.0                 
+ [3] QFeatures_1.19.3            MultiAssayExperiment_1.35.3
+ [5] SummarizedExperiment_1.39.0 Biobase_2.69.0             
+ [7] GenomicRanges_1.61.0        GenomeInfoDb_1.45.3        
+ [9] IRanges_2.43.0              S4Vectors_0.47.0           
+[11] BiocGenerics_0.55.0         generics_0.1.4             
+[13] MatrixGenerics_1.21.0       matrixStats_1.5.0          
+[15] BiocStyle_2.37.0           
 
 loaded via a namespace (and not attached):
- [1] tidyselect_1.2.1            farver_2.1.2               
- [3] dplyr_1.1.4                 fastmap_1.2.0              
- [5] SingleCellExperiment_1.29.2 lazyeval_0.2.2             
+ [1] tidyselect_1.2.1            dplyr_1.1.4                
+ [3] farver_2.1.2                fastmap_1.2.0              
+ [5] SingleCellExperiment_1.31.0 lazyeval_0.2.2             
  [7] nipals_1.0                  digest_0.6.37              
  [9] lifecycle_1.0.4             cluster_2.1.8.1            
-[11] ProtGenerics_1.39.2         magrittr_2.0.3             
-[13] compiler_4.5.0              rlang_1.1.5                
-[15] sass_0.4.9                  tools_4.5.0                
+[11] ProtGenerics_1.41.0         magrittr_2.0.3             
+[13] compiler_4.5.0              rlang_1.1.6                
+[15] sass_0.4.10                 tools_4.5.0                
 [17] igraph_2.1.4                yaml_2.3.10                
-[19] knitr_1.50                  labeling_0.4.3             
-[21] S4Arrays_1.7.3              htmlwidgets_1.6.4          
-[23] DelayedArray_0.33.6         plyr_1.8.9                 
+[19] knitr_1.50                  S4Arrays_1.9.0             
+[21] labeling_0.4.3              htmlwidgets_1.6.4          
+[23] DelayedArray_0.35.1         plyr_1.8.9                 
 [25] RColorBrewer_1.1-3          abind_1.4-8                
 [27] withr_3.0.2                 purrr_1.0.4                
 [29] desc_1.4.3                  grid_4.5.0                 
-[31] colorspace_2.1-1            scales_1.3.0               
-[33] MASS_7.3-65                 cli_3.6.4                  
-[35] rmarkdown_2.29              crayon_1.5.3               
-[37] ragg_1.3.3                  metapod_1.15.0             
-[39] httr_1.4.7                  reshape2_1.4.4             
-[41] BiocBaseUtils_1.9.0         cachem_1.1.0               
-[43] stringr_1.5.1               AnnotationFilter_1.31.0    
-[45] BiocManager_1.30.25         XVector_0.47.2             
-[47] vctrs_0.6.5                 Matrix_1.7-3               
-[49] jsonlite_2.0.0              slam_0.1-55                
-[51] bookdown_0.42               IHW_1.35.0                 
-[53] ggrepel_0.9.6               clue_0.3-66                
-[55] systemfonts_1.2.1           tidyr_1.3.1                
-[57] jquerylib_0.1.4             glue_1.8.0                 
-[59] pkgdown_2.1.1.9000          stringi_1.8.7              
-[61] gtable_0.3.6                UCSC.utils_1.3.1           
-[63] munsell_0.5.1               lpsymphony_1.35.0          
-[65] tibble_3.2.1                pillar_1.10.1              
-[67] htmltools_0.5.8.1           GenomeInfoDbData_1.2.14    
-[69] R6_2.6.1                    textshaping_1.0.0          
-[71] evaluate_1.0.3              lattice_0.22-6             
-[73] bslib_0.9.0                 Rcpp_1.0.14                
-[75] fdrtool_1.2.18              SparseArray_1.7.7          
-[77] xfun_0.51                   MsCoreUtils_1.19.2         
-[79] fs_1.6.5                    pkgconfig_2.0.3            </code></pre>
+[31] scales_1.4.0                MASS_7.3-65                
+[33] cli_3.6.5                   rmarkdown_2.29             
+[35] crayon_1.5.3                ragg_1.4.0                 
+[37] metapod_1.17.0              httr_1.4.7                 
+[39] reshape2_1.4.4              BiocBaseUtils_1.11.0       
+[41] cachem_1.1.0                stringr_1.5.1              
+[43] AnnotationFilter_1.33.0     BiocManager_1.30.25        
+[45] XVector_0.49.0              vctrs_0.6.5                
+[47] Matrix_1.7-3                jsonlite_2.0.0             
+[49] slam_0.1-55                 bookdown_0.43              
+[51] IHW_1.37.0                  ggrepel_0.9.6              
+[53] clue_0.3-66                 systemfonts_1.2.3          
+[55] tidyr_1.3.1                 jquerylib_0.1.4            
+[57] glue_1.8.0                  pkgdown_2.1.3.9000         
+[59] stringi_1.8.7               gtable_0.3.6               
+[61] UCSC.utils_1.5.0            lpsymphony_1.37.0          
+[63] tibble_3.2.1                pillar_1.10.2              
+[65] htmltools_0.5.8.1           R6_2.6.1                   
+[67] textshaping_1.0.1           evaluate_1.0.3             
+[69] lattice_0.22-7              bslib_0.9.0                
+[71] Rcpp_1.0.14                 fdrtool_1.2.18             
+[73] SparseArray_1.9.0           xfun_0.52                  
+[75] MsCoreUtils_1.21.0          fs_1.6.6                   
+[77] pkgconfig_2.0.3            </code></pre>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
@@ -551,7 +552,7 @@ license</a> license.</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.9000.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.9000.</p>
 </div>
 
       </footer>
