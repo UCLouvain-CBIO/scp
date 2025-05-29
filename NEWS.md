@@ -2,7 +2,8 @@
 
 ## scp 1.19.2
 
-(nothing yet)
+- Fix grep pattern in example for readSingleCellExperiment() (see
+  #94).
 
 ## scp 1.19.1
 
