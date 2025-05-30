@@ -51,8 +51,8 @@ To cite the `scp` package in publications use:
   Thorny Issue of Missing Values in Single-Cell Proteomics.” Journal
   of Proteome Research 22 (9): 2775–84.
 
-> Vanderaa Christophe and Laurent Gatto. The current state of 
-  single-cell proteomics data analysis. Current Protocols 3 (1): 
+> Vanderaa Christophe and Laurent Gatto. The current state of
+  single-cell proteomics data analysis. Current Protocols 3 (1):
   e658.; doi: https://doi.org/10.1002/cpz1.658 (2023).
 
 > Vanderaa Christophe and Laurent Gatto. Replication
@@ -74,3 +74,15 @@ The `scp` code is provided under a permissive
 The documentation, including the manual pages and the vignettes, are
 distributed under a
 [CC BY-SA license](https://creativecommons.org/licenses/by-sa/2.0/).
+
+## Contributions
+
+Contributions are welcome, and should ideally be provdied through a
+Github pull request. Feel free to discuss any more non-trivial
+suggestions or changes first in an issue.
+
+### Contributors
+
+- [Micha Birklbauer](https://github.com/michabirklbauer): [fix grep
+  pattern in example for
+  readSingleCellExperiment](https://github.com/UCLouvain-CBIO/scp/pull/94).
