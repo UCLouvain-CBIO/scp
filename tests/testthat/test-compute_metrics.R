@@ -181,10 +181,11 @@ test_that("computeSCR", {
     )
     ## Error: sample pattern found in 1 set, but not others
     data(scp1)
-    scp1$SampleType[2:3] <- "foo"
+    scp2 <- scp1
+    scp2$SampleType[2:3] <- "foo"
     expect_error(
         computeSCR(
-            scp1, i = 1:3, colvar = "SampleType",
+            scp2, i = 1:3, colvar = "SampleType",
             samplePattern = "foo", carrierPattern = "Carrier"
         ),
         regexp = "No match.*samplePattern.*foo.*for the following set.*190321S_LCA10_X_FP97AG, 190914S_LCB3_X_16plex_Set_21\n$"
@@ -200,20 +201,22 @@ test_that("computeSCR", {
     )
     ## Error: carrier pattern found in 1 set, but not others
     data(scp1)
-    scp1$SampleType[1] <- "foo"
+    scp2 <- scp1
+    scp2$SampleType[1] <- "foo"
     expect_error(
         computeSCR(
-            scp1, i = 1:3, colvar = "SampleType",
+            scp2, i = 1:3, colvar = "SampleType",
             samplePattern = "Ref", carrierPattern = "foo"
         ),
         regexp = "No match.*carrierPattern.*foo.*for the following set.*190321S_LCA10_X_FP97AG, 190914S_LCB3_X_16plex_Set_21\n$"
     )
     ## Error: sample and carrier pattern found in 1 set, but not others
     data(scp1)
-    scp1$SampleType[1:3] <- "foo"
+    scp2 <- scp1
+    scp2$SampleType[1:3] <- "foo"
     expect_error(
         computeSCR(
-            scp1, i = 1:3, colvar = "SampleType",
+            scp2, i = 1:3, colvar = "SampleType",
             samplePattern = "foo", carrierPattern = "foo"
         ),
         regexp = paste0(
@@ -226,6 +229,44 @@ test_that("computeSCR", {
                             samplePattern = "Reference", carrierPattern = "Carrier",
                             rowDataName = "dart_PEP"),
                  regexp = "already exists")
+})
+
+test_that(".checkMissingSamples", {
+    ## Pattern is found in all sets: no error
+    expect_null(
+        .checkMissingSamples(
+            sampleNotFound = character(),
+            carrierNotFound = character(),
+            samplePattern = "foo1", carrierPattern = "foo2"
+        )
+    )
+    ## Pattern not found for carrier
+    expect_error(
+        .checkMissingSamples(
+            sampleNotFound = character(),
+            carrierNotFound = c("bar1", "bar2"),
+            samplePattern = "foo1", carrierPattern = "foo2"
+        ),
+        regexp = "No match found with 'carrierPattern = \"foo2\"' for the following set\\(s\\):\nbar1, bar2"
+    )
+    ## Pattern not found for sample
+    expect_error(
+        .checkMissingSamples(
+            sampleNotFound = c("bar1", "bar2"),
+            carrierNotFound = character(),
+            samplePattern = "foo1", carrierPattern = "foo2"
+        ),
+        regexp = "No match found with 'samplePattern = \"foo1\"' for the following set\\(s\\):\nbar1, bar2"
+    )
+    ## Pattern not found for both
+    expect_error(
+        .checkMissingSamples(
+            sampleNotFound = c("bar1", "bar2"),
+            carrierNotFound = c("bar3", "bar4"),
+            samplePattern = "foo1", carrierPattern = "foo2"
+        ),
+        regexp = "No match found with 'samplePattern = \"foo1\"' for the following set\\(s\\):\nbar1, bar2\nNo match found with 'carrierPattern = \"foo2\"' for the following set\\(s\\):\nbar3, bar4\n"
+    )
 })
 
 test_that("pep2qvalue", {

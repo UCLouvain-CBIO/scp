@@ -229,8 +229,8 @@ computeSCR <- function(object,
              "Use another name or remove that column before running ",
              "this function.")
     i <- QFeatures:::.normIndex(object, i)
-    sampleNotFound <- NULL
-    carrierNotFound <- NULL
+    sampleNotFound <- character()
+    carrierNotFound <- character()
     ## Iterate over the different assay indices
     for (ii in i) {
         annot <- colData(object)[colnames(object[[ii]]), ][, colvar]
@@ -243,7 +243,7 @@ computeSCR <- function(object,
         carrIdx <- grep(carrierPattern, annot)
         if (!length(sampIdx)) sampleNotFound <- c(sampleNotFound, ii)
         if (!length(carrIdx)) carrierNotFound <- c(carrierNotFound, ii)
-        if (length(c(sampIdx, carrIdx)) != 2) next
+        if (!length(sampIdx) || !length(carrIdx)) next
         ## Get sample data
         samp <- assay(object[[ii]])[, sampIdx, drop = FALSE]
         if (ncol(samp) > 1)
@@ -260,6 +260,34 @@ computeSCR <- function(object,
         ## more efficient than
         ## rowData(object[[ii]])[, rowDataName] <-  ratio
     }
+    .checkMissingSamples(
+        sampleNotFound, carrierNotFound, samplePattern, carrierPattern
+    )
+    object
+}
+
+## Internal function that will throw an informative error if the
+## carrier or the sample pattern (used for computing the SCR) are not
+## found in an assay.
+##
+## The function throws an error if there is at least one of
+## sampleNotFound, carrierNotFound is not empty. Otherwise, the
+## function returns NULL.
+##
+## @param sampleNotFound A character() with the names of the sets for
+##   which the sample pattern is not found. The function will generate
+##   an error when it is not empty.
+## @param carrierNotFound A character() with the names of the sets for
+##   which the carrier pattern is not found. The function will
+##   generate an error when it is not empty.
+## @param samplePattern A character(1) providing the name of the
+##   sample pattern used to identify sample columns. This is used to
+##   generate an informative error message.
+## @param carrierPattern A character(1) providing the name of the
+##   carrier pattern used to identify carrier columns. This is used to
+##   generate an informative error message.
+.checkMissingSamples <- function(sampleNotFound, carrierNotFound,
+                                 samplePattern, carrierPattern) {
     msg <- ""
     if (length(sampleNotFound)) {
         msg <- paste0(
@@ -276,7 +304,7 @@ computeSCR <- function(object,
         )
     }
     if (msg != "") stop(msg)
-    object
+    NULL
 }
 
 ##' Compute q-values
