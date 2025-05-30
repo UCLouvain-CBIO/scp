@@ -2,7 +2,7 @@
 
 ## scp 1.19.2
 
-(nothing yet)
+- feat: improved error message when pattern is not found in computeSCR
 
 ## scp 1.19.1
 
