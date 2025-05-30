@@ -2,8 +2,7 @@
 
 ## scp 1.19.2
 
-- Fix grep pattern in example for readSingleCellExperiment() (see
-  #94).
+- feat: improved error message when pattern is not found in computeSCR
 
 ## scp 1.19.1
 
