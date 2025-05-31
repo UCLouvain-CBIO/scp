@@ -1,5 +1,9 @@
 # scp 1.19
 
+## scp 1.19.3
+
+- Nothing yet.
+
 ## scp 1.19.2
 
 - feat: improved error message when pattern is not found in
