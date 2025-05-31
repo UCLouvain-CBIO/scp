@@ -986,7 +986,7 @@ formatted to a long format table that can easily be plugged in the
 ## Get the features related to Plastin-2 (P13796)
 subsetByFeature(scp, "P13796") |>
     ## Format the `QFeatures` to a long format table
-    longFormat(colvars = c("runCol", "SampleType", "quantCols")) |>
+    longForm(colvars = c("runCol", "SampleType", "quantCols")) |>
     data.frame() |>
     ## This is used to preserve ordering of the samples and assays in ggplot2
     mutate(assay = factor(assay, levels = names(scp)),
