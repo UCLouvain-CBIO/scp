@@ -2,7 +2,9 @@
 
 ## scp 1.19.2
 
-- feat: improved error message when pattern is not found in computeSCR
+- feat: improved error message when pattern is not found in
+  computeSCR
+- feat: use typeMetadata (based on QFeatues 1.19.1)
 
 ## scp 1.19.1
 
@@ -40,7 +42,7 @@
 - By default, `readSCP` and `readSCPfromDIANN` now create
 QFeatures objects that contain `SummarizedExperiment` objects.
 - `readSCP` and `readSCPfromDIANN` have a new parameter:
-`experimentsAsSce` that indicate if the QFeatures should 
+`experimentsAsSce` that indicate if the QFeatures should
 contain `SingleCellExperiment`, default is `FALSE`.
 - `readSCP` and `readSCPfromDIANN` now return a QFeatures of type
 "scp".
