@@ -7,3 +7,5 @@ docs
 ^\.github$
 .editorconfig
 .git
+^doc$
+^Meta$

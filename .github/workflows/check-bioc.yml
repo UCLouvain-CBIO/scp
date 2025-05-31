@@ -232,9 +232,9 @@ jobs:
       #     cd preprocessCore
       #     R CMD INSTALL --configure-args="--disable-threading"  .
 
-      - name: Manually install latest RforMassSpectrometry/QFeatures
+      - name: Manually install from a branch
         run: |
-          BiocManager::install("RforMassSpectrometry/QFeatures")
+          remotes::install_github("RforMassSpectrometry/QFeatures", ref = "typeMetadata")
         shell: Rscript {0}
 
       - name: Session info

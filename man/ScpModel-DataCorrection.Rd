@@ -12,7 +12,7 @@ scpRemoveBatchEffect(object, effects = NULL, intercept = TRUE, name)
 }
 \arguments{
 \item{object}{An object that inherits from the
-\code{SingleCellExperiment} class. It must contain an estimated
+\code{SummarizedExperiment} class. It must contain an estimated
 \code{ScpModel} in its metadata}
 
 \item{effects}{A \code{character()} vector. For \code{scpKeepEffect()},
@@ -35,7 +35,7 @@ missing, the name of the first model found in \code{object} is used.}
 \description{
 The function uses the data modelling output to generate corrected
 data that can be used for downstream analysis. The input
-is expected to be a \code{SingleCellExperiment} object that contains an
+is expected to be a \code{SummarizedExperiment} object that contains an
 estimated \code{ScpModel}. There are two approaches:
 \itemize{
 \item \code{scpKeepEffect()}: keep the effects of interests. The
@@ -55,7 +55,7 @@ lead to similar results if the effects that are used to
 reconstruct the data are the ones that are not removed when
 performing batch correction (see examples).
 
-The function returns a new \code{SingleCellExperiment} that contains an
+The function returns a new \code{SummarizedExperiment} that contains an
 assay with the batch corrected data. Note that the 'ScpModel` is
 erased in this new object.
 }

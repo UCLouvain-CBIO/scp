@@ -228,23 +228,16 @@ test_that("addReducedDims", {
     se <- scpModelWorkflow(se, formula = ~ 1 + condition + batch)
     require("nipals")
     compRes <- scpComponentAnalysis(se)
-    ## sce is not a SCE = error
-    expect_error(
-        addReducedDims(se, compRes),
-        "'sce' must be a SingleCellExperiment object. Transform your data using 'as.sce, .SingleCellExperiment..'."
-    )
-    ## empty list = no effect
-    require("SingleCellExperiment")
     sce <- as(se, "SingleCellExperiment")
     expect_identical(
-        addReducedDims(sce, List()),
+        addReducedDims(se, List()),
         sce
     )
     ## add one table
     exp <- as.matrix(compRes$bySample$unmodelled[, 1:2])
     attr(exp, "proportionVariance") <- metadata(compRes$bySample$unmodelled)$proportionVariance
     expect_identical(
-        reducedDims(addReducedDims(sce, compRes$bySample["unmodelled"])),
+        reducedDims(addReducedDims(se, compRes$bySample["unmodelled"])),
         List(unmodelled = exp)
     )
     ## add more table
@@ -254,7 +247,7 @@ test_that("addReducedDims", {
         out
     })
     expect_identical(
-        reducedDims(addReducedDims(sce, compRes$bySample)),
+        reducedDims(addReducedDims(se, compRes$bySample)),
         List(exp)
     )
 })
