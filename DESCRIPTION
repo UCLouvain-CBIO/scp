@@ -1,6 +1,6 @@
 Package: scp
 Title: Mass Spectrometry-Based Single-Cell Proteomics Data Analysis
-Version: 1.19.1
+Version: 1.19.2
 Authors@R:
     c(person("Christophe", "Vanderaa",
               email = "christophe.vanderaa@ugent.be",
