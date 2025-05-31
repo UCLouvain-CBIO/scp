@@ -21,7 +21,7 @@ Description: Utility functions for manipulating, processing, and
     visualization.
 Depends:
     R (>= 4.3.0),
-    QFeatures (>= 1.13.5)
+    QFeatures (>= 1.19.1)
 Imports:
     IHW,
     ggplot2,
