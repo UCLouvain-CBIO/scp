@@ -9,7 +9,8 @@ Authors@R:
       person("Laurent", "Gatto",
               email = "laurent.gatto@uclouvain.be",
               comment = c(ORCID = "0000-0002-1520-2268"),
-              role = "aut"))
+              role = "aut"),
+      person("Léopold", "Guyot", role = "ctb"))
 Description: Utility functions for manipulating, processing, and
     analyzing mass spectrometry-based single-cell proteomics
     data. The package is an extension to the 'QFeatures' package and
