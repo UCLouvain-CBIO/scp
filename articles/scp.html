@@ -116,10 +116,11 @@ spectrometry (MS)-based single cell proteomics (SCP) data. The functions
 rely on a specific data structure that wraps <a href="https://rformassspectrometry.github.io/QFeatures/" class="external-link"><code>QFeatures</code></a>
 objects (<span class="citation">Gatto and Vanderaa (2023)</span>) around
 <a href="http://bioconductor.org/packages/release/bioc/html/SingleCellExperiment.html" class="external-link"><code>SingleCellExperiment</code></a>
-objects (<span class="citation">Amezquita et al. (2020)</span>). This
-data structure could be seen as Matryoshka dolls were the
-<code>SingleCellExperiment</code> objects are small dolls contained in
-the bigger <code>QFeatures</code> doll.</p>
+(<span class="citation">Amezquita et al. (2020)</span>) or <a href="http://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html" class="external-link"><code>SummarizedExperiment</code></a>
+objects. This data structure could be seen as Matryoshka dolls were the
+<code>SingleCellExperiment</code> or <code>SummarizedExperiment</code>
+objects are small dolls contained in the bigger <code>QFeatures</code>
+doll.</p>
 <p>The <code>SingleCellExperiment</code> class provides a dedicated
 framework for single-cell data. The <code>SingleCellExperiment</code>
 serves as an interface to many cutting-edge methods for processing,
@@ -271,12 +272,12 @@ interest, that are macrophage (<code>Macrophage</code>) or monocyte
 <span><span class="co">#&gt; Formatting sample annotations (colData).</span></span>
 <span><span class="co">#&gt; Formatting data as a 'QFeatures' object.</span></span>
 <span><span class="va">scp</span></span>
-<span><span class="co">#&gt; An instance of class QFeatures (type: bulk) with 4 sets:</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures (type: scp) with 4 sets:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 395 rows and 11 columns </span></span>
-<span><span class="co">#&gt;  [2] 190321S_LCA10_X_FP97_blank_01: SingleCellExperiment with 109 rows and 11 columns </span></span>
-<span><span class="co">#&gt;  [3] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 487 rows and 11 columns </span></span>
-<span><span class="co">#&gt;  [4] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 370 rows and 16 columns</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SummarizedExperiment with 395 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [2] 190321S_LCA10_X_FP97_blank_01: SummarizedExperiment with 109 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [3] 190321S_LCA10_X_FP97AG: SummarizedExperiment with 487 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [4] 190914S_LCB3_X_16plex_Set_21: SummarizedExperiment with 370 rows and 16 columns</span></span></code></pre></div>
 <p>See here that the 3 first assays contain 11 columns that correspond
 to the TMT-11 labels and the last assay contains 16 columns that
 correspond to the TMT-16 labels.</p>
@@ -357,7 +358,7 @@ in that batch and it should be removed. Using <code>dims</code>, we can
 query the dimensions (hence the number of features and the number of
 samples) of all assays contained in the dataset.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">dims</span><span class="op">(</span><span class="va">scp</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/dims.html" class="external-link">dims</a></span><span class="op">(</span><span class="va">scp</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      190222S_LCA9_X_FP94BM 190321S_LCA10_X_FP97_blank_01 190321S_LCA10_X_FP97AG</span></span>
 <span><span class="co">#&gt; [1,]                   283                            60                    318</span></span>
 <span><span class="co">#&gt; [2,]                    11                            11                     11</span></span>
@@ -373,18 +374,18 @@ have sufficient PSMs (the number of rows is greater than 150), and then
 subset the <code>scp</code> object for the assays that meet the
 criterion.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">keepAssay</span> <span class="op">&lt;-</span> <span class="fu">dims</span><span class="op">(</span><span class="va">scp</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span>, <span class="op">]</span> <span class="op">&gt;</span> <span class="fl">150</span></span>
+<code class="sourceCode R"><span><span class="va">keepAssay</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/dims.html" class="external-link">dims</a></span><span class="op">(</span><span class="va">scp</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span>, <span class="op">]</span> <span class="op">&gt;</span> <span class="fl">150</span></span>
 <span><span class="va">scp</span> <span class="op">&lt;-</span> <span class="va">scp</span><span class="op">[</span>, , <span class="va">keepAssay</span><span class="op">]</span></span>
 <span><span class="co">#&gt; Warning: 'experiments' dropped; see 'drops()'</span></span>
 <span><span class="co">#&gt; harmonizing input:</span></span>
 <span><span class="co">#&gt;   removing 11 sampleMap rows not in names(experiments)</span></span>
 <span><span class="co">#&gt;   removing 11 colData rownames not in sampleMap 'primary'</span></span>
 <span><span class="va">scp</span></span>
-<span><span class="co">#&gt; An instance of class QFeatures (type: bulk) with 3 sets:</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures (type: scp) with 3 sets:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 283 rows and 11 columns </span></span>
-<span><span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 318 rows and 11 columns </span></span>
-<span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 200 rows and 16 columns</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SummarizedExperiment with 283 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SummarizedExperiment with 318 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SummarizedExperiment with 200 rows and 16 columns</span></span></code></pre></div>
 <p>Notice the <code>190321S_LCA10_X_FP97_blank_01</code> sample was
 removed because it did not contain sufficient features, as expected from
 a blank run. This could also have been the case for failed runs.</p>
@@ -583,11 +584,11 @@ Conceptual illustration of feature aggregation.
 data.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">scp</span></span>
-<span><span class="co">#&gt; An instance of class QFeatures (type: bulk) with 3 sets:</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures (type: scp) with 3 sets:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 239 rows and 11 columns </span></span>
-<span><span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 277 rows and 11 columns </span></span>
-<span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 186 rows and 16 columns</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SummarizedExperiment with 239 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SummarizedExperiment with 277 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SummarizedExperiment with 186 rows and 16 columns</span></span></code></pre></div>
 <p>The PSMs are aggregated over the <code>fcol</code> feature variable,
 here the modified peptide sequence. We also need to supply an
 aggregating function that will tell how to combine the quantitative data
@@ -611,14 +612,14 @@ assays are unchanged. This allows to keep track of the data
 processing.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">scp</span></span>
-<span><span class="co">#&gt; An instance of class QFeatures (type: bulk) with 6 sets:</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures (type: scp) with 6 sets:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 239 rows and 11 columns </span></span>
-<span><span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 277 rows and 11 columns </span></span>
-<span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 186 rows and 16 columns </span></span>
-<span><span class="co">#&gt;  [4] peptides_190222S_LCA9_X_FP94BM: SingleCellExperiment with 216 rows and 11 columns </span></span>
-<span><span class="co">#&gt;  [5] peptides_190321S_LCA10_X_FP97AG: SingleCellExperiment with 256 rows and 11 columns </span></span>
-<span><span class="co">#&gt;  [6] peptides_190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 168 rows and 16 columns</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SummarizedExperiment with 239 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SummarizedExperiment with 277 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SummarizedExperiment with 186 rows and 16 columns </span></span>
+<span><span class="co">#&gt;  [4] peptides_190222S_LCA9_X_FP94BM: SummarizedExperiment with 216 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [5] peptides_190321S_LCA10_X_FP97AG: SummarizedExperiment with 256 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [6] peptides_190914S_LCB3_X_16plex_Set_21: SummarizedExperiment with 168 rows and 16 columns</span></span></code></pre></div>
 <p>Under the hood, the <code>QFeatures</code> architecture preserves the
 relationship between the aggregated assays. See <code><a href="https://rdrr.io/pkg/QFeatures/man/AssayLinks.html" class="external-link">?AssayLinks</a></code>
 for more information on relationships between assays. This is
@@ -671,30 +672,30 @@ three-order subsetting, <code>x[rows, columns, assays]</code>, where
 columns are the samples of interest.</p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">scp</span></span>
-<span><span class="co">#&gt; An instance of class QFeatures (type: bulk) with 7 sets:</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures (type: scp) with 7 sets:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 239 rows and 11 columns </span></span>
-<span><span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 277 rows and 11 columns </span></span>
-<span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 186 rows and 16 columns </span></span>
-<span><span class="co">#&gt;  [4] peptides_190222S_LCA9_X_FP94BM: SingleCellExperiment with 216 rows and 11 columns </span></span>
-<span><span class="co">#&gt;  [5] peptides_190321S_LCA10_X_FP97AG: SingleCellExperiment with 256 rows and 11 columns </span></span>
-<span><span class="co">#&gt;  [6] peptides_190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 168 rows and 16 columns </span></span>
-<span><span class="co">#&gt;  [7] peptides: SingleCellExperiment with 384 rows and 38 columns</span></span>
+<span><span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SummarizedExperiment with 239 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SummarizedExperiment with 277 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SummarizedExperiment with 186 rows and 16 columns </span></span>
+<span><span class="co">#&gt;  [4] peptides_190222S_LCA9_X_FP94BM: SummarizedExperiment with 216 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [5] peptides_190321S_LCA10_X_FP97AG: SummarizedExperiment with 256 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [6] peptides_190914S_LCB3_X_16plex_Set_21: SummarizedExperiment with 168 rows and 16 columns </span></span>
+<span><span class="co">#&gt;  [7] peptides: SummarizedExperiment with 384 rows and 38 columns</span></span>
 <span><span class="va">scp</span> <span class="op">&lt;-</span> <span class="va">scp</span><span class="op">[</span>, <span class="va">scp</span><span class="op">$</span><span class="va">SampleType</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Blank"</span>, <span class="st">"Macrophage"</span>, <span class="st">"Monocyte"</span><span class="op">)</span>, <span class="op">]</span></span></code></pre></div>
 <p>The subsetting removes unwanted samples from all assays. The filtered
 data set contains the same number of assays with the same number of
 features, but the number of columns (hence sampled) decreased.</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">scp</span></span>
-<span><span class="co">#&gt; An instance of class QFeatures (type: bulk) with 7 sets:</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures (type: scp) with 7 sets:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 239 rows and 8 columns </span></span>
-<span><span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 277 rows and 8 columns </span></span>
-<span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 186 rows and 12 columns </span></span>
-<span><span class="co">#&gt;  [4] peptides_190222S_LCA9_X_FP94BM: SingleCellExperiment with 216 rows and 8 columns </span></span>
-<span><span class="co">#&gt;  [5] peptides_190321S_LCA10_X_FP97AG: SingleCellExperiment with 256 rows and 8 columns </span></span>
-<span><span class="co">#&gt;  [6] peptides_190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 168 rows and 12 columns </span></span>
-<span><span class="co">#&gt;  [7] peptides: SingleCellExperiment with 384 rows and 28 columns</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SummarizedExperiment with 239 rows and 8 columns </span></span>
+<span><span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SummarizedExperiment with 277 rows and 8 columns </span></span>
+<span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SummarizedExperiment with 186 rows and 12 columns </span></span>
+<span><span class="co">#&gt;  [4] peptides_190222S_LCA9_X_FP94BM: SummarizedExperiment with 216 rows and 8 columns </span></span>
+<span><span class="co">#&gt;  [5] peptides_190321S_LCA10_X_FP97AG: SummarizedExperiment with 256 rows and 8 columns </span></span>
+<span><span class="co">#&gt;  [6] peptides_190914S_LCB3_X_16plex_Set_21: SummarizedExperiment with 168 rows and 12 columns </span></span>
+<span><span class="co">#&gt;  [7] peptides: SummarizedExperiment with 384 rows and 28 columns</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="filter-based-on-the-median-relative-intensity">Filter based on the median relative intensity<a class="anchor" aria-label="anchor" href="#filter-based-on-the-median-relative-intensity"></a>
@@ -818,7 +819,7 @@ More conventional normalization procedure can be found in
 <span>             i <span class="op">=</span> <span class="st">"peptides_norm_col"</span>,</span>
 <span>             MARGIN <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>             FUN <span class="op">=</span> <span class="st">"/"</span>,</span>
-<span>             STATS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowMeans</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">scp</span><span class="op">[[</span><span class="st">"peptides_norm_col"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,  na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
+<span>             STATS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/MatrixGenerics/man/rowMeans.html" class="external-link">rowMeans</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">scp</span><span class="op">[[</span><span class="st">"peptides_norm_col"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,  na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
 <span>             name <span class="op">=</span> <span class="st">"peptides_norm"</span><span class="op">)</span></span></code></pre></div>
 <p>Notice each call to <code>sweep</code> created a new assay. Let’s
 have a look to the current stat of the <code>QFeatures</code> plot:</p>
@@ -869,19 +870,18 @@ function.</p>
 <span>                         fun <span class="op">=</span> <span class="fu">matrixStats</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/matrixStats/man/rowMedians.html" class="external-link">colMedians</a></span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Your quantitative and row data contain missing values. Please read the</span></span>
 <span><span class="co">#&gt; relevant section(s) in the aggregateFeatures manual page regarding the</span></span>
-<span><span class="co">#&gt; effects of missing values on data aggregation.</span></span>
-<span><span class="co">#&gt; Aggregated: 1/1</span></span></code></pre></div>
+<span><span class="co">#&gt; effects of missing values on data aggregation.</span></span></code></pre></div>
 <div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">scp</span></span>
-<span><span class="co">#&gt; An instance of class QFeatures (type: bulk) with 11 sets:</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures (type: scp) with 11 sets:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 239 rows and 6 columns </span></span>
-<span><span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 277 rows and 6 columns </span></span>
-<span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 186 rows and 6 columns </span></span>
+<span><span class="co">#&gt;  [1] 190222S_LCA9_X_FP94BM: SummarizedExperiment with 239 rows and 6 columns </span></span>
+<span><span class="co">#&gt;  [2] 190321S_LCA10_X_FP97AG: SummarizedExperiment with 277 rows and 6 columns </span></span>
+<span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SummarizedExperiment with 186 rows and 6 columns </span></span>
 <span><span class="co">#&gt;  ...</span></span>
-<span><span class="co">#&gt;  [9] peptides_norm: SingleCellExperiment with 373 rows and 18 columns </span></span>
-<span><span class="co">#&gt;  [10] peptides_log: SingleCellExperiment with 373 rows and 18 columns </span></span>
-<span><span class="co">#&gt;  [11] proteins: SingleCellExperiment with 94 rows and 18 columns</span></span></code></pre></div>
+<span><span class="co">#&gt;  [9] peptides_norm: SummarizedExperiment with 373 rows and 18 columns </span></span>
+<span><span class="co">#&gt;  [10] peptides_log: SummarizedExperiment with 373 rows and 18 columns </span></span>
+<span><span class="co">#&gt;  [11] proteins: SummarizedExperiment with 94 rows and 18 columns</span></span></code></pre></div>
 <p>After the second aggregation, the <code>proteins</code> assay in this
 example contains quantitative information for 89 proteins in 15
 single-cells.</p>
@@ -911,7 +911,7 @@ dividing.</p>
 <span><span class="va">scp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-processing.html" class="external-link">sweep</a></span><span class="op">(</span><span class="va">scp</span>, i <span class="op">=</span> <span class="st">"proteins_norm_col"</span>,</span>
 <span>             MARGIN <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>             FUN <span class="op">=</span> <span class="st">"-"</span>,</span>
-<span>             STATS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowMeans</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">scp</span><span class="op">[[</span><span class="st">"proteins_norm_col"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,</span>
+<span>             STATS <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/MatrixGenerics/man/rowMeans.html" class="external-link">rowMeans</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">scp</span><span class="op">[[</span><span class="st">"proteins_norm_col"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>,</span>
 <span>                              na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span>
 <span>             name <span class="op">=</span> <span class="st">"proteins_norm"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -999,23 +999,27 @@ set:</p>
 <div class="section level2">
 <h2 id="dimension-reduction">Dimension reduction<a class="anchor" aria-label="anchor" href="#dimension-reduction"></a>
 </h2>
-<p>Because each assay contains <code>SingelCellExperiment</code>
-objects, we can easily apply methods developed in the scRNA-Seq field. A
-useful package for dimension reduction on single-cell data is the
-<code>scater</code>.</p>
+<p>Because each assay contains <code>SingelCellExperiment</code> or
+<code>SummarizedExperiment</code> objects, we can easily apply methods
+developed in the scRNA-Seq field. A useful package for dimension
+reduction on single-cell data is the <code>scater</code>.</p>
 <div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://bioconductor.org/packages/scater/" class="external-link">scater</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; Loading required package: SingleCellExperiment</span></span>
 <span><span class="co">#&gt; Loading required package: scuttle</span></span></code></pre></div>
 <p>This package provides streamline functions to computes various
 dimension reduction such as PCA, UMAP, t-SNE, NMF, MDS, ….</p>
+<p>In the case where you have <code>SummarizedExperiment</code> objects,
+you can first convert it with <code>as</code> like so.</p>
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">scp</span><span class="op">[[</span><span class="st">"proteins_batchC"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/methods/as.html" class="external-link">as</a></span><span class="op">(</span><span class="va">scp</span><span class="op">[[</span><span class="st">"proteins_batchC"</span><span class="op">]</span><span class="op">]</span>, <span class="st">"SingleCellExperiment"</span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="pca">PCA<a class="anchor" aria-label="anchor" href="#pca"></a>
 </h3>
 <p>PCA can be computed using the <code>runPCA</code> method. It returns
 a <code>SingleCellExperiment</code> object for which the dimension
 reduction results are stored in the <code>reducedDim</code> slot.</p>
-<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">scp</span><span class="op">[[</span><span class="st">"proteins_batchC"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocSingular/man/runPCA.html" class="external-link">runPCA</a></span><span class="op">(</span><span class="va">scp</span><span class="op">[[</span><span class="st">"proteins_batchC"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>                                   ncomponents <span class="op">=</span> <span class="fl">5</span>,</span>
 <span>                                   ntop <span class="op">=</span> <span class="cn">Inf</span>,</span>
@@ -1027,7 +1031,7 @@ reduction results are stored in the <code>reducedDim</code> slot.</p>
 should give the name of the dimension reduction results to plot, here we
 called it <code>PCA</code>. The samples are colored by type of
 sample.</p>
-<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotReducedDim.html" class="external-link">plotReducedDim</a></span><span class="op">(</span><span class="va">scp</span><span class="op">[[</span><span class="st">"proteins_batchC"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>               dimred <span class="op">=</span> <span class="st">"PCA"</span>,</span>
 <span>               colour_by <span class="op">=</span> <span class="st">"SampleType"</span>,</span>
@@ -1046,7 +1050,7 @@ results are used automatically when supplying
 <code>dimred = "PCA"</code> (<code>PCA</code> is the name of the
 dimension reduction result that we supplied in the previous
 section).</p>
-<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">scp</span><span class="op">[[</span><span class="st">"proteins_batchC"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scater/man/runUMAP.html" class="external-link">runUMAP</a></span><span class="op">(</span><span class="va">scp</span><span class="op">[[</span><span class="st">"proteins_batchC"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>                                    ncomponents <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>                                    ntop <span class="op">=</span> <span class="cn">Inf</span>,</span>
@@ -1060,7 +1064,7 @@ section).</p>
 gives the name of the dimension reduction results to plot, here we
 called it <code>UMAP</code>. The samples are colored by type of
 sample.</p>
-<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotReducedDim.html" class="external-link">plotReducedDim</a></span><span class="op">(</span><span class="va">scp</span><span class="op">[[</span><span class="st">"proteins_batchC"</span><span class="op">]</span><span class="op">]</span>,</span>
 <span>               dimred <span class="op">=</span> <span class="st">"UMAP"</span>,</span>
 <span>               colour_by <span class="op">=</span> <span class="st">"SampleType"</span>,</span>
@@ -1085,7 +1089,7 @@ framework. Using the <code>subsetByFeature</code>, we can extract the
 protein of interest and its related features in the other assays. The
 data is formatted to a long format table that can easily be plugged in
 the <code>ggplot2</code> visualization tool.</p>
-<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Get the features related to Plastin-2 (P13796)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-subsetBy.html" class="external-link">subsetByFeature</a></span><span class="op">(</span><span class="va">scp</span>, <span class="st">"P13796"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="co">## Format the `QFeatures` to a long format table</span></span>
@@ -1148,7 +1152,7 @@ other attached packages:
  [5] BiocParallel_1.43.3         genefilter_1.91.0          
  [7] mgcv_1.9-3                  nlme_3.1-168               
  [9] dplyr_1.1.4                 ggplot2_3.5.2              
-[11] scp_1.19.1                  QFeatures_1.19.3           
+[11] scp_1.19.1                  QFeatures_1.19.1           
 [13] MultiAssayExperiment_1.35.3 SummarizedExperiment_1.39.0
 [15] Biobase_2.69.0              GenomicRanges_1.61.0       
 [17] GenomeInfoDb_1.45.4         IRanges_2.43.0             

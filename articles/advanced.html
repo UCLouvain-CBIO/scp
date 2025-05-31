@@ -143,13 +143,13 @@ valid.</li>
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://UCLouvain-CBIO.github.io/scp" class="external-link">scp</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"scp1"</span><span class="op">)</span></span>
 <span><span class="va">scp1</span></span>
-<span><span class="co">#&gt; An instance of class QFeatures (type: scp) with 5 sets:</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures (type: bulk) with 5 sets:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 11 columns </span></span>
-<span><span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 176 rows and 11 columns </span></span>
-<span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 215 rows and 16 columns </span></span>
-<span><span class="co">#&gt;  [4] peptides: SingleCellExperiment with 539 rows and 38 columns </span></span>
-<span><span class="co">#&gt;  [5] proteins: SingleCellExperiment with 292 rows and 38 columns</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SummarizedExperiment with 166 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SummarizedExperiment with 176 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SummarizedExperiment with 215 rows and 16 columns </span></span>
+<span><span class="co">#&gt;  [4] peptides: SummarizedExperiment with 539 rows and 38 columns </span></span>
+<span><span class="co">#&gt;  [5] proteins: SummarizedExperiment with 292 rows and 38 columns</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="modify-the-quantitative-data">Modify the quantitative data<a class="anchor" aria-label="anchor" href="#modify-the-quantitative-data"></a>
@@ -184,19 +184,16 @@ types required by the <code>normByType</code> function. We therefore use
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sce</span> <span class="op">&lt;-</span> <span class="fu">getWithColData</span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"proteins"</span><span class="op">)</span></span>
 <span><span class="va">sce</span></span>
-<span><span class="co">#&gt; class: SingleCellExperiment </span></span>
+<span><span class="co">#&gt; class: SummarizedExperiment </span></span>
 <span><span class="co">#&gt; dim: 292 38 </span></span>
 <span><span class="co">#&gt; metadata(0):</span></span>
 <span><span class="co">#&gt; assays(2): assay aggcounts</span></span>
 <span><span class="co">#&gt; rownames(292): A1A519 A5D8V6 ... REV__CON__Q32PI4 REV__CON__Q3MHN5</span></span>
 <span><span class="co">#&gt; rowData names(9): protein Match.time.difference ...</span></span>
 <span><span class="co">#&gt;   Potential.contaminant .n</span></span>
-<span><span class="co">#&gt; colnames(38): 190321S_LCA10_X_FP97AG_RI1 190321S_LCA10_X_FP97AG_RI2 ...</span></span>
-<span><span class="co">#&gt;   190914S_LCB3_X_16plex_Set_21_RI15 190914S_LCB3_X_16plex_Set_21_RI16</span></span>
-<span><span class="co">#&gt; colData names(7): Set Channel ... sortday digest</span></span>
-<span><span class="co">#&gt; reducedDimNames(0):</span></span>
-<span><span class="co">#&gt; mainExpName: NULL</span></span>
-<span><span class="co">#&gt; altExpNames(0):</span></span></code></pre></div>
+<span><span class="co">#&gt; colnames(38): 190321S_LCA10_X_FP97AGRI1 190321S_LCA10_X_FP97AGRI2 ...</span></span>
+<span><span class="co">#&gt;   190914S_LCB3_X_16plex_Set_21RI15 190914S_LCB3_X_16plex_Set_21RI16</span></span>
+<span><span class="co">#&gt; colData names(7): Set Channel ... sortday digest</span></span></code></pre></div>
 <p>Next, we can apply the data transformation to the quantitative data.
 As mentioned above, our function expects a matrix-like object as an
 input, so we use the <code>assay</code> function. We then update the
@@ -223,14 +220,14 @@ in the <code>rowData</code>.</p>
 <code class="sourceCode R"><span><span class="va">scp1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/QFeatures-class.html" class="external-link">addAssay</a></span><span class="op">(</span><span class="va">scp1</span>, <span class="va">sce</span>, name <span class="op">=</span> <span class="st">"proteinsNorm"</span><span class="op">)</span></span>
 <span><span class="va">scp1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/QFeatures/man/AssayLinks.html" class="external-link">addAssayLinkOneToOne</a></span><span class="op">(</span><span class="va">scp1</span>, from <span class="op">=</span> <span class="st">"proteins"</span>, to <span class="op">=</span> <span class="st">"proteinsNorm"</span><span class="op">)</span></span>
 <span><span class="va">scp1</span></span>
-<span><span class="co">#&gt; An instance of class QFeatures (type: scp) with 6 sets:</span></span>
+<span><span class="co">#&gt; An instance of class QFeatures (type: bulk) with 6 sets:</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 166 rows and 11 columns </span></span>
-<span><span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 176 rows and 11 columns </span></span>
-<span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 215 rows and 16 columns </span></span>
-<span><span class="co">#&gt;  [4] peptides: SingleCellExperiment with 539 rows and 38 columns </span></span>
-<span><span class="co">#&gt;  [5] proteins: SingleCellExperiment with 292 rows and 38 columns </span></span>
-<span><span class="co">#&gt;  [6] proteinsNorm: SingleCellExperiment with 292 rows and 38 columns</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] 190321S_LCA10_X_FP97AG: SummarizedExperiment with 166 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [2] 190222S_LCA9_X_FP94BM: SummarizedExperiment with 176 rows and 11 columns </span></span>
+<span><span class="co">#&gt;  [3] 190914S_LCB3_X_16plex_Set_21: SummarizedExperiment with 215 rows and 16 columns </span></span>
+<span><span class="co">#&gt;  [4] peptides: SummarizedExperiment with 539 rows and 38 columns </span></span>
+<span><span class="co">#&gt;  [5] proteins: SummarizedExperiment with 292 rows and 38 columns </span></span>
+<span><span class="co">#&gt;  [6] proteinsNorm: SummarizedExperiment with 292 rows and 38 columns</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="overwrite-an-existing-assay">Overwrite an existing assay<a class="anchor" aria-label="anchor" href="#overwrite-an-existing-assay"></a>
@@ -250,7 +247,7 @@ inconsistencies. You can however verify that a <code>QFeatures</code>
 object is still valid after some processing thanks to the
 <code>validObject</code> function.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">validObject</span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/methods/validObject.html" class="external-link">validObject</a></span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 <p>If the function detects no issues in the data, it will return
 <code>TRUE</code>. Otherwise the function will throw an informative
@@ -268,46 +265,46 @@ we first extract the required data, in this case the quantitative
 values, and compute the sample-wise average protein expression.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">scp1</span>, <span class="st">"proteins"</span><span class="op">)</span></span>
-<span><span class="va">meanExprs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colMeans</a></span><span class="op">(</span><span class="va">m</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">meanExprs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MatrixGenerics/man/rowMeans.html" class="external-link">colMeans</a></span><span class="op">(</span><span class="va">m</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">meanExprs</span></span>
-<span><span class="co">#&gt;        190321S_LCA10_X_FP97AG_RI1        190321S_LCA10_X_FP97AG_RI2 </span></span>
-<span><span class="co">#&gt;                        45368.3628                         7566.8782 </span></span>
-<span><span class="co">#&gt;        190321S_LCA10_X_FP97AG_RI3        190321S_LCA10_X_FP97AG_RI4 </span></span>
-<span><span class="co">#&gt;                         3271.0402                         2158.4230 </span></span>
-<span><span class="co">#&gt;        190321S_LCA10_X_FP97AG_RI5        190321S_LCA10_X_FP97AG_RI6 </span></span>
-<span><span class="co">#&gt;                         1162.3936                         1835.7939 </span></span>
-<span><span class="co">#&gt;        190321S_LCA10_X_FP97AG_RI7        190321S_LCA10_X_FP97AG_RI8 </span></span>
-<span><span class="co">#&gt;                         1293.4738                         1415.4205 </span></span>
-<span><span class="co">#&gt;        190321S_LCA10_X_FP97AG_RI9       190321S_LCA10_X_FP97AG_RI10 </span></span>
-<span><span class="co">#&gt;                         1965.6531                         1264.4064 </span></span>
-<span><span class="co">#&gt;       190321S_LCA10_X_FP97AG_RI11         190222S_LCA9_X_FP94BM_RI1 </span></span>
-<span><span class="co">#&gt;                         1238.5979                        48901.4654 </span></span>
-<span><span class="co">#&gt;         190222S_LCA9_X_FP94BM_RI2         190222S_LCA9_X_FP94BM_RI3 </span></span>
-<span><span class="co">#&gt;                         5189.5912                         2802.1850 </span></span>
-<span><span class="co">#&gt;         190222S_LCA9_X_FP94BM_RI4         190222S_LCA9_X_FP94BM_RI5 </span></span>
-<span><span class="co">#&gt;                         1204.2350                          715.7667 </span></span>
-<span><span class="co">#&gt;         190222S_LCA9_X_FP94BM_RI6         190222S_LCA9_X_FP94BM_RI7 </span></span>
-<span><span class="co">#&gt;                         1032.7122                          403.8267 </span></span>
-<span><span class="co">#&gt;         190222S_LCA9_X_FP94BM_RI8         190222S_LCA9_X_FP94BM_RI9 </span></span>
-<span><span class="co">#&gt;                         1089.0548                         1076.2613 </span></span>
-<span><span class="co">#&gt;        190222S_LCA9_X_FP94BM_RI10        190222S_LCA9_X_FP94BM_RI11 </span></span>
-<span><span class="co">#&gt;                         1572.3337                         1186.4431 </span></span>
-<span><span class="co">#&gt;  190914S_LCB3_X_16plex_Set_21_RI1  190914S_LCB3_X_16plex_Set_21_RI2 </span></span>
-<span><span class="co">#&gt;                        96881.8350                         2731.9430 </span></span>
-<span><span class="co">#&gt;  190914S_LCB3_X_16plex_Set_21_RI3  190914S_LCB3_X_16plex_Set_21_RI4 </span></span>
-<span><span class="co">#&gt;                         8208.1958                          208.2857 </span></span>
-<span><span class="co">#&gt;  190914S_LCB3_X_16plex_Set_21_RI5  190914S_LCB3_X_16plex_Set_21_RI6 </span></span>
-<span><span class="co">#&gt;                         3209.7730                         2014.4889 </span></span>
-<span><span class="co">#&gt;  190914S_LCB3_X_16plex_Set_21_RI7  190914S_LCB3_X_16plex_Set_21_RI8 </span></span>
-<span><span class="co">#&gt;                         2897.1103                         3006.6741 </span></span>
-<span><span class="co">#&gt;  190914S_LCB3_X_16plex_Set_21_RI9 190914S_LCB3_X_16plex_Set_21_RI10 </span></span>
-<span><span class="co">#&gt;                         2760.8564                         2549.9348 </span></span>
-<span><span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI11 190914S_LCB3_X_16plex_Set_21_RI12 </span></span>
-<span><span class="co">#&gt;                         2388.5289                         2533.8006 </span></span>
-<span><span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI13 190914S_LCB3_X_16plex_Set_21_RI14 </span></span>
-<span><span class="co">#&gt;                         2134.5615                         3125.1980 </span></span>
-<span><span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21_RI15 190914S_LCB3_X_16plex_Set_21_RI16 </span></span>
-<span><span class="co">#&gt;                         3276.5618                         3195.8827</span></span></code></pre></div>
+<span><span class="co">#&gt;        190321S_LCA10_X_FP97AGRI1        190321S_LCA10_X_FP97AGRI2 </span></span>
+<span><span class="co">#&gt;                       45368.3628                        7566.8782 </span></span>
+<span><span class="co">#&gt;        190321S_LCA10_X_FP97AGRI3        190321S_LCA10_X_FP97AGRI4 </span></span>
+<span><span class="co">#&gt;                        3271.0402                        2158.4230 </span></span>
+<span><span class="co">#&gt;        190321S_LCA10_X_FP97AGRI5        190321S_LCA10_X_FP97AGRI6 </span></span>
+<span><span class="co">#&gt;                        1162.3936                        1835.7939 </span></span>
+<span><span class="co">#&gt;        190321S_LCA10_X_FP97AGRI7        190321S_LCA10_X_FP97AGRI8 </span></span>
+<span><span class="co">#&gt;                        1293.4738                        1415.4205 </span></span>
+<span><span class="co">#&gt;        190321S_LCA10_X_FP97AGRI9       190321S_LCA10_X_FP97AGRI10 </span></span>
+<span><span class="co">#&gt;                        1965.6531                        1264.4064 </span></span>
+<span><span class="co">#&gt;       190321S_LCA10_X_FP97AGRI11         190222S_LCA9_X_FP94BMRI1 </span></span>
+<span><span class="co">#&gt;                        1238.5979                       48901.4654 </span></span>
+<span><span class="co">#&gt;         190222S_LCA9_X_FP94BMRI2         190222S_LCA9_X_FP94BMRI3 </span></span>
+<span><span class="co">#&gt;                        5189.5912                        2802.1850 </span></span>
+<span><span class="co">#&gt;         190222S_LCA9_X_FP94BMRI4         190222S_LCA9_X_FP94BMRI5 </span></span>
+<span><span class="co">#&gt;                        1204.2350                         715.7667 </span></span>
+<span><span class="co">#&gt;         190222S_LCA9_X_FP94BMRI6         190222S_LCA9_X_FP94BMRI7 </span></span>
+<span><span class="co">#&gt;                        1032.7122                         403.8267 </span></span>
+<span><span class="co">#&gt;         190222S_LCA9_X_FP94BMRI8         190222S_LCA9_X_FP94BMRI9 </span></span>
+<span><span class="co">#&gt;                        1089.0548                        1076.2613 </span></span>
+<span><span class="co">#&gt;        190222S_LCA9_X_FP94BMRI10        190222S_LCA9_X_FP94BMRI11 </span></span>
+<span><span class="co">#&gt;                        1572.3337                        1186.4431 </span></span>
+<span><span class="co">#&gt;  190914S_LCB3_X_16plex_Set_21RI1  190914S_LCB3_X_16plex_Set_21RI2 </span></span>
+<span><span class="co">#&gt;                       96881.8350                        2731.9430 </span></span>
+<span><span class="co">#&gt;  190914S_LCB3_X_16plex_Set_21RI3  190914S_LCB3_X_16plex_Set_21RI4 </span></span>
+<span><span class="co">#&gt;                        8208.1958                         208.2857 </span></span>
+<span><span class="co">#&gt;  190914S_LCB3_X_16plex_Set_21RI5  190914S_LCB3_X_16plex_Set_21RI6 </span></span>
+<span><span class="co">#&gt;                        3209.7730                        2014.4889 </span></span>
+<span><span class="co">#&gt;  190914S_LCB3_X_16plex_Set_21RI7  190914S_LCB3_X_16plex_Set_21RI8 </span></span>
+<span><span class="co">#&gt;                        2897.1103                        3006.6741 </span></span>
+<span><span class="co">#&gt;  190914S_LCB3_X_16plex_Set_21RI9 190914S_LCB3_X_16plex_Set_21RI10 </span></span>
+<span><span class="co">#&gt;                        2760.8564                        2549.9348 </span></span>
+<span><span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21RI11 190914S_LCB3_X_16plex_Set_21RI12 </span></span>
+<span><span class="co">#&gt;                        2388.5289                        2533.8006 </span></span>
+<span><span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21RI13 190914S_LCB3_X_16plex_Set_21RI14 </span></span>
+<span><span class="co">#&gt;                        2134.5615                        3125.1980 </span></span>
+<span><span class="co">#&gt; 190914S_LCB3_X_16plex_Set_21RI15 190914S_LCB3_X_16plex_Set_21RI16 </span></span>
+<span><span class="co">#&gt;                        3276.5618                        3195.8827</span></span></code></pre></div>
 <p>Next, we insert the computed averages into the <code>colData</code>.
 You need to make sure to match sample names because an extracted assay
 may not contain all samples and may be in a different order compared to
@@ -323,7 +320,7 @@ straightforward to access the new data.</p>
 <p>To make sure that the process did not corrupt the
 <code>colData</code>, we advise to verify the data is still valid.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">validObject</span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/methods/validObject.html" class="external-link">validObject</a></span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -349,7 +346,7 @@ the results in a named <code>List</code>.</p>
 <span>    <span class="co">## We get the quantitative values for the current assay</span></span>
 <span>    <span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">scp1</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
 <span>    <span class="co">## We compute the number of samples in which each features is detected</span></span>
-<span>    <span class="va">n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">m</span> <span class="op">!=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span>    <span class="va">n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MatrixGenerics/man/rowSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">m</span> <span class="op">!=</span> <span class="fl">0</span><span class="op">)</span></span>
 <span>    <span class="co">## We store the result as a DataFrame in the List</span></span>
 <span>    <span class="va">res</span><span class="op">[[</span><span class="va">i</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">DataFrame</span><span class="op">(</span>nbSamples <span class="op">=</span> <span class="va">n</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
@@ -391,7 +388,7 @@ facilitates the access the new data.</p>
 <code>rowData</code> in any assay, we advise to verify the data is still
 valid.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">validObject</span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/methods/validObject.html" class="external-link">validObject</a></span><span class="op">(</span><span class="va">scp1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -409,12 +406,12 @@ understand and less error-prone.</p>
 <span>    <span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">List</span><span class="op">(</span><span class="op">)</span></span>
 <span>    <span class="kw">for</span> <span class="op">(</span><span class="va">ii</span> <span class="kw">in</span> <span class="va">i</span><span class="op">)</span> <span class="op">{</span></span>
 <span>        <span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">object</span><span class="op">[[</span><span class="va">ii</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
-<span>        <span class="va">n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">m</span> <span class="op">!=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span>        <span class="va">n</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MatrixGenerics/man/rowSums.html" class="external-link">rowSums</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&amp;</span> <span class="va">m</span> <span class="op">!=</span> <span class="fl">0</span><span class="op">)</span></span>
 <span>        <span class="va">res</span><span class="op">[[</span><span class="va">ii</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">DataFrame</span><span class="op">(</span>nbSamples <span class="op">=</span> <span class="va">n</span><span class="op">)</span></span>
 <span>    <span class="op">}</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span><span class="op">[</span><span class="va">i</span><span class="op">]</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">res</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="fu">validObject</span><span class="op">(</span><span class="va">object</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html" class="external-link">stopifnot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/methods/validObject.html" class="external-link">validObject</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span><span class="op">)</span></span>
 <span>    <span class="va">object</span></span>
 <span><span class="op">}</span></span></code></pre></div>
 <p>Thanks to this new function, the previous section now simply boils
@@ -480,7 +477,7 @@ attached base packages:
 
 other attached packages:
  [1] ggplot2_3.5.2               scp_1.19.1                 
- [3] QFeatures_1.19.3            MultiAssayExperiment_1.35.3
+ [3] QFeatures_1.19.1            MultiAssayExperiment_1.35.3
  [5] SummarizedExperiment_1.39.0 Biobase_2.69.0             
  [7] GenomicRanges_1.61.0        GenomeInfoDb_1.45.4        
  [9] IRanges_2.43.0              S4Vectors_0.47.0           

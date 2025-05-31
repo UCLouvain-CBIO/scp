@@ -82,9 +82,9 @@ object.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">readSCP</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">readSCP</span><span class="op">(</span><span class="va">...</span>, experimentsAsSce <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">readSCPfromDIANN</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">readSCPfromDIANN</span><span class="op">(</span><span class="va">...</span>, experimentsAsSce <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">readSingleCellExperiment</span><span class="op">(</span><span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -98,11 +98,20 @@ object.</p>
 <code>readQFeatures()</code> or <code>readQFeaturesFromDIANN()</code>. See these
 respective manual pages for details.</p></dd>
 
+
+<dt id="arg-experimentsassce">experimentsAsSce<a class="anchor" aria-label="anchor" href="#arg-experimentsassce"></a></dt>
+<dd><p>A <code>logical(1)</code> indicating whether the
+<code>QFeatures</code> object should be composed of <code>SingleCellExperiment</code>
+objects. By default: <code>FALSE</code>, the <code>QFeatures</code> object will be composed
+of <code>SummarizedExperiment</code> objects. Note that using
+<code>SingleCellExperiment</code> can impact the performance.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
     <p>An instance of class <code>SingleCellExperiment</code> or a
-<code>QFeatures</code>, composed of <code>SingleCellExperiment</code> objects.</p>
+<code>QFeatures</code>, composed of <code>SingleCellExperiment</code> or
+<code>SummarizedExperiment</code> objects.</p>
     </div>
     <div id="note">
     <h2>Note</h2>
@@ -170,12 +179,12 @@ for details and an example on how to read label-free and plexDIA
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Splitting data in runs.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Formatting sample annotations (colData).</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Formatting data as a 'QFeatures' object.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> An instance of class QFeatures (type: bulk) with 4 sets:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> An instance of class QFeatures (type: scp) with 4 sets:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 190222S_LCA9_X_FP94BM: SingleCellExperiment with 395 rows and 16 columns </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [2] 190321S_LCA10_X_FP97AG: SingleCellExperiment with 487 rows and 16 columns </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [3] 190321S_LCA10_X_FP97_blank_01: SingleCellExperiment with 109 rows and 16 columns </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] 190914S_LCB3_X_16plex_Set_21: SingleCellExperiment with 370 rows and 16 columns </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 190222S_LCA9_X_FP94BM: SummarizedExperiment with 395 rows and 16 columns </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [2] 190321S_LCA10_X_FP97AG: SummarizedExperiment with 487 rows and 16 columns </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3] 190321S_LCA10_X_FP97_blank_01: SummarizedExperiment with 109 rows and 16 columns </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] 190914S_LCB3_X_16plex_Set_21: SummarizedExperiment with 370 rows and 16 columns </span>
 </code></pre></div>
     </div>
   </div>

@@ -131,7 +131,10 @@ figure below provides a roadmap of the workflow:</p>
 </div>
 <p>The vignette will start with the processed data extracted as a
 <code>SingleCellExperiment</code> object from a processed
-<code>QFeatures</code> object. We will not cover data processing as it
+<code>QFeatures</code> object. Note that using a
+<code>SummarizedExperiment</code> will also work, it will automatically
+be converted to a <code>SingleCellExperiment</code> object with
+<code>scpModelWorkflow</code>. We will not cover data processing as it
 is covered in another vignette.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://UCLouvain-CBIO.github.io/scp" class="external-link">"scp"</a></span><span class="op">)</span></span>
@@ -920,7 +923,7 @@ other attached packages:
  [1] scater_1.37.0               scuttle_1.19.0             
  [3] ggplot2_3.5.2               patchwork_1.3.0            
  [5] SingleCellExperiment_1.31.0 scp_1.19.1                 
- [7] QFeatures_1.19.3            MultiAssayExperiment_1.35.3
+ [7] QFeatures_1.19.1            MultiAssayExperiment_1.35.3
  [9] SummarizedExperiment_1.39.0 Biobase_2.69.0             
 [11] GenomicRanges_1.61.0        GenomeInfoDb_1.45.4        
 [13] IRanges_2.43.0              S4Vectors_0.47.0           
