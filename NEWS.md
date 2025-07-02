@@ -2,10 +2,10 @@
 
 ## scp 1.19.3
 
-- Nothing yet.
+- docs: explicitly mention scplainer in the man pages
 
 ## scp 1.19.2
-
+ 
 - feat: improved error message when pattern is not found in
   computeSCR
 - feat: use typeMetadata (based on QFeatues 1.19.1)
