@@ -12,7 +12,7 @@ scpModelFilterPlot(object, name)
 }
 \arguments{
 \item{object}{An object that inherits from the
-\code{SingleCellExperiment} class.}
+\code{SummarizedExperiment} class.}
 
 \item{formula}{A \code{formula} object controlling which variables are
 to be modelled.}
@@ -38,7 +38,7 @@ modelling step of the \emph{scplainer} workflow.
 
 
 The main input is \code{object} that inherits from the
-\code{SingleCellExperiment} class. The quantitative data will be
+\code{SummarizedExperiment} class. The quantitative data will be
 retrieve using \code{assay(object)}. If \code{object} contains multiple
 assays, you can specify which assay to take as input thanks to the
 argument \code{i}, the function will then assume \code{assay(object, i)} as

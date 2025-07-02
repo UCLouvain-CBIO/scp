@@ -1,9 +1,14 @@
 # scp 1.19
 
+## scp 1.19.3
+
+- Nothing yet.
+
 ## scp 1.19.2
 
-- Fix grep pattern in example for readSingleCellExperiment() (see
-  #94).
+- feat: improved error message when pattern is not found in
+  computeSCR
+- feat: use typeMetadata (based on QFeatues 1.19.1)
 
 ## scp 1.19.1
 
@@ -23,14 +28,30 @@
 
 # scp 1.17
 
+## scp 1.17.0
+
+- New Bioconductor 3.21 devel
+
 ## scp 1.17.1
 
 - Deprecate `aggregateFeaturesOverAssays`, use
   `QFeatures::aggregateFeatures` instead.
 
-## scp 1.17.0
+## scp 1.17.2
 
-- New Bioconductor 3.21 devel
+- Recommend the use of `SummarizedExperiment` instead of
+`SingleCellExperiment` for performance reasons.
+- All functions are now compatible with `SummarizedExperiment`.
+- `data("scp1")` now contains `SummarizedExperiment` objects.
+- By default, `readSCP` and `readSCPfromDIANN` now create
+QFeatures objects that contain `SummarizedExperiment` objects.
+- `readSCP` and `readSCPfromDIANN` have a new parameter:
+`experimentsAsSce` that indicate if the QFeatures should
+contain `SingleCellExperiment`, default is `FALSE`.
+- `readSCP` and `readSCPfromDIANN` now return a QFeatures of type
+"scp".
+- `scpModelWorkflow` now automatically convert a `SummarizedExperiment`
+to a `SingleCellExperiment`.
 
 # scp 1.16
 

@@ -1,12 +1,12 @@
 
 ####---- Internal functions ----####
 
-## Internal function that normalizes SingleCellExperiment object using 
+## Internal function that normalizes SummarizedExperiment object using 
 ## proteomics normalization methods available in MsCoreUtils::normalize_matrix
 ##' @importFrom MsCoreUtils normalize_matrix
 .normalizeSCP <- function(x, method, ...) {
-  if(!inherits(x, "SingleCellExperiment")) 
-    stop("The assay must be a 'SingleCellExperiment' object.")
+  if(!inherits(x, "SummarizedExperiment")) 
+    stop("The assay must be a 'SummarizedExperiment' object.")
   e <- normalize_matrix(assay(x), method, ...)
   rownames(e) <- rownames(assay(x))
   colnames(e) <- colnames(assay(x))

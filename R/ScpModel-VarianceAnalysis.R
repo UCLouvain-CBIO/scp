@@ -78,7 +78,7 @@ NULL
 ##' @name ScpModel-VarianceAnalysis
 ##'
 ##' @param object An object that inherits from the
-##'     `SingleCellExperiment` class. It must contain an estimated
+##'     `SummarizedExperiment` class. It must contain an estimated
 ##'     `ScpModel` in its metadata.
 ##'
 ##' @param name A `character(1)` providing the name to use to retrieve

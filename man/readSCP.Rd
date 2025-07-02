@@ -6,9 +6,9 @@
 \alias{readSingleCellExperiment}
 \title{Read single-cell proteomics tabular data}
 \usage{
-readSCP(...)
+readSCP(..., experimentsAsSce = FALSE)
 
-readSCPfromDIANN(...)
+readSCPfromDIANN(..., experimentsAsSce = FALSE)
 
 readSingleCellExperiment(...)
 }
@@ -16,10 +16,17 @@ readSingleCellExperiment(...)
 \item{...}{Parameters passed to \code{\link[=readSummarizedExperiment]{readSummarizedExperiment()}},
 \code{\link[=readQFeatures]{readQFeatures()}} or \code{\link[=readQFeaturesFromDIANN]{readQFeaturesFromDIANN()}}. See these
 respective manual pages for details.}
+
+\item{experimentsAsSce}{A \code{logical(1)} indicating whether the
+\code{QFeatures} object should be composed of \code{SingleCellExperiment}
+objects. By default: \code{FALSE}, the \code{QFeatures} object will be composed
+of \code{SummarizedExperiment} objects. Note that using
+\code{SingleCellExperiment} can impact the performance.}
 }
 \value{
 An instance of class \code{SingleCellExperiment} or a
-\code{QFeatures}, composed of \code{SingleCellExperiment} objects.
+\code{QFeatures}, composed of \code{SingleCellExperiment} or
+\code{SummarizedExperiment} objects.
 }
 \description{
 Function to import and convert tabular data from a spreadsheet or

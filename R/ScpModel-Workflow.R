@@ -76,7 +76,7 @@ NULL
 ##' @section Input data:
 ##'
 ##' The main input is `object` that inherits from the
-##' `SingleCellExperiment` class. The quantitative data will be
+##' `SummarizedExperiment` class. The quantitative data will be
 ##' retrieve using `assay(object)`. If `object` contains multiple
 ##' assays, you can specify which assay to take as input thanks to the
 ##' argument `i`, the function will then assume `assay(object, i)` as
@@ -193,7 +193,7 @@ NULL
 ##' @name ScpModel-Workflow
 ##'
 ##' @param object An object that inherits from the
-##'     `SingleCellExperiment` class.
+##'     `SummarizedExperiment` class.
 ##'
 ##' @param formula A `formula` object controlling which variables are
 ##'     to be modelled.
@@ -215,6 +215,10 @@ scpModelWorkflow <- function(object, formula,
                              i = 1,
                              name = "model",
                              verbose = TRUE) {
+    if (!inherits(object, "SingleCellExperiment")) {
+        object <- as(object, "SingleCellExperiment")
+        message("`object` converted to SingleCellExperiment.")
+    }
     if (name %in% names(metadata(object))) {
         warning("An element called '", name, "' is already present ",
                 "in the metadata. The associated content will be ",
