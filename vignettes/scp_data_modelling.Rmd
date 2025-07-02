@@ -1,5 +1,5 @@
 ---
-title: "Single Cell Proteomics data modelling"
+title: "Single Cell Proteomics data modelling using scplainer"
 author:
     - name: Laurent Gatto
     - name: Christophe Vanderaa
