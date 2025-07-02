@@ -31,7 +31,8 @@ to the console.}
 }
 \description{
 Function to estimate a linear model for each feature (peptide or
-protein) of a single-cell proteomics data set.
+protein) of a single-cell proteomics data set. This is the
+modelling step of the \emph{scplainer} workflow.
 }
 \section{Input data}{
 
@@ -159,15 +160,23 @@ scpModelFilterPlot(leduc_minimal)
 scpModelFilterThreshold(leduc_minimal) <- 2
 scpModelFilterPlot(leduc_minimal)
 }
-\seealso{
-\itemize{
-\item \linkS4class{ScpModel} for functions to extract information from the
-\code{ScpModel} object
-\item \link{ScpModel-VarianceAnalysis}, \link{ScpModel-DifferentialAnalysis},
-\link{ScpModel-ComponentAnalysis} to explore the model results
-\item \link{scpKeepEffect} and \link{scpRemoveBatchEffect} to perform batch
-correction for downstream analyses.
+\references{
+scplainer: using linear models to understand mass
+spectrometry-based single-cell proteomics data Christophe
+Vanderaa, Laurent Gatto bioRxiv 2023.12.14.571792; doi:
+https://doi.org/10.1101/2023.12.14.571792.
 }
+\seealso{
+This function is part of the \emph{scplainer} workflow, which also
+consists of \link{ScpModel-VarianceAnalysis},
+\link{ScpModel-DifferentialAnalysis}, \link{ScpModel-ComponentAnalysis} to
+explore the model results
+
+\linkS4class{ScpModel} provides functions to extract information from
+the \code{ScpModel} object.
+
+\link{scpKeepEffect} and \link{scpRemoveBatchEffect} perform batch
+correction for downstream analyses.
 }
 \author{
 Christophe Vanderaa, Laurent Gatto

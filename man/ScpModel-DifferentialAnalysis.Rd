@@ -83,7 +83,8 @@ colour based on an annotation (see \code{\link[ggplot2:aes]{ggplot2::aes()}}).}
 \description{
 Differential abundance analysis assess the statistical
 significance of the differences observed between group of samples
-of interest.
+of interest. Differential abundance analysis is part of the
+\emph{scplainer} workflow.
 }
 \section{Running the differential abundance analysis}{
 
@@ -214,12 +215,21 @@ byProteinDA <- scpDifferentialAggregate(
 scpVolcanoPlot(byProteinDA) |>
     wrap_plots(guides = "collect")
 }
-\seealso{
-\itemize{
-\item \link{ScpModel-Workflow} to run a model on SCP data upstream of
-differential abundance analysis.
-\item \code{\link[=scpAnnotateResults]{scpAnnotateResults()}} to annotate analysis of variance results.
+\references{
+scplainer: using linear models to understand mass
+spectrometry-based single-cell proteomics data Christophe
+Vanderaa, Laurent Gatto bioRxiv 2023.12.14.571792; doi:
+https://doi.org/10.1101/2023.12.14.571792.
 }
+\seealso{
+This function is part of the \emph{scplainer} workflow, which also
+consists of \link{ScpModel-Workflow} to run a model on SCP data
+upstream of analysis of variance, and
+\link{ScpModel-VarianceAnalysis} and \link{ScpModel-ComponentAnalysis}
+to explore the model results.
+
+\code{\link[=scpAnnotateResults]{scpAnnotateResults()}} streamlines the annotation of the
+differential abundance results.
 }
 \author{
 Christophe Vanderaa, Laurent Gatto

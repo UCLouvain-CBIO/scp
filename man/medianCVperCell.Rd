@@ -71,7 +71,7 @@ assigned an NA.
 \examples{
 data("scp1")
 scp1 <- filterFeatures(scp1, ~ !is.na(Proteins))
-scp1 <- medianCVperCell(scp1,
+scp1 <- medianCVperCell(scp1, 
                         i = 1:3,
                         groupBy = "Proteins",
                         nobs = 5,

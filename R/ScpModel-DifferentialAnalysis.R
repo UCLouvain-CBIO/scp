@@ -8,7 +8,8 @@
 ##'
 ##' Differential abundance analysis assess the statistical
 ##' significance of the differences observed between group of samples
-##' of interest.
+##' of interest. Differential abundance analysis is part of the
+##' *scplainer* workflow.
 ##'
 ##' @section Running the differential abundance analysis:
 ##'
@@ -87,15 +88,28 @@
 ##'
 ##' @seealso
 ##'
-##' - [ScpModel-Workflow] to run a model on SCP data upstream of
-##'   differential abundance analysis.
-##' - [scpAnnotateResults()] to annotate analysis of variance results.
+##' This function is part of the *scplainer* workflow, which also
+##' consists of [ScpModel-Workflow] to run a model on SCP data
+##' upstream of analysis of variance, and
+##' [ScpModel-VarianceAnalysis] and [ScpModel-ComponentAnalysis]
+##' to explore the model results.
+##'
+##' [scpAnnotateResults()] streamlines the annotation of the
+##' differential abundance results.
+##'
+##' @references
+##'
+##' scplainer: using linear models to understand mass
+##' spectrometry-based single-cell proteomics data Christophe
+##' Vanderaa, Laurent Gatto bioRxiv 2023.12.14.571792; doi:
+##' https://doi.org/10.1101/2023.12.14.571792.
 ##'
 ##' @author Christophe Vanderaa, Laurent Gatto
 ##'
 ##' @example inst/examples/examples_ScpModel-DifferentialAnalysis.R
 ##'
 NULL
+
 
 ## ---- Analysis functions ----
 

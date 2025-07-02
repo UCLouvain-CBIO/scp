@@ -62,7 +62,7 @@ feature. The ratios are averaged within the assay.
 }
 \examples{
 data("scp1")
-scp1 <- computeSCR(scp1,
+scp1 <- computeSCR(scp1, 
                    i = 1,
                    colvar = "SampleType",
                    carrierPattern = "Carrier",

@@ -1,4 +1,65 @@
 
+## ---- scplainer ----
+
+##' @name scplainer
+##'
+##' @title scplainer: linear models to understand mass
+##'   spectrometry-based single-cell proteomics data
+##'
+##' @description
+##'
+##' *scplainer*, standing for SCP-based Linear modelling Approach for
+##' Interpretable aNd Explorable Results, is a principled and
+##' standardised approach for extracting meaningful insights from SCP
+##' data. At its core, the approach performs statistical modelling
+##' using linear regression.
+##'
+##' The workflow starts from a [SingleCellExperiment] object
+##' containing SCP data. The data is assumed to be
+##' **log-transformed**. We advise to perform cell and feature quality
+##' control to avoid that failed or outlying cells/feature distort the
+##' results. We also recommend starting at the precursor or the
+##' peptide-level, but the workflow allows protein-level data.
+##' Similarly, the workflow is robust against for missing values, but
+##' it also allows for data where missing values are imputed.
+##'
+##' To learn how to import your data, we suggest reading the vignette:
+##' \code{vignette("read_scp", package = "scp")}
+##'
+##' To learn how to process your data, we suggest reading the vignette:
+##' \code{vignette("scp", package = "scp")}
+##'
+##' **Outline of the workflow**
+##'
+##' 1. [scpModel-Workflow]: performs the data modelling and filtering
+##'    using linear regression.
+##' 2. [ScpModel-VarianceAnalysis]: investigate the contribution of
+##'    each model variable to the data
+##' 3. [ScpModel-DifferentialAnalysis]: assess the statistical
+##'    significance of the differences observed between group of
+##'    samples of interest.
+##' 4. [ScpModel-ComponentAnalysis]: visually explore the data
+##'    captured by each model variable.
+##'
+##' Once the data are modelled and explored, the filtered, normalised
+##' and batch-corrected data can be retrieved for further downstream
+##' analysis, such as clustering or trajectory inference.
+##'
+##' You can find a demonstration of the *scplainer* workflow in a
+##' dedicated vignette:
+##' \code{vignette("scp_data_modelling", package = "scp")}
+##'
+##' @references
+##'
+##' scplainer: using linear models to understand mass
+##' spectrometry-based single-cell proteomics data Christophe
+##' Vanderaa, Laurent Gatto bioRxiv 2023.12.14.571792; doi:
+##' https://doi.org/10.1101/2023.12.14.571792.
+##'
+##' @author Christophe Vanderaa, Laurent Gatto
+##'
+NULL
+
 ## ---- ScpModel workflow ----
 
 
@@ -9,7 +70,8 @@
 ##' @description
 ##'
 ##' Function to estimate a linear model for each feature (peptide or
-##' protein) of a single-cell proteomics data set.
+##' protein) of a single-cell proteomics data set. This is the
+##' modelling step of the *scplainer* workflow.
 ##'
 ##' @section Input data:
 ##'
@@ -104,12 +166,23 @@
 ##'
 ##' @seealso
 ##'
-##' - [ScpModel-class] for functions to extract information from the
-##'   `ScpModel` object
-##' - [ScpModel-VarianceAnalysis], [ScpModel-DifferentialAnalysis],
-##'   [ScpModel-ComponentAnalysis] to explore the model results
-##' - [scpKeepEffect] and [scpRemoveBatchEffect] to perform batch
-##'   correction for downstream analyses.
+##' This function is part of the *scplainer* workflow, which also
+##' consists of [ScpModel-VarianceAnalysis],
+##' [ScpModel-DifferentialAnalysis], [ScpModel-ComponentAnalysis] to
+##' explore the model results
+##'
+##' [ScpModel-class] provides functions to extract information from
+##' the `ScpModel` object.
+##'
+##' [scpKeepEffect] and [scpRemoveBatchEffect] perform batch
+##' correction for downstream analyses.
+##'
+##' @references
+##'
+##' scplainer: using linear models to understand mass
+##' spectrometry-based single-cell proteomics data Christophe
+##' Vanderaa, Laurent Gatto bioRxiv 2023.12.14.571792; doi:
+##' https://doi.org/10.1101/2023.12.14.571792.
 ##'
 ##' @author Christophe Vanderaa, Laurent Gatto
 ##'

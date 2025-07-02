@@ -8,7 +8,8 @@
 ##' @description
 ##'
 ##' Analysis of variance investigates the contribution of each effects
-##' in capturing the variance in the data.
+##' in capturing the variance in the data. Analysis of variance is
+##' part of the *scplainer* workflow.
 ##'
 ##' @section Running the variance analysis:
 ##'
@@ -50,9 +51,21 @@
 ##'
 ##' @seealso
 ##'
-##' - [ScpModel-Workflow] to run a model on SCP data upstream of
-##'   analysis of variance.
-##' - [scpAnnotateResults()] to annotate analysis of variance results.
+##' This function is part of the *scplainer* workflow, which also
+##' consists of [ScpModel-Workflow] to run a model on SCP data
+##' upstream of analysis of variance, and
+##' [ScpModel-DifferentialAnalysis] and [ScpModel-ComponentAnalysis]
+##' to explore the model results.
+##'
+##' [scpAnnotateResults()] streamlines the annotation of the analysis
+##' of variance results.
+##'
+##' @references
+##'
+##' scplainer: using linear models to understand mass
+##' spectrometry-based single-cell proteomics data Christophe
+##' Vanderaa, Laurent Gatto bioRxiv 2023.12.14.571792; doi:
+##' https://doi.org/10.1101/2023.12.14.571792.
 ##'
 ##' @author Christophe Vanderaa, Laurent Gatto
 ##'
