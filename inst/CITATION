@@ -51,9 +51,11 @@ citEntry(entry = "article",
          author = personList(
            person(given = "Christophe", family = "Vanderaa"),
            person(given = "Laurent", family = "Gatto")),
-         journal = "bioRxiv",
-         year = "2024",
+         journal = " Genome Biol",
+         year = "2025",
+         volume = "26",
+         doi = "10.1186/s13059-025-03713-4",
          textVersion = paste("Vanderaa Christophe and Laurent Gatto.",
                              "scplainer: using linear models to understand mass spectrometry-based single-cell proteomics data.",
-                             "bioRxiv 2023.12.14.571792; doi: https://doi.org/10.1101/2023.12.14.571792")
+                             "Genome Biol 26, 237 (2025). https://doi.org/10.1186/s13059-025-03713-4")
          )

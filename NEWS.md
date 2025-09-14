@@ -1,11 +1,15 @@
 # scp 1.19
 
+## scp 1.19.4
+
+- Update scplainer reference.
+
 ## scp 1.19.3
 
 - docs: explicitly mention scplainer in the man pages
 
 ## scp 1.19.2
- 
+
 - feat: improved error message when pattern is not found in
   computeSCR
 - feat: use typeMetadata (based on QFeatues 1.19.1)
