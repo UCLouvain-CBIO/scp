@@ -1,3 +1,13 @@
+# scp 1.21
+
+## scp 1.21.1
+
+- Update Chris' email address.
+
+## scp 1.21.0
+
+- New Bioconductor devel
+
 # scp 1.19
 
 ## scp 1.19.5
