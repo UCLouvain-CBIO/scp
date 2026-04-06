@@ -189,10 +189,10 @@ jobs:
       #     remotes::install_git("https://git.bioconductor.org/packages/vsn")
       #   shell: Rscript {0}
 
-      - name: Manually install genefilter
-        run: |
-          remotes::install_git("https://git.bioconductor.org/packages/genefilter")
-        shell: Rscript {0}
+      # - name: Manually install genefilter
+      #   run: |
+      #     remotes::install_git("https://git.bioconductor.org/packages/genefilter")
+      #   shell: Rscript {0}
 
       # - name: Manually install sva
       #   run: |
@@ -232,10 +232,10 @@ jobs:
       #     cd preprocessCore
       #     R CMD INSTALL --configure-args="--disable-threading"  .
 
-      - name: Manually install from a branch
-        run: |
-          remotes::install_github("RforMassSpectrometry/QFeatures", ref = "typeMetadata")
-        shell: Rscript {0}
+      # - name: Manually install from a branch
+      #   run: |
+      #     remotes::install_github("RforMassSpectrometry/QFeatures", ref = "typeMetadata")
+      #   shell: Rscript {0}
 
       - name: Session info
         run: |
