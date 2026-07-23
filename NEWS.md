@@ -1,3 +1,13 @@
+# scp 1.23
+
+## scp 1.23.1
+
+- Update citations.
+
+## scp 1.23.0
+
+- New Bioconductor devel
+
 # scp 1.21
 
 ## scp 1.21.1
