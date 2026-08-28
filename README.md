@@ -48,24 +48,25 @@ BiocManager::install("UCLouvain-CBIO/scp")
 
 To cite the `scp` package in publications use:
 
-> Vanderaa, Christophe, and Laurent
-> Gatto. 2025. [https://link.springer.com/article/10.1186/s13059-025-03713-4](Scplainer:
-> Using Linear Models to Understand Mass Spectrometry-Based
-> Single-Cell Proteomics Data). Genome Biology 26 (1): 237.
+> Vanderaa, Christophe, and Laurent Gatto. 2025. [Scplainer: Using
+> Linear Models to Understand Mass Spectrometry-Based Single-Cell
+> Proteomics
+> Data](https://link.springer.com/article/10.1186/s13059-025-03713-4). Genome
+> Biology 26 (1): 237.
 
-> Vanderaa, Christophe, and Laurent
-> Gatto. 2023. [https://pubs.acs.org/doi/10.1021/acs.jproteome.3c00227](Revisiting
-> the Thorny Issue of Missing Values in Single-Cell
-> Proteomics). Journal of Proteome Research 22 (9): 2775–84.
+> Vanderaa, Christophe, and Laurent Gatto. 2023. [Revisiting the
+> Thorny Issue of Missing Values in Single-Cell
+> Proteomics](https://pubs.acs.org/doi/10.1021/acs.jproteome.3c00227). Journal
+> of Proteome Research 22 (9): 2775–84.
 
 > Vanderaa Christophe and Laurent Gatto. The current state of
 > single-cell proteomics data analysis. Current Protocols 3 (1):
 > e658.; doi: https://doi.org/10.1002/cpz1.658 (2023).
 
-> Vanderaa Christophe and Laurent
-> Gatto. [https://www.tandfonline.com/doi/full/10.1080/14789450.2021.1988571](Replication
-> of Single-Cell Proteomics Data Reveals Important Computational
-> Challenges). Expert Review of Proteomics, 1–9 (2021).
+> Vanderaa Christophe and Laurent Gatto. [Replication of Single-Cell
+> Proteomics Data Reveals Important Computational
+> Challenges](https://www.tandfonline.com/doi/full/10.1080/14789450.2021.1988571). Expert
+> Review of Proteomics, 1–9 (2021).
 
 ## Asking for help
 
