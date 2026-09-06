@@ -72,7 +72,7 @@ identical(reconstructed, batchCorreced)
 }
 \seealso{
 \itemize{
-\item \linkS4class{ScpModel} for functions to extract information from the
+\item \link[=ScpModel-class]{ScpModel} for functions to extract information from the
 \code{ScpModel} object
 \item \link{ScpModel-Workflow} to run a model on SCP data required for
 batch correction.

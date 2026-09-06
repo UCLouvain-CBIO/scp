@@ -172,7 +172,7 @@ consists of \link{ScpModel-VarianceAnalysis},
 \link{ScpModel-DifferentialAnalysis}, \link{ScpModel-ComponentAnalysis} to
 explore the model results
 
-\linkS4class{ScpModel} provides functions to extract information from
+\link[=ScpModel-class]{ScpModel} provides functions to extract information from
 the \code{ScpModel} object.
 
 \link{scpKeepEffect} and \link{scpRemoveBatchEffect} perform batch

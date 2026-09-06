@@ -40,7 +40,7 @@ stored. The name cannot already exist in the \code{colData}.}
 sequentially applied to each feature (row) in each assay.
 Available methods and additional
 information about normalization can be found in
-\link[MsCoreUtils:normalize]{MsCoreUtils::normalizeMethods}. You can also specify
+\link[MsCoreUtils:normalizeMethods]{MsCoreUtils::normalizeMethods}. You can also specify
 \code{norm = "SCoPE2"} to reproduce the normalization performed
 before computing the CVs as suggested by Specht et al.
 \code{norm = "none"} will not normalize the data (default)}
@@ -71,7 +71,7 @@ assigned an NA.
 \examples{
 data("scp1")
 scp1 <- filterFeatures(scp1, ~ !is.na(Proteins))
-scp1 <- medianCVperCell(scp1, 
+scp1 <- medianCVperCell(scp1,
                         i = 1:3,
                         groupBy = "Proteins",
                         nobs = 5,

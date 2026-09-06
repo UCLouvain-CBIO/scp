@@ -19,7 +19,7 @@ are \code{normAssay}.}
 apply. See Details.`}
 
 \item{...}{Additional parameters passed to
-\code{\link[MsCoreUtils:normalize]{MsCoreUtils::normalizeMethods()}}.}
+\code{\link[MsCoreUtils:normalizeMethods]{MsCoreUtils::normalizeMethods()}}.}
 }
 \value{
 A \code{QFeatures} object with an additional assay containing the
@@ -34,7 +34,7 @@ a new assay
 The \code{method} parameter in \code{normalize} can be one of \code{"sum"},
 \code{"max"}, \code{"center.mean"}, \code{"center.median"}, \code{"div.mean"},
 \code{"div.median"}, \code{"diff.meda"}, \verb{"quantiles}", \verb{"quantiles.robust}"
-or \code{"vsn"}. The \code{\link[MsCoreUtils:normalize]{MsCoreUtils::normalizeMethods()}} function returns
+or \code{"vsn"}. The \code{\link[MsCoreUtils:normalizeMethods]{MsCoreUtils::normalizeMethods()}} function returns
 a vector of available normalisation methods.
 \itemize{
 \item For \code{"sum"} and \code{"max"}, each feature's intensity is divided by
@@ -59,7 +59,7 @@ function arguments.
 }
 
 For further details and examples about normalisation, see
-\code{\link[MsCoreUtils:normalize]{MsCoreUtils::normalize_matrix()}}.
+\code{\link[MsCoreUtils:normalize_matrix]{MsCoreUtils::normalize_matrix()}}.
 }
 \examples{
 
@@ -70,5 +70,5 @@ normalizeSCP(scp1, i = "proteins", name = "normproteins",
 
 }
 \seealso{
-\link[QFeatures:QFeatures-processing]{QFeatures::normalize} for more details about \code{normalize}
+\link[QFeatures:normalize]{QFeatures::normalize} for more details about \code{normalize}
 }

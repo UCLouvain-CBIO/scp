@@ -27,10 +27,10 @@ test_that("scpDifferentialAnalysis", {
     estimable <- c("a", "c", "d", "e", "h", "i", "j")
     expect_identical(
         scpDifferentialAnalysis(
-            se, contrast = list(c("condition", "1", "2"))
+            se, contrasts = list(c("condition", "1", "2"))
         ),
         scpDifferentialAnalysis(
-            se, contrast = list(c("condition", "1", "2")), name = "model"
+            se, contrasts = list(c("condition", "1", "2")), name = "model"
         )
     )
 
@@ -47,7 +47,7 @@ test_that("scpDifferentialAnalysis", {
     metadata(exp[[1]])$contrast <- c("condition", "1", "2")
     expect_equal(
         scpDifferentialAnalysis(
-            se, contrast = list(c("condition", "1", "2"))
+            se, contrasts = list(c("condition", "1", "2"))
         ),
         exp,
         tolerance = 1E-2
@@ -84,7 +84,7 @@ test_that("scpDifferentialAnalysis", {
     expect_equal(
         scpDifferentialAnalysis(
             se,
-            contrast = list(
+            contrasts = list(
                 c("condition", "1", "2"), ## there is change = positive control
                 c("condition", "1", "3") ## there is no change = negative control
             )
@@ -203,7 +203,7 @@ test_that(".scpDifferentialAnalysisOnContrast", {
     metadata(exp)$contrast <- c("condition", "1", "2")
     expect_equal(
         .scpDifferentialAnalysisOnContrast(
-            se, contrast = list(c("condition", "1", "2")), name = "model"
+            se, contrasts = list(c("condition", "1", "2")), name = "model"
         ),
         list(condition_1_vs_2 = exp),
         tolerance = 1E-2
@@ -240,7 +240,7 @@ test_that(".scpDifferentialAnalysisOnContrast", {
     expect_equal(
         .scpDifferentialAnalysisOnContrast(
             se,
-            contrast = list(
+            contrasts = list(
                 c("condition", "1", "2"), ## there is change = positive control
                 c("condition", "1", "3") ## there is no change = negative control
             ),
@@ -780,7 +780,7 @@ test_that("scpVolcanoPlot", {
     assay(se)[sample(1:length(assay(se)), length(assay(se))/2)] <- NA
     se <- scpModelWorkflow(se, formula = ~ 1 + condition)
     daRes <- scpDifferentialAnalysis(
-        se, contrast = list(c("condition", "1", "2"))
+        se, contrasts = list(c("condition", "1", "2"))
     )
     ## default plot
     set.seed(124) ## ggrepel is stochastic

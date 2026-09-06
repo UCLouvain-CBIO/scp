@@ -328,7 +328,7 @@ test_that("medianCVperCell", {
                    regexp = "The median CV could not be computed for one or more")
     ## Error: the colData name already exists
     expect_error(medianCVperCell(scpfilt, i = 1:5, groupBy = "Proteins",
-                                 colData = "SampleType"),
+                                 colDataName = "SampleType"),
                  regexp = "The colData name 'SampleType' already exists")
     ## Error: the assays contain duplicated samples
     expect_error(medianCVperCell(scp1, i = 1:5, groupBy = "Proteins"),

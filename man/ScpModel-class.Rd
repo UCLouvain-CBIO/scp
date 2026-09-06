@@ -76,7 +76,7 @@ divided by the number of coefficients to estimate. n/p cannot be
 smaller than 1 because this would lead to over-specified models.
 \item \code{scpModelFitList}: A \code{List} that contains the model results for
 each feature. Each element is a \code{ScpModelFit} object (see
-\code{\linkS4class{ScpModelFit}})
+\code{\link[=ScpModelFit-class]{ScpModelFit}})
 }
 }
 \section{Getters}{
@@ -158,7 +158,7 @@ scpModelFilterThreshold(leduc_minimal)
 }
 \seealso{
 \itemize{
-\item \linkS4class{ScpModelFit} for a description of the class that store
+\item \link[=ScpModelFit-class]{ScpModelFit} for a description of the class that store
 modelling results
 \item \link{ScpModel-Workflow} that uses the class to store the estimated
 model.

@@ -11,7 +11,7 @@ An object of class \code{QFeatures} of length 5.
 data("scp1")
 }
 \description{
-A small \link{QFeatures} object with SCoPE2 data. The object is
+A small \link[QFeatures:QFeatures]{QFeatures} object with SCoPE2 data. The object is
 composed of 5 assays, including 3 PSM-level assays, 1 peptide
 assay and 1 protein assay.
 }
@@ -19,8 +19,8 @@ assay and 1 protein assay.
 The dataset is a subset of the SCoPE2 dataset (version 2, Specht
 et al. 2019,
 \href{https://www.biorxiv.org/content/10.1101/665307v3}{BioRXiv}).
-This dataset was converted to a \code{\link{QFeatures}} object where each
-assay in stored as a \code{\link{SingleCellExperiment}} object. One assay
+This dataset was converted to a \code{\link[QFeatures:QFeatures]{QFeatures}} object where each
+assay in stored as a \code{\link[SingleCellExperiment:SingleCellExperiment]{SingleCellExperiment}} object. One assay
 per chromatographic batch ("LCA9", "LCA10", "LCB3") was randomly
 sampled. For each assay, 100 proteins were randomly sampled. PSMs
 were then aggregated to peptides and joined in a single assay.

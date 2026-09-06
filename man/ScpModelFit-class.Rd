@@ -11,7 +11,7 @@ feature}
 An \code{ScpModelFit} object is expected to be stored as a list element
 in the \code{scpModelFitList} of an \code{ScpModel} object. The
 \code{ScpModelFit} object should \strong{never be accessed directly} by the
-user. Refer to the \linkS4class{ScpModel} for a list of function to
+user. Refer to the \link[=ScpModel-class]{ScpModel} for a list of function to
 access the information in an \code{ScpModelFit}. The \code{ScpModelFit}
 class contains several slots that contain the model output for a
 feature:
@@ -37,7 +37,7 @@ new("ScpModelFit") ## this should never be used by the user
 
 }
 \seealso{
-\linkS4class{ScpModel} for a description of the class that relies on
+\link[=ScpModel-class]{ScpModel} for a description of the class that relies on
 \code{ScpModelFit}
 }
 \author{

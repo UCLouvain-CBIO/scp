@@ -13,8 +13,8 @@ readSCPfromDIANN(..., experimentsAsSce = FALSE)
 readSingleCellExperiment(...)
 }
 \arguments{
-\item{...}{Parameters passed to \code{\link[=readSummarizedExperiment]{readSummarizedExperiment()}},
-\code{\link[=readQFeatures]{readQFeatures()}} or \code{\link[=readQFeaturesFromDIANN]{readQFeaturesFromDIANN()}}. See these
+\item{...}{Parameters passed to \code{\link[QFeatures:readSummarizedExperiment]{readSummarizedExperiment()}},
+\code{\link[QFeatures:readQFeatures]{readQFeatures()}} or \code{\link[QFeatures:readQFeaturesFromDIANN]{readQFeaturesFromDIANN()}}. See these
 respective manual pages for details.}
 
 \item{experimentsAsSce}{A \code{logical(1)} indicating whether the
@@ -74,7 +74,7 @@ this function depends on.
 \item The more general \code{\link[QFeatures:readQFeaturesFromDIANN]{QFeatures::readQFeaturesFromDIANN()}} function,
 for details and an example on how to read label-free and plexDIA
 (mTRAQ) data processed with DIA-NN.
-\item The \code{\link[QFeatures:readQFeatures]{QFeatures::readSummarizedExperiment()}} function, which
+\item The \code{\link[QFeatures:readSummarizedExperiment]{QFeatures::readSummarizedExperiment()}} function, which
 \code{readSingleCellExperiment()} depends on.
 \item The \code{\link[SingleCellExperiment:SingleCellExperiment]{SingleCellExperiment::SingleCellExperiment()}} class.
 }

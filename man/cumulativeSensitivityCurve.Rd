@@ -17,7 +17,7 @@ cumulativeSensitivityCurve(
 predictSensitivity(df, nSamples)
 }
 \arguments{
-\item{object}{An object of class \link{QFeatures}.}
+\item{object}{An object of class \link[QFeatures:QFeatures]{QFeatures}.}
 
 \item{i}{The index of the assay in \code{object}. The assay must
 contain an identification matrix, that is a matrix where an

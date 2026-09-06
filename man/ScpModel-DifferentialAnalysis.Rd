@@ -76,7 +76,7 @@ change point size, transparency, or assign colour based on an
 annotation (see \code{\link[ggplot2:aes]{ggplot2::aes()}}).}
 
 \item{labelParams}{A \code{list} where each element is an argument that
-is provided to \code{\link[ggrepel:geom_text_repel]{ggrepel::geom_label_repel()}}. This is useful
+is provided to \code{\link[ggrepel:geom_label_repel]{ggrepel::geom_label_repel()}}. This is useful
 to change label size, transparency, or assign
 colour based on an annotation (see \code{\link[ggplot2:aes]{ggplot2::aes()}}).}
 }
@@ -115,7 +115,7 @@ argument, that is the name of the numerical annotation variable.
 
 The statistical tests in both use cases are conducted for each
 feature independently. The p-values are adjusted using
-\code{\link[IHW:ihw.default]{IHW::ihw()}}, where each test is weighted using the feature
+\code{\link[IHW:ihw]{IHW::ihw()}}, where each test is weighted using the feature
 intercept (that is the average feature intensity). The function
 returns a list of \code{DataFrame}s with one table for each test
 contrast and/or coefficient. It provides the adjusted p-values and

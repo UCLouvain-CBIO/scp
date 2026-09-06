@@ -32,11 +32,11 @@ test_that("scpComponentAnalysis", {
                            name = "noNA", i = 2)
     ## effects not modelled = error
     expect_error(
-        scpComponentAnalysis(se, effect = "foo"),
+        scpComponentAnalysis(se, effects = "foo"),
         "'foo' is/are not modelled effects."
     )
     expect_error(
-        scpComponentAnalysis(se, effect = c("foo1", "foo2")),
+        scpComponentAnalysis(se, effects = c("foo1", "foo2")),
         "'foo1', 'foo2' is/are not modelled effects."
     )
     ## method not known = error
@@ -96,7 +96,7 @@ test_that("scpComponentAnalysis", {
         scpModelEffects(se)[["condition"]] + scpModelResiduals(se)
     ))
     expect_identical(
-        scpComponentAnalysis(se, method = "APCA", effect = "condition"),
+        scpComponentAnalysis(se, method = "APCA", effects = "condition"),
         List(
             bySample = SimpleList(
                 unmodelled = unmod$bySample,
@@ -115,7 +115,7 @@ test_that("scpComponentAnalysis", {
         scpModelEffects(se)[["numeric"]] + scpModelResiduals(se)
     ))
     expect_identical(
-        scpComponentAnalysis(se, method = "APCA", effect = c("condition", "numeric")),
+        scpComponentAnalysis(se, method = "APCA", effects = c("condition", "numeric")),
         List(
             bySample = SimpleList(
                 unmodelled = unmod$bySample,
@@ -133,7 +133,7 @@ test_that("scpComponentAnalysis", {
     )
     ## Missing effect = all effects
     expect_identical(
-        scpComponentAnalysis(se, method = "APCA", effect = c("condition", "numeric")),
+        scpComponentAnalysis(se, method = "APCA", effects = c("condition", "numeric")),
         scpComponentAnalysis(se, method = "APCA")
     )
     ## ASCA
@@ -141,7 +141,7 @@ test_that("scpComponentAnalysis", {
         scpModelEffects(se)[["condition"]]
     ))
     expect_identical(
-        scpComponentAnalysis(se, method = "ASCA", effect = "condition"),
+        scpComponentAnalysis(se, method = "ASCA", effects = "condition"),
         List(
             bySample = SimpleList(
                 unmodelled = unmod$bySample,
@@ -160,7 +160,7 @@ test_that("scpComponentAnalysis", {
         scpModelEffects(se)[["condition"]], scpModelResiduals(se), .nipalsWrapper
     ))
     expect_identical(
-        scpComponentAnalysis(se, method = "ASCA.E", effect = "condition"),
+        scpComponentAnalysis(se, method = "ASCA.E", effects = "condition"),
         List(
             bySample = SimpleList(
                 unmodelled = unmod$bySample,
@@ -177,7 +177,7 @@ test_that("scpComponentAnalysis", {
     ## All methods
     expect_identical(
         scpComponentAnalysis(se, method = c("APCA", "ASCA", "ASCA.E"),
-                             effect = "condition"),
+                             effects = "condition"),
         List(
             bySample = SimpleList(
                 unmodelled = unmod$bySample,
@@ -197,7 +197,7 @@ test_that("scpComponentAnalysis", {
     )
     ## no residuals
     expect_identical(
-        scpComponentAnalysis(se, method = "ASCA", effect = "condition",
+        scpComponentAnalysis(se, method = "ASCA", effects = "condition",
                              residuals = FALSE),
         List(
             bySample = SimpleList(
@@ -212,7 +212,7 @@ test_that("scpComponentAnalysis", {
     )
     ## no unmodelled
     expect_identical(
-        scpComponentAnalysis(se, method = "ASCA", effect = "condition",
+        scpComponentAnalysis(se, method = "ASCA", effects = "condition",
                              unmodelled = FALSE),
         List(
             bySample = SimpleList(

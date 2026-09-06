@@ -1,4 +1,3 @@
-
 ## ---- scplainer ----
 
 ##' @name scplainer
@@ -31,7 +30,7 @@
 ##'
 ##' **Outline of the workflow**
 ##'
-##' 1. [scpModel-Workflow]: performs the data modelling and filtering
+##' 1. [ScpModel-Workflow]: performs the data modelling and filtering
 ##'    using linear regression.
 ##' 2. [ScpModel-VarianceAnalysis]: investigate the contribution of
 ##'    each model variable to the data

@@ -11,12 +11,12 @@ standardised approach for extracting meaningful insights from SCP
 data. At its core, the approach performs statistical modelling
 using linear regression.
 
-The workflow starts from a \link{SingleCellExperiment} object
+The workflow starts from a \link[SingleCellExperiment:SingleCellExperiment]{SingleCellExperiment} object
 containing SCP data. The data is assumed to be
 \strong{log-transformed}. We advise to perform cell and feature quality
 control to avoid that failed or outlying cells/feature distort the
 results. We also recommend starting at the precursor or the
-peptide-level, but the workflow also allows protein-level data.
+peptide-level, but the workflow allows protein-level data.
 Similarly, the workflow is robust against for missing values, but
 it also allows for data where missing values are imputed.
 
@@ -28,7 +28,7 @@ To learn how to process your data, we suggest reading the vignette:
 
 \strong{Outline of the workflow}
 \enumerate{
-\item \link{scpModel-Workflow}: performs the data modelling and filtering
+\item \link{ScpModel-Workflow}: performs the data modelling and filtering
 using linear regression.
 \item \link{ScpModel-VarianceAnalysis}: investigate the contribution of
 each model variable to the data

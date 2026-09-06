@@ -7,7 +7,7 @@
 reportMissingValues(object, i, by = NULL)
 }
 \arguments{
-\item{object}{An object of class \link{QFeatures}.}
+\item{object}{An object of class \link[QFeatures:QFeatures]{QFeatures}.}
 
 \item{i}{The index of the assay in \code{object}. The assay must
 contain an identification matrix, that is a matrix where an
@@ -46,7 +46,7 @@ peps <- scp1[["peptides"]]
 assay(peps) <- !is.na(assay(peps))
 scp1 <- addAssay(scp1, peps, "id")
 
-## Report metrics 
+## Report metrics
 reportMissingValues(scp1, "id")
 ## Report metrics by sample type
 reportMissingValues(scp1, "id", scp1$SampleType)

@@ -1,5 +1,9 @@
 # scp 1.23
 
+## scp 1.23.2
+
+- `aggregateFeaturesOverAssays()` is now defunct.
+
 ## scp 1.23.1
 
 - Update citations.
