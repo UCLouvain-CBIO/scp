@@ -769,6 +769,9 @@ test_that("scpDifferentialAggregate", {
 })
 
 test_that("scpVolcanoPlot", {
+    labelParams <- list(
+        seed = 123, max.time = Inf, max.iter = 10000
+    )
     se <-  SummarizedExperiment(assays = List(
         matrix(0, 100, 100, dimnames = list(paste0("row", 1:100),
                                            paste0("col", 1:100)))
@@ -783,27 +786,27 @@ test_that("scpVolcanoPlot", {
         se, contrasts = list(c("condition", "1", "2"))
     )
     ## default plot
-    set.seed(124) ## ggrepel is stochastic
     expect_doppelganger(
         "scpVolcanoPlot default",
-        scpVolcanoPlot(daRes)
+        scpVolcanoPlot(daRes, labelParams = labelParams)
 
     )
     ## change FDR line
     expect_doppelganger(
         "scpVolcanoPlot change fdrLine",
-        scpVolcanoPlot(daRes, fdrLine = 1E-5)
+        scpVolcanoPlot(daRes, fdrLine = 1E-5, labelParams = labelParams)
 
     )
     ## change number of labels
     expect_doppelganger(
         "scpVolcanoPlot change top",
-        scpVolcanoPlot(daRes, top = 30, labelParams = list(max.overlaps = 100))
+        scpVolcanoPlot(daRes, top = 30,
+                       labelParams = c(list(max.overlaps = 100), labelParams))
 
     )
     expect_doppelganger(
         "scpVolcanoPlot change top is zero",
-        scpVolcanoPlot(daRes, top = 0)
+        scpVolcanoPlot(daRes, top = 0, labelParams = labelParams)
     )
     ## change label filter
     ## label filter is absent = error
@@ -813,12 +816,13 @@ test_that("scpVolcanoPlot", {
     )
     expect_doppelganger(
         "scpVolcanoPlot change by",
-        scpVolcanoPlot(daRes, by = "Estimate")
+        scpVolcanoPlot(daRes, by = "Estimate", labelParams = labelParams)
     )
     ## change ordering direction
     expect_doppelganger(
         "scpVolcanoPlot decreasing",
-        scpVolcanoPlot(daRes, by = "Estimate", decreasing = TRUE)
+        scpVolcanoPlot(daRes, by = "Estimate", decreasing = TRUE,
+                       labelParams = labelParams)
     )
     ## change labelling variable
     ## labelling variable is absent = error
@@ -828,21 +832,24 @@ test_that("scpVolcanoPlot", {
     )
     expect_doppelganger(
         "scpVolcanoPlot textBy",
-        scpVolcanoPlot(daRes, textBy = "Df")
+        scpVolcanoPlot(daRes, textBy = "Df", labelParams = labelParams)
     )
     ## change point params
     expect_doppelganger(
         "scpVolcanoPlot pointParams",
-        scpVolcanoPlot(daRes, pointParams = list(aes(size = Df)))
+        scpVolcanoPlot(daRes, pointParams = list(aes(size = Df)),
+                       labelParams = labelParams)
     )
     ## change label params
     expect_doppelganger(
         "scpVolcanoPlot labelParams",
-        scpVolcanoPlot(daRes, labelParams = list(aes(colour = Df)))
+        scpVolcanoPlot(daRes,
+                       labelParams = c(list(aes(colour = Df)), labelParams))
     )
     expect_doppelganger(
         "scpVolcanoPlot labelParams change label",
-        scpVolcanoPlot(daRes, labelParams = list(aes(label = Df)))
+        scpVolcanoPlot(daRes,
+                       labelParams = c(list(aes(label = Df)), labelParams))
     )
 })
 
@@ -889,35 +896,39 @@ test_that(".filterDifferentialData", {
 })
 
 test_that(".plotVolcano", {
+    labelParams <- list(
+        seed = 123, max.time = Inf, max.iter = 10000
+    )
+    set.seed(124)
     x <- data.frame(
         Estimate = -10:10,
         padj = runif(21)/10,
         names = paste("feat", 1:21)
     )
-    set.seed(124) ## ggrepel is stochastic
     ## Default
     expect_doppelganger(
         ".plotVolcano default",
-        .plotVolcano(x, pointParams = list(), labelParams = list(),
+        .plotVolcano(x, pointParams = list(), labelParams = labelParams,
                      textBy = "names")
     )
     ## Change FDR line
     expect_doppelganger(
         ".plotVolcano change fdr",
-        .plotVolcano(x, pointParams = list(), labelParams = list(),
+        .plotVolcano(x, pointParams = list(), labelParams = labelParams,
                      textBy = "names", fdrLine = 0.01)
     )
     ## Change contrast
     expect_doppelganger(
         ".plotVolcano change contrast",
-        .plotVolcano(x, pointParams = list(), labelParams = list(),
+        .plotVolcano(x, pointParams = list(), labelParams = labelParams,
                      textBy = "names", contrast = c("condition", "A", "B"))
     )
     ## Change point and label params
     expect_doppelganger(
         ".plotVolcano change aes params",
         .plotVolcano(x, pointParams = list(aes(col = padj), size = 5),
-                     labelParams = list(aes(size = -padj), colour = "red"),
+                     labelParams = c(list(aes(size = -padj), colour = "red"),
+                                     labelParams),
                      textBy = "names", contrast = c("condition", "A", "B"))
     )
 })

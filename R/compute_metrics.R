@@ -49,7 +49,7 @@
 }
 
 ## @param x A `SummarizedExperiment` object
-##     
+##
 ## @param group A `factor()` that indicates how features (rows) should
 ##    be grouped. The CVs are computed for each group separately.
 ##
@@ -58,7 +58,7 @@ featureCV <- function(x, group, na.rm = TRUE, norm = "none", nobs = 2, ...) {
     ## Check object
     if (!inherits(x, "SummarizedExperiment"))
         stop("'x' must inherit from a 'SummarizedExperiment'")
-    ## Optional normalization(s)   
+    ## Optional normalization(s)
     if (identical(norm, "SCoPE2")) {
         xnorm <- .normalizeSCP(x, method = "div.median")
         assay(x) <- sweep(assay(x), 1,
@@ -77,7 +77,7 @@ featureCV <- function(x, group, na.rm = TRUE, norm = "none", nobs = 2, ...) {
 
 .getDetectionMatrix <- function(object, i) {
     i <- QFeatures:::.normIndex(object, i)
-    if (length(i) > 1) stop("Invalid 'i'. You selected multiple assays.")
+    if (length(i) > 1) stop("Invalid 'i'. You selected multiple sets.")
     x <- zeroIsNA(object[[i]])
     !is.na(assay(x))
 }
@@ -520,7 +520,7 @@ medianCVperCell <- function(object, i, groupBy, nobs = 5, na.rm = TRUE,
     ## Check arguments: no redundant columns
     coln <- unlist(colnames(object)[i])
     if (any(duplicated(coln)))
-        stop("Duplicated samples were found in assay(s) 'i'. This would ",
+        stop("Duplicated samples were found in set(s) 'i'. This would ",
              "lead to inconsistencies in the 'colData'.")
     ## Initiate the vectors with cell median CVs
     medCVs <- rep(NA, length(coln))

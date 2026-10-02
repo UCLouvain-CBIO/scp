@@ -2,6 +2,7 @@
 
 export("scpModelFilterThreshold<-")
 export(addReducedDims)
+export(aggregateFeaturesOverAssays)
 export(computeSCR)
 export(cumulativeSensitivityCurve)
 export(divideByReference)
@@ -51,7 +52,8 @@ importFrom(IHW,
 importFrom(MsCoreUtils,normalize_matrix)
 importFrom(MultiAssayExperiment,
   "experiments<-",
-  ExperimentList
+  ExperimentList,
+  experiments
 )
 importFrom(QFeatures,
   aggregateFeatures,
