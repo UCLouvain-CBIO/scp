@@ -1,5 +1,10 @@
 # scp 1.23
 
+## scp 1.23.3
+
+- Change maintainer.
+- Update vdiffr images.
+
 ## scp 1.23.2
 
 - `aggregateFeaturesOverAssays()` is now defunct.
