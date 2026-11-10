@@ -4,6 +4,7 @@
 
 - Change maintainer.
 - Update vdiffr images.
+- Change license to GPL-3.
 
 ## scp 1.23.2
 
