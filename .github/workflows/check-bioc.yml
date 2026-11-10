@@ -35,11 +35,11 @@ name: R-CMD-check-bioc
 ## Note that you can always run a GHA test without the cache by using the word
 ## "/nocache" in the commit message.
 env:
-  has_testthat: 'false'
+  has_testthat: 'true'
   run_covr: 'false'
   run_pkgdown: 'true'
   has_RUnit: 'false'
-  has_BiocCheck: 'false'
+  has_BiocCheck: 'true'
   cache-version: 'cache-v3'
 
 jobs:
@@ -226,17 +226,17 @@ jobs:
           sessioninfo::session_info(pkgs, include_base = TRUE)
         shell: Rscript {0}
 
-      ## - name: Run CMD check
-      ##   env:
-      ##     _R_CHECK_CRAN_INCOMING_: false
-      ##   run: |
-      ##     rcmdcheck::rcmdcheck(
-      ##         args = c("--no-build-vignettes", "--no-manual", "--timings"),
-      ##         build_args = c("--no-manual", "--no-resave-data"),
-      ##         error_on = "warning",
-      ##         check_dir = "check"
-      ##     )
-      ##   shell: Rscript {0}
+      - name: Run CMD check
+        env:
+          _R_CHECK_CRAN_INCOMING_: false
+        run: |
+          rcmdcheck::rcmdcheck(
+              args = c("--no-build-vignettes", "--no-manual", "--timings"),
+              build_args = c("--no-manual", "--no-resave-data"),
+              error_on = "warning",
+              check_dir = "check"
+          )
+        shell: Rscript {0}
 
       ## Might need an to add this to the if:  && runner.os == 'Linux'
       - name: Reveal testthat details
