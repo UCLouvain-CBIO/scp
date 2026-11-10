@@ -9,3 +9,4 @@ docs
 .git
 ^doc$
 ^Meta$
+NOTES.md
