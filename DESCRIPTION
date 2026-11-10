@@ -44,6 +44,7 @@ Suggests:
     MsDataHub (>= 1.3.3),
     impute,
     knitr,
+    dplyr,
     patchwork,
     preprocessCore,
     rmarkdown,
