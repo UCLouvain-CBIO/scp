@@ -4,107 +4,78 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Load Single-Cell Proteomics data using `readSCP` • scp</title>
-<!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
-<script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Load Single-Cell Proteomics data using `readSCP`">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="icon" sizes="any" href="../favicon.ico">
+<link rel="manifest" href="../site.webmanifest">
+<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Load Single-Cell Proteomics data using `readSCP`">
 </head>
-<body data-spy="scroll" data-target="#toc">
+<body>
+    <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <div class="container template-article">
-      <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">scp</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.19.3</span>
-      </span>
-    </div>
+    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
 
-    <div id="navbar" class="navbar-collapse collapse">
-      <ul class="nav navbar-nav">
-<li>
-  <a href="../articles/scp.html">Get started</a>
-</li>
-<li>
-  <a href="../reference/index.html">Reference</a>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Articles
+    <a class="navbar-brand me-2" href="../index.html">scp</a>
 
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-<li>
-      <a href="../articles/advanced.html">Advanced usage of `scp`</a>
-    </li>
-    <li>
-      <a href="../articles/QFeatures_nutshell.html">QFeatures in a nutshell</a>
-    </li>
-    <li>
-      <a href="../articles/read_scp.html">Load Single-Cell Proteomics data using `readSCP`</a>
-    </li>
-    <li>
-      <a href="../articles/reporting_missing_values.html">Reporting missing values for Single Cell Proteomics</a>
-    </li>
-    <li>
-      <a href="../articles/scp_data_modelling.html">Single Cell Proteomics data modelling</a>
-    </li>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.23.3</small>
+
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div id="navbar" class="collapse navbar-collapse ms-3">
+      <ul class="navbar-nav me-auto">
+<li class="nav-item"><a class="nav-link" href="../articles/scp.html">Get started</a></li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="active nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/advanced.html">Advanced usage of `scp`</a></li>
+    <li><a class="dropdown-item" href="../articles/QFeatures_nutshell.html">QFeatures in a nutshell</a></li>
+    <li><a class="dropdown-item" href="../articles/read_scp.html">Load Single-Cell Proteomics data using `readSCP`</a></li>
+    <li><a class="dropdown-item" href="../articles/reporting_missing_values.html">Reporting missing values for Single Cell Proteomics</a></li>
+    <li><a class="dropdown-item" href="../articles/scp_data_modelling.html">Single Cell Proteomics data modelling using scplainer</a></li>
   </ul>
 </li>
-<li>
-  <a href="../news/index.html">Changelog</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
-<ul class="nav navbar-nav navbar-right">
-<li>
-  <a href="https://github.com/UCLouvain-CBIO/scp/" class="external-link">
-    <span class="fab fa-github fa-lg"></span>
-
-  </a>
-</li>
+<ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
+</form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/UCLouvain-CBIO/scp/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
-<!--/.nav-collapse -->
+
+
   </div>
-<!--/.container -->
-</div>
-<!--/.navbar -->
+</nav><div class="container template-article">
 
 
 
-      </header><div class="row">
-  <div class="col-md-9 contents">
-    <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Load Single-Cell Proteomics data using
-<code>readSCP</code>
-</h1>
+
+<div class="row">
+  <main id="main" class="col-md-9"><div class="page-header">
+
+      <h1>Load Single-Cell Proteomics data using `readSCP`</h1>
                         <h4 data-toc-skip class="author">Laurent
 Gatto</h4>
                                     <h4 data-toc-skip class="author">Christophe
 Vanderaa</h4>
                         
-            <h4 data-toc-skip class="date">31 May 2025</h4>
+            <h4 data-toc-skip class="date">10 November 2026</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/master/vignettes/read_scp.Rmd" class="external-link"><code>vignettes/read_scp.Rmd</code></a></small>
-      <div class="hidden name"><code>read_scp.Rmd</code></div>
-
+      <small class="dont-index">Source: <a href="https://github.com/UCLouvain-CBIO/scp/blob/main/vignettes/read_scp.Rmd" class="external-link"><code>vignettes/read_scp.Rmd</code></a></small>
+      <div class="d-none name"><code>read_scp.Rmd</code></div>
     </div>
 
     
@@ -140,7 +111,7 @@ across different sets are stored to facilitate manipulation and
 visualization of of PSM, peptide and protein data. This is conceptually
 shown below.</p>
 <div class="figure" style="text-align: center">
-<img src="figures/SCP_framework.png" alt="The `scp` framework relies on `SingleCellExperiment` and `QFeatures` objects" width="100%"><p class="caption">
+<img src="figures/SCP_framework.png" class="r-plt" alt="The `scp` framework relies on `SingleCellExperiment` and `QFeatures` objects" width="100%"><p class="caption">
 The <code>scp</code> framework relies on
 <code>SingleCellExperiment</code> and <code>QFeatures</code> objects
 </p>
@@ -160,7 +131,7 @@ example a data table that has been generated by MaxQuant. The table is
 available from the <code>scp</code> package and is called
 <code>mqScpData</code> (for MaxQuant generated SCP data).</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://UCLouvain-CBIO.github.io/scp" class="external-link">scp</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://UCLouvain-CBIO.github.io/scp">scp</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"mqScpData"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">mqScpData</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 1361  149</span></span></code></pre></div>
@@ -177,7 +148,7 @@ name</li>
 protein name</li>
 </ul>
 <div class="figure" style="text-align: center">
-<img src="figures/readSCP_inputTable.png" alt="Conceptual representation of the `assayData` input table" width="450px"><p class="caption">
+<img src="figures/readSCP_inputTable.png" class="r-plt" alt="Conceptual representation of the `assayData` input table" width="450px"><p class="caption">
 Conceptual representation of the <code>assayData</code> input table
 </p>
 </div>
@@ -325,7 +296,7 @@ corresponding sample.</li>
 <p>These two columns allow <code>scp</code> to correctly split and match
 data that were acquired across multiple acquisition runs.</p>
 <div class="figure" style="text-align: center">
-<img src="figures/readSCP_sampleTable.png" alt="Conceptual representation of the sample table" width="450px"><p class="caption">
+<img src="figures/readSCP_sampleTable.png" class="r-plt" alt="Conceptual representation of the sample table" width="450px"><p class="caption">
 Conceptual representation of the sample table
 </p>
 </div>
@@ -380,6 +351,7 @@ automatically detects and removes columns containing only
 <span><span class="co">#&gt; Checking arguments.</span></span>
 <span><span class="co">#&gt; Loading data as a 'SummarizedExperiment' object.</span></span>
 <span><span class="co">#&gt; Splitting data in runs.</span></span>
+<span><span class="co">#&gt;   |                                                                              |                                                                      |   0%  |                                                                              |==================                                                    |  25%  |                                                                              |===================================                                   |  50%  |                                                                              |====================================================                  |  75%  |                                                                              |======================================================================| 100%</span></span>
 <span><span class="co">#&gt; Formatting sample annotations (colData).</span></span>
 <span><span class="co">#&gt; Formatting data as a 'QFeatures' object.</span></span>
 <span><span class="co">#&gt; An instance of class QFeatures (type: scp) with 4 sets:</span></span>
@@ -533,7 +505,7 @@ provided by the <code>quantCols</code> field in the annotation table
 (<code>colData</code> argument).</li>
 </ol>
 <div class="figure" style="text-align: center">
-<img src="figures/readSCP_step1.png" alt="Step1: Convert the input table to a `SingleCellExperiment` object" width="450px"><p class="caption">
+<img src="figures/readSCP_step1.png" class="r-plt" alt="Step1: Convert the input table to a `SingleCellExperiment` object" width="450px"><p class="caption">
 Step1: Convert the input table to a <code>SingleCellExperiment</code>
 object
 </p>
@@ -549,7 +521,7 @@ acquisition runs that was used by MaxQuant to retrieve the raw data
 files.</li>
 </ol>
 <div class="figure" style="text-align: center">
-<img src="figures/readSCP_step2.png" alt="Step2: Split by acquisition run" width="500px"><p class="caption">
+<img src="figures/readSCP_step2.png" class="r-plt" alt="Step2: Split by acquisition run" width="500px"><p class="caption">
 Step2: Split by acquisition run
 </p>
 </div>
@@ -562,7 +534,7 @@ column with run names and a <code>quantCols</code> column with the names
 of the quantitative columns in <code>assayData</code>.</li>
 </ol>
 <div class="figure" style="text-align: center">
-<img src="figures/readSCP_step3.png" alt="Step3: Adding and matching the sample annotations" width="700px"><p class="caption">
+<img src="figures/readSCP_step3.png" class="r-plt" alt="Step3: Adding and matching the sample annotations" width="700px"><p class="caption">
 Step3: Adding and matching the sample annotations
 </p>
 </div>
@@ -572,7 +544,7 @@ Step3: Adding and matching the sample annotations
 object.</li>
 </ol>
 <div class="figure" style="text-align: center">
-<img src="figures/readSCP_step4.png" alt="Step4: Converting to a `QFeatures`" width="600px"><p class="caption">
+<img src="figures/readSCP_step4.png" class="r-plt" alt="Step4: Converting to a `QFeatures`" width="600px"><p class="caption">
 Step4: Converting to a <code>QFeatures</code>
 </p>
 </div>
@@ -608,8 +580,8 @@ vignette, you can submit a feature request (see next section).</p>
 <p>The <code><a href="../reference/readSCP.html">readSCPfromDIANN()</a></code> function is adapted to import
 label-free and plexDIA/mTRAQ <code>Report.tsv</code> files generated by
 DIA-NN.</p>
-<p>For more information, see the <code><a href="https://rdrr.io/pkg/QFeatures/man/readQFeatures.html" class="external-link">readQFeatures()</a></code> and
-<code><a href="https://rdrr.io/pkg/QFeatures/man/readQFeaturesFromDIANN.html" class="external-link">readQFeaturesFromDIANN()</a></code> manual pages, that described the
+<p>For more information, see the <code><a href="https://rformassspectrometry.github.io/QFeatures/reference/readQFeatures.html" class="external-link">readQFeatures()</a></code> and
+<code><a href="https://rformassspectrometry.github.io/QFeatures/reference/readQFeaturesFromDIANN.html" class="external-link">readQFeaturesFromDIANN()</a></code> manual pages, that described the
 main principle that concern the data import and formatting.</p>
 </div>
 <div class="section level2">
@@ -623,9 +595,9 @@ function or the documentation are also warmly welcome.</p>
 <div class="section level2">
 <h2 class="unnumbered" id="session-information">Session information<a class="anchor" aria-label="anchor" href="#session-information"></a>
 </h2>
-<pre><code>R version 4.5.0 (2025-04-11)
+<pre><code>R version 4.6.1 (2026-06-24)
 Platform: x86_64-pc-linux-gnu
-Running under: Ubuntu 24.04.2 LTS
+Running under: Ubuntu 24.04.5 LTS
 
 Matrix products: default
 BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -647,53 +619,52 @@ attached base packages:
 [8] base     
 
 other attached packages:
- [1] scp_1.19.3                  QFeatures_1.19.1           
- [3] MultiAssayExperiment_1.35.3 SummarizedExperiment_1.39.0
- [5] Biobase_2.69.0              GenomicRanges_1.61.0       
- [7] GenomeInfoDb_1.45.4         IRanges_2.43.0             
- [9] S4Vectors_0.47.0            BiocGenerics_0.55.0        
-[11] generics_0.1.4              MatrixGenerics_1.21.0      
-[13] matrixStats_1.5.0           BiocStyle_2.37.0           
+ [1] scp_1.23.3                  QFeatures_1.23.2           
+ [3] MultiAssayExperiment_1.39.1 SummarizedExperiment_1.43.0
+ [5] Biobase_2.73.2              GenomicRanges_1.65.4       
+ [7] Seqinfo_1.3.2               IRanges_2.47.5             
+ [9] S4Vectors_0.51.10           BiocGenerics_0.59.12       
+[11] generics_0.1.4              MatrixGenerics_1.25.0      
+[13] matrixStats_1.5.0           BiocStyle_2.41.0           
 
 loaded via a namespace (and not attached):
- [1] gtable_0.3.6                ggplot2_3.5.2              
- [3] xfun_0.52                   bslib_0.9.0                
- [5] htmlwidgets_1.6.4           ggrepel_0.9.6              
- [7] lattice_0.22-7              vctrs_0.6.5                
- [9] tools_4.5.0                 tibble_3.2.1               
-[11] cluster_2.1.8.1             nipals_1.0                 
-[13] pkgconfig_2.0.3             BiocBaseUtils_1.11.0       
-[15] Matrix_1.7-3                RColorBrewer_1.1-3         
-[17] IHW_1.37.0                  desc_1.4.3                 
-[19] lpsymphony_1.37.0           lifecycle_1.0.4            
-[21] farver_2.1.2                compiler_4.5.0             
-[23] stringr_1.5.1               textshaping_1.0.1          
-[25] clue_0.3-66                 htmltools_0.5.8.1          
+ [1] gtable_0.3.6                ggplot2_4.0.3              
+ [3] xfun_0.62                   bslib_0.12.0               
+ [5] htmlwidgets_1.6.4           ggrepel_0.9.8              
+ [7] lattice_0.23-1              vctrs_0.7.3                
+ [9] tools_4.6.1                 tibble_3.3.1               
+[11] cluster_2.1.8.3             nipals_1.2                 
+[13] pkgconfig_2.0.3             Matrix_1.7-6               
+[15] RColorBrewer_1.1-3          IHW_1.41.0                 
+[17] S7_0.2.2                    desc_1.4.3                 
+[19] lpsymphony_1.41.0           lifecycle_1.0.5            
+[21] farver_2.1.2                compiler_4.6.1             
+[23] stringr_1.6.0               textshaping_1.0.5          
+[25] clue_0.3-68                 htmltools_0.5.9            
 [27] sass_0.4.10                 fdrtool_1.2.18             
-[29] yaml_2.3.10                 lazyeval_0.2.2             
-[31] pkgdown_2.1.3.9000          pillar_1.10.2              
-[33] crayon_1.5.3                jquerylib_0.1.4            
-[35] tidyr_1.3.1                 MASS_7.3-65                
-[37] SingleCellExperiment_1.31.0 DelayedArray_0.35.1        
-[39] cachem_1.1.0                abind_1.4-8                
-[41] metapod_1.17.0              tidyselect_1.2.1           
-[43] digest_0.6.37               slam_0.1-55                
-[45] stringi_1.8.7               purrr_1.0.4                
-[47] dplyr_1.1.4                 reshape2_1.4.4             
-[49] bookdown_0.43               fastmap_1.2.0              
-[51] grid_4.5.0                  cli_3.6.5                  
-[53] SparseArray_1.9.0           magrittr_2.0.3             
-[55] S4Arrays_1.9.1              scales_1.4.0               
-[57] UCSC.utils_1.5.0            rmarkdown_2.29             
-[59] XVector_0.49.0              httr_1.4.7                 
-[61] igraph_2.1.4                ragg_1.4.0                 
-[63] evaluate_1.0.3              knitr_1.50                 
-[65] rlang_1.1.6                 Rcpp_1.0.14                
-[67] glue_1.8.0                  BiocManager_1.30.25        
-[69] jsonlite_2.0.0              AnnotationFilter_1.33.0    
-[71] R6_2.6.1                    plyr_1.8.9                 
-[73] systemfonts_1.2.3           fs_1.6.6                   
-[75] ProtGenerics_1.41.0         MsCoreUtils_1.21.0         </code></pre>
+[29] yaml_2.3.12                 lazyeval_0.2.3             
+[31] pkgdown_2.2.1.9000          pillar_1.11.1              
+[33] jquerylib_0.1.4             tidyr_1.3.2                
+[35] MASS_7.3-66                 SingleCellExperiment_1.35.2
+[37] DelayedArray_0.39.8         cachem_1.1.0               
+[39] abind_1.4-8                 metapod_1.21.0             
+[41] tidyselect_1.2.1            digest_0.6.39              
+[43] slam_0.1-56                 stringi_1.8.9              
+[45] purrr_1.2.2                 dplyr_1.2.1                
+[47] reshape2_1.4.5              bookdown_0.48              
+[49] fastmap_1.2.0               grid_4.6.1                 
+[51] cli_3.6.6                   SparseArray_1.13.4         
+[53] magrittr_2.0.5              S4Arrays_1.13.2            
+[55] scales_1.4.0                rmarkdown_2.32             
+[57] XVector_0.53.0              igraph_2.3.4               
+[59] otel_0.2.0                  ragg_1.5.2                 
+[61] evaluate_1.0.5              knitr_1.52                 
+[63] rlang_1.3.0                 Rcpp_1.1.2                 
+[65] glue_1.8.1                  BiocManager_1.30.27        
+[67] jsonlite_2.0.0              AnnotationFilter_1.37.0    
+[69] R6_2.6.1                    plyr_1.8.9                 
+[71] systemfonts_1.3.2           fs_2.1.0                   
+[73] ProtGenerics_1.45.0         MsCoreUtils_1.25.4         </code></pre>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="license">License<a class="anchor" aria-label="anchor" href="#license"></a>
@@ -704,42 +675,34 @@ license</a> license.</p>
 <div class="section level2">
 <h2 class="unnumbered" id="reference">Reference<a class="anchor" aria-label="anchor" href="#reference"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-Amezquita2019-bf" class="csl-entry">
-Amezquita, Robert A, Aaron T L Lun, Etienne Becht, Vince J Carey,
-Lindsay N Carpp, Ludwig Geistlinger, Federico Marini, et al. 2020.
+Amezquita, Robert A, Aaron T L Lun, Etienne Becht, et al. 2020.
 <span>“Orchestrating Single-Cell Analysis with Bioconductor.”</span>
 <em>Nat. Methods</em> 17 (2): 137–45.
 </div>
 <div id="ref-Gatto2023-ry" class="csl-entry">
-Gatto, Laurent, and Christophe Vanderaa. 2023. <span>“QFeatures:
-Quantitative Features for Mass Spectrometry Data.”</span> <a href="https://doi.org/10.18129/B9.bioc.QFeatures" class="external-link">https://doi.org/10.18129/B9.bioc.QFeatures</a>.
+Gatto, Laurent, and Christophe Vanderaa. 2023. <em>QFeatures:
+Quantitative Features for Mass Spectrometry Data</em>. <a href="https://doi.org/10.18129/B9.bioc.QFeatures" class="external-link">https://doi.org/10.18129/B9.bioc.QFeatures</a>.
 </div>
 </div>
 </div>
-  </div>
-
-  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
-
-      </div>
-
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside>
 </div>
 
 
 
-      <footer><div class="copyright">
-  <p></p>
-<p>Developed by Christophe Vanderaa, Laurent Gatto.</p>
+    <footer><div class="pkgdown-footer-left">
+  <p>Developed by Christophe Vanderaa, Laurent Gatto.</p>
 </div>
 
-<div class="pkgdown">
-  <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.9000.</p>
+<div class="pkgdown-footer-right">
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.9000.</p>
 </div>
 
-      </footer>
+    </footer>
 </div>
-
 
 
 

@@ -1,0 +1,179 @@
+# Single cell proteomics data processing
+
+The `scp` package is used to process and analyse mass spectrometry-based
+single cell proteomics data. It relies on the
+[`QFeatures`](https://rformassspectrometry.github.io/QFeatures/) package
+to manage and process
+[`SingleCellExperiment`](http://bioconductor.org/packages/release/bioc/html/SingleCellExperiment.md)
+or
+[`SummarizedExperiment`](http://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.md)
+objects.
+
+![](https://raw.githubusercontent.com/UCLouvain-CBIO/scp/master/sticker/sticker.png)
+
+## Installation
+
+To install the **stable version** from Bioconductor:
+
+\
+`if`` ``(``!`[`requireNamespace`](https://rdrr.io/r/base/ns-load.html)`(``"BiocManager"``)``)`\
+`    `[`install.packages`](https://rdrr.io/r/utils/install.packages.html)`(``"BiocManager"``)`\
+`BiocManager``::`[`install`](https://bioconductor.github.io/BiocManager/reference/install.html)`(``"scp"``)`
+
+To install the **devel version** from GitHub, you first need to ensure
+that you are using the `devel` release of Bioconductor and make sure
+your installed libraries are valid.
+
+\
+`BiocManager``::`[`install`](https://bioconductor.github.io/BiocManager/reference/install.html)`(``version ``=`` ``"devel"``)`\
+[`stopifnot`](https://rdrr.io/r/base/stopifnot.html)`(``BiocManager``::`[`valid`](https://bioconductor.github.io/BiocManager/reference/valid.html)`(``)``)`
+
+Then, you can install `scp` from Github.
+
+\
+`BiocManager``::`[`install`](https://bioconductor.github.io/BiocManager/reference/install.html)`(``"UCLouvain-CBIO/scp"``)`
+
+## Citation
+
+To cite the `scp` package in publications use:
+
+> Vanderaa, Christophe, and Laurent Gatto. 2025. [Scplainer: Using
+> Linear Models to Understand Mass Spectrometry-Based Single-Cell
+> Proteomics
+> Data](https://link.springer.com/article/10.1186/s13059-025-03713-4).
+> Genome Biology 26 (1): 237.
+
+> Vanderaa, Christophe, and Laurent Gatto. 2023. [Revisiting the Thorny
+> Issue of Missing Values in Single-Cell
+> Proteomics](https://pubs.acs.org/doi/10.1021/acs.jproteome.3c00227).
+> Journal of Proteome Research 22 (9): 2775–84.
+
+> Vanderaa Christophe and Laurent Gatto. The current state of
+> single-cell proteomics data analysis. Current Protocols 3 (1): e658.;
+> doi: <https://doi.org/10.1002/cpz1.658> (2023).
+
+> Vanderaa Christophe and Laurent Gatto. [Replication of Single-Cell
+> Proteomics Data Reveals Important Computational
+> Challenges](https://www.tandfonline.com/doi/full/10.1080/14789450.2021.1988571).
+> Expert Review of Proteomics, 1–9 (2021).
+
+## Asking for help
+
+Feel free to use [Github
+issues](https://github.com/UCLouvain-CBIO/scp/issues) or the
+[Bioconductor support site](https://support.bioconductor.org/) to ask
+question or report problems with `scp`.
+
+## License
+
+The `scp` code is provided under a
+[GPL-3.0](https://opensource.org/license/gpl-3.0) license. The
+documentation, including the manual pages and the vignettes, are
+distributed under a [CC BY-SA
+license](https://creativecommons.org/licenses/by-sa/2.0/).
+
+## Contributions
+
+Contributions are welcome, and should ideally be provdied through a
+Github pull request. Feel free to discuss any more non-trivial
+suggestions or changes first in an issue.
+
+### Contributors
+
+- [Micha Birklbauer](https://github.com/michabirklbauer): [fix grep
+  pattern in example for
+  readSingleCellExperiment](https://github.com/UCLouvain-CBIO/scp/pull/94).
+
+# Package index
+
+## All functions
+
+- [`scpModelComponentMethods`](https://UCLouvain-CBIO.github.io/scp/reference/ScpModel-ComponentAnalysis.md)
+  [`scpComponentAnalysis()`](https://UCLouvain-CBIO.github.io/scp/reference/ScpModel-ComponentAnalysis.md)
+  [`scpComponentAggregate()`](https://UCLouvain-CBIO.github.io/scp/reference/ScpModel-ComponentAnalysis.md)
+  [`scpComponentPlot()`](https://UCLouvain-CBIO.github.io/scp/reference/ScpModel-ComponentAnalysis.md)
+  [`scpComponentBiplot()`](https://UCLouvain-CBIO.github.io/scp/reference/ScpModel-ComponentAnalysis.md)
+  : Component analysis for single cell proteomics
+- [`scpKeepEffect()`](https://UCLouvain-CBIO.github.io/scp/reference/ScpModel-DataCorrection.md)
+  [`scpRemoveBatchEffect()`](https://UCLouvain-CBIO.github.io/scp/reference/ScpModel-DataCorrection.md)
+  : Correct single-cell proteomics data
+- [`scpDifferentialAnalysis()`](https://UCLouvain-CBIO.github.io/scp/reference/ScpModel-DifferentialAnalysis.md)
+  [`scpDifferentialAggregate()`](https://UCLouvain-CBIO.github.io/scp/reference/ScpModel-DifferentialAnalysis.md)
+  [`scpVolcanoPlot()`](https://UCLouvain-CBIO.github.io/scp/reference/ScpModel-DifferentialAnalysis.md)
+  : Differential abundance analysis for single-cell proteomics
+- [`scpVarianceAnalysis()`](https://UCLouvain-CBIO.github.io/scp/reference/ScpModel-VarianceAnalysis.md)
+  [`scpVarianceAggregate()`](https://UCLouvain-CBIO.github.io/scp/reference/ScpModel-VarianceAnalysis.md)
+  [`scpVariancePlot()`](https://UCLouvain-CBIO.github.io/scp/reference/ScpModel-VarianceAnalysis.md)
+  : Analysis of variance for single-cell proteomics
+- [`scpModelWorkflow()`](https://UCLouvain-CBIO.github.io/scp/reference/ScpModel-Workflow.md)
+  [`scpModelFilterPlot()`](https://UCLouvain-CBIO.github.io/scp/reference/ScpModel-Workflow.md)
+  : Modelling single-cell proteomics data
+- [`scpModelFormula()`](https://UCLouvain-CBIO.github.io/scp/reference/ScpModel-class.md)
+  [`scpModelInput()`](https://UCLouvain-CBIO.github.io/scp/reference/ScpModel-class.md)
+  [`scpModelFilterThreshold()`](https://UCLouvain-CBIO.github.io/scp/reference/ScpModel-class.md)
+  [`scpModelFilterNPRatio()`](https://UCLouvain-CBIO.github.io/scp/reference/ScpModel-class.md)
+  [`scpModelResiduals()`](https://UCLouvain-CBIO.github.io/scp/reference/ScpModel-class.md)
+  [`scpModelEffects()`](https://UCLouvain-CBIO.github.io/scp/reference/ScpModel-class.md)
+  [`scpModelNames()`](https://UCLouvain-CBIO.github.io/scp/reference/ScpModel-class.md)
+  [`` `scpModelFilterThreshold<-`() ``](https://UCLouvain-CBIO.github.io/scp/reference/ScpModel-class.md)
+  : Class to store the results of single-cell proteomics modelling
+- [`ScpModelFit`](https://UCLouvain-CBIO.github.io/scp/reference/ScpModelFit-class.md)
+  [`ScpModelFit-class`](https://UCLouvain-CBIO.github.io/scp/reference/ScpModelFit-class.md)
+  [`class:ScpModelFit`](https://UCLouvain-CBIO.github.io/scp/reference/ScpModelFit-class.md)
+  : Class to store the components of an estimated model for a feature
+- [`addReducedDims()`](https://UCLouvain-CBIO.github.io/scp/reference/addReducedDims.md)
+  : Add scplainer Component Analysis Results
+- [`computeSCR()`](https://UCLouvain-CBIO.github.io/scp/reference/computeSCR.md)
+  : Compute the sample over carrier ratio (SCR)
+- [`cumulativeSensitivityCurve()`](https://UCLouvain-CBIO.github.io/scp/reference/cumulativeSensitivityCurve.md)
+  [`predictSensitivity()`](https://UCLouvain-CBIO.github.io/scp/reference/cumulativeSensitivityCurve.md)
+  : Cumulative sensitivity curve
+- [`divideByReference()`](https://UCLouvain-CBIO.github.io/scp/reference/divideByReference.md)
+  : Divide assay columns by a reference column
+- [`jaccardIndex()`](https://UCLouvain-CBIO.github.io/scp/reference/jaccardIndex.md)
+  : Compute the pairwise Jaccard index
+- [`leduc_minimal`](https://UCLouvain-CBIO.github.io/scp/reference/leduc_minimal.md)
+  : Minimally processed single-cell proteomics data set
+- [`medianCVperCell()`](https://UCLouvain-CBIO.github.io/scp/reference/medianCVperCell.md)
+  : Compute the median coefficient of variation (CV) per cell
+- [`mqScpData`](https://UCLouvain-CBIO.github.io/scp/reference/mqScpData.md)
+  : Example MaxQuant/SCoPE2 output
+- [`normalizeSCP()`](https://UCLouvain-CBIO.github.io/scp/reference/normalizeSCP.md)
+  : Normalize single-cell proteomics (SCP) data
+- [`pep2qvalue()`](https://UCLouvain-CBIO.github.io/scp/reference/pep2qvalue.md)
+  : Compute q-values
+- [`readSCP()`](https://UCLouvain-CBIO.github.io/scp/reference/readSCP.md)
+  [`readSCPfromDIANN()`](https://UCLouvain-CBIO.github.io/scp/reference/readSCP.md)
+  [`readSingleCellExperiment()`](https://UCLouvain-CBIO.github.io/scp/reference/readSCP.md)
+  : Read single-cell proteomics tabular data
+- [`reportMissingValues()`](https://UCLouvain-CBIO.github.io/scp/reference/reportMissingValues.md)
+  : Four metrics to report missing values
+- [`sampleAnnotation`](https://UCLouvain-CBIO.github.io/scp/reference/sampleAnnotation.md)
+  : Single cell sample annotation
+- [`scp-defunct`](https://UCLouvain-CBIO.github.io/scp/reference/scp-deprecated.md)
+  [`aggregateFeaturesOverAssays`](https://UCLouvain-CBIO.github.io/scp/reference/scp-deprecated.md)
+  : Defunct Functions
+- [`scp1`](https://UCLouvain-CBIO.github.io/scp/reference/scp1.md) :
+  Single Cell QFeatures data
+- [`scpAnnotateResults()`](https://UCLouvain-CBIO.github.io/scp/reference/scpAnnotateResults.md)
+  : Annotate single-cell proteomics analysis output
+- [`scplainer`](https://UCLouvain-CBIO.github.io/scp/reference/scplainer.md)
+  : scplainer: linear models to understand mass spectrometry-based
+  single-cell proteomics data
+
+# Articles
+
+### All vignettes
+
+- [Advanced usage of
+  \`scp\`](https://UCLouvain-CBIO.github.io/scp/articles/advanced.md):
+- [QFeatures in a
+  nutshell](https://UCLouvain-CBIO.github.io/scp/articles/QFeatures_nutshell.md):
+- [Load Single-Cell Proteomics data using
+  \`readSCP\`](https://UCLouvain-CBIO.github.io/scp/articles/read_scp.md):
+- [Reporting missing values for Single Cell
+  Proteomics](https://UCLouvain-CBIO.github.io/scp/articles/reporting_missing_values.md):
+- [Single Cell Proteomics data modelling using
+  scplainer](https://UCLouvain-CBIO.github.io/scp/articles/scp_data_modelling.md):
+- [Single Cell Proteomics data processing and
+  analysis](https://UCLouvain-CBIO.github.io/scp/articles/scp.md):

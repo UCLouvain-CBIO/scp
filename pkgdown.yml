@@ -1,6 +1,6 @@
-pandoc: 3.6.4
-pkgdown: 2.1.3.9000
-pkgdown_sha: f950aed41af49c732ba7884d0806c3641a7b94b3
+pandoc: '3.13'
+pkgdown: 2.2.1.9000
+pkgdown_sha: f69b62a7e74b58b42170284b6f3f56c674e7a3f8
 articles:
   advanced: advanced.html
   QFeatures_nutshell: QFeatures_nutshell.html
@@ -8,4 +8,7 @@ articles:
   reporting_missing_values: reporting_missing_values.html
   scp_data_modelling: scp_data_modelling.html
   scp: scp.html
-last_built: 2025-05-31T10:50Z
+last_built: 2026-11-10T20:55Z
+urls:
+  reference: https://UCLouvain-CBIO.github.io/scp/reference
+  article: https://UCLouvain-CBIO.github.io/scp/articles
