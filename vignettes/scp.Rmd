@@ -36,7 +36,7 @@ specific data structure that wraps
 [`QFeatures`](https://rformassspectrometry.github.io/QFeatures/)
 objects (@Gatto2023-ry) around
 [`SingleCellExperiment`](http://bioconductor.org/packages/release/bioc/html/SingleCellExperiment.html)
-(@Amezquita2019-bf) or 
+(@Amezquita2019-bf) or
 [`SummarizedExperiment`](http://bioconductor.org/packages/release/bioc/html/SummarizedExperiment.html)
 objects. This data structure could be seen as
 Matryoshka dolls were the `SingleCellExperiment` or `SummarizedExperiment` objects are small
@@ -895,7 +895,7 @@ library(scater)
 This package provides streamline functions to computes various
 dimension reduction such as PCA, UMAP, t-SNE, NMF, MDS, ....
 
-In the case where you have `SummarizedExperiment` objects, you can first 
+In the case where you have `SummarizedExperiment` objects, you can first
 convert it with `as` like so.
 
 ```{r}
@@ -1034,6 +1034,6 @@ sessionInfo()
 # License {-}
 
 This vignette is distributed under a [CC BY-SA
-license](https://creativecommons.org/licenses/by-sa/2.0/) license.
+license](https://creativecommons.org/licenses/by-sa/4.0/).
 
 # Reference {-}

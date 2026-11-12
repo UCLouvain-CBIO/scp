@@ -49,9 +49,9 @@ The figure below provides a roadmap of the workflow:
 ![scplainer modelling workflow](figures/ScpModel-class.png)
 
 The vignette will start with the processed data extracted as a
-`SingleCellExperiment` object from  a processed `QFeatures` object. 
-Note that using a `SummarizedExperiment` will also work, it will 
-automatically be converted to a `SingleCellExperiment` object 
+`SingleCellExperiment` object from  a processed `QFeatures` object.
+Note that using a `SummarizedExperiment` will also work, it will
+automatically be converted to a `SingleCellExperiment` object
 with `scpModelWorkflow`.
 We will not cover data processing as it is covered in another vignette.
 
@@ -590,7 +590,6 @@ sessionInfo()
 # License {-}
 
 This vignette is distributed under a
-[CC BY-SA license](https://creativecommons.org/licenses/by-sa/2.0/)
-license.
+[CC BY-SA license](https://creativecommons.org/licenses/by-sa/4.0/).
 
 # Reference {-}

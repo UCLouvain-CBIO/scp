@@ -39,7 +39,7 @@ to allow users to navigate up and down the different MS levels.
 quantitative data. Its the base building block of a QFeatures object.
 `SingleCellExperiment` is another class designed as an efficient data
 container that serves as an interface to state-of-the-art methods and
-algorithms for single-cell data. This class is used in the context of 
+algorithms for single-cell data. This class is used in the context of
 data modeling (scplainer).
 
 Our framework combines the three
@@ -344,7 +344,6 @@ sessionInfo()
 # License {-}
 
 This vignette is distributed under a
-[CC BY-SA license](https://creativecommons.org/licenses/by-sa/2.0/)
-license.
+[CC BY-SA license](https://creativecommons.org/licenses/by-sa/4.0/).
 
 # Reference {-}
