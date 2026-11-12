@@ -1,5 +1,9 @@
 # scp 1.23
 
+## scp 1.23.4
+
+- Fix CC BY-SA link.
+
 ## scp 1.23.3
 
 - Change maintainer.
