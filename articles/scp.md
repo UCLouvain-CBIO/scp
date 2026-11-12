@@ -1073,7 +1073,7 @@ that describes more in details how to visualize and explore data in a
      [5] BiocParallel_1.47.0         genefilter_1.95.0          
      [7] mgcv_1.9-4                  nlme_3.1-171               
      [9] dplyr_1.2.1                 ggplot2_4.0.3              
-    [11] scp_1.23.3                  QFeatures_1.23.2           
+    [11] scp_1.23.4                  QFeatures_1.23.2           
     [13] MultiAssayExperiment_1.39.1 SummarizedExperiment_1.43.0
     [15] Biobase_2.73.2              GenomicRanges_1.65.4       
     [17] Seqinfo_1.3.2               IRanges_2.47.5             
@@ -1124,7 +1124,7 @@ that describes more in details how to visualize and explore data in a
 ## License
 
 This vignette is distributed under a [CC BY-SA
-license](https://creativecommons.org/licenses/by-sa/2.0/) license.
+license](https://creativecommons.org/licenses/by-sa/4.0/).
 
 ## Reference
 

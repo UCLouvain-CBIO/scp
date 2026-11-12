@@ -3,7 +3,7 @@
 A `SingleCellExperiment` object that has been minimally processed. The
 data set is published by Leduc et al. 2022 (see references) and
 retrieved using
-[`scpdata::leduc2022_pSCoPE()`](https://rdrr.io/pkg/scpdata/man/leduc2022_pSCoPE.html).
+[`scpdata::leduc2022_pSCoPE()`](https://UCLouvain-CBIO.github.io/scpdata/reference/leduc2022_pSCoPE.html).
 The data processing was conducted with `QFeatures` and `scp`. Quality
 control was performed, followed by building the peptide data and
 log2-transformation. To limit the size of the data, only cells

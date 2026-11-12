@@ -527,7 +527,7 @@ documentation are also warmly welcome.
     [8] base     
 
     other attached packages:
-     [1] scp_1.23.3                  QFeatures_1.23.2           
+     [1] scp_1.23.4                  QFeatures_1.23.2           
      [3] MultiAssayExperiment_1.39.1 SummarizedExperiment_1.43.0
      [5] Biobase_2.73.2              GenomicRanges_1.65.4       
      [7] Seqinfo_1.3.2               IRanges_2.47.5             
@@ -577,7 +577,7 @@ documentation are also warmly welcome.
 ## License
 
 This vignette is distributed under a [CC BY-SA
-license](https://creativecommons.org/licenses/by-sa/2.0/) license.
+license](https://creativecommons.org/licenses/by-sa/4.0/).
 
 ## Reference
 

@@ -28,8 +28,8 @@ the `scpdata` package.
 
 \
 [`library`](https://rdrr.io/r/base/library.html)`(`[`"scp"`](https://UCLouvain-CBIO.github.io/scp)`)`\
-[`library`](https://rdrr.io/r/base/library.html)`(``"scpdata"``)`\
-`leduc`` ``<-`` `[`leduc2022`](https://rdrr.io/pkg/scpdata/man/leduc2022.html)`(``)`
+[`library`](https://rdrr.io/r/base/library.html)`(`[`"scpdata"`](https://UCLouvain-CBIO.github.io/scpdata/)`)`\
+`leduc`` ``<-`` `[`leduc2022`](https://UCLouvain-CBIO.github.io/scpdata/reference/leduc2022.html)`(``)`
 
 Next, we reduce the size of the dataset to the 30 first acquisitions.
 This allows for a fast execution of the code for this vignette while
@@ -205,7 +205,7 @@ sensitivity by about 150 peptides.
 ## License
 
 This vignette is distributed under a [CC BY-SA
-license](https://creativecommons.org/licenses/by-sa/2.0/) license.
+license](https://creativecommons.org/licenses/by-sa/4.0/).
 
 ## Reference
 

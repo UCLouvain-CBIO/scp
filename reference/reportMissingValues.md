@@ -93,8 +93,8 @@ data
 #>     skeleton = (function (x, ...) 
 #>     stop(gettextf("invalid call in method dispatch to '%s' (no default method)", 
 #>         "data"), domain = NA))(x, ...))
-#> <bytecode: 0x5a1a7572a5c0>
-#> <environment: 0x5a1a7571f0e8>
+#> <bytecode: 0x5c83715571b0>
+#> <environment: 0x5c83715477d0>
 #> attr(,"generic")
 #> [1] "data"
 #> attr(,"generic")attr(,"package")

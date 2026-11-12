@@ -38,7 +38,7 @@ in another vignette.
 ## Example data set
 
 The example data set is a subset of the `leduc2022_pSCoPE` data set (see
-[`?scpdata::leduc2022_pSCoPE`](https://rdrr.io/pkg/scpdata/man/leduc2022_pSCoPE.html)
+[`?scpdata::leduc2022_pSCoPE`](https://UCLouvain-CBIO.github.io/scpdata/reference/leduc2022_pSCoPE.html)
 for more info). The data is acquired using TMT-18 multiplexing and
 data-dependent acquisition (DDA). The data has been processed using a
 minimal workflow:
@@ -893,7 +893,7 @@ Note that the batch-corrected data still contain missing values. The
     other attached packages:
      [1] scater_1.41.3               scuttle_1.23.2             
      [3] ggplot2_4.0.3               patchwork_1.3.2            
-     [5] SingleCellExperiment_1.35.2 scp_1.23.3                 
+     [5] SingleCellExperiment_1.35.2 scp_1.23.4                 
      [7] QFeatures_1.23.2            MultiAssayExperiment_1.39.1
      [9] SummarizedExperiment_1.43.0 Biobase_2.73.2             
     [11] GenomicRanges_1.65.4        Seqinfo_1.3.2              
@@ -937,7 +937,7 @@ Note that the batch-corrected data still contain missing values. The
 ## License
 
 This vignette is distributed under a [CC BY-SA
-license](https://creativecommons.org/licenses/by-sa/2.0/) license.
+license](https://creativecommons.org/licenses/by-sa/4.0/).
 
 ## Reference
 

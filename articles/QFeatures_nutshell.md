@@ -649,7 +649,7 @@ object is provided in the `QFeautres` visualization
     [8] base     
 
     other attached packages:
-     [1] ggplot2_4.0.3               scp_1.23.3                 
+     [1] ggplot2_4.0.3               scp_1.23.4                 
      [3] QFeatures_1.23.2            MultiAssayExperiment_1.39.1
      [5] SummarizedExperiment_1.43.0 Biobase_2.73.2             
      [7] GenomicRanges_1.65.4        Seqinfo_1.3.2              
@@ -702,7 +702,7 @@ object is provided in the `QFeautres` visualization
 ## License
 
 This vignette is distributed under a [CC BY-SA
-license](https://creativecommons.org/licenses/by-sa/2.0/) license.
+license](https://creativecommons.org/licenses/by-sa/4.0/).
 
 ## Reference
 
